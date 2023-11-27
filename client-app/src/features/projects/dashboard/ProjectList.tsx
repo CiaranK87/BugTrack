@@ -1,13 +1,22 @@
 import { Button, Table } from "semantic-ui-react";
 import { Project } from "../../../app/models/project";
+import { SyntheticEvent, useState } from "react";
 
 interface Props {
   projects: Project[];
   selectProject: (id: string) => void;
   deleteProject: (id: string) => void;
+  submitting: boolean;
 }
 
-export default function ProjectList({ projects, selectProject, deleteProject }: Props) {
+export default function ProjectList({ projects, selectProject, deleteProject, submitting }: Props) {
+  const [target, setTarget] = useState("");
+
+  function handleProjectDelete(e: SyntheticEvent<HTMLButtonElement>, id: string) {
+    setTarget(e.currentTarget.name);
+    deleteProject(id);
+  }
+
   return (
     <Table celled textAlign="center">
       <Table.Header>
@@ -27,7 +36,13 @@ export default function ProjectList({ projects, selectProject, deleteProject }: 
             <Table.Cell>{project.description}</Table.Cell>
             <Table.Cell>
               <Button onClick={() => selectProject(project.id)} content="View" color="blue" />
-              <Button onClick={() => deleteProject(project.id)} content="Delete" color="red" />
+              <Button
+                name={project.id}
+                loading={submitting && target === project.id}
+                onClick={(e) => handleProjectDelete(e, project.id)}
+                content="Delete"
+                color="red"
+              />
             </Table.Cell>
           </Table.Row>
         ))}

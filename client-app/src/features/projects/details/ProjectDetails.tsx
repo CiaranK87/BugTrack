@@ -16,7 +16,10 @@ export default function ProjectDetails({ project, cancelSelectProject, openForm 
         <Card.Header>{project.name}</Card.Header>
         <span>{project.projectOwner}</span>
         <Card.Meta>
-          <span>{project.startDate}</span>
+          <span>start-date: {project.startDate}</span>
+        </Card.Meta>
+        <Card.Meta>
+          <span>end-date: {project.endDate}</span>
         </Card.Meta>
         <Card.Description>{project.description}</Card.Description>
       </Card.Content>

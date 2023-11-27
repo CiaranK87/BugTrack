@@ -6,9 +6,10 @@ interface Props {
   project: Project | undefined;
   closeForm: () => void;
   createOrEdit: (project: Project) => void;
+  submitting: boolean;
 }
 
-export default function ProjectForm({ project: selectedProject, closeForm, createOrEdit }: Props) {
+export default function ProjectForm({ project: selectedProject, closeForm, createOrEdit, submitting }: Props) {
   const initialState = selectedProject ?? {
     id: "",
     name: "",
@@ -40,8 +41,21 @@ export default function ProjectForm({ project: selectedProject, closeForm, creat
           name="description"
           onChange={handleInputChange}
         />
-        <Form.Input placeholder="Project start date" value={project.startDate} name="startDate" onChange={handleInputChange} />
-        <Button floated="right" positive type="submit" content="Submit" />
+        <Form.Input
+          type="date"
+          placeholder="Project start date"
+          value={project.startDate}
+          name="startDate"
+          onChange={handleInputChange}
+        />
+        <Form.Input
+          type="date"
+          placeholder="Project end date"
+          value={project.endDate}
+          name="endDate"
+          onChange={handleInputChange}
+        />
+        <Button loading={submitting} floated="right" positive type="submit" content="Submit" />
         <Button onClick={closeForm} floated="right" type="button" content="Cancel" />
       </Form>
     </Segment>

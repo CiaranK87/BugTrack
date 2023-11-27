@@ -14,6 +14,7 @@ interface Props {
   closeForm: () => void;
   createOrEdit: (project: Project) => void;
   deleteProject: (id: string) => void;
+  submitting: boolean;
 }
 
 export default function ProjectDashboard({
@@ -26,19 +27,22 @@ export default function ProjectDashboard({
   closeForm,
   createOrEdit,
   deleteProject,
+  submitting,
 }: Props) {
   return (
     <Grid>
       <Grid.Column width={10}>
         <Segment>
-          <ProjectList projects={projects} selectProject={selectProject} deleteProject={deleteProject} />
+          <ProjectList projects={projects} selectProject={selectProject} deleteProject={deleteProject} submitting={submitting} />
         </Segment>
       </Grid.Column>
       <Grid.Column width={6}>
         {selectedProject && !editMode && (
           <ProjectDetails project={selectedProject} cancelSelectProject={cancelSelectProject} openForm={openForm} />
         )}
-        {editMode && <ProjectForm closeForm={closeForm} project={selectedProject} createOrEdit={createOrEdit} />}
+        {editMode && (
+          <ProjectForm closeForm={closeForm} project={selectedProject} createOrEdit={createOrEdit} submitting={submitting} />
+        )}
       </Grid.Column>
     </Grid>
   );
