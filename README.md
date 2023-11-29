@@ -23,7 +23,7 @@ The client-side is React (typescript)
 cd Bugtrack/API  # Navigate to the API project folder
 - dotnet restore        # Restore project dependencies
 - dotnet build          # Build the project
-- dotnet run            # Run the API server
+- dotnet run            # Run the API server\
 Visit http://localhost:5000 in your browser to see if the API is running.
 
 
@@ -31,5 +31,5 @@ Visit http://localhost:5000 in your browser to see if the API is running.
 
 cd Bugtrack/client-app  # Navigate to the client-side project folder
 - npm install               # Install client-side dependencies
-- npm run dev                 # Start the development server
+- npm run dev                 # Start the development server\
 Visit http://localhost:3000 in your browser to see your React app.
