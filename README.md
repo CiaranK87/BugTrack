@@ -5,7 +5,7 @@ This project represents my learning journey in full-stack development,
 combining .NET and React to create a practical and user-friendly application 
 showcasing my abilities in building functional and maintainable software.
 
-The server-side is .NET
+The server-side is .NET\
 The client-side is React (typescript)
 
 
