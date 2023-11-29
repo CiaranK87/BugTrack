@@ -18,7 +18,7 @@ The client-side is React (typescript)
 # Getting Started
 ## 1. Clone the repository
 
-### set up the back-end
+### 2. set up the back-end
 Navigate to the API project folder
 cd Bugtrack/API  
 - dotnet restore           - restore project dependencies
@@ -28,7 +28,7 @@ cd Bugtrack/API
 Visit http://localhost:5000 in your browser to see if the API is running.
 
 
-### set up the client-side
+### 3. set up the client-side
 Navigate to the client-side project folder
 cd Bugtrack/client-app  
 - npm install               - Install client-side dependencies
