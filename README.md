@@ -30,6 +30,6 @@ Visit http://localhost:5000 in your browser to see if the API is running.
 ### set up the client-side
 Navigate to the client-side project folder
 cd Bugtrack/client-app  
-- npm install               # Install client-side dependencies
-- npm run dev                 # Start the development server\
+- npm install               - Install client-side dependencies
+- npm run dev               - Start the development server\
 Visit http://localhost:3000 in your browser to see your React app.
