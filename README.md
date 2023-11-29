@@ -14,6 +14,10 @@ The client-side is React (typescript)
 - [Node.js](https://nodejs.org/)
 - [npm](https://www.npmjs.com/) (Node Package Manager)
 
+### Sqlite for the database with entity framework core.
+- cd Bugtrack/API
+- dotnet ef database update
+
 
 # Getting Started
 ### 1. Clone the repository
