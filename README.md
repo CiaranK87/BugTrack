@@ -1,6 +1,3 @@
-![Project Logo](https://github.com/CiaranK87/BugTrack/client-app/public/assets/bug-logo.png)
-
-
 # BugTrack
 
 ## description
