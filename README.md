@@ -20,10 +20,15 @@ The client-side is React (typescript)
 
 ### set up the back-end
 Navigate to the API project folder
-cd Bugtrack/API
-- dotnet restore        - Restore project dependencies
-- dotnet build          - Build the project
-- dotnet run            - Run the API server\
+# Restore project dependencies
+dotnet restore
+
+# Build the project
+dotnet build
+
+# Run the API server
+dotnet run
+
 Visit http://localhost:5000 in your browser to see if the API is running.
 
 
