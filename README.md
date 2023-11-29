@@ -16,7 +16,7 @@ The client-side is React (typescript)
 
 
 # Getting Started
-## 1. Clone the repository
+### 1. Clone the repository
 
 ### 2. set up the back-end
 Navigate to the API project folder
