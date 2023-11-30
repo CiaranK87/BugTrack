@@ -10,7 +10,7 @@ The client-side is React (typescript)
 
 
 ## Prerequisites
-- [.NET SDK](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
+- [.NET SDK (version 7)](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
 - [Node.js](https://nodejs.org/)
 - [npm](https://www.npmjs.com/) (Node Package Manager)
 
