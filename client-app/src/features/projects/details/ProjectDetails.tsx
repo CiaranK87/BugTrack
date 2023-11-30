@@ -1,13 +1,13 @@
 import { Button, Card } from "semantic-ui-react";
-import { Project } from "../../../app/models/project";
+import { useStore } from "../../../app/stores/store";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
 
-interface Props {
-  project: Project;
-  cancelSelectProject: () => void;
-  openForm: (id: string) => void;
-}
+export default function ProjectDetails() {
+  const { projectStore } = useStore();
+  const { selectedProject: project, openForm, cancelSelectedProject } = projectStore;
 
-export default function ProjectDetails({ project, cancelSelectProject, openForm }: Props) {
+  if (!project) return <LoadingComponent />;
+
   return (
     <Card fluid>
       {/* <Image src="../../../../public/assets/bug-logo.png" /> */}
@@ -26,7 +26,7 @@ export default function ProjectDetails({ project, cancelSelectProject, openForm 
       <Card.Content extra>
         <Button.Group widths={2}>
           <Button onClick={() => openForm(project.id)} basic color="blue" content="Edit" />
-          <Button onClick={cancelSelectProject} basic color="grey" content="Cancel" />
+          <Button onClick={cancelSelectedProject} basic color="grey" content="Cancel" />
         </Button.Group>
       </Card.Content>
     </Card>
