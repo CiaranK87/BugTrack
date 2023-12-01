@@ -1,15 +1,12 @@
 import { ChangeEvent, useState } from "react";
 import { Button, Form, Segment } from "semantic-ui-react";
-import { Project } from "../../../app/models/project";
+import { useStore } from "../../../app/stores/store";
+import { observer } from "mobx-react-lite";
 
-interface Props {
-  project: Project | undefined;
-  closeForm: () => void;
-  createOrEdit: (project: Project) => void;
-  submitting: boolean;
-}
+export default observer(function ProjectForm() {
+  const { projectStore } = useStore();
+  const { selectedProject, closeForm, createProject, updateProject, loading } = projectStore;
 
-export default function ProjectForm({ project: selectedProject, closeForm, createOrEdit, submitting }: Props) {
   const initialState = selectedProject ?? {
     id: "",
     name: "",
@@ -22,7 +19,7 @@ export default function ProjectForm({ project: selectedProject, closeForm, creat
   const [project, setProject] = useState(initialState);
 
   function handleSubmit() {
-    createOrEdit(project);
+    project.id ? updateProject(project) : createProject(project);
   }
 
   function handleInputChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -55,9 +52,9 @@ export default function ProjectForm({ project: selectedProject, closeForm, creat
           name="endDate"
           onChange={handleInputChange}
         />
-        <Button loading={submitting} floated="right" positive type="submit" content="Submit" />
+        <Button loading={loading} floated="right" positive type="submit" content="Submit" />
         <Button onClick={closeForm} floated="right" type="button" content="Cancel" />
       </Form>
     </Segment>
   );
-}
+});

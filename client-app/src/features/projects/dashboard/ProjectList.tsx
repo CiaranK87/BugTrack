@@ -1,15 +1,12 @@
 import { Button, Table } from "semantic-ui-react";
-import { Project } from "../../../app/models/project";
 import { SyntheticEvent, useState } from "react";
+import { useStore } from "../../../app/stores/store";
+import { observer } from "mobx-react-lite";
 
-interface Props {
-  projects: Project[];
-  selectProject: (id: string) => void;
-  deleteProject: (id: string) => void;
-  submitting: boolean;
-}
+export default observer(function ProjectList() {
+  const { projectStore } = useStore();
+  const { deleteProject, projectsByStartDate, loading } = projectStore;
 
-export default function ProjectList({ projects, selectProject, deleteProject, submitting }: Props) {
   const [target, setTarget] = useState("");
 
   function handleProjectDelete(e: SyntheticEvent<HTMLButtonElement>, id: string) {
@@ -29,16 +26,16 @@ export default function ProjectList({ projects, selectProject, deleteProject, su
       </Table.Header>
 
       <Table.Body>
-        {projects.map((project) => (
+        {projectsByStartDate.map((project) => (
           <Table.Row key={project.id}>
             <Table.Cell>{project.name}</Table.Cell>
             <Table.Cell>{project.projectOwner}</Table.Cell>
             <Table.Cell>{project.description}</Table.Cell>
             <Table.Cell>
-              <Button onClick={() => selectProject(project.id)} content="View" color="blue" />
+              <Button onClick={() => projectStore.selectProject(project.id)} content="View" color="blue" />
               <Button
                 name={project.id}
-                loading={submitting && target === project.id}
+                loading={loading && target === project.id}
                 onClick={(e) => handleProjectDelete(e, project.id)}
                 content="Delete"
                 color="red"
@@ -49,7 +46,7 @@ export default function ProjectList({ projects, selectProject, deleteProject, su
       </Table.Body>
     </Table>
   );
-}
+});
 
 // <Segment>
 //   <Item.Group divided>
