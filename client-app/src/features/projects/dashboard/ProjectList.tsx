@@ -2,6 +2,7 @@ import { Button, Table } from "semantic-ui-react";
 import { SyntheticEvent, useState } from "react";
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
+import { Link } from "react-router-dom";
 
 export default observer(function ProjectList() {
   const { projectStore } = useStore();
@@ -32,7 +33,7 @@ export default observer(function ProjectList() {
             <Table.Cell>{project.projectOwner}</Table.Cell>
             <Table.Cell>{project.description}</Table.Cell>
             <Table.Cell>
-              <Button onClick={() => projectStore.selectProject(project.id)} content="View" color="blue" />
+              <Button as={Link} to={`/projects/${project.id}`} content="View" color="blue" />
               <Button
                 name={project.id}
                 loading={loading && target === project.id}
