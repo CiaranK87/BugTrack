@@ -1,13 +1,19 @@
 import { Grid, Segment } from "semantic-ui-react";
 import ProjectList from "./ProjectList";
-import ProjectDetails from "../details/ProjectDetails";
-import ProjectForm from "../form/ProjectForm";
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
+import { useEffect } from "react";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
 
 export default observer(function ProjectDashboard() {
   const { projectStore } = useStore();
-  const { selectedProject, editMode } = projectStore;
+  const { loadProjects, projectRegistry } = projectStore;
+
+  useEffect(() => {
+    if (projectRegistry.size <= 1) loadProjects();
+  }, [loadProjects, projectRegistry.size]);
+
+  if (projectStore.loadingInitial) return <LoadingComponent content="Loading App" />;
 
   return (
     <Grid>
@@ -17,8 +23,9 @@ export default observer(function ProjectDashboard() {
         </Segment>
       </Grid.Column>
       <Grid.Column width={6}>
-        {selectedProject && !editMode && <ProjectDetails />}
-        {editMode && <ProjectForm />}
+        <Segment textAlign="center">
+          <h2>Project filters</h2>
+        </Segment>
       </Grid.Column>
     </Grid>
   );

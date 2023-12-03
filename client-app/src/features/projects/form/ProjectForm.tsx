@@ -1,31 +1,46 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Button, Form, Segment } from "semantic-ui-react";
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { Project } from "../../../app/models/project";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
+import { v4 as uuid } from "uuid";
 
 export default observer(function ProjectForm() {
   const { projectStore } = useStore();
-  const { selectedProject, closeForm, createProject, updateProject, loading } = projectStore;
+  const { createProject, updateProject, loading, loadProject, loadingInitial } = projectStore;
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-  const initialState = selectedProject ?? {
+  const [project, setProject] = useState<Project>({
     id: "",
     name: "",
     projectOwner: "",
     description: "",
     startDate: "",
     endDate: "",
-  };
+  });
 
-  const [project, setProject] = useState(initialState);
+  useEffect(() => {
+    if (id) loadProject(id).then((project) => setProject(project!));
+  }, [id, loadProject]);
 
   function handleSubmit() {
-    project.id ? updateProject(project) : createProject(project);
+    if (!project.id) {
+      project.id = uuid();
+      createProject(project).then(() => navigate(`/projects/${project.id}`));
+    } else {
+      updateProject(project).then(() => navigate(`/projects/${project.id}`));
+    }
   }
 
   function handleInputChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     const { name, value } = event.target;
     setProject({ ...project, [name]: value });
   }
+
+  if (loadingInitial) return <LoadingComponent content="Loading Project..." />;
 
   return (
     <Segment clearing>
@@ -53,7 +68,7 @@ export default observer(function ProjectForm() {
           onChange={handleInputChange}
         />
         <Button loading={loading} floated="right" positive type="submit" content="Submit" />
-        <Button onClick={closeForm} floated="right" type="button" content="Cancel" />
+        <Button as={Link} to="projects" floated="right" type="button" content="Cancel" />
       </Form>
     </Segment>
   );

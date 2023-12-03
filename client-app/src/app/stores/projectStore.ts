@@ -8,7 +8,7 @@ export default class ProjectStore {
   selectedProject: Project | undefined = undefined;
   editMode = false;
   loading = false;
-  loadingInitial = true;
+  loadingInitial = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -19,11 +19,11 @@ export default class ProjectStore {
   }
 
   loadProjects = async () => {
+    this.setLoadingInitial(true);
     try {
       const projects = await agent.Projects.list();
       projects.forEach((project) => {
-        project.startDate.split("T")[0];
-        this.projectRegistry.set(project.id, project);
+        this.setProject(project);
       });
       this.setLoadingInitial(false);
     } catch (error) {
@@ -32,25 +32,37 @@ export default class ProjectStore {
     }
   };
 
+  loadProject = async (id: string) => {
+    let project = this.getProject(id);
+    if (project) {
+      this.selectedProject = project;
+      return project;
+    } else {
+      this.setLoadingInitial(true);
+      try {
+        project = await agent.Projects.details(id);
+        this.setProject(project);
+        runInAction(() => (this.selectedProject = project));
+        this.setLoadingInitial(false);
+        return project;
+      } catch (error) {
+        console.log(error);
+        this.setLoadingInitial(false);
+      }
+    }
+  };
+
+  private getProject = (id: string) => {
+    return this.projectRegistry.get(id);
+  };
+
+  private setProject = (project: Project) => {
+    project.startDate.split("T")[0];
+    this.projectRegistry.set(project.id, project);
+  };
+
   setLoadingInitial = (state: boolean) => {
     this.loadingInitial = state;
-  };
-
-  selectProject = (id: string) => {
-    this.selectedProject = this.projectRegistry.get(id);
-  };
-
-  cancelSelectedProject = () => {
-    this.selectedProject = undefined;
-  };
-
-  openForm = (id?: string) => {
-    id ? this.selectProject(id) : this.cancelSelectedProject();
-    this.editMode = true;
-  };
-
-  closeForm = () => {
-    this.editMode = false;
   };
 
   createProject = async (project: Project) => {
@@ -96,7 +108,6 @@ export default class ProjectStore {
       await agent.Projects.delete(id);
       runInAction(() => {
         this.projectRegistry.delete(id);
-        if (this.selectedProject?.id === id) this.cancelSelectedProject;
         this.loading = false;
       });
     } catch (error) {
