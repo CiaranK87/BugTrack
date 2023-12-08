@@ -4,6 +4,7 @@ import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import { useEffect } from "react";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
+import ProjectFilters from "./ProjectFilters";
 
 export default observer(function ProjectDashboard() {
   const { projectStore } = useStore();
@@ -23,9 +24,7 @@ export default observer(function ProjectDashboard() {
         </Segment>
       </Grid.Column>
       <Grid.Column width={6}>
-        <Segment textAlign="center">
-          <h2>Project filters</h2>
-        </Segment>
+        <ProjectFilters />
       </Grid.Column>
     </Grid>
   );
