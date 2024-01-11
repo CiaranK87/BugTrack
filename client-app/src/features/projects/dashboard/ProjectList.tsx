@@ -32,7 +32,7 @@ export default observer(function ProjectList() {
             <Table.Cell>{project.name}</Table.Cell>
             <Table.Cell>{project.projectOwner}</Table.Cell>
             <Table.Cell>{project.description}</Table.Cell>
-            <Table.Cell>
+            <Table.Cell style={{ display: "flex" }}>
               <Button as={Link} to={`/projects/${project.id}`} content="View" color="blue" />
               <Button
                 name={project.id}
