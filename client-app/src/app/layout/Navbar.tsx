@@ -10,6 +10,7 @@ export default function Navbar() {
           BugTrack
         </Menu.Item>
         <Menu.Item as={NavLink} to="/projects" name="Projects" />
+        <Menu.Item as={NavLink} to="/errors" name="Errors" />
         <Menu.Item>
           <Button as={NavLink} to="/createProject" color="teal" content="Create Project" />
         </Menu.Item>
