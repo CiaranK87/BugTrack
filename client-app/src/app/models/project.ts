@@ -3,6 +3,5 @@ export interface Project {
   name: string;
   projectOwner: string;
   description: string;
-  startDate: string;
-  endDate: string;
+  startDate: Date | null;
 }

@@ -16,7 +16,6 @@ namespace Persistence
                     ProjectOwner = "John",
                     Description = "Seed Project 1 Description",
                     StartDate = DateTime.UtcNow,
-                    EndDate = DateTime.UtcNow.AddMonths(1),
                 },
 		new Project
                 {
@@ -24,7 +23,6 @@ namespace Persistence
                     ProjectOwner = "Tom",
                     Description = "Seed Project 2 Description",
                     StartDate = DateTime.UtcNow,
-                    EndDate = DateTime.UtcNow.AddMonths(2),
                 },
 		new Project
                 {
@@ -32,7 +30,6 @@ namespace Persistence
                     ProjectOwner = "Sarah",
                     Description = "Seed Project 3 Description",
                     StartDate = DateTime.UtcNow,
-                    EndDate = DateTime.UtcNow.AddMonths(3),
                 },
 		new Project
                 {
@@ -40,7 +37,6 @@ namespace Persistence
                     ProjectOwner = "Sally",
                     Description = "Seed Project 4 Description",
                     StartDate = DateTime.UtcNow,
-                    EndDate = DateTime.UtcNow.AddMonths(4),
                 },
 		new Project
                 {
@@ -48,7 +44,6 @@ namespace Persistence
                     ProjectOwner = "Mike",
                     Description = "Seed Project 5 Description",
                     StartDate = DateTime.UtcNow,
-                    EndDate = DateTime.UtcNow.AddMonths(5),
                 },
 		new Project
                 {
@@ -56,7 +51,6 @@ namespace Persistence
                     ProjectOwner = "Susan",
                     Description = "Seed Project 6 Description",
                     StartDate = DateTime.UtcNow,
-                    EndDate = DateTime.UtcNow.AddMonths(6),
                 },
 		new Project
                 {
@@ -64,7 +58,6 @@ namespace Persistence
                     ProjectOwner = "Paul",
                     Description = "Seed Project 7 Description",
                     StartDate = DateTime.UtcNow,
-                    EndDate = DateTime.UtcNow.AddMonths(7),
                 },
 		new Project
                 {
@@ -72,7 +65,6 @@ namespace Persistence
                     ProjectOwner = "Tammy",
                     Description = "Seed Project 8 Description",
                     StartDate = DateTime.UtcNow,
-                    EndDate = DateTime.UtcNow.AddMonths(8),
                 },
             };
 

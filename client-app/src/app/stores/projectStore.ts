@@ -15,7 +15,7 @@ export default class ProjectStore {
   }
 
   get projectsByStartDate() {
-    return Array.from(this.projectRegistry.values()).sort((a, b) => Date.parse(a.startDate) - Date.parse(b.startDate));
+    return Array.from(this.projectRegistry.values()).sort((a, b) => a.startDate!.getDate() - b.startDate!.getDate());
   }
 
   loadProjects = async () => {
@@ -57,7 +57,7 @@ export default class ProjectStore {
   };
 
   private setProject = (project: Project) => {
-    project.startDate.split("T")[0];
+    project.startDate = new Date(project.startDate!);
     this.projectRegistry.set(project.id, project);
   };
 

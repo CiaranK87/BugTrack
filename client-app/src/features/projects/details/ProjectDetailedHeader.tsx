@@ -1,6 +1,8 @@
 import { observer } from "mobx-react-lite";
 import { Button, Header, Item, Segment } from "semantic-ui-react";
 import { Project } from "../../../app/models/project";
+import { Link } from "react-router-dom";
+import { format } from "date-fns";
 
 interface Props {
   project: Project;
@@ -15,7 +17,7 @@ export default observer(function ProjectDetailedHeader({ project }: Props) {
             <Item>
               <Item.Content>
                 <Header size="huge" content={project.name} style={{ color: "black" }} />
-                <p>Start Date: {project.startDate.split("T")[0]}</p>
+                <p>Start Date: {format(project.startDate!, "dd MMM yyyy")}</p>
                 <p>
                   Project Owned by <strong>{project.projectOwner}</strong>
                 </p>
@@ -25,7 +27,7 @@ export default observer(function ProjectDetailedHeader({ project }: Props) {
         </Segment>
       </Segment>
       <Segment clearing attached="bottom">
-        <Button color="orange" floated="right">
+        <Button as={Link} to={`/manage/${project.id}`} color="orange" floated="right">
           Manage Project
         </Button>
       </Segment>
