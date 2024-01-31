@@ -6,6 +6,7 @@ import ProjectDetails from "../../features/projects/details/ProjectDetails";
 import TestError from "../../features/errors/TestError";
 import NotFound from "../../features/errors/NotFound";
 import ServerError from "../../features/errors/ServerError";
+import LoginForm from "../../features/users/LoginForm";
 
 export const routes: RouteObject[] = [
   {
@@ -16,6 +17,7 @@ export const routes: RouteObject[] = [
       { path: "projects/:id", element: <ProjectDetails /> },
       { path: "createProject", element: <ProjectForm key="create" /> },
       { path: "manage/:id", element: <ProjectForm key="manage" /> },
+      { path: "login", element: <LoginForm /> },
       { path: "errors", element: <TestError /> },
       { path: "not-found", element: <NotFound /> },
       { path: "server-error", element: <ServerError /> },

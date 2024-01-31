@@ -14,7 +14,7 @@ export default observer(function ProjectDashboard() {
     if (projectRegistry.size <= 1) loadProjects();
   }, [loadProjects, projectRegistry.size]);
 
-  if (projectStore.loadingInitial) return <LoadingComponent content="Loading App" />;
+  if (projectStore.loadingInitial) return <LoadingComponent content="Loading Projects..." />;
 
   return (
     <Grid>
