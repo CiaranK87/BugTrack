@@ -6,5 +6,8 @@ namespace Domain
     {
         public string DisplayName { get; set; }
         public string JobTitle { get; set; }
+
+        public string Bio { get; set; }
+        public ICollection<ProjectParticipant> Projects { get; set; }
     }
 }

@@ -7,7 +7,7 @@ namespace Application.Projects
     {
         public ProjectValidator()
         {
-            RuleFor(x => x.Name).NotEmpty();
+            RuleFor(x => x.ProjectTitle).NotEmpty();
             RuleFor(x => x.ProjectOwner).NotEmpty();
             RuleFor(x => x.Description).NotEmpty();
             RuleFor(x => x.StartDate).NotEmpty();

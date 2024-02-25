@@ -16,7 +16,7 @@ export default observer(function ProjectDetailedHeader({ project }: Props) {
           <Item.Group>
             <Item>
               <Item.Content>
-                <Header size="huge" content={project.name} style={{ color: "black" }} />
+                <Header size="huge" content={project.projectTitle} style={{ color: "black" }} />
                 <p>Start Date: {format(project.startDate!, "dd MMM yyyy")}</p>
                 <p>
                   Project Owned by <strong>{project.projectOwner}</strong>
