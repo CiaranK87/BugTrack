@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers
 {
 
-    [AllowAnonymous]
     public class ProjectsController : BaseApiController
     {
 
@@ -33,7 +32,7 @@ namespace API.Controllers
             return HandleResult(await Mediator.Send(new Create.Command {Project = project}));
         }
 
-
+        [Authorize(Policy = "IsProjectOwner")]    
         [HttpPut("{id}")]
 
         public async Task<IActionResult> EditProject(Guid id, Project project)
@@ -42,12 +41,20 @@ namespace API.Controllers
             return HandleResult(await Mediator.Send(new Edit.Command {Project = project}));
         }
 
+
+        [Authorize(Policy = "IsProjectOwner")] 
         [HttpDelete("{id}")]
 
         public async Task<IActionResult> DeleteProject(Guid id)
         {
             return HandleResult (await Mediator.Send(new Delete.Command {Id = id}));
             
+        }
+
+        [HttpPost("{id}/participant")]
+        public async Task<IActionResult> AddParticipant(Guid id)
+        {
+            return HandleResult(await Mediator.Send(new UpdateParticipants.Command {Id = id})); 
         }
     }
 }

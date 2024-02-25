@@ -20,7 +20,7 @@ export default observer(function ProjectForm() {
 
   const [project, setProject] = useState<Project>({
     id: "",
-    name: "",
+    projectTitle: "",
     projectOwner: "",
     description: "",
     startDate: null,
@@ -31,7 +31,7 @@ export default observer(function ProjectForm() {
   }, [id, loadProject]);
 
   const validationSchema = Yup.object({
-    name: Yup.string().required("The project name is required"),
+    projectTitle: Yup.string().required("The project title is required"),
     projectOwner: Yup.string().required("The project owner is required"),
     description: Yup.string().required("The project description is required"),
     startDate: Yup.string().required("The project start date is required"),
@@ -62,7 +62,7 @@ export default observer(function ProjectForm() {
       >
         {({ handleSubmit, isValid, isSubmitting, dirty }) => (
           <Form className="ui form" onSubmit={handleSubmit} autoComplete="off">
-            <MyTextInput name="name" placeholder="Name" />
+            <MyTextInput name="title" placeholder="projectTitle" />
             <MyTextInput placeholder="Project Owner" name="projectOwner" />
             <MyTextArea rows={2} placeholder="Project Description" name="description" />
             <MyDateInput

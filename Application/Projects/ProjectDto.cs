@@ -1,6 +1,8 @@
-namespace Domain
+using Application.Profiles;
+
+namespace Application.Projects
 {
-    public class Project
+    public class ProjectDto
     {
         public Guid Id { get; set; }        
 
@@ -12,8 +14,10 @@ namespace Domain
 
         public DateTime StartDate { get; set; }
 
+        public string OwnerUsername { get; set; }
+
         public bool IsCancelled { get; set; }
 
-        public ICollection<ProjectParticipant> Participants { get; set; } = new List<ProjectParticipant>();  
+        public ICollection<Profile> Participants { get; set; }
     }
 }
