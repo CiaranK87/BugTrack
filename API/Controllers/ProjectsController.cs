@@ -51,7 +51,7 @@ namespace API.Controllers
             
         }
 
-        [HttpPost("{id}/participant")]
+        [HttpPost("{id}/participate")]
         public async Task<IActionResult> AddParticipant(Guid id)
         {
             return HandleResult(await Mediator.Send(new UpdateParticipants.Command {Id = id})); 

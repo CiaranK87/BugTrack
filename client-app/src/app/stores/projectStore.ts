@@ -1,7 +1,9 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { Project } from "../models/project";
+import { Project, ProjectFormValues } from "../models/project";
 import agent from "../api/agent";
 import { v4 as uuid } from "uuid";
+import { store } from "./store";
+import { Profile } from "../models/profile";
 
 export default class ProjectStore {
   projectRegistry = new Map<string, Project>();
@@ -57,48 +59,51 @@ export default class ProjectStore {
   };
 
   private setProject = (project: Project) => {
+    const user = store.userStore.user;
+    if (user) {
+      project.isParticipant = project.participants!.some((p) => p.username === user.username);
+      project.isOwner = project.ownerUsername === user.username;
+      project.owner = project.participants?.find((x) => x.username === project.ownerUsername);
+    }
     project.startDate = new Date(project.startDate!);
     this.projectRegistry.set(project.id, project);
+    0;
   };
 
   setLoadingInitial = (state: boolean) => {
     this.loadingInitial = state;
   };
 
-  createProject = async (project: Project) => {
-    this.loading = true;
+  createProject = async (project: ProjectFormValues) => {
+    const user = store.userStore.user;
+    const participant = new Profile(user!);
     project.id = uuid();
     try {
       await agent.Projects.create(project);
+      const newProject = new Project(project);
+      newProject.ownerUsername = user!.username;
+      newProject.participants = [participant];
+      this.setProject(newProject);
       runInAction(() => {
-        this.projectRegistry.set(project.id, project);
-        this.selectedProject = project;
-        this.editMode = false;
-        this.loading = false;
+        this.selectedProject = newProject;
       });
     } catch (error) {
       console.log(error);
-      runInAction(() => {
-        this.loading = false;
-      });
     }
   };
 
-  updateProject = async (project: Project) => {
-    this.loading = true;
+  updateProject = async (project: ProjectFormValues) => {
     try {
       await agent.Projects.update(project);
       runInAction(() => {
-        this.projectRegistry.set(project.id, project);
-        this.selectedProject = project;
-        this.editMode = false;
-        this.loading = false;
+        if (project.id) {
+          const updatedProject = { ...this.getProject(project.id), ...project };
+          this.projectRegistry.set(project.id, updatedProject as Project);
+          this.selectedProject = project as Project;
+        }
       });
     } catch (error) {
       console.log(error);
-      runInAction(() => {
-        this.loading = false;
-      });
     }
   };
 
@@ -115,6 +120,45 @@ export default class ProjectStore {
       runInAction(() => {
         this.loading = false;
       });
+    }
+  };
+
+  updateParticipants = async () => {
+    const user = store.userStore.user;
+    this.loading = true;
+
+    try {
+      await agent.Projects.participate(this.selectedProject!.id);
+      runInAction(() => {
+        if (this.selectedProject?.isParticipant) {
+          this.selectedProject.participants = this.selectedProject.participants?.filter((p) => p.username !== user?.username);
+          this.selectedProject.isParticipant = false;
+        } else {
+          const attendee = new Profile(user!);
+          this.selectedProject?.participants?.push(attendee);
+          this.selectedProject!.isParticipant = true;
+        }
+        this.projectRegistry.set(this.selectedProject!.id, this.selectedProject!);
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      runInAction(() => (this.loading = false));
+    }
+  };
+
+  cancelProjectToggle = async () => {
+    this.loading = true;
+    try {
+      await agent.Projects.participate(this.selectedProject!.id);
+      runInAction(() => {
+        this.selectedProject!.isCancelled = !this.selectedProject?.isCancelled;
+        this.projectRegistry.set(this.selectedProject!.id, this.selectedProject!);
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      runInAction(() => (this.loading = false));
     }
   };
 }
