@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { Project } from "../models/project";
+import { Project, ProjectFormValues } from "../models/project";
 import { toast } from "react-toastify";
 import { router } from "../router/Routes";
 import { store } from "../stores/store";
@@ -74,9 +74,10 @@ const requests = {
 const Projects = {
   list: () => requests.get<Project[]>("/projects"),
   details: (id: string) => requests.get<Project>(`/projects/${id}`),
-  create: (project: Project) => requests.post<void>("/projects", project),
-  update: (project: Project) => requests.put<void>(`/projects/${project.id}`, project),
+  create: (project: ProjectFormValues) => requests.post<void>("/projects", project),
+  update: (project: ProjectFormValues) => requests.put<void>(`/projects/${project.id}`, project),
   delete: (id: string) => requests.del<void>(`/projects/${id}`),
+  participate: (id: string) => requests.post<void>(`/projects/${id}/participate`, {}),
 };
 
 const Account = {

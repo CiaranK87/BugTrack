@@ -3,7 +3,7 @@ import { Button, Header, Segment } from "semantic-ui-react";
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Project } from "../../../app/models/project";
+import { ProjectFormValues } from "../../../app/models/project";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
@@ -15,19 +15,13 @@ import { v4 as uuid } from "uuid";
 export default observer(function ProjectForm() {
   const navigate = useNavigate();
   const { projectStore } = useStore();
-  const { createProject, updateProject, loading, loadProject, loadingInitial } = projectStore;
+  const { createProject, updateProject, loadProject, loadingInitial } = projectStore;
   const { id } = useParams();
 
-  const [project, setProject] = useState<Project>({
-    id: "",
-    projectTitle: "",
-    projectOwner: "",
-    description: "",
-    startDate: null,
-  });
+  const [project, setProject] = useState<ProjectFormValues>(new ProjectFormValues());
 
   useEffect(() => {
-    if (id) loadProject(id).then((project) => setProject(project!));
+    if (id) loadProject(id).then((project) => setProject(new ProjectFormValues(project)));
   }, [id, loadProject]);
 
   const validationSchema = Yup.object({
@@ -37,8 +31,8 @@ export default observer(function ProjectForm() {
     startDate: Yup.string().required("The project start date is required"),
   });
 
-  function handleFormSubmit(project: Project) {
-    if (project.id.length === 0) {
+  function handleFormSubmit(project: ProjectFormValues) {
+    if (!project.id) {
       const newProject = {
         ...project,
         id: uuid(),
@@ -62,7 +56,7 @@ export default observer(function ProjectForm() {
       >
         {({ handleSubmit, isValid, isSubmitting, dirty }) => (
           <Form className="ui form" onSubmit={handleSubmit} autoComplete="off">
-            <MyTextInput name="title" placeholder="projectTitle" />
+            <MyTextInput name="projectTitle" placeholder="project Title" />
             <MyTextInput placeholder="Project Owner" name="projectOwner" />
             <MyTextArea rows={2} placeholder="Project Description" name="description" />
             <MyDateInput
@@ -74,7 +68,7 @@ export default observer(function ProjectForm() {
             />
             <Button
               disabled={isSubmitting || !dirty || !isValid}
-              loading={loading}
+              loading={isSubmitting}
               floated="right"
               positive
               type="submit"

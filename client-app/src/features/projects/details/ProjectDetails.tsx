@@ -25,7 +25,7 @@ export default observer(function ProjectDetails() {
         <ProjectDetailedHeader project={project} />
       </Grid.Column>
       <Grid.Column width={8}>
-        <ProjectDetailedInfo />
+        <ProjectDetailedInfo project={project} />
       </Grid.Column>
       <Grid.Column width={8}>
         <ProjectDetailedTicketInfo />
