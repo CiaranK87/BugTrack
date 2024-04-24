@@ -15,5 +15,6 @@ namespace Domain
         public bool IsCancelled { get; set; }
 
         public ICollection<ProjectParticipant> Participants { get; set; } = new List<ProjectParticipant>();  
+        public ICollection<Ticket> Tickets { get; set; }  
     }
 }

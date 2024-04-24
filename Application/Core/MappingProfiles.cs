@@ -17,6 +17,8 @@ namespace Application.Core
                 .ForMember(dest => dest.DisplayName, opt => opt.MapFrom(src => src.AppUser.DisplayName))
                 .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.AppUser.UserName))
                 .ForMember(dest => dest.Bio, opt => opt.MapFrom(src => src.AppUser.Bio));
+
+            CreateMap<Ticket, Ticket>();
         }
     }
 }

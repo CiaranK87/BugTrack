@@ -51,6 +51,33 @@ namespace Persistence
                             {
                                 AppUser = users[0],
                                 IsOwner = true
+                            }                            
+                        },
+                        Tickets = new List<Ticket>
+                        {
+                            new Ticket
+                            {
+                                Title = "Ticket 1",
+                                Description = "Ticket 1 description",
+                                Submitter = "Ticket 1 submitter",
+                                Assigned = "Ticket 1 assigned",
+                                priority = "Ticket 1 priority",
+                                Severity = "Ticket 1 severity",
+                                Status = "Ticket 1 status",
+                                StartDate = DateTime.UtcNow,
+                                Updated = DateTime.UtcNow,
+                            },
+                            new Ticket
+                            {
+                                Title = "Ticket 2",
+                                Description = "Ticket 2 description",
+                                Submitter = "Ticket 2 submitter",
+                                Assigned = "Ticket 2 assigned",
+                                priority = "Ticket 2 priority",
+                                Severity = "Ticket 2 severity",
+                                Status = "Ticket 2 status",
+                                StartDate = DateTime.UtcNow,
+                                Updated = DateTime.UtcNow,
                             }
                         }
                     },
