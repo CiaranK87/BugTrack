@@ -74,7 +74,7 @@ export default observer(function ProjectForm() {
               type="submit"
               content="Submit"
             />
-            <Button as={Link} to="projects" floated="right" type="button" content="Cancel" />
+            <Button as={Link} to="/projects" floated="right" type="button" content="Cancel" />
           </Form>
         )}
       </Formik>

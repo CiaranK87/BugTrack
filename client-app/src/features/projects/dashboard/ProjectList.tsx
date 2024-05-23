@@ -15,9 +15,7 @@ export default observer(function ProjectList() {
           <Header sub color="teal">
             ACTIVE PROJECTS
           </Header>
-          {projectsByStartDate.map((project) => (
-            <ProjectListItem key={project.id} project={project} />
-          ))}
+          <ProjectListItem key={project.id} project={project} />
         </Fragment>
       ))}
     </>

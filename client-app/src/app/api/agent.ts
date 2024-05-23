@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { router } from "../router/Routes";
 import { store } from "../stores/store";
 import { User, UserFormValues } from "../models/user";
+import { Ticket } from "../models/ticket";
 
 const sleep = (delay: number) => {
   return new Promise((resolve) => {
@@ -80,6 +81,14 @@ const Projects = {
   participate: (id: string) => requests.post<void>(`/projects/${id}/participate`, {}),
 };
 
+const Tickets = {
+  list: () => requests.get<Ticket[]>("/tickets"),
+  details: (id: string) => requests.get<Ticket>(`/tickets/${id}`),
+  create: (ticket: Ticket) => requests.post<void>("/tickets", ticket),
+  update: (ticket: Ticket) => requests.put<void>(`/tickets/${ticket.id}`, ticket),
+  delete: (id: string) => requests.del<void>(`/tickets/${id}`),
+};
+
 const Account = {
   current: () => requests.get<User>("/account"),
   login: (user: UserFormValues) => requests.post<User>("/account/login", user),
@@ -89,6 +98,7 @@ const Account = {
 const agent = {
   Projects,
   Account,
+  Tickets,
 };
 
 export default agent;

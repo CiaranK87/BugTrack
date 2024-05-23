@@ -7,6 +7,9 @@ import TestError from "../../features/errors/TestError";
 import NotFound from "../../features/errors/NotFound";
 import ServerError from "../../features/errors/ServerError";
 import LoginForm from "../../features/users/LoginForm";
+import TicketDashboard from "../../features/tickets/dashboard/TicketDashboard";
+import TicketDetails from "../../features/tickets/details/TicketDetails";
+import TicketForm from "../../features/tickets/form/TicketForm";
 
 export const routes: RouteObject[] = [
   {
@@ -15,8 +18,12 @@ export const routes: RouteObject[] = [
     children: [
       { path: "projects", element: <ProjectDashboard /> },
       { path: "projects/:id", element: <ProjectDetails /> },
-      { path: "createProject", element: <ProjectForm key="create" /> },
-      { path: "manage/:id", element: <ProjectForm key="manage" /> },
+      { path: "createProject", element: <ProjectForm key="createProject" /> },
+      { path: "manage/:id", element: <ProjectForm key="manageProject" /> },
+      { path: "tickets", element: <TicketDashboard /> },
+      { path: "tickets/:id", element: <TicketDetails /> },
+      { path: "createTicket", element: <TicketForm key="createTicket" /> },
+      { path: "manageTicket/:id", element: <TicketForm key="manageTicket" /> },
       { path: "login", element: <LoginForm /> },
       { path: "errors", element: <TestError /> },
       { path: "not-found", element: <NotFound /> },
