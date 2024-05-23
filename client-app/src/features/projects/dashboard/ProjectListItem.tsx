@@ -8,7 +8,7 @@ interface Props {
   project: Project;
 }
 
-export default function ActivityListItem({ project }: Props) {
+export default function ProjectListItem({ project }: Props) {
   return (
     <Segment.Group style={{ marginBottom: "30px" }}>
       <Segment>

@@ -7,6 +7,7 @@ export default observer(function Navbar() {
   const {
     userStore: { user, logout },
   } = useStore();
+
   return (
     <Menu inverted fixed="top">
       <Container>
@@ -15,9 +16,11 @@ export default observer(function Navbar() {
           BugTrack
         </Menu.Item>
         <Menu.Item as={NavLink} to="/projects" name="Projects" />
+        <Menu.Item as={NavLink} to="/tickets" name="Tickets" />
         <Menu.Item as={NavLink} to="/errors" name="Errors" />
         <Menu.Item>
           <Button as={NavLink} to="/createProject" color="teal" content="Create Project" />
+          <Button as={NavLink} to="/createTicket" color="teal" content="Create Ticket" />
         </Menu.Item>
         <Menu.Item position="right">
           <Image avatar spaced="right" src={"/assets/user.png"} />
