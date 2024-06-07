@@ -7,14 +7,14 @@ import LoadingComponent from "../../../app/layout/LoadingComponent";
 import TicketFilters from "./TicketFilters";
 
 export default observer(function TicketDashboard() {
-  const { projectStore, ticketStore } = useStore();
+  const { ticketStore } = useStore();
   const { loadTickets, ticketRegistry } = ticketStore;
 
   useEffect(() => {
     if (ticketRegistry.size <= 0) loadTickets();
   }, [loadTickets, ticketRegistry.size]);
 
-  if (projectStore.loadingInitial) return <LoadingComponent content="Loading App..." />;
+  if (ticketStore.loadingInitial) return <LoadingComponent content="Loading Tickets..." />;
 
   // if (ticketStore.loadingInitial) return <LoadingComponent content="Loading Tickets..." />;
 
