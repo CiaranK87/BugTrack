@@ -23,25 +23,34 @@ export default function TestErrors() {
     axios.get(baseUrl + "buggy/unauthorised").catch((err) => console.log(err.response));
   }
 
-  function handleBadGuid() {
+  function handleBadProjectGuid() {
     axios.get(baseUrl + "projects/notaguid").catch((err) => console.log(err.response));
   }
+  function handleBadTicketGuid() {
+    axios.get(baseUrl + "tickets/notaguid").catch((err) => console.log(err.response));
+  }
 
-  function handleValidationError() {
+  function handleProjectValidationError() {
     axios.post(baseUrl + "projects", {}).catch((err) => setErrors(err));
+  }
+
+  function handleTicketValidationError() {
+    axios.post(baseUrl + "tickets", {}).catch((err) => setErrors(err));
   }
 
   return (
     <>
       <Header as="h1" content="Test Error component" />
       <Segment>
-        <Button.Group widths="7">
+        <Button.Group widths="10">
           <Button onClick={handleNotFound} content="Not Found" basic primary />
           <Button onClick={handleBadRequest} content="Bad Request" basic primary />
-          <Button onClick={handleValidationError} content="Validation Error" basic primary />
+          <Button onClick={handleProjectValidationError} content="Project Validation Error" basic primary />
+          <Button onClick={handleTicketValidationError} content="Ticket Validation Error" basic primary />
           <Button onClick={handleServerError} content="Server Error" basic primary />
           <Button onClick={handleUnauthorised} content="Unauthorised" basic primary />
-          <Button onClick={handleBadGuid} content="Bad Guid" basic primary />
+          <Button onClick={handleBadProjectGuid} content="Bad Project Guid" basic primary />
+          <Button onClick={handleBadTicketGuid} content="Bad Ticket Guid" basic primary />
         </Button.Group>
       </Segment>
       {errors && <ValidationError errors={errors} />}
