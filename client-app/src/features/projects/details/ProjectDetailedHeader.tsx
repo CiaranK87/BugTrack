@@ -48,7 +48,7 @@ export default observer(function ProjectDetailedHeader({ project }: Props) {
               loading={loading}
             />
 
-            <Button disabled={project.isCancelled} as={Link} to={`/manage/${project.id}`} color="orange" floated="right">
+            <Button disabled={project.isCancelled} as={Link} to={`/manageProject/${project.id}`} color="orange" floated="right">
               Manage Project
             </Button>
           </>

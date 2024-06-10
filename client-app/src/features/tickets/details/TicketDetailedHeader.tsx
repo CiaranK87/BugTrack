@@ -1,6 +1,8 @@
 import { observer } from "mobx-react-lite";
 import { Button, Header, Item, Segment } from "semantic-ui-react";
 import { Ticket } from "../../../app/models/ticket";
+import { Link } from "react-router-dom";
+import { format } from "date-fns";
 
 interface Props {
   ticket: Ticket;
@@ -15,7 +17,7 @@ export default observer(function TicketDetailedHeader({ ticket }: Props) {
             <Item>
               <Item.Content>
                 <Header size="huge" content={ticket.title} />
-                <p>{ticket.startDate}</p>
+                <p>{format(ticket.startDate!, "dd/MM/yyyy")}</p>
                 <p>
                   Submitted by <strong>Bob</strong>
                 </p>
@@ -27,7 +29,7 @@ export default observer(function TicketDetailedHeader({ ticket }: Props) {
       <Segment clearing attached="bottom">
         <Button color="teal">Collaborate</Button>
         <Button>Cancel collaboration</Button>
-        <Button color="orange" floated="right">
+        <Button as={Link} to={`/manageTicket/${ticket.id}`} color="orange" floated="right">
           Manage Ticket
         </Button>
       </Segment>
