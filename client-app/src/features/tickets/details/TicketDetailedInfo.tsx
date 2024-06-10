@@ -1,6 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { Segment, Grid, Icon } from "semantic-ui-react";
 import { Ticket } from "../../../app/models/ticket";
+import { format } from "date-fns";
 
 interface Props {
   ticket: Ticket;
@@ -25,7 +26,7 @@ export default observer(function TicketDetailedInfo({ ticket }: Props) {
             <Icon name="calendar" size="large" color="teal" />
           </Grid.Column>
           <Grid.Column width={15}>
-            <span>{ticket.startDate.split("T")[0]}</span>
+            <span>{format(ticket.startDate!, "dd/MM/yyyy")}</span>
           </Grid.Column>
         </Grid>
       </Segment>

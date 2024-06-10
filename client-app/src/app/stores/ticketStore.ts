@@ -15,7 +15,7 @@ export default class TicketStore {
   }
 
   get ticketsByStartDate() {
-    return Array.from(this.ticketRegistry.values()).sort((a, b) => Date.parse(a.startDate) - Date.parse(b.startDate));
+    return Array.from(this.ticketRegistry.values()).sort((a, b) => a.startDate!.getTime() - b.startDate!.getTime());
   }
 
   loadTickets = async () => {
@@ -55,8 +55,8 @@ export default class TicketStore {
   };
 
   private setTicket = (ticket: Ticket) => {
-    ticket.startDate.split("T")[0];
-    ticket.updated.split("T")[0];
+    ticket.startDate = new Date(ticket.startDate!);
+    ticket.updated = new Date(ticket.updated!);
     this.ticketRegistry.set(ticket.id, ticket);
   };
 

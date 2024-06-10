@@ -3,6 +3,7 @@ import { Button, Icon, Item, Segment } from "semantic-ui-react";
 import { useStore } from "../../../app/stores/store";
 import { SyntheticEvent, useState } from "react";
 import { Ticket } from "../../../app/models/ticket";
+import { format } from "date-fns";
 
 interface Props {
   ticket: Ticket;
@@ -35,7 +36,7 @@ export default function TicketListItem({ ticket }: Props) {
       </Segment>
       <Segment>
         <span>
-          <Icon name="clock" /> {ticket.startDate.split("T")[0]}
+          <Icon name="clock" /> {format(ticket.startDate!, "dd/MM/yyyy")}
         </span>
       </Segment>
       <Segment secondary>Assigned/collaborators go here</Segment>

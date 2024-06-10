@@ -1,17 +1,24 @@
-import { Button, Form, Segment } from "semantic-ui-react";
-import { ChangeEvent, useEffect, useState } from "react";
+import { Button, Header, Segment } from "semantic-ui-react";
+import { useEffect, useState } from "react";
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Ticket } from "../../../app/models/ticket";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
+import { Formik, Form } from "formik";
+import * as Yup from "yup";
+import MyTextInput from "../../../app/common/form/MyTextInput";
+import MyTextArea from "../../../app/common/form/MyTextArea";
+import MySelectInput from "../../../app/common/form/MySelectInput";
+import { priorityOptions } from "../../../app/common/options/priorityOptions";
+import MyDateInput from "../../../app/common/form/MyDateInput";
 import { v4 as uuid } from "uuid";
 
 export default observer(function TicketForm() {
+  const navigate = useNavigate();
   const { ticketStore } = useStore();
   const { createTicket, updateTicket, loading, loadTicket, loadingInitial } = ticketStore;
-  const { id } = useParams();
-  const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
 
   const [ticket, setTicket] = useState<Ticket>({
     id: "",
@@ -22,45 +29,72 @@ export default observer(function TicketForm() {
     priority: "",
     severity: "",
     status: "",
-    startDate: "",
-    updated: "",
+    startDate: null,
+    updated: null,
+  });
+
+  const validationSchema = Yup.object({
+    title: Yup.string().required("The ticket title is required"),
+    description: Yup.string().required("The ticket description is required"),
+    submitter: Yup.string().required(),
+    assigned: Yup.string().required(),
+    priority: Yup.string().required(),
+    severity: Yup.string().required(),
+    status: Yup.string().required(),
+    startDate: Yup.string().required("The ticket start date is required"),
+    updated: Yup.string().required("Updated date is required"),
   });
 
   useEffect(() => {
     if (id) loadTicket(id).then((ticket) => setTicket(ticket!));
   }, [id, loadTicket]);
 
-  function handleSubmit() {
+  function handleFormSubmit(ticket: Ticket) {
     if (!ticket.id) {
-      ticket.id = uuid();
-      createTicket(ticket).then(() => navigate(`/tickets/${ticket.id}`));
+      const newTicket = {
+        ...ticket,
+        id: uuid(),
+      };
+      createTicket(newTicket).then(() => navigate(`/tickets/${newTicket.id}`));
     } else {
       updateTicket(ticket).then(() => navigate(`/tickets/${ticket.id}`));
     }
-  }
-
-  function handleInputChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    const { name, value } = event.target;
-    setTicket({ ...ticket, [name]: value });
   }
 
   if (loadingInitial) return <LoadingComponent content="Loading ticket..." />;
 
   return (
     <Segment clearing>
-      <Form onSubmit={handleSubmit} autoComplete="off">
-        <Form.Input placeholder="Title" value={ticket.title} name="title" onChange={handleInputChange} />
-        <Form.TextArea placeholder="Description" value={ticket.description} name="description" onChange={handleInputChange} />
-        <Form.Input placeholder="Submitter" value={ticket.submitter} name="submitter" onChange={handleInputChange} />
-        <Form.Input placeholder="Assigned" value={ticket.assigned} name="assigned" onChange={handleInputChange} />
-        <Form.Input placeholder="Priority" value={ticket.priority} name="priority" onChange={handleInputChange} />
-        <Form.Input placeholder="Severity" value={ticket.severity} name="severity" onChange={handleInputChange} />
-        <Form.Input placeholder="Status" value={ticket.status} name="status" onChange={handleInputChange} />
-        <Form.Input type="date" placeholder="StartDate" value={ticket.startDate} name="startDate" onChange={handleInputChange} />
-        <Form.Input type="date" placeholder="Updated" value={ticket.updated} name="updated" onChange={handleInputChange} />
-        <Button loading={loading} floated="right" positive type="submit" content="Submit" />
-        <Button floated="right" type="button" content="Cancel" />
-      </Form>
+      <Header content="Ticket Details" sub color="teal" />
+      <Formik
+        validationSchema={validationSchema}
+        enableReinitialize
+        initialValues={ticket}
+        onSubmit={(values) => handleFormSubmit(values)}
+      >
+        {({ handleSubmit, isValid, isSubmitting, dirty }) => (
+          <Form className="ui form" onSubmit={handleSubmit} autoComplete="off">
+            <MyTextInput name="title" placeholder="Title" />
+            <MyTextArea rows={3} placeholder="Description" name="description" />
+            <MyTextInput placeholder="Submitter" name="submitter" />
+            <MyTextInput placeholder="Assigned" name="assigned" />
+            <MySelectInput options={priorityOptions} placeholder="Priority" name="priority" />
+            <MyTextInput placeholder="Severity" name="severity" />
+            <MyTextInput placeholder="Status" name="status" />
+            <MyDateInput placeholderText="StartDate" name="startDate" dateFormat="MMMM d, yyyy" />
+            <MyDateInput placeholderText="Updated" name="updated" dateFormat="MMMM d, yyyy" />
+            <Button
+              disabled={isSubmitting || !dirty || !isValid}
+              loading={loading}
+              floated="right"
+              positive
+              type="submit"
+              content="Submit"
+            />
+            <Button floated="right" type="button" content="Cancel" />
+          </Form>
+        )}
+      </Formik>
     </Segment>
   );
 });
