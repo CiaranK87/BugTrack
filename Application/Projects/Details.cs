@@ -29,10 +29,12 @@ namespace Application.Projects
             {
 
                 var project = await _context.Projects
-                    .ProjectTo<ProjectDto>(_mapper.ConfigurationProvider)
-                    .FirstOrDefaultAsync(x => x.Id == request.Id);
+                .Include(p => p.Tickets)
+                .Include(p => p.Participants)
+                    .ThenInclude(p => p.AppUser)
+                .FirstOrDefaultAsync(x => x.Id == request.Id);
 
-                return Result<ProjectDto>.Success(project);
+                return Result<ProjectDto>.Success(_mapper.Map<ProjectDto>(project));
             }
         }
     }

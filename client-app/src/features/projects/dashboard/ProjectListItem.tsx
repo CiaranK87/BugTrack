@@ -20,7 +20,7 @@ export default function ProjectListItem({ project }: Props) {
               <Item.Header as={Link} to={`/projects/${project.id}`}>
                 {project.projectTitle}
               </Item.Header>
-              <Item.Description>Project owner - {project.owner!.displayName}</Item.Description>
+              <Item.Description>Project owner - {project.owner!.displayName ?? "unknown"}</Item.Description>
               {project.isOwner && (
                 <Item.Description>
                   <Label basic color="orange">
@@ -28,6 +28,12 @@ export default function ProjectListItem({ project }: Props) {
                   </Label>
                 </Item.Description>
               )}
+
+              <Label color="teal" attached="top right">
+                {`${project.ticketCount || 0} ticket${project.ticketCount === 1 ? '' : 's'}`}
+              </Label>
+
+              
               {project.isParticipant && !project.isOwner && (
                 <Item.Description>
                   <Label basic color="green">

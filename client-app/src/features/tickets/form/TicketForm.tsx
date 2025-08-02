@@ -18,7 +18,7 @@ export default observer(function TicketForm() {
   const navigate = useNavigate();
   const { ticketStore } = useStore();
   const { createTicket, updateTicket, loading, loadTicket, loadingInitial } = ticketStore;
-  const { id } = useParams<{ id: string }>();
+  const { id, projectId } = useParams<{ id: string; projectId: string }>();
 
   const [ticket, setTicket] = useState<Ticket>({
     id: "",
@@ -30,7 +30,9 @@ export default observer(function TicketForm() {
     severity: "",
     status: "",
     startDate: null,
+    endDate: null,
     updated: null,
+    projectId: projectId ||  "",
   });
 
   const validationSchema = Yup.object({
@@ -42,6 +44,7 @@ export default observer(function TicketForm() {
     severity: Yup.string().required(),
     status: Yup.string().required(),
     startDate: Yup.string().required("The ticket start date is required"),
+    endDate: Yup.date().required("The ticket end date is required"),
     updated: Yup.string().required("Updated date is required"),
   });
 
@@ -54,10 +57,11 @@ export default observer(function TicketForm() {
       const newTicket = {
         ...ticket,
         id: uuid(),
+        projectId: projectId!,
       };
-      createTicket(newTicket).then(() => navigate(`/tickets/${newTicket.id}`));
+      createTicket(newTicket).then(() => navigate(`/projects/${projectId}`));
     } else {
-      updateTicket(ticket).then(() => navigate(`/tickets/${ticket.id}`));
+      updateTicket(ticket).then(() => navigate(`/projects/${projectId}`));
     }
   }
 
@@ -82,6 +86,7 @@ export default observer(function TicketForm() {
             <MyTextInput placeholder="Severity" name="severity" />
             <MyTextInput placeholder="Status" name="status" />
             <MyDateInput placeholderText="StartDate" name="startDate" dateFormat="MMMM d, yyyy" />
+            <MyDateInput placeholderText="End Date" name="endDate" dateFormat="MMMM d, yyyy"/>
             <MyDateInput placeholderText="Updated" name="updated" dateFormat="MMMM d, yyyy" />
             <Button
               disabled={isSubmitting || !dirty || !isValid}

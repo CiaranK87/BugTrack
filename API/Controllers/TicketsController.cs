@@ -16,11 +16,19 @@ namespace API.Controllers
 
 
 
-        [HttpGet("{id}")] //api/ticket/:id
+        [HttpGet("{id}")]
 
         public async Task<IActionResult> GetTicket(Guid id)
         {            
             return HandleResult(await Mediator.Send(new Details.Query{Id = id}));
+        }
+
+
+
+        [HttpGet("project/{projectId}")]
+        public async Task<IActionResult> GetTicketsByProjectId(Guid projectId)
+        {
+            return HandleResult(await Mediator.Send(new ListByProjectId.Query { ProjectId = projectId }));
         }
 
 

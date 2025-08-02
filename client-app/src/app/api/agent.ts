@@ -83,6 +83,7 @@ const Projects = {
 
 const Tickets = {
   list: () => requests.get<Ticket[]>("/tickets"),
+  listByProject: (projectId: string) => requests.get<Ticket[]>(`/tickets/project/${projectId}`),
   details: (id: string) => requests.get<Ticket>(`/tickets/${id}`),
   create: (ticket: Ticket) => requests.post<void>("/tickets", ticket),
   update: (ticket: Ticket) => requests.put<void>(`/tickets/${ticket.id}`, ticket),

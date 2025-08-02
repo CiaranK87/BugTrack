@@ -26,10 +26,13 @@ namespace Application.Projects
             public async Task<Result<List<ProjectDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
                 var projects = await _context.Projects
-                    .ProjectTo<ProjectDto>(_mapper.ConfigurationProvider)
+                    .Include(p => p.Tickets)
+                    .Include(p => p.Participants)
+                        .ThenInclude(p => p.AppUser)
                     .ToListAsync(cancellationToken);
 
-                return Result<List<ProjectDto>>.Success(projects);
+                var projectDtos = _mapper.Map<List<ProjectDto>>(projects);
+                return Result<List<ProjectDto>>.Success(projectDtos);
             }
         }
     }

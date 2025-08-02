@@ -5,6 +5,7 @@ import { v4 as uuid } from "uuid";
 
 export default class TicketStore {
   ticketRegistry = new Map<string, Ticket>();
+  projectTickets = new Map<string, Ticket[]>();
   selectedTicket: Ticket | undefined = undefined;
   editMode = false;
   loading = false;
@@ -54,6 +55,29 @@ export default class TicketStore {
     }
   };
 
+  loadTicketsByProject = async (projectId: string) => {
+  this.setLoadingInitial(true);
+  try {
+    const tickets = await agent.Tickets.listByProject(projectId);
+    const processedTickets = tickets.map(ticket => {
+      ticket.startDate = new Date(ticket.startDate!);
+      ticket.endDate = new Date(ticket.endDate!);
+      ticket.updated = new Date(ticket.updated!);
+      return ticket;
+    });
+    
+    runInAction(() => {
+      this.projectTickets.set(projectId, processedTickets);
+    });
+    this.setLoadingInitial(false);
+    return processedTickets;
+  } catch (error) {
+    console.log(error);
+    this.setLoadingInitial(false);
+    return [];
+  }
+};
+
   private setTicket = (ticket: Ticket) => {
     ticket.startDate = new Date(ticket.startDate!);
     ticket.updated = new Date(ticket.updated!);
@@ -62,6 +86,10 @@ export default class TicketStore {
 
   private getTicket = (id: string) => {
     return this.ticketRegistry.get(id);
+  };
+
+  getProjectTickets = (projectId: string) => {
+  return this.projectTickets.get(projectId) || [];
   };
 
   setLoadingInitial = (state: boolean) => {

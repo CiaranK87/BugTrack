@@ -22,7 +22,7 @@ export const routes: RouteObject[] = [
       { path: "manageProject/:id", element: <ProjectForm key="manageProject" /> },
       { path: "tickets", element: <TicketDashboard /> },
       { path: "tickets/:id", element: <TicketDetails /> },
-      { path: "createTicket", element: <TicketForm key="createTicket" /> },
+      { path: "projects/:projectId/tickets/create", element: <TicketForm key="createTicket" /> },
       { path: "manageTicket/:id", element: <TicketForm key="manageTicket" /> },
       { path: "login", element: <LoginForm /> },
       { path: "errors", element: <TestError /> },

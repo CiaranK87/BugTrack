@@ -8,5 +8,7 @@ export interface Ticket {
   severity: string;
   status: string;
   startDate: Date | null;
+  endDate: Date | null;
   updated: Date | null;
+  projectId: string;
 }

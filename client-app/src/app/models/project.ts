@@ -34,6 +34,7 @@ export class Project implements IProject {
   isOwner: boolean = false;
   owner?: Profile;
   participants?: Profile[];
+  ticketCount?: number;
 }
 
 export class ProjectFormValues {

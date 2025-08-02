@@ -28,7 +28,7 @@ export default observer(function ProjectDetails() {
         <ProjectDetailedInfo project={project} />
       </Grid.Column>
       <Grid.Column width={8}>
-        <ProjectDetailedTicketInfo />
+        <ProjectDetailedTicketInfo projectId={project.id} />
       </Grid.Column>
     </Grid>
   );

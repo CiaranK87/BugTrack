@@ -18,6 +18,8 @@ namespace Application.Projects
 
         public bool IsCancelled { get; set; }
 
+        public int TicketCount { get; set; }
+
         public ICollection<Profile> Participants { get; set; }
     }
 }

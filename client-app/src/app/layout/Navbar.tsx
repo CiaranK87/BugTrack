@@ -20,7 +20,6 @@ export default observer(function Navbar() {
         <Menu.Item as={NavLink} to="/errors" name="Errors" />
         <Menu.Item>
           <Button as={NavLink} to="/createProject" color="teal" content="Create Project" />
-          <Button as={NavLink} to="/createTicket" color="teal" content="Create Ticket" />
         </Menu.Item>
         <Menu.Item position="right">
           <Image avatar spaced="right" src={"/assets/user.png"} />
