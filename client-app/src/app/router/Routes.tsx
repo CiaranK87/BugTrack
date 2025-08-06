@@ -10,6 +10,7 @@ import LoginForm from "../../features/users/LoginForm";
 import TicketDashboard from "../../features/tickets/dashboard/TicketDashboard";
 import TicketDetails from "../../features/tickets/details/TicketDetails";
 import TicketForm from "../../features/tickets/form/TicketForm";
+import ProfilePage from "../../features/profiles/ProfilePage";
 
 export const routes: RouteObject[] = [
   {
@@ -25,6 +26,7 @@ export const routes: RouteObject[] = [
       { path: "projects/:projectId/tickets/create", element: <TicketForm key="createTicket" /> },
       { path: "manageTicket/:id", element: <TicketForm key="manageTicket" /> },
       { path: "login", element: <LoginForm /> },
+      { path: "/profile/:username", element: <ProfilePage />},
       { path: "errors", element: <TestError /> },
       { path: "not-found", element: <NotFound /> },
       { path: "server-error", element: <ServerError /> },

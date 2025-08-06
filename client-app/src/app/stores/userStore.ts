@@ -3,9 +3,13 @@ import { User, UserFormValues } from "../models/user";
 import agent from "../api/agent";
 import { store } from "./store";
 import { router } from "../router/Routes";
+import { Profile } from "../models/profile";
+
 
 export default class UserStore {
   user: User | null = null;
+  profile: Profile | null = null;
+  loadingProfile = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -45,4 +49,38 @@ export default class UserStore {
       console.log(error);
     }
   };
+
+  loadProfile = async (username: string) => {
+  this.loadingProfile = true;
+  try {
+    const profile = await agent.Profiles.get(username);
+    runInAction(() => {
+      this.profile = profile;
+      this.loadingProfile = false;
+    });
+  } catch (error) {
+    console.log(error);
+    runInAction(() => {
+      this.loadingProfile = false;
+    });
+  }
+}
+
+  updateProfile = async (profile: Partial<Profile>) => {
+    try {
+      await agent.Profiles.updateProfile(profile);
+      runInAction(() => {
+        if (this.profile) {
+          this.profile.displayName = profile.displayName || this.profile.displayName;
+          this.profile.bio = profile.bio || this.profile.bio;
+        }
+      });
+    } catch (error: any) {
+      console.log("Profile update error:", error.response?.data || error.message);
+    }
+  }
+
+  isCurrentUser = (username: string) => {
+    return this.user?.username === username;
+}
 }

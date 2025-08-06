@@ -11,6 +11,8 @@ export default class ProjectStore {
   editMode = false;
   loading = false;
   loadingInitial = false;
+  userProjects: Project[] = [];
+  loadingUserProjects = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -53,6 +55,22 @@ export default class ProjectStore {
       }
     }
   };
+
+  loadUserProjects = async (username: string) => {
+  this.loadingUserProjects = true;
+  try {
+    const projects = await agent.Projects.getUserProjects(username);
+    runInAction(() => {
+      this.userProjects = projects;
+      this.loadingUserProjects = false;
+    });
+  } catch (error) {
+    console.log(error);
+    runInAction(() => {
+      this.loadingUserProjects = false;
+    });
+  }
+}
 
   private getProject = (id: string) => {
     return this.projectRegistry.get(id);

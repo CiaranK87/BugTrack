@@ -5,6 +5,7 @@ import { router } from "../router/Routes";
 import { store } from "../stores/store";
 import { User, UserFormValues } from "../models/user";
 import { Ticket } from "../models/ticket";
+import { Profile } from "../models/profile";
 
 const sleep = (delay: number) => {
   return new Promise((resolve) => {
@@ -79,6 +80,7 @@ const Projects = {
   update: (project: ProjectFormValues) => requests.put<void>(`/projects/${project.id}`, project),
   delete: (id: string) => requests.del<void>(`/projects/${id}`),
   participate: (id: string) => requests.post<void>(`/projects/${id}/participate`, {}),
+  getUserProjects: (username: string) => requests.get<Project[]>(`/profiles/${username}/projects`),
 };
 
 const Tickets = {
@@ -96,10 +98,16 @@ const Account = {
   register: (user: UserFormValues) => requests.post<User>("/account/register", user),
 };
 
+const Profiles = {
+  get: (username: string) => requests.get<Profile>(`/profiles/${username}`),
+  updateProfile: (profile: Partial<Profile>) => requests.put<void>(`/profiles`, profile),
+};
+
 const agent = {
   Projects,
   Account,
   Tickets,
+  Profiles,
 };
 
 export default agent;
