@@ -11,6 +11,7 @@ import TicketDashboard from "../../features/tickets/dashboard/TicketDashboard";
 import TicketDetails from "../../features/tickets/details/TicketDetails";
 import TicketForm from "../../features/tickets/form/TicketForm";
 import ProfilePage from "../../features/profiles/ProfilePage";
+import Dashboard from "../../features/dashboard/Dashboard";
 
 export const routes: RouteObject[] = [
   {
@@ -18,6 +19,7 @@ export const routes: RouteObject[] = [
     element: <App />,
     children: [
       { path: "projects", element: <ProjectDashboard /> },
+      { path: "dashboard", element: <Dashboard /> },
       { path: "projects/:id", element: <ProjectDetails /> },
       { path: "createProject", element: <ProjectForm key="createProject" /> },
       { path: "manageProject/:id", element: <ProjectForm key="manageProject" /> },

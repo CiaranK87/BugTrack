@@ -11,7 +11,7 @@ export default observer(function Navbar() {
   return (
     <Menu inverted fixed="top">
       <Container>
-        <Menu.Item as={NavLink} to="/" header>
+        <Menu.Item as={NavLink} to="/dashboard" header>
           <img src="/assets/bug-logo.png" alt="logo" style={{ marginRight: "10px" }} />
           BugTrack
         </Menu.Item>

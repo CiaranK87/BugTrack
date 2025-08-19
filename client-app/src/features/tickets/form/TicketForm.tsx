@@ -13,11 +13,13 @@ import MySelectInput from "../../../app/common/form/MySelectInput";
 import { priorityOptions } from "../../../app/common/options/priorityOptions";
 import MyDateInput from "../../../app/common/form/MyDateInput";
 import { v4 as uuid } from "uuid";
+import { statusOptions } from "../../../app/common/options/statusOptions";
 
 export default observer(function TicketForm() {
   const navigate = useNavigate();
-  const { ticketStore } = useStore();
+  const { ticketStore, projectStore } = useStore();
   const { createTicket, updateTicket, loading, loadTicket, loadingInitial } = ticketStore;
+  const { loadProject, projectRegistry } = projectStore;
   const { id, projectId } = useParams<{ id: string; projectId: string }>();
 
   const [ticket, setTicket] = useState<Ticket>({
@@ -32,25 +34,48 @@ export default observer(function TicketForm() {
     startDate: null,
     endDate: null,
     updated: null,
-    projectId: projectId ||  "",
+    projectId: projectId || "",
   });
 
-  const validationSchema = Yup.object({
-    title: Yup.string().required("The ticket title is required"),
-    description: Yup.string().required("The ticket description is required"),
-    submitter: Yup.string().required(),
-    assigned: Yup.string().required(),
-    priority: Yup.string().required(),
-    severity: Yup.string().required(),
-    status: Yup.string().required(),
-    startDate: Yup.string().required("The ticket start date is required"),
-    endDate: Yup.date().required("The ticket end date is required"),
-    updated: Yup.string().required("Updated date is required"),
-  });
+  const [projectUsersAsOptions, setProjectUsersAsOptions] = useState<{ text: string; value: string }[]>([]);
 
   useEffect(() => {
     if (id) loadTicket(id).then((ticket) => setTicket(ticket!));
   }, [id, loadTicket]);
+
+useEffect(() => {
+  if (projectId) {
+    loadProject(projectId).then(() => {
+      const project = projectRegistry.get(projectId);
+      console.log('All participants:', project?.participants);
+      console.log('DEBUG: Project loaded', project);
+      console.log('DEBUG: Participants', project?.participants);
+      if (project?.participants?.length) {
+        console.log('DEBUG: First participant', project.participants[0]);
+        console.log('DEBUG: First participant username', project.participants[0].username);
+      }
+
+      const options = project?.participants?.map(p => ({
+        text: p.displayName,
+        value: p.username
+      })) || [];
+      setProjectUsersAsOptions(options);
+    });
+  }
+}, [projectId, loadProject, projectRegistry]);
+
+  const validationSchema = Yup.object({
+    title: Yup.string().required("The ticket title is required"),
+    description: Yup.string().required("The ticket description is required"),
+    submitter: Yup.string().required("Submitter is required"),
+    assigned: Yup.string().required("Please assign to a user"),
+    priority: Yup.string().required("Priority is required"),
+    severity: Yup.string().required("Severity is required"),
+    status: Yup.string().required("Status is required"),
+    startDate: Yup.string().required("Start date is required"),
+    endDate: Yup.string().required("End date is required"),
+    updated: Yup.string().required("Updated date is required"),
+  });
 
   function handleFormSubmit(ticket: Ticket) {
     if (!ticket.id) {
@@ -81,12 +106,16 @@ export default observer(function TicketForm() {
             <MyTextInput name="title" placeholder="Title" />
             <MyTextArea rows={3} placeholder="Description" name="description" />
             <MyTextInput placeholder="Submitter" name="submitter" />
-            <MyTextInput placeholder="Assigned" name="assigned" />
+            <MySelectInput 
+              options={projectUsersAsOptions} 
+              placeholder="Assign to" 
+              name="assigned" 
+            />
             <MySelectInput options={priorityOptions} placeholder="Priority" name="priority" />
             <MyTextInput placeholder="Severity" name="severity" />
-            <MyTextInput placeholder="Status" name="status" />
-            <MyDateInput placeholderText="StartDate" name="startDate" dateFormat="MMMM d, yyyy" />
-            <MyDateInput placeholderText="End Date" name="endDate" dateFormat="MMMM d, yyyy"/>
+            <MySelectInput options={statusOptions} placeholder="Status" name="status" />
+            <MyDateInput placeholderText="Start Date" name="startDate" dateFormat="MMMM d, yyyy" />
+            <MyDateInput placeholderText="End Date" name="endDate" dateFormat="MMMM d, yyyy" />
             <MyDateInput placeholderText="Updated" name="updated" dateFormat="MMMM d, yyyy" />
             <Button
               disabled={isSubmitting || !dirty || !isValid}

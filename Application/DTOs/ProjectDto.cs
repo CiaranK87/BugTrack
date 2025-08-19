@@ -1,4 +1,4 @@
-using Application.Profiles;
+using Application.DTOs;
 
 namespace Application.Projects
 {
@@ -20,6 +20,6 @@ namespace Application.Projects
 
         public int TicketCount { get; set; }
 
-        public ICollection<Profile> Participants { get; set; }
+        public ICollection<ProfileDto> Participants { get; set; } = new List<ProfileDto>();
     }
 }

@@ -9,10 +9,10 @@ export default observer(function ModalContainer() {
     <Modal 
       open={modalStore.open} 
       onClose={modalStore.closeModal} 
-      size="small"
+      size="mini"
       dimmer="blurring"
     >
-      <Modal.Content>
+      <Modal.Content style={{ padding: '2rem' }}>
         {modalStore.body}
       </Modal.Content>
     </Modal>

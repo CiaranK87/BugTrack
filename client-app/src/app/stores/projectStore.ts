@@ -36,25 +36,26 @@ export default class ProjectStore {
     }
   };
 
-  loadProject = async (id: string) => {
-    let project = this.getProject(id);
-    if (project) {
-      this.selectedProject = project;
+loadProject = async (id: string) => {
+  let project = this.getProject(id);
+  if (project) {
+    this.selectedProject = project;
+    return project;
+  } else {
+    this.setLoadingInitial(true);
+    try {
+      project = await agent.Projects.details(id);
+      console.log('🔧 [ProjectStore] API Response:', project);
+      this.setProject(project);
+      runInAction(() => (this.selectedProject = project));
+      this.setLoadingInitial(false);
       return project;
-    } else {
-      this.setLoadingInitial(true);
-      try {
-        project = await agent.Projects.details(id);
-        this.setProject(project);
-        runInAction(() => (this.selectedProject = project));
-        this.setLoadingInitial(false);
-        return project;
-      } catch (error) {
-        console.log(error);
-        this.setLoadingInitial(false);
-      }
+    } catch (error) {
+      console.log(error);
+      this.setLoadingInitial(false);
     }
-  };
+  }
+};
 
   loadUserProjects = async (username: string) => {
   this.loadingUserProjects = true;
