@@ -15,7 +15,7 @@ namespace Application.Tickets
             RuleFor(x => x.Severity).NotEmpty();
             RuleFor(x => x.Status).NotEmpty();
             RuleFor(x => x.StartDate).NotEmpty();
-            RuleFor(x => x.Updated).NotEmpty();
+
         }
     }
 }

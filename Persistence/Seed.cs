@@ -42,7 +42,7 @@ namespace Persistence
                     new Project
                     {
                         ProjectTitle = "Past Project 1",
-                        ProjectOwner = "bob", // ✅ username, not display name
+                        ProjectOwner = "bob",
                         Description = "This is past project 1 description",
                         StartDate = DateTime.UtcNow.AddMonths(-2),
                         Participants = new List<ProjectParticipant>
@@ -64,8 +64,8 @@ namespace Persistence
                             {
                                 Title = "Ticket 1",
                                 Description = "Ticket 1 description",
-                                Submitter = "bob", // ✅ real username
-                                Assigned = "jane", // ✅ real username
+                                Submitter = "bob", 
+                                Assigned = "jane",
                                 Priority = "High",
                                 Severity = "Critical",
                                 Status = "In Progress",
@@ -78,7 +78,7 @@ namespace Persistence
                                 Title = "Ticket 2",
                                 Description = "Ticket 2 description",
                                 Submitter = "jane",
-                                Assigned = "bob", // ✅ assign to bob
+                                Assigned = "bob",
                                 Priority = "Medium",
                                 Severity = "Medium",
                                 Status = "Pending",
@@ -88,7 +88,7 @@ namespace Persistence
                             }
                         }
                     },
-                    // Other projects — already good, but ensure ProjectOwner = username
+                    
                     new Project
                     {
                         ProjectTitle = "Past Project 2",
@@ -149,8 +149,8 @@ namespace Persistence
                             },
                         }
                     },
-                    // Keep rest similar — just fix ProjectOwner to use username
-                    // Example:
+                    
+                    
                     new Project
                     {
                         ProjectTitle = "Future Project 3",
@@ -187,7 +187,7 @@ namespace Persistence
                             }
                         }
                     },
-                    // Add 1-2 more projects with tickets if needed
+                    
                 };
 
                 await context.Projects.AddRangeAsync(projects);

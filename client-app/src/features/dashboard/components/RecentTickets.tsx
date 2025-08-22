@@ -1,4 +1,3 @@
-// components/RecentTickets.tsx
 import { observer } from "mobx-react-lite";
 import { Link } from "react-router-dom";
 import { List, Segment, Header } from "semantic-ui-react";
@@ -16,7 +15,7 @@ export default observer(function RecentTickets() {
     .sort((a, b) => {
       const dateA = a.updated ? new Date(a.updated).getTime() : 0;
       const dateB = b.updated ? new Date(b.updated).getTime() : 0;
-      return dateB - dateA; // newest first
+      return dateB - dateA;
     })
     .slice(0, 5);
 

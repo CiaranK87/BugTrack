@@ -6,7 +6,7 @@ namespace API.Controllers
 {
     public class TicketsController : BaseApiController
     {
-        [HttpGet] //api/tickets
+        [HttpGet]
         public async Task<IActionResult> GetTickets()
         {
             return HandleResult(await Mediator.Send(new List.Query()));
@@ -47,13 +47,14 @@ namespace API.Controllers
 
 
         [HttpPut("{id}")]
-
-        public async Task<IActionResult> EditTicket(Guid id, Ticket ticket)
+        public async Task<IActionResult> Edit(Guid id, Ticket ticket)
         {
             ticket.Id = id;
-
-            return HandleResult(await Mediator.Send(new Edit.Command {Ticket = ticket}));
+            var result = await Mediator.Send(new Edit.Command { Ticket = ticket });
+            if (!result.IsSuccess) return BadRequest(result.Error);
+            return Ok();
         }
+
 
 
 

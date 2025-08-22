@@ -9,26 +9,29 @@ import ProjectDetailedInfo from "./ProjectDetailedInfo";
 import ProjectDetailedTicketInfo from "./ProjectDetailedTicketInfo";
 
 export default observer(function ProjectDetails() {
-  const { projectStore } = useStore();
-  const { selectedProject: project, loadProject, loadingInitial } = projectStore;
-  const { id } = useParams();
+  const { ticketStore, projectStore } = useStore();
+  const { selectedProject, loadProject, loadingInitial } = projectStore;
+  const { id } = useParams<{ id: string }>();
 
-  useEffect(() => {
-    if (id) loadProject(id);
-  }, [id, loadProject]);
+useEffect(() => {
+  if (id) {
+    loadProject(id);
+    ticketStore.loadTicketsByProject(id);
+  }
+}, [id, loadProject]);
 
-  if (loadingInitial || !project) return <LoadingComponent />;
+  if (loadingInitial || !selectedProject) return <LoadingComponent />;
 
   return (
     <Grid>
       <Grid.Column width={16}>
-        <ProjectDetailedHeader project={project} />
+        <ProjectDetailedHeader project={selectedProject} />
       </Grid.Column>
       <Grid.Column width={8}>
-        <ProjectDetailedInfo project={project} />
+        <ProjectDetailedInfo project={selectedProject} />
       </Grid.Column>
       <Grid.Column width={8}>
-        <ProjectDetailedTicketInfo projectId={project.id} />
+        <ProjectDetailedTicketInfo projectId={selectedProject.id} />
       </Grid.Column>
     </Grid>
   );

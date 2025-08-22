@@ -25,6 +25,7 @@ export default class ProjectStore {
   loadProjects = async () => {
     this.setLoadingInitial(true);
     try {
+      this.projectRegistry.clear();
       const projects = await agent.Projects.list();
       projects.forEach((project) => {
         this.setProject(project);
@@ -45,7 +46,6 @@ loadProject = async (id: string) => {
     this.setLoadingInitial(true);
     try {
       project = await agent.Projects.details(id);
-      console.log('🔧 [ProjectStore] API Response:', project);
       this.setProject(project);
       runInAction(() => (this.selectedProject = project));
       this.setLoadingInitial(false);

@@ -62,8 +62,6 @@ export default observer(function ProjectForm() {
             <MyDateInput
               placeholderText="Project start date"
               name="startDate"
-              // showTimeSelect
-              // timeCaption="time"
               dateFormat="MMMM d, yyyy"
             />
             <Button

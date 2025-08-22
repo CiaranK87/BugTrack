@@ -1,4 +1,3 @@
-// features/dashboard/components/StatisticGroup.tsx
 import { observer } from "mobx-react-lite";
 import { Statistic, Grid, Icon } from "semantic-ui-react";
 

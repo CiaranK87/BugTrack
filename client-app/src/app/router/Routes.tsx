@@ -20,15 +20,18 @@ export const routes: RouteObject[] = [
     children: [
       { path: "projects", element: <ProjectDashboard /> },
       { path: "dashboard", element: <Dashboard /> },
+
+      
+      { path: "projects/:projectId/tickets/create", element: <TicketForm key="createTicket" /> },
+      { path: "projects/:projectId/tickets/:id", element: <TicketForm key="manageTicket" /> },
       { path: "projects/:id", element: <ProjectDetails /> },
+
       { path: "createProject", element: <ProjectForm key="createProject" /> },
       { path: "manageProject/:id", element: <ProjectForm key="manageProject" /> },
       { path: "tickets", element: <TicketDashboard /> },
       { path: "tickets/:id", element: <TicketDetails /> },
-      { path: "projects/:projectId/tickets/create", element: <TicketForm key="createTicket" /> },
-      { path: "manageTicket/:id", element: <TicketForm key="manageTicket" /> },
       { path: "login", element: <LoginForm /> },
-      { path: "/profile/:username", element: <ProfilePage />},
+      { path: "/profile/:username", element: <ProfilePage /> },
       { path: "errors", element: <TestError /> },
       { path: "not-found", element: <NotFound /> },
       { path: "server-error", element: <ServerError /> },

@@ -28,9 +28,11 @@ export default observer(function ProjectDetailedHeader({ project }: Props) {
                 <p>
                   Project Owned by{" "}
                   <strong>
-                    <Link to={`/profile/${project.owner?.username}`}>{project.owner!.displayName}</Link>
+                    <Link to={`/profile/${project.owner?.username || ''}`}>
+                      {project.owner?.displayName || project.projectOwner || 'Unknown'}
+                    </Link>
                   </strong>
-                </p>
+              </p>
               </Item.Content>
             </Item>
           </Item.Group>

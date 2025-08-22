@@ -55,20 +55,29 @@ export default class TicketStore {
     }
   };
 
-  loadTicketsByProject = async (projectId: string) => {
+loadTicketsByProject = async (projectId: string) => {
   this.setLoadingInitial(true);
   try {
     const tickets = await agent.Tickets.listByProject(projectId);
+    
     const processedTickets = tickets.map(ticket => {
-      ticket.startDate = new Date(ticket.startDate!);
-      ticket.endDate = new Date(ticket.endDate!);
-      ticket.updated = new Date(ticket.updated!);
+
+    const normalize = (d: any) => d ? new Date(d + 'Z') : null;
+
+      ticket.startDate = normalize(ticket.startDate);
+      ticket.endDate = normalize(ticket.endDate);
+      ticket.updated = normalize(ticket.updated);
       return ticket;
     });
-    
+
     runInAction(() => {
+      
+      this.ticketRegistry.clear();
+      processedTickets.forEach(ticket => this.ticketRegistry.set(ticket.id, ticket));
+      
       this.projectTickets.set(projectId, processedTickets);
     });
+
     this.setLoadingInitial(false);
     return processedTickets;
   } catch (error) {
@@ -78,9 +87,14 @@ export default class TicketStore {
   }
 };
 
+
   private setTicket = (ticket: Ticket) => {
-    ticket.startDate = new Date(ticket.startDate!);
-    ticket.updated = new Date(ticket.updated!);
+    
+    const normalize = (d: any) => d ? new Date(d + 'Z') : null;
+
+    ticket.startDate = normalize(ticket.startDate);
+    ticket.endDate = normalize(ticket.endDate);
+    ticket.updated = normalize(ticket.updated);
     this.ticketRegistry.set(ticket.id, ticket);
   };
 
@@ -116,13 +130,15 @@ export default class TicketStore {
     }
   };
 
+
   updateTicket = async (ticket: Ticket) => {
     this.loading;
     try {
       await agent.Tickets.update(ticket);
+      const fresh = await agent.Tickets.details(ticket.id);
       runInAction(() => {
-        this.ticketRegistry.set(ticket.id, ticket);
-        this.selectedTicket = ticket;
+        this.setTicket(fresh);
+        this.selectedTicket = fresh;
         this.editMode = false;
         this.loading = false;
       });

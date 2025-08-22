@@ -1,4 +1,3 @@
-// features/dashboard/components/TicketPriorityChart.tsx
 import { observer } from "mobx-react-lite";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import { Segment, Header } from "semantic-ui-react";

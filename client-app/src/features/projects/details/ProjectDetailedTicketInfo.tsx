@@ -20,8 +20,6 @@ export default observer(function ProjectDetailedTicketInfo({ projectId }: Props)
   }, [projectId, loadTicketsByProject]);
 
 
-  // Split these out into a separate utils file
-
   const getPriorityColor = (priority: string) => {
   switch (priority?.toLowerCase()) {
     case 'high':

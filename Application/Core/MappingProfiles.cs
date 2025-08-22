@@ -9,10 +9,10 @@ namespace Application.Core
     {
         public MappingProfiles()
         {
-            // Identity: Project to itself (if needed)
+            
             CreateMap<Project, Project>();
 
-            // Project to ProjectDto
+            
             CreateMap<Project, ProjectDto>()
                 .ForMember(
                     dest => dest.OwnerUsername,
@@ -26,10 +26,10 @@ namespace Application.Core
                 .ForMember(
                     dest => dest.Participants,
                     opt => opt.MapFrom(src => src.Participants
-                        .Select(pp => pp.AppUser)) // AppUser → auto-mapped to ProfileDto
+                        .Select(pp => pp.AppUser))
                 );
 
-            // AppUser to ProfileDto (used in Participants mapping)
+
             CreateMap<AppUser, ProfileDto>()
                 .ForMember(
                     dest => dest.Username,
@@ -45,11 +45,12 @@ namespace Application.Core
                 )
                 .ForMember(
                     dest => dest.Image,
-                    opt => opt.Ignore() // or map if you have image logic later
+                    opt => opt.Ignore()
                 );
 
-            // Ticket identity (if needed)
             CreateMap<Ticket, Ticket>();
+
+            CreateMap<Ticket, TicketDto>();
         }
     }
 }

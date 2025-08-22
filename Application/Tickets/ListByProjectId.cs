@@ -24,7 +24,7 @@ namespace Application.Tickets
             public async Task<Result<List<Ticket>>> Handle(Query request, CancellationToken cancellationToken)
             {
                 var tickets = await _context.Tickets
-                    .Where(t => t.ProjectId == request.ProjectId) // Add filtering
+                    .Where(t => t.ProjectId == request.ProjectId)
                     .ToListAsync(cancellationToken);
                 
                 return Result<List<Ticket>>.Success(tickets);

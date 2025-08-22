@@ -11,12 +11,10 @@ export default observer(function TicketDashboard() {
   const { loadTickets, ticketRegistry } = ticketStore;
 
   useEffect(() => {
-    if (ticketRegistry.size <= 0) loadTickets();
-  }, [loadTickets, ticketRegistry.size]);
+    loadTickets();
+  }, [loadTickets]);
 
   if (ticketStore.loadingInitial) return <LoadingComponent content="Loading Tickets..." />;
-
-  // if (ticketStore.loadingInitial) return <LoadingComponent content="Loading Tickets..." />;
 
   return (
     <>

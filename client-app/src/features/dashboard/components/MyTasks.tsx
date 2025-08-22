@@ -1,4 +1,3 @@
-// features/dashboard/components/MyTasks.tsx
 import { observer } from "mobx-react-lite";
 import { Link } from "react-router-dom";
 import { List, Segment, Header } from "semantic-ui-react";

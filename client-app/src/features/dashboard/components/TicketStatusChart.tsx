@@ -1,4 +1,3 @@
-// features/dashboard/components/TicketStatusChart.tsx
 import { observer } from "mobx-react-lite";
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from 'recharts';
 import { Segment, Header } from "semantic-ui-react";

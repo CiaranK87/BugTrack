@@ -33,28 +33,28 @@ export default observer(function TicketForm() {
     status: "",
     startDate: null,
     endDate: null,
-    updated: null,
     projectId: projectId || "",
   });
 
   const [projectUsersAsOptions, setProjectUsersAsOptions] = useState<{ text: string; value: string }[]>([]);
 
-  useEffect(() => {
-    if (id) loadTicket(id).then((ticket) => setTicket(ticket!));
-  }, [id, loadTicket]);
+useEffect(() => {
+  if (id) {
+    loadTicket(id).then((ticket) => {
+      if (ticket) {
+        setTicket({
+          ...ticket,
+          id: ticket.id,
+        });
+      }
+    });
+  }
+}, [id, loadTicket]);
 
 useEffect(() => {
   if (projectId) {
     loadProject(projectId).then(() => {
       const project = projectRegistry.get(projectId);
-      console.log('All participants:', project?.participants);
-      console.log('DEBUG: Project loaded', project);
-      console.log('DEBUG: Participants', project?.participants);
-      if (project?.participants?.length) {
-        console.log('DEBUG: First participant', project.participants[0]);
-        console.log('DEBUG: First participant username', project.participants[0].username);
-      }
-
       const options = project?.participants?.map(p => ({
         text: p.displayName,
         value: p.username
@@ -74,21 +74,33 @@ useEffect(() => {
     status: Yup.string().required("Status is required"),
     startDate: Yup.string().required("Start date is required"),
     endDate: Yup.string().required("End date is required"),
-    updated: Yup.string().required("Updated date is required"),
   });
 
-  function handleFormSubmit(ticket: Ticket) {
-    if (!ticket.id) {
-      const newTicket = {
-        ...ticket,
-        id: uuid(),
-        projectId: projectId!,
-      };
-      createTicket(newTicket).then(() => navigate(`/projects/${projectId}`));
-    } else {
-      updateTicket(ticket).then(() => navigate(`/projects/${projectId}`));
+function handleFormSubmit(ticket: Ticket) {
+  if (!ticket.id) {
+    const newTicket = {
+      ...ticket,
+      id: uuid(),
+      projectId: projectId!,
+    };
+    createTicket(newTicket).then(() => {
+      projectStore.loadProjects();
+      navigate(`/projects/${projectId}`);
+    });
+      
+  } else {
+    if (!ticket.id || typeof ticket.id !== 'string') {
+      console.error('Invalid ticket id:', ticket.id);
+      return;
     }
+    
+    updateTicket(ticket).then(() => {
+      ticketStore.loadTicketsByProject(projectId!);
+      projectStore.loadProjects();
+      navigate(`/projects/${projectId}`);
+    });
   }
+}
 
   if (loadingInitial) return <LoadingComponent content="Loading ticket..." />;
 
@@ -116,7 +128,7 @@ useEffect(() => {
             <MySelectInput options={statusOptions} placeholder="Status" name="status" />
             <MyDateInput placeholderText="Start Date" name="startDate" dateFormat="MMMM d, yyyy" />
             <MyDateInput placeholderText="End Date" name="endDate" dateFormat="MMMM d, yyyy" />
-            <MyDateInput placeholderText="Updated" name="updated" dateFormat="MMMM d, yyyy" />
+            
             <Button
               disabled={isSubmitting || !dirty || !isValid}
               loading={loading}

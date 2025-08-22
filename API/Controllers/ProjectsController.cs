@@ -10,7 +10,7 @@ namespace API.Controllers
     public class ProjectsController : BaseApiController
     {
 
-        [HttpGet] // api/projects
+        [HttpGet]
         public async Task<IActionResult> GetProjects()
         {
             return HandleResult(await Mediator.Send(new List.Query()));
@@ -18,7 +18,7 @@ namespace API.Controllers
         }
 
 
-        [HttpGet("{id}")] // api/project/:id
+        [HttpGet("{id}")]
 
         public async Task<IActionResult> GetProject(Guid id)
         {

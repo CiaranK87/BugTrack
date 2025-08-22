@@ -1,10 +1,10 @@
-// Dashboard.tsx (clean and declarative)
+
 import { observer } from "mobx-react-lite";
 import { useEffect } from "react";
 import { Container, Grid, Header, Segment, Icon } from "semantic-ui-react";
 import { useStore } from "../../app/stores/store";
 
-// Components
+
 import StatisticGroup from "./components/StatisticGroup";
 import TicketStatusChart from "./components/TicketStatusChart";
 import RecentTickets from "./components/RecentTickets";

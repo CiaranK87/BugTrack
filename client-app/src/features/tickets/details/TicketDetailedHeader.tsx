@@ -17,7 +17,7 @@ export default observer(function TicketDetailedHeader({ ticket }: Props) {
             <Item>
               <Item.Content>
                 <Header size="huge" content={ticket.title} />
-                <p>{format(ticket.startDate!, "dd/MM/yyyy")}</p>
+                <p>Created: {format(ticket.startDate!, "dd MMM yyyy 'at' HH:mm")}</p>
                 <p>
                   Submitted by <strong>Bob</strong>
                 </p>
@@ -29,7 +29,7 @@ export default observer(function TicketDetailedHeader({ ticket }: Props) {
       <Segment clearing attached="bottom">
         <Button color="teal">Collaborate</Button>
         <Button>Cancel collaboration</Button>
-        <Button as={Link} to={`/manageTicket/${ticket.id}`} color="orange" floated="right">
+        <Button as={Link} to={`/projects/${ticket.projectId}/tickets/${ticket.id}`} color="orange" floated="right">
           Manage Ticket
         </Button>
       </Segment>
