@@ -14,6 +14,7 @@ import { priorityOptions } from "../../../app/common/options/priorityOptions";
 import MyDateInput from "../../../app/common/form/MyDateInput";
 import { v4 as uuid } from "uuid";
 import { statusOptions } from "../../../app/common/options/statusOptions";
+import { severityOptions } from "../../../app/common/options/severityOptions";
 
 export default observer(function TicketForm() {
   const navigate = useNavigate();
@@ -21,12 +22,13 @@ export default observer(function TicketForm() {
   const { createTicket, updateTicket, loading, loadTicket, loadingInitial } = ticketStore;
   const { loadProject, projectRegistry } = projectStore;
   const { id, projectId } = useParams<{ id: string; projectId: string }>();
+  const { user } = useStore().userStore;
 
   const [ticket, setTicket] = useState<Ticket>({
     id: "",
     title: "",
     description: "",
-    submitter: "",
+    submitter: user?.username || "",
     assigned: "",
     priority: "",
     severity: "",
@@ -81,6 +83,7 @@ function handleFormSubmit(ticket: Ticket) {
     const newTicket = {
       ...ticket,
       id: uuid(),
+      submitter: user!.username,
       projectId: projectId!,
     };
     createTicket(newTicket).then(() => {
@@ -117,14 +120,13 @@ function handleFormSubmit(ticket: Ticket) {
           <Form className="ui form" onSubmit={handleSubmit} autoComplete="off">
             <MyTextInput name="title" placeholder="Title" />
             <MyTextArea rows={3} placeholder="Description" name="description" />
-            <MyTextInput placeholder="Submitter" name="submitter" />
             <MySelectInput 
               options={projectUsersAsOptions} 
               placeholder="Assign to" 
               name="assigned" 
             />
             <MySelectInput options={priorityOptions} placeholder="Priority" name="priority" />
-            <MyTextInput placeholder="Severity" name="severity" />
+            <MySelectInput options={severityOptions} placeholder="Severity" name="severity" />
             <MySelectInput options={statusOptions} placeholder="Status" name="status" />
             <MyDateInput placeholderText="Start Date" name="startDate" dateFormat="MMMM d, yyyy" />
             <MyDateInput placeholderText="End Date" name="endDate" dateFormat="MMMM d, yyyy" />
