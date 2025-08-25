@@ -8,7 +8,7 @@ import TicketFilters from "./TicketFilters";
 
 export default observer(function TicketDashboard() {
   const { ticketStore } = useStore();
-  const { loadTickets, ticketRegistry } = ticketStore;
+  const { loadTickets } = ticketStore;
 
   useEffect(() => {
     loadTickets();

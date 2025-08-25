@@ -29,7 +29,7 @@ export default function ProjectListItem({ project }: Props) {
                 </Item.Description>
               )}
 
-              <Label color="grey" attached="top right">
+              <Label basic color='orange' attached="top right">
                 {`${project.ticketCount || 0} ticket${project.ticketCount === 1 ? '' : 's'}`}
               </Label>
 
