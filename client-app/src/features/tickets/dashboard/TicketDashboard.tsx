@@ -1,4 +1,4 @@
-import { Grid, Header } from "semantic-ui-react";
+import { Grid, Header, Segment } from "semantic-ui-react";
 import TicketList from "./TicketList";
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
@@ -18,12 +18,13 @@ export default observer(function TicketDashboard() {
 
   return (
     <>
-      <Header as="h2" icon="ticket" content="All Tickets" />
       <Grid>
-        <Grid.Column width="10">
+        <Grid.Column width={10}>
+          <Segment>
           <TicketList />
+          </Segment>
         </Grid.Column>
-        <Grid.Column width="6">
+        <Grid.Column width={6}>
           <TicketFilters />
         </Grid.Column>
       </Grid>
