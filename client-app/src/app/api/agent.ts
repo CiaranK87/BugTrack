@@ -49,7 +49,7 @@ axios.interceptors.response.use(
         }
         break;
       case 401:
-        toast.error("Unauthorised");
+        toast.error("Unauthorized");
         break;
       case 403:
         toast.error("Forbidden");

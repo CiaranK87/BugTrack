@@ -7,9 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers
 {
 
-    public class ProjectsController : BaseApiController
+    public class ProjectsController(IAuthorizationService authorizationService) : BaseApiController(authorizationService)
     {
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetProjects()
         {
@@ -19,20 +20,24 @@ namespace API.Controllers
 
 
         [HttpGet("{id}")]
-
         public async Task<IActionResult> GetProject(Guid id)
         {
-            return HandleResult(await Mediator.Send(new Details.Query{Id = id}));
-        }
+            var authorized = await _authorizationService.AuthorizeAsync(User, id.ToString(), "ProjectAnyRole");
+            if (!authorized.Succeeded)
+                return Forbid();
 
+            return HandleResult(await Mediator.Send(new Details.Query { Id = id }));
+}
+
+
+        [Authorize(Policy = "CanCreateProjects")]
         [HttpPost]
-
         public async Task<IActionResult> CreateProject(Project project)
         {
             return HandleResult(await Mediator.Send(new Create.Command {Project = project}));
         }
 
-        [Authorize(Policy = "IsProjectOwner")]    
+        [Authorize(Policy = "ProjectOwnerOrManager")]    
         [HttpPut("{id}")]
 
         public async Task<IActionResult> EditProject(Guid id, Project project)
@@ -42,7 +47,7 @@ namespace API.Controllers
         }
 
 
-        [Authorize(Policy = "IsProjectOwner")] 
+        [Authorize(Policy = "ProjectOwnerOrManager")]
         [HttpDelete("{id}")]
 
         public async Task<IActionResult> DeleteProject(Guid id)
@@ -51,10 +56,14 @@ namespace API.Controllers
             
         }
 
+
+        [Authorize(Policy = "ProjectOwnerOrManager")]
         [HttpPost("{id}/participate")]
         public async Task<IActionResult> AddParticipant(Guid id)
         {
             return HandleResult(await Mediator.Send(new UpdateParticipants.Command {Id = id})); 
         }
+
+
     }
 }

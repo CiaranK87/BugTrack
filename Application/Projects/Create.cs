@@ -43,6 +43,7 @@ namespace Application.Projects
                     AppUser = user,
                     Project = request.Project,
                     IsOwner = true,
+                    Role = "Owner"
                 };
 
                 request.Project.Participants.Add(participant);

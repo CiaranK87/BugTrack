@@ -18,7 +18,7 @@ useEffect(() => {
     loadProject(id);
     ticketStore.loadTicketsByProject(id);
   }
-}, [id, loadProject]);
+}, [id]);
 
   if (loadingInitial || !selectedProject) return <LoadingComponent />;
 

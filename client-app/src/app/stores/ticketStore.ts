@@ -54,41 +54,45 @@ export default class TicketStore {
       }
     }
   };
-
-loadTicketsByProject = async (projectId: string) => {
+  
+  loadTicketsByProject = async (projectId: string) => {
+  
+  if (this.loadingProjectIds.has(projectId) || this.loadingInitial) return;
+  
+  this.loadingProjectIds.add(projectId);
   this.setLoadingInitial(true);
+  
   try {
     const tickets = await agent.Tickets.listByProject(projectId);
     
     const processedTickets = tickets.map(ticket => {
-
-    const normalize = (d: any) => d ? new Date(d + 'Z') : null;
-
+      const normalize = (d: any) => d ? new Date(d + 'Z') : null;
       ticket.startDate = normalize(ticket.startDate);
       ticket.endDate = normalize(ticket.endDate);
       ticket.updated = normalize(ticket.updated);
       return ticket;
     });
-
+    
     runInAction(() => {
-      
       this.ticketRegistry.clear();
       processedTickets.forEach(ticket => this.ticketRegistry.set(ticket.id, ticket));
-      
       this.projectTickets.set(projectId, processedTickets);
     });
-
-    this.setLoadingInitial(false);
-    return processedTickets;
   } catch (error) {
     console.log(error);
-    this.setLoadingInitial(false);
-    return [];
+    runInAction(() => {
+      this.projectTickets.set(projectId, []);
+    });
+  } finally {
+    runInAction(() => {
+      this.setLoadingInitial(false);
+      this.loadingProjectIds.delete(projectId);
+    });
   }
 };
 
 
-  private setTicket = (ticket: Ticket) => {
+private setTicket = (ticket: Ticket) => {
     
     const normalize = (d: any) => d ? new Date(d + 'Z') : null;
 
@@ -102,14 +106,16 @@ loadTicketsByProject = async (projectId: string) => {
     return this.ticketRegistry.get(id);
   };
 
+  private loadingProjectIds = new Set<string>();
+  
   getProjectTickets = (projectId: string) => {
-  return this.projectTickets.get(projectId) || [];
+    return this.projectTickets.get(projectId) || [];
   };
-
+  
   setLoadingInitial = (state: boolean) => {
     this.loadingInitial = state;
   };
-
+  
   createTicket = async (ticket: Ticket) => {
     this.loading = true;
     ticket.id = uuid();

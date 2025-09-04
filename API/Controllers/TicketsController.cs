@@ -1,11 +1,13 @@
 using Application.Tickets;
 using Domain;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    public class TicketsController : BaseApiController
+    public class TicketsController(IAuthorizationService authorizationService) : BaseApiController(authorizationService)
     {
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetTickets()
         {
@@ -13,39 +15,32 @@ namespace API.Controllers
         }
 
 
-
-
-
+        [Authorize]
         [HttpGet("{id}")]
-
         public async Task<IActionResult> GetTicket(Guid id)
         {            
             return HandleResult(await Mediator.Send(new Details.Query{Id = id}));
         }
 
 
+[HttpGet("project/{projectId}")]
+public async Task<IActionResult> GetTicketsByProject(Guid projectId)
+{
+    var authorized = await _authorizationService.AuthorizeAsync(User, projectId.ToString(), "ProjectAnyRole");
+    if (!authorized.Succeeded) return Forbid();
 
-        [HttpGet("project/{projectId}")]
-        public async Task<IActionResult> GetTicketsByProjectId(Guid projectId)
-        {
-            return HandleResult(await Mediator.Send(new ListByProjectId.Query { ProjectId = projectId }));
-        }
+    return HandleResult(await Mediator.Send(new Application.Tickets.ListByProjectId.Query { ProjectId = projectId }));
+}
 
 
-
-
-
-        [HttpPost]
-
-        public async Task<IActionResult> CreateTicket(Ticket ticket)
+        [Authorize(Policy = "ProjectOwnerOrManager")]
+        [HttpPost("projects/{projectId}/tickets")]
+        public async Task<IActionResult> CreateTicket(Guid projectId, Ticket ticket)
         {
             return HandleResult(await Mediator.Send(new Create.Command {Ticket = ticket}));
         }
 
-
-
-
-
+        [Authorize(Policy = "ProjectContributor")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Edit(Guid id, Ticket ticket)
         {
@@ -56,12 +51,8 @@ namespace API.Controllers
         }
 
 
-
-
-
-
+        [Authorize(Policy = "ProjectOwnerOrManager")]
         [HttpDelete("{id}")]
-
         public async Task<IActionResult> DeleteTicket(Guid id)
         {
             return HandleResult(await Mediator.Send(new Delete.Command {Id = id}));

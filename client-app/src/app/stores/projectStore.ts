@@ -4,6 +4,7 @@ import agent from "../api/agent";
 import { v4 as uuid } from "uuid";
 import { store } from "./store";
 import { Profile } from "../models/profile";
+import { router } from "../router/Routes";
 
 export default class ProjectStore {
   projectRegistry = new Map<string, Project>();
@@ -38,22 +39,23 @@ export default class ProjectStore {
   };
 
 loadProject = async (id: string) => {
-  let project = this.getProject(id);
-  if (project) {
-    this.selectedProject = project;
-    return project;
-  } else {
-    this.setLoadingInitial(true);
-    try {
-      project = await agent.Projects.details(id);
+  this.setLoadingInitial(true);
+  try {
+    const project = await agent.Projects.details(id);
+    runInAction(() => {
       this.setProject(project);
-      runInAction(() => (this.selectedProject = project));
-      this.setLoadingInitial(false);
-      return project;
-    } catch (error) {
-      console.log(error);
-      this.setLoadingInitial(false);
-    }
+      this.selectedProject = project;
+    });
+    this.setLoadingInitial(false);
+    return project;
+  } catch (error) {
+    console.log("Failed to load project", error);
+    runInAction(() => {
+      this.selectedProject = undefined;
+    });
+    this.setLoadingInitial(false);
+    // Optionally: redirect
+    router.navigate('/forbidden');
   }
 };
 

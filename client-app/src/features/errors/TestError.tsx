@@ -19,8 +19,8 @@ export default function TestErrors() {
     axios.get(baseUrl + "buggy/server-error").catch((err) => console.log(err.response));
   }
 
-  function handleUnauthorised() {
-    axios.get(baseUrl + "buggy/unauthorised").catch((err) => console.log(err.response));
+  function handleUnauthorized() {
+    axios.get(baseUrl + "buggy/unauthorized").catch((err) => console.log(err.response));
   }
 
   function handleBadProjectGuid() {
@@ -48,7 +48,7 @@ export default function TestErrors() {
           <Button onClick={handleProjectValidationError} content="Project Validation Error" basic primary />
           <Button onClick={handleTicketValidationError} content="Ticket Validation Error" basic primary />
           <Button onClick={handleServerError} content="Server Error" basic primary />
-          <Button onClick={handleUnauthorised} content="Unauthorised" basic primary />
+          <Button onClick={handleUnauthorized} content="Unauthorized" basic primary />
           <Button onClick={handleBadProjectGuid} content="Bad Project Guid" basic primary />
           <Button onClick={handleBadTicketGuid} content="Bad Ticket Guid" basic primary />
         </Button.Group>

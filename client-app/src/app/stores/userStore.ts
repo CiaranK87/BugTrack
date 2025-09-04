@@ -1,9 +1,10 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { User, UserFormValues } from "../models/user";
+import { DecodedToken, User, UserFormValues } from "../models/user";
 import agent from "../api/agent";
 import { store } from "./store";
 import { router } from "../router/Routes";
 import { Profile } from "../models/profile";
+import { jwtDecode } from "jwt-decode";
 
 export default class UserStore {
   user: User | null = null;
@@ -19,16 +20,31 @@ export default class UserStore {
     return !!this.user;
   }
 
+
   login = async (creds: UserFormValues) => {
-    const user = await agent.Account.login(creds);
+    try {
+      const user = await agent.Account.login(creds);
+      const decodedToken = jwtDecode<DecodedToken>(user.token);
+
+      this.user = {
+        ...user,
+        projectRoles: decodedToken.projectrole ?? []
+      };
+
     store.commonStore.setToken(user.token);
-    runInAction(() => {
-      this.user = user;
-      this.userRegistry.set(user.username, user);
-    });
-    router.navigate("/dashboard");
+    
+    if (this.user) {
+      this.userRegistry.set(this.user.username, this.user);
+    }
+
+    store.projectStore.loadProjects();
+    
+    router.navigate('/projects');
     store.modalStore.closeModal();
-  };
+  } catch (error) {
+    throw error;
+  }
+};
 
   register = async (creds: UserFormValues) => {
     const user = await agent.Account.register(creds);
@@ -60,12 +76,8 @@ export default class UserStore {
     }
   };
 
-
-  getUserById(username: string): User | undefined {
-    return this.userRegistry.get(username);
-  }
-
-
+  
+  
   loadProfile = async (username: string) => {
     this.loadingProfile = true;
     try {
@@ -81,7 +93,7 @@ export default class UserStore {
       });
     }
   };
-
+  
   updateProfile = async (profile: Partial<Profile>) => {
     try {
       await agent.Profiles.updateProfile(profile);
@@ -90,7 +102,7 @@ export default class UserStore {
           this.profile.displayName = profile.displayName || this.profile.displayName;
           this.profile.bio = profile.bio || this.profile.bio;
         }
-      
+        
         if (profile.displayName && this.user) {
           this.user.displayName = profile.displayName;
           this.userRegistry.set(this.user.username, this.user);
@@ -100,6 +112,23 @@ export default class UserStore {
       console.log("Profile update error:", error.response?.data || error.message);
     }
   };
+
+  get projectRoles() {
+    if (!this.user?.projectRoles) return {};
+    const roles: Record<string, string> = {};
+    
+    this.user.projectRoles.forEach(claim => {
+      const [projectPart, role] = claim.split("=");
+      const projectId = projectPart.split(":")[1];
+      roles[projectId] = role;
+    });
+  
+  return roles;
+  }
+  
+  getUserById(username: string): User | undefined {
+    return this.userRegistry.get(username);
+  }
 
   isCurrentUser = (username: string) => {
     return this.user?.username === username;

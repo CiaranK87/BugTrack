@@ -1,3 +1,4 @@
+using API.Authorization;
 using API.Extensions;
 using API.Middleware;
 using Domain;
@@ -10,17 +11,44 @@ using Persistence;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
-builder.Services.AddControllers(opt => 
+builder.Services.AddControllers(opt =>
 {
-    var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
-    opt.Filters.Add(new AuthorizeFilter(policy));
+    opt.Filters.Add(new AuthorizeFilter());
 });
+
+
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddIdentityServices(builder.Configuration);
+builder.Services.AddSingleton<IAuthorizationHandler, ProjectRoleHandler>();
+
+// Add Auth Policies
+builder.Services.AddAuthorization(options =>
+{
+    // Global policies
+    options.AddPolicy("CanCreateProjects", policy =>
+        policy.RequireRole("Admin", "ProjectManager"));
+
+    // Project-scoped policies - use cleaner names
+    options.AddPolicy("ProjectOwnerOrManager", policy =>
+        policy.Requirements.Add(new ProjectRoleRequirement("Owner", "ProjectManager")));
+
+    options.AddPolicy("ProjectDeveloper", policy =>
+        policy.Requirements.Add(new ProjectRoleRequirement("Developer")));
+
+    options.AddPolicy("ProjectBusinessUser", policy =>
+        policy.Requirements.Add(new ProjectRoleRequirement("BusinessUser")));
+
+    // Combined policies for flexibility
+    options.AddPolicy("ProjectContributor", policy =>
+        policy.Requirements.Add(new ProjectRoleRequirement("Owner", "ProjectManager", "Developer")));
+
+    options.AddPolicy("ProjectAnyRole", policy =>
+        policy.Requirements.Add(new ProjectRoleRequirement("Owner", "ProjectManager", "Developer", "BusinessUser")));
+});
+
+
 
 var app = builder.Build();
-
 
 // Configure the HTTP request pipeline.
 app.UseMiddleware<ExceptionMiddleware>();
@@ -32,12 +60,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("CorsPolicy");
-
 app.UseHttpsRedirection();
-
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 using var scope = app.Services.CreateScope();
@@ -47,13 +72,15 @@ try
 {
     var context = services.GetRequiredService<DataContext>();
     var userManager = services.GetRequiredService<UserManager<AppUser>>();
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+
     await context.Database.MigrateAsync();
-    await Seed.SeedData(context, userManager);
+    await Seed.SeedData(context, userManager, roleManager);
 }
 catch (Exception ex)
 {
     var logger = services.GetRequiredService<ILogger<Program>>();
-    logger.LogError(ex, "An error occured during migration");
+    logger.LogError(ex, "An error occurred during migration");
 }
 
 app.Run();

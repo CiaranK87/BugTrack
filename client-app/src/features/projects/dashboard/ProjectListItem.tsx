@@ -24,7 +24,7 @@ export default function ProjectListItem({ project }: Props) {
               {project.isOwner && (
                 <Item.Description>
                   <Label basic color="orange">
-                    You are the owner of this project
+                    OWNER
                   </Label>
                 </Item.Description>
               )}
@@ -37,7 +37,7 @@ export default function ProjectListItem({ project }: Props) {
               {project.isParticipant && !project.isOwner && (
                 <Item.Description>
                   <Label basic color="green">
-                    You are participating in this project
+                    PARTICIPANT
                   </Label>
                 </Item.Description>
               )}

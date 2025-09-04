@@ -33,10 +33,7 @@ namespace API.Controllers
 
             var result = await _userManager.CheckPasswordAsync(user, loginDto.Password);
 
-            if(result)
-            {
-                return CreateUserObject(user);
-            } 
+            if (result) return await CreateUserObject(user);
 
             return Unauthorized();
         }
@@ -65,15 +62,11 @@ namespace API.Controllers
 
             var result = await _userManager.CreateAsync(user, registerDto.Password);
 
-            if (result.Succeeded)
-            {
-                return CreateUserObject(user);
-            }
+            if (result.Succeeded) return await CreateUserObject(user);
 
             return BadRequest(result.Errors);
         }
 
-        
         [Authorize]
         [HttpGet]
 
@@ -81,19 +74,17 @@ namespace API.Controllers
         {
             var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
 
-            return CreateUserObject(user);
+            return await CreateUserObject(user);
         }
 
-    private UserDto CreateUserObject(AppUser user)
+        private async Task<UserDto> CreateUserObject(AppUser user)
         {
             return new UserDto
             {
                 DisplayName = user.DisplayName,
-                Token = _tokenService.CreateToken(user),
+                Token = await _tokenService.CreateToken(user),
                 Username = user.UserName
             };
         }
-
-
     }
 }

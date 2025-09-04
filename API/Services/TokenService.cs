@@ -2,26 +2,51 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Domain;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Persistence;
 
 namespace API.Services
 {
     public class TokenService
     {
         private readonly IConfiguration _config;
-        public TokenService(IConfiguration config)
+        private readonly DataContext _context;
+        private readonly UserManager<AppUser> _userManager;
+
+        public TokenService(IConfiguration config, DataContext context, UserManager<AppUser> userManager)
         {
             _config = config;
-            
+            _context = context;
+            _userManager = userManager;
         }
-        public string CreateToken(AppUser user)
+
+        public async Task<string> CreateToken(AppUser user)
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Email, user.Email)
+                new(ClaimTypes.Name, user.UserName),
+                new(ClaimTypes.NameIdentifier, user.Id),
+                new(ClaimTypes.Email, user.Email),
             };
+
+            // Project-specific roles
+            var projectParticipants = await _context.ProjectParticipants
+                .Where(pp => pp.AppUserId == user.Id)
+                .ToListAsync();
+
+            foreach (var pp in projectParticipants)
+            {
+                claims.Add(new Claim("projectrole", $"project:{pp.ProjectId}={pp.Role}"));
+            }
+
+            // Global Identity roles
+            var userRoles = await _userManager.GetRolesAsync(user);
+            foreach (var role in userRoles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["TokenKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -34,11 +59,9 @@ namespace API.Services
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
-
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
             return tokenHandler.WriteToken(token);
         }
-           
     }
 }

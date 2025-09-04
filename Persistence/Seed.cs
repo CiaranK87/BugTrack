@@ -6,30 +6,26 @@ namespace Persistence
     public class Seed
     {
         public static async Task SeedData(DataContext context,
-            UserManager<AppUser> userManager)
+            UserManager<AppUser> userManager,
+            RoleManager<IdentityRole> roleManager)
         {
             if (!userManager.Users.Any() && !context.Projects.Any())
             {
+                if (!await roleManager.RoleExistsAsync("Admin"))
+                    await roleManager.CreateAsync(new IdentityRole("Admin"));
+                if (!await roleManager.RoleExistsAsync("ProjectManager"))
+                    await roleManager.CreateAsync(new IdentityRole("ProjectManager"));
+                if (!await roleManager.RoleExistsAsync("Developer"))
+                    await roleManager.CreateAsync(new IdentityRole("Developer"));
+                if (!await roleManager.RoleExistsAsync("BusinessUser"))
+                    await roleManager.CreateAsync(new IdentityRole("BusinessUser"));
+
+
                 var users = new List<AppUser>
                 {
-                    new AppUser
-                    {
-                        DisplayName = "Bob",
-                        UserName = "bob",
-                        Email = "bob@test.com"
-                    },
-                    new AppUser
-                    {
-                        DisplayName = "Jane",
-                        UserName = "jane",
-                        Email = "jane@test.com"
-                    },
-                    new AppUser
-                    {
-                        DisplayName = "Tim",
-                        UserName = "tim",
-                        Email = "tim@test.com"
-                    },
+                    new AppUser {DisplayName = "Bob", UserName = "bob", Email = "bob@test.com"},
+                    new AppUser {DisplayName = "Jane", UserName = "jane", Email = "jane@test.com"},
+                    new AppUser {DisplayName = "Tim", UserName = "tim", Email = "tim@test.com" },
                 };
 
                 foreach (var user in users)
@@ -50,12 +46,14 @@ namespace Persistence
                             new ProjectParticipant
                             {
                                 AppUser = users[0],
-                                IsOwner = true
+                                IsOwner = true,
+                                Role = "ProjectManager"
                             },
                             new ProjectParticipant
                             {
                                 AppUser = users[1],
-                                IsOwner = false
+                                IsOwner = false,
+                                Role = "Developer"
                             }
                         },
                         Tickets = new List<Ticket>
@@ -100,12 +98,14 @@ namespace Persistence
                             new ProjectParticipant
                             {
                                 AppUser = users[0],
-                                IsOwner = true                            
+                                IsOwner = true,
+                                Role = "ProjectManager"                            
                             },
                             new ProjectParticipant
                             {
                                 AppUser = users[1],
-                                IsOwner = false                            
+                                IsOwner = false,
+                                Role = "Developer"                            
                             },
                         }
                     },
@@ -119,13 +119,15 @@ namespace Persistence
                         {
                             new ProjectParticipant
                             {
-                                AppUser = users[2],
-                                IsOwner = true                            
+                                AppUser = users[1],
+                                IsOwner = true,
+                                Role = "ProjectManager"                            
                             },
                             new ProjectParticipant
                             {
-                                AppUser = users[1],
-                                IsOwner = false                            
+                                AppUser = users[2],
+                                IsOwner = false,
+                                Role = "BusinessUser"                            
                             },
                         }
                     },
@@ -140,12 +142,14 @@ namespace Persistence
                             new ProjectParticipant
                             {
                                 AppUser = users[0],
-                                IsOwner = true
+                                IsOwner = true,
+                                Role = "ProjectManager"
                             },
                             new ProjectParticipant
                             {
                                 AppUser = users[2],
-                                IsOwner = false
+                                IsOwner = false,
+                                Role = "Developer"
                             },
                         }
                     },
@@ -162,20 +166,22 @@ namespace Persistence
                             new ProjectParticipant
                             {
                                 AppUser = users[1],
-                                IsOwner = true
+                                IsOwner = true,
+                                Role = "ProjectManager"
                             },
                             new ProjectParticipant
                             {
                                 AppUser = users[0],
-                                IsOwner = false
+                                IsOwner = false,
+                                Role = "BusinessUser"
                             },
                         },
                         Tickets = new List<Ticket>
                         {
                             new Ticket
                             {
-                                Title = "Ticket 1",
-                                Description = "Ticket 1 description",
+                                Title = "Ticket 3",
+                                Description = "Ticket 3 description",
                                 Submitter = "tim",
                                 Assigned = "bob",
                                 Priority = "Low",

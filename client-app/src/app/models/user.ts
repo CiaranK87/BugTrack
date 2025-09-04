@@ -2,6 +2,7 @@ export interface User {
   username: string;
   displayName: string;
   token: string;
+  projectRoles?: string[];
 }
 
 export interface UserFormValues {
@@ -9,4 +10,11 @@ export interface UserFormValues {
   password: string;
   displayName?: string;
   username?: string;
+}
+
+export interface DecodedToken {
+  unique_name: string;
+  role?: string[];
+  projectrole?: string[];
+  exp: number;
 }
