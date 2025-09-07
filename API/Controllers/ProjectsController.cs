@@ -30,38 +30,72 @@ namespace API.Controllers
 }
 
 
-        [Authorize(Policy = "CanCreateProjects")]
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateProject(Project project)
         {
             return HandleResult(await Mediator.Send(new Create.Command {Project = project}));
         }
 
-        [Authorize(Policy = "ProjectOwnerOrManager")]    
-        [HttpPut("{id}")]
 
-        public async Task<IActionResult> EditProject(Guid id, Project project)
+
+        [Authorize]    
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Edit(Project project)
         {
-            project.Id = id;
-            return HandleResult(await Mediator.Send(new Edit.Command {Project = project}));
+            var projectResult = await Mediator.Send(new Details.Query { Id = project.Id });
+            if (!projectResult.IsSuccess) return HandleResult(projectResult);
+
+            var projectId = projectResult.Value?.Id.ToString();
+            if (string.IsNullOrEmpty(projectId)) return NotFound();
+
+            var authorized = await _authorizationService.AuthorizeAsync(
+                User,
+                projectId,
+                "ProjectOwnerOrManager"
+            );
+
+            if (!authorized.Succeeded) return Forbid();
+
+            return HandleResult(await Mediator.Send(new Edit.Command { Project = project }));
         }
 
 
-        [Authorize(Policy = "ProjectOwnerOrManager")]
+        [Authorize]
         [HttpDelete("{id}")]
-
         public async Task<IActionResult> DeleteProject(Guid id)
         {
-            return HandleResult (await Mediator.Send(new Delete.Command {Id = id}));
+            var projectResult = await Mediator.Send(new Details.Query { Id = id });
+            if (!projectResult.IsSuccess) return HandleResult(projectResult);
+
+            var projectId = projectResult.Value?.Id.ToString();
+            if (string.IsNullOrEmpty(projectId)) return NotFound();
+
+            var authorized = await _authorizationService.AuthorizeAsync(
+                User,
+                projectId,
+                "ProjectOwnerOrManager"
+            );
+
+            if (!authorized.Succeeded) return Forbid();
             
+            return HandleResult(await Mediator.Send(new Delete.Command { Id = id }));
         }
 
-
-        [Authorize(Policy = "ProjectOwnerOrManager")]
+        [Authorize]
         [HttpPost("{id}/participate")]
         public async Task<IActionResult> AddParticipant(Guid id)
         {
-            return HandleResult(await Mediator.Send(new UpdateParticipants.Command {Id = id})); 
+            var projectResult = await Mediator.Send(new Details.Query { Id = id });
+            if (!projectResult.IsSuccess) return HandleResult(projectResult);
+
+            var projectId = projectResult.Value?.Id.ToString();
+            if (string.IsNullOrEmpty(projectId)) return NotFound();
+
+            var authorized = await _authorizationService.AuthorizeAsync(User, projectId, "ProjectOwnerOrManager");
+            if (!authorized.Succeeded) return Forbid();
+
+            return HandleResult(await Mediator.Send(new UpdateParticipants.Command { Id = id }));
         }
 
 

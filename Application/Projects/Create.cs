@@ -48,6 +48,8 @@ namespace Application.Projects
 
                 request.Project.Participants.Add(participant);
 
+                _context.ProjectParticipants.Add(participant);
+
                 _context.Projects.Add(request.Project);
 
                 var result = await _context.SaveChangesAsync() > 0;

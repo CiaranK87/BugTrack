@@ -33,6 +33,18 @@ namespace Persistence
                     await userManager.CreateAsync(user, "Pa$$w0rd");
                 }
 
+                 var bob = await userManager.FindByEmailAsync("bob@test.com");
+                    if (bob != null && !await userManager.IsInRoleAsync(bob, "ProjectManager"))
+                    {
+                        await userManager.AddToRoleAsync(bob, "ProjectManager");
+                    }
+
+                    var jane = await userManager.FindByEmailAsync("jane@test.com");
+                    if (jane != null && !await userManager.IsInRoleAsync(jane, "Admin"))
+                    {
+                        await userManager.AddToRoleAsync(jane, "Admin");
+                    }
+
                 var projects = new List<Project>
                 {
                     new Project

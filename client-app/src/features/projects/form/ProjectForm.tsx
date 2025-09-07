@@ -32,16 +32,31 @@ export default observer(function ProjectForm() {
   });
 
   function handleFormSubmit(project: ProjectFormValues) {
-    if (!project.id) {
-      const newProject = {
-        ...project,
-        id: uuid(),
-      };
-      createProject(newProject).then(() => navigate(`/projects/${newProject.id}`));
-    } else {
-      updateProject(project).then(() => navigate(`/projects/${project.id}`));
-    }
+  if (!project.id) {
+    const newProject = {
+      ...project,
+      id: uuid(),
+    };
+    console.log("Creating project:", newProject);
+    createProject(newProject)
+      .then(() => {
+        console.log("✅ Project created, navigating");
+        navigate(`/projects/${newProject.id}`);
+      })
+      .catch(error => {
+        console.error("❌ Failed to create project", error);
+      });
+  } else {
+    updateProject(project)
+      .then(() => {
+        console.log("✅ Project updated, navigating");
+        navigate(`/projects/${project.id}`);
+      })
+      .catch(error => {
+        console.error("❌ Failed to update project", error);
+      });
   }
+}
 
   if (loadingInitial) return <LoadingComponent content="Loading Project..." />;
 
