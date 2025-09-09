@@ -31,17 +31,7 @@ namespace API.Services
                 new(ClaimTypes.Email, user.Email),
             };
 
-            // Project-specific roles
-            var projectParticipants = await _context.ProjectParticipants
-                .Where(pp => pp.AppUserId == user.Id)
-                .ToListAsync();
 
-            foreach (var pp in projectParticipants)
-            {
-                claims.Add(new Claim("projectrole", $"project:{pp.ProjectId}={pp.Role}"));
-            }
-
-            // Global Identity roles
             var userRoles = await _userManager.GetRolesAsync(user);
             foreach (var role in userRoles)
             {

@@ -30,7 +30,7 @@ namespace API.Controllers
 }
 
 
-        [Authorize]
+        [Authorize(Policy = "CanCreateProjects")]
         [HttpPost]
         public async Task<IActionResult> CreateProject(Project project)
         {

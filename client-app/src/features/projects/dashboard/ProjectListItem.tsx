@@ -20,7 +20,7 @@ export default function ProjectListItem({ project }: Props) {
               <Item.Header as={Link} to={`/projects/${project.id}`}>
                 {project.projectTitle}
               </Item.Header>
-              <Item.Description>Project owner - {project.owner!.displayName ?? "unknown"}</Item.Description>
+              <Item.Description>Project owner - {project.owner?.displayName ?? "unknown"}</Item.Description>
               {project.isOwner && (
                 <Item.Description>
                   <Label basic color="orange">

@@ -109,7 +109,7 @@ namespace Persistence
                         {
                             new ProjectParticipant
                             {
-                                AppUser = users[0],
+                                AppUser = users[2],
                                 IsOwner = true,
                                 Role = "ProjectManager"                            
                             },
@@ -177,7 +177,7 @@ namespace Persistence
                         {
                             new ProjectParticipant
                             {
-                                AppUser = users[1],
+                                AppUser = users[2],
                                 IsOwner = true,
                                 Role = "ProjectManager"
                             },

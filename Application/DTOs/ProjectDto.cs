@@ -20,6 +20,8 @@ namespace Application.Projects
 
         public int TicketCount { get; set; }
 
+        public ProfileDto Owner { get; set; }
+
         public ICollection<ProfileDto> Participants { get; set; } = new List<ProfileDto>();
     }
 }

@@ -3,6 +3,7 @@ using AutoMapper;
 using Domain;
 using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace Application.Projects
@@ -35,15 +36,21 @@ namespace Application.Projects
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
-                var project = await _context.Projects.FindAsync(request.Project.Id);
+                var project = await _context.Projects
+                    .Include(p => p.Participants)
+                    .FirstOrDefaultAsync(p => p.Id == request.Project.Id);
 
-                if(project == null) return null;
+                if (project == null) return Result<Unit>.Failure("Project not found");
 
-                _mapper.Map(request.Project, project);
+                project.ProjectTitle = request.Project.ProjectTitle;
+                project.Description = request.Project.Description;
+                project.StartDate = request.Project.StartDate;
+                project.IsCancelled = request.Project.IsCancelled;
+                project.ProjectOwner = request.Project.ProjectOwner;
 
                 var result = await _context.SaveChangesAsync() > 0;
 
-                if(!result) return Result<Unit>.Failure("Failed to update project");
+                if (!result) return Result<Unit>.Failure("Failed to update project");
 
                 return Result<Unit>.Success(Unit.Value);
             }

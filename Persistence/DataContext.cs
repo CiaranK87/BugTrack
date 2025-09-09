@@ -22,7 +22,7 @@ namespace Persistence
 
             builder.Entity<ProjectParticipant>()
                 .HasOne(pp => pp.AppUser)
-                .WithMany(p => p.Projects)
+                .WithMany(p => p.ProjectParticipants)
                 .HasForeignKey(pp => pp.AppUserId);
 
             builder.Entity<ProjectParticipant>()

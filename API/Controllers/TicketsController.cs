@@ -19,7 +19,16 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetTicket(Guid id)
         {            
-            return HandleResult(await Mediator.Send(new Details.Query{Id = id}));
+            var ticketResult = await Mediator.Send(new Details.Query{Id = id});
+            if (!ticketResult.IsSuccess) return HandleResult(ticketResult);
+
+            var projectId = ticketResult.Value?.ProjectId.ToString();
+            if (string.IsNullOrEmpty(projectId)) return NotFound();
+
+            var authorized = await _authorizationService.AuthorizeAsync(User, projectId, "ProjectAnyRole");
+            if (!authorized.Succeeded) return Forbid();
+
+            return Ok(ticketResult.Value);
         }
 
         [Authorize]

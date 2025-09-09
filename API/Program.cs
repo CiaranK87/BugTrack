@@ -19,16 +19,19 @@ builder.Services.AddControllers(opt =>
 
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddIdentityServices(builder.Configuration);
-builder.Services.AddSingleton<IAuthorizationHandler, ProjectRoleHandler>();
 
-// Add Auth Policies
+builder.Services.AddScoped<ProjectRoleHandler>();
+builder.Services.AddScoped<IAuthorizationHandler>(sp => sp.GetRequiredService<ProjectRoleHandler>());
+builder.Services.AddLogging();
+
+
 builder.Services.AddAuthorization(options =>
 {
-    // Global policies
+    
     options.AddPolicy("CanCreateProjects", policy =>
         policy.RequireRole("Admin", "ProjectManager"));
 
-    // Project-scoped policies - use cleaner names
+    
     options.AddPolicy("ProjectOwnerOrManager", policy =>
         policy.Requirements.Add(new ProjectRoleRequirement("Owner", "ProjectManager")));
 
@@ -38,7 +41,7 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("ProjectBusinessUser", policy =>
         policy.Requirements.Add(new ProjectRoleRequirement("BusinessUser")));
 
-    // Combined policies for flexibility
+    
     options.AddPolicy("ProjectContributor", policy =>
         policy.Requirements.Add(new ProjectRoleRequirement("Owner", "ProjectManager", "Developer")));
 
