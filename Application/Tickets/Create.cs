@@ -23,23 +23,21 @@ namespace Application.Tickets
 
         public class Handler : IRequestHandler<Command, Result<Unit>>
         {
-        private readonly DataContext _context;
+            private readonly DataContext _context;
+
             public Handler(DataContext context)
             {
-            _context = context;
+                _context = context;
             }
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
-                request.Ticket.Updated = DateTime.UtcNow; 
-                
+                request.Ticket.Updated = DateTime.UtcNow;
                 _context.Tickets.Add(request.Ticket);
 
-                var result = await _context.SaveChangesAsync() > 0;
-
-                if(!result) return Result<Unit>.Failure("Failed to create ticket");
-
-                return Result<Unit>.Success(Unit.Value);
+                var success = await _context.SaveChangesAsync() > 0;
+                return success ? Result<Unit>.Success(Unit.Value)
+                               : Result<Unit>.Failure("Failed to create ticket");
             }
         }
     }

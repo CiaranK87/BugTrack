@@ -81,6 +81,7 @@ const Projects = {
   delete: (id: string) => requests.del<void>(`/projects/${id}`),
   participate: (id: string) => requests.post<void>(`/projects/${id}/participate`, {}),
   getUserProjects: (username: string) => requests.get<Project[]>(`/profiles/${username}/projects`),
+  getUserRole: (projectId: string) => requests.get<string>(`/projects/${projectId}/role`),
 };
 
 const Tickets = {

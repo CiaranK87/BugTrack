@@ -1,104 +1,75 @@
+using Application.Core;
 using Application.Tickets;
+using Application.DTOs;
+using AutoMapper;
 using Domain;
-using Microsoft.AspNetCore.Authorization;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    public class TicketsController(IAuthorizationService authorizationService) : BaseApiController(authorizationService)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class TicketsController : ControllerBase
     {
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> GetTickets()
+        private readonly IMediator _mediator;
+        private readonly IMapper _mapper;
+
+        public TicketsController(IMediator mediator, IMapper mapper)
         {
-            return HandleResult(await Mediator.Send(new List.Query()));
+            _mediator = mediator;
+            _mapper = mapper;
         }
 
-
-        [Authorize]
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetTicket(Guid id)
-        {            
-            var ticketResult = await Mediator.Send(new Details.Query{Id = id});
-            if (!ticketResult.IsSuccess) return HandleResult(ticketResult);
+        public async Task<ActionResult<TicketDto>> GetTicket(Guid id)
+        {
+            var result = await _mediator.Send(new Details.Query { Id = id });
+            if (result.Value == null) return NotFound();
 
-            var projectId = ticketResult.Value?.ProjectId.ToString();
-            if (string.IsNullOrEmpty(projectId)) return NotFound();
-
-            var authorized = await _authorizationService.AuthorizeAsync(User, projectId, "ProjectAnyRole");
-            if (!authorized.Succeeded) return Forbid();
-
-            return Ok(ticketResult.Value);
+            return Ok(_mapper.Map<TicketDto>(result.Value));
+            
         }
 
-        [Authorize]
+        [HttpGet]
+        public async Task<ActionResult<List<TicketDto>>> GetTickets()
+        {
+            var result = await _mediator.Send(new Application.Tickets.List.Query());
+            if (!result.IsSuccess) return BadRequest(result.Error);
+            
+            var dtoList = result.Value.Select(t => _mapper.Map<TicketDto>(t)).ToList();
+            return Ok(dtoList);
+        }
+
         [HttpGet("project/{projectId}")]
-        public async Task<IActionResult> GetTicketsByProject(Guid projectId)
+        public async Task<ActionResult<List<TicketDto>>> GetTicketsByProject(Guid projectId)
         {
-            var authorized = await _authorizationService.AuthorizeAsync(User, projectId.ToString(), "ProjectAnyRole");
-            if (!authorized.Succeeded) return Forbid();
-
-            return HandleResult(await Mediator.Send(new Application.Tickets.ListByProjectId.Query { ProjectId = projectId }));
+            var result = await _mediator.Send(new ListByProjectId.Query { ProjectId = projectId });
+            var dtoList = result.Value.Select(t => _mapper.Map<TicketDto>(t)).ToList();
+            return Ok(dtoList);
         }
 
-
-        [Authorize]
         [HttpPost]
-        public async Task<IActionResult> CreateTicket(Ticket ticket)
+        public async Task<IActionResult> CreateTicket([FromBody] TicketDto ticketDto)
         {
-            var projectId = ticket.ProjectId.ToString();
-            var authorized = await _authorizationService.AuthorizeAsync(User, projectId, "ProjectContributor");
-            
-            if (!authorized.Succeeded)
-                return Forbid();
-
-            return HandleResult(await Mediator.Send(new Create.Command { Ticket = ticket }));
+            var ticket = _mapper.Map<Ticket>(ticketDto);
+            return HandleResult(await _mediator.Send(new Create.Command { Ticket = ticket }));
         }
 
-
-        [Authorize]
         [HttpPut("{id}")]
-        public async Task<IActionResult> Edit(Guid id, Ticket ticket)
+        public async Task<IActionResult> EditTicket(Guid id, [FromBody] EditTicketDto editDto)
         {
+            var ticket = _mapper.Map<Ticket>(editDto);
             ticket.Id = id;
-
-            
-            var ticketResult = await Mediator.Send(new Details.Query { Id = id });
-            if (!ticketResult.IsSuccess) return HandleResult(ticketResult);
-
-            var projectId = ticketResult.Value?.ProjectId.ToString();
-            if (string.IsNullOrEmpty(projectId)) return NotFound();
-
-            
-            var authorized = await _authorizationService.AuthorizeAsync(User, projectId, "ProjectContributor");
-            if (!authorized.Succeeded) return Forbid();
-
-            
-            var result = await Mediator.Send(new Edit.Command { Ticket = ticket });
-            return HandleResult(result);
+            return HandleResult(await _mediator.Send(new Edit.Command { Ticket = ticket }));
         }
 
-
-        [Authorize]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTicket(Guid id)
+        private IActionResult HandleResult<T>(Result<T> result)
         {
-            var ticketResult = await Mediator.Send(new Details.Query { Id = id });
-            if (!ticketResult.IsSuccess) return HandleResult(ticketResult);
-
-            var projectId = ticketResult.Value?.ProjectId.ToString();
-            if (string.IsNullOrEmpty(projectId)) return NotFound();
-
-            var authorized = await _authorizationService.AuthorizeAsync(
-                User, 
-                projectId, 
-                "ProjectOwnerOrManager"
-            );
-
-            if (!authorized.Succeeded) return Forbid();
-
-            return HandleResult(await Mediator.Send(new Delete.Command { Id = id }));
+            if (result == null) return NotFound();
+            if (result.IsSuccess && result.Value != null) return Ok(result.Value);
+            if (result.IsSuccess) return NoContent();
+            return BadRequest(result.Error);
         }
-
     }
 }

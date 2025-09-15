@@ -20,8 +20,7 @@ builder.Services.AddControllers(opt =>
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddIdentityServices(builder.Configuration);
 
-builder.Services.AddScoped<ProjectRoleHandler>();
-builder.Services.AddScoped<IAuthorizationHandler>(sp => sp.GetRequiredService<ProjectRoleHandler>());
+builder.Services.AddScoped<IAuthorizationHandler, ProjectRoleHandler>();
 builder.Services.AddLogging();
 
 
@@ -38,15 +37,15 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("ProjectDeveloper", policy =>
         policy.Requirements.Add(new ProjectRoleRequirement("Developer")));
 
-    options.AddPolicy("ProjectBusinessUser", policy =>
-        policy.Requirements.Add(new ProjectRoleRequirement("BusinessUser")));
+    options.AddPolicy("ProjectUser", policy =>
+        policy.Requirements.Add(new ProjectRoleRequirement("User")));
 
     
     options.AddPolicy("ProjectContributor", policy =>
         policy.Requirements.Add(new ProjectRoleRequirement("Owner", "ProjectManager", "Developer")));
 
     options.AddPolicy("ProjectAnyRole", policy =>
-        policy.Requirements.Add(new ProjectRoleRequirement("Owner", "ProjectManager", "Developer", "BusinessUser")));
+        policy.Requirements.Add(new ProjectRoleRequirement("Owner", "ProjectManager", "Developer", "User")));
 });
 
 

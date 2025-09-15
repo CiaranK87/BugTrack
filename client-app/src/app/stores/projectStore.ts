@@ -14,6 +14,7 @@ export default class ProjectStore {
   loadingInitial = false;
   userProjects: Project[] = [];
   loadingUserProjects = false;
+   projectRoles: Record<string, string> = {};
 
   constructor() {
     makeAutoObservable(this);
@@ -54,7 +55,7 @@ loadProject = async (id: string) => {
       this.selectedProject = undefined;
     });
     this.setLoadingInitial(false);
-    // Optionally: redirect
+    
     router.navigate('/forbidden');
   }
 };
@@ -74,6 +75,15 @@ loadProject = async (id: string) => {
     });
   }
 }
+
+loadUserRoleForProject = async (projectId: string) => {
+  const role = await agent.Projects.getUserRole(projectId);
+  runInAction(() => {
+    this.projectRoles[projectId] = role;
+  });
+};
+
+
 
   private getProject = (id: string) => {
     return this.projectRegistry.get(id);
@@ -182,4 +192,8 @@ loadProject = async (id: string) => {
       runInAction(() => (this.loading = false));
     }
   };
+  clear = () => {
+  this.projectRegistry.clear();
+  this.selectedProject = undefined;
+}
 }

@@ -1,10 +1,9 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { DecodedToken, User, UserFormValues } from "../models/user";
+import { User, UserFormValues } from "../models/user";
 import agent from "../api/agent";
 import { store } from "./store";
 import { router } from "../router/Routes";
 import { Profile } from "../models/profile";
-import { jwtDecode } from "jwt-decode";
 
 export default class UserStore {
   user: User | null = null;
@@ -22,29 +21,21 @@ export default class UserStore {
 
 
   login = async (creds: UserFormValues) => {
-    try {
-      const user = await agent.Account.login(creds);
-      const decodedToken = jwtDecode<DecodedToken>(user.token);
+  const user = await agent.Account.login(creds);
+  store.commonStore.setToken(user.token);
 
-      this.user = {
-        ...user,
-        projectRoles: decodedToken.projectrole ?? []
-      };
-
-    store.commonStore.setToken(user.token);
-    
-    if (this.user) {
-      this.userRegistry.set(this.user.username, this.user);
-    }
-
-    store.projectStore.loadProjects();
-    
-    router.navigate('/projects');
-    store.modalStore.closeModal();
-  } catch (error) {
-    throw error;
-  }
+  runInAction(() => {
+    this.user = user;
+    this.userRegistry.set(user.username, user);
+  });
+  
+  store.projectStore.clear();
+  store.ticketStore.clear();
+  
+  router.navigate("/projects");
+  store.modalStore.closeModal();
 };
+
 
   register = async (creds: UserFormValues) => {
     const user = await agent.Account.register(creds);

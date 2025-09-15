@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Persistence;
-using API.Services;
 using Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,8 +18,8 @@ namespace API.Authorization
         }
 
         protected override async Task HandleRequirementAsync(
-            AuthorizationHandlerContext context,
-            ProjectRoleRequirement requirement)
+        AuthorizationHandlerContext context,
+        ProjectRoleRequirement requirement)
         {
             if (context.User.IsInRole("Admin"))
             {
@@ -28,60 +27,52 @@ namespace API.Authorization
                 return;
             }
 
-            string projectId = null;
+            string? projectIdString = null;
 
-            if (context.Resource is AuthorizationFilterContext authContext)
+            // Use resource directly if it's a Guid or string
+            if (context.Resource is Guid guidResource)
+                projectIdString = guidResource.ToString();
+            else if (context.Resource is string stringResource)
+                projectIdString = stringResource;
+
+            // Fallback: extract from route
+            if (projectIdString == null && context.Resource is AuthorizationFilterContext authContext)
             {
-                if (!authContext.HttpContext.Request.RouteValues.TryGetValue("id", out var projectIdObj))
-                    return;
-                projectId = projectIdObj?.ToString();
-            }
-            else if (context.Resource is string resource)
-            {
-                projectId = resource;
+                if (!authContext.HttpContext.Request.RouteValues.TryGetValue("projectId", out var pIdObj))
+                    authContext.HttpContext.Request.RouteValues.TryGetValue("id", out pIdObj);
+                projectIdString = pIdObj?.ToString();
             }
 
-            if (string.IsNullOrEmpty(projectId) || !Guid.TryParse(projectId, out var projectGuid))
+            if (!Guid.TryParse(projectIdString, out var projectGuid))
                 return;
 
             var currentUserId = _userAccessor.GetUserId();
             if (string.IsNullOrEmpty(currentUserId))
                 return;
 
-            
-            var hasRoleInClaim = context.User.Claims
-                .Where(c => c.Type == "projectrole" && c.Value.StartsWith($"project:{projectId}="))
-                .Select(c => c.Value.Split('=')[1])
-                .Any(role => requirement.AllowedRoles.Contains(role));
-
-            if (hasRoleInClaim)
-            {
-                context.Succeed(requirement);
-                return;
-            }
-
-            
+            // Check participant role
             var participant = await _context.ProjectParticipants
                 .AsNoTracking()
                 .Where(pp => pp.AppUserId == currentUserId && pp.ProjectId == projectGuid)
                 .Select(pp => new { pp.Role, pp.IsOwner })
                 .FirstOrDefaultAsync();
 
-            if (participant == null)
-                return;
+            if (participant == null) return;
 
-            
+            // Owner shortcut
             if (participant.IsOwner && requirement.AllowedRoles.Contains("Owner"))
             {
                 context.Succeed(requirement);
                 return;
             }
 
-            
-            if (!string.IsNullOrEmpty(participant.Role) && requirement.AllowedRoles.Contains(participant.Role))
+            // Match role string
+            if (!string.IsNullOrWhiteSpace(participant.Role) &&
+                requirement.AllowedRoles.Contains(participant.Role))
             {
                 context.Succeed(requirement);
             }
         }
+
     }
 }

@@ -17,40 +17,45 @@ namespace Persistence
                     await roleManager.CreateAsync(new IdentityRole("ProjectManager"));
                 if (!await roleManager.RoleExistsAsync("Developer"))
                     await roleManager.CreateAsync(new IdentityRole("Developer"));
-                if (!await roleManager.RoleExistsAsync("BusinessUser"))
-                    await roleManager.CreateAsync(new IdentityRole("BusinessUser"));
+                if (!await roleManager.RoleExistsAsync("User"))
+                    await roleManager.CreateAsync(new IdentityRole("User"));
 
 
-                var users = new List<AppUser>
-                {
-                    new AppUser {DisplayName = "Bob", UserName = "bob", Email = "bob@test.com"},
-                    new AppUser {DisplayName = "Jane", UserName = "jane", Email = "jane@test.com"},
-                    new AppUser {DisplayName = "Tim", UserName = "tim", Email = "tim@test.com" },
-                };
+        var users = new List<AppUser>
+            {
+                new AppUser { DisplayName = "Bob", UserName = "bob", Email = "bob@test.com" },
+                new AppUser { DisplayName = "Jane", UserName = "jane", Email = "jane@test.com" },
+                new AppUser { DisplayName = "Tim", UserName = "tim", Email = "tim@test.com" },
+            };
 
-                foreach (var user in users)
-                {
-                    await userManager.CreateAsync(user, "Pa$$w0rd");
-                }
+            foreach (var user in users)
+            {
+                await userManager.CreateAsync(user, "Pa$$w0rd");
+            }
 
-                 var bob = await userManager.FindByEmailAsync("bob@test.com");
-                    if (bob != null && !await userManager.IsInRoleAsync(bob, "ProjectManager"))
-                    {
-                        await userManager.AddToRoleAsync(bob, "ProjectManager");
-                    }
+            var bob = await userManager.FindByEmailAsync("bob@test.com");
+            if (bob != null && !await userManager.IsInRoleAsync(bob, "ProjectManager"))
+            {
+                await userManager.AddToRoleAsync(bob, "ProjectManager");
+            }
 
-                    var jane = await userManager.FindByEmailAsync("jane@test.com");
-                    if (jane != null && !await userManager.IsInRoleAsync(jane, "Admin"))
-                    {
-                        await userManager.AddToRoleAsync(jane, "Admin");
-                    }
+            var jane = await userManager.FindByEmailAsync("jane@test.com");
+            if (jane != null && !await userManager.IsInRoleAsync(jane, "Admin"))
+            {
+                await userManager.AddToRoleAsync(jane, "Admin");
+            }
+
+            var tim = await userManager.FindByEmailAsync("tim@test.com");
+            if (tim != null && !await userManager.IsInRoleAsync(tim, "User"))
+            {
+                await userManager.AddToRoleAsync(tim, "User");
+            }
 
                 var projects = new List<Project>
                 {
                     new Project
                     {
                         ProjectTitle = "Past Project 1",
-                        ProjectOwner = "bob",
                         Description = "This is past project 1 description",
                         StartDate = DateTime.UtcNow.AddMonths(-2),
                         Participants = new List<ProjectParticipant>
@@ -58,14 +63,14 @@ namespace Persistence
                             new ProjectParticipant
                             {
                                 AppUser = users[0],
-                                IsOwner = true,
-                                Role = "ProjectManager"
+                                Role = "Owner",
+                                IsOwner = true
                             },
                             new ProjectParticipant
                             {
-                                AppUser = users[1],
-                                IsOwner = false,
-                                Role = "Developer"
+                                AppUser = users[2],
+                                Role = "Developer",
+                                IsOwner = false
                             }
                         },
                         Tickets = new List<Ticket>
@@ -102,7 +107,6 @@ namespace Persistence
                     new Project
                     {
                         ProjectTitle = "Past Project 2",
-                        ProjectOwner = "tim",
                         Description = "This is past project 2 description ",
                         StartDate = DateTime.UtcNow.AddMonths(-1),
                         Participants = new List<ProjectParticipant>
@@ -110,21 +114,20 @@ namespace Persistence
                             new ProjectParticipant
                             {
                                 AppUser = users[2],
-                                IsOwner = true,
-                                Role = "ProjectManager"                            
+                                Role = "Owner",                            
+                                IsOwner = true
                             },
                             new ProjectParticipant
                             {
                                 AppUser = users[1],
-                                IsOwner = false,
-                                Role = "Developer"                            
+                                Role = "Developer",                            
+                                IsOwner = false
                             },
                         }
                     },
                     new Project
                     {
                         ProjectTitle = "Future Project 1",
-                        ProjectOwner = "jane",
                         Description = "This is future project 1 description",
                         StartDate = DateTime.UtcNow.AddMonths(1),
                         Participants = new List<ProjectParticipant>
@@ -132,21 +135,20 @@ namespace Persistence
                             new ProjectParticipant
                             {
                                 AppUser = users[1],
-                                IsOwner = true,
-                                Role = "ProjectManager"                            
+                                Role = "Owner",                            
+                                IsOwner = true
                             },
                             new ProjectParticipant
                             {
                                 AppUser = users[2],
-                                IsOwner = false,
-                                Role = "BusinessUser"                            
+                                Role = "User",                            
+                                IsOwner = false
                             },
                         }
                     },
                     new Project
                     {
                         ProjectTitle = "Future Project 2",
-                        ProjectOwner = "bob",
                         Description = "This is future project 2 description",
                         StartDate = DateTime.UtcNow.AddMonths(2),
                         Participants = new List<ProjectParticipant>
@@ -154,14 +156,14 @@ namespace Persistence
                             new ProjectParticipant
                             {
                                 AppUser = users[0],
-                                IsOwner = true,
-                                Role = "ProjectManager"
+                                Role = "Owner",
+                                IsOwner = true
                             },
                             new ProjectParticipant
                             {
                                 AppUser = users[2],
-                                IsOwner = false,
-                                Role = "Developer"
+                                Role = "Developer",
+                                IsOwner = false
                             },
                         }
                     },
@@ -170,7 +172,6 @@ namespace Persistence
                     new Project
                     {
                         ProjectTitle = "Future Project 3",
-                        ProjectOwner = "tim",
                         Description = "This is future project 3 description",
                         StartDate = DateTime.UtcNow.AddMonths(3),
                         Participants = new List<ProjectParticipant>
@@ -178,14 +179,14 @@ namespace Persistence
                             new ProjectParticipant
                             {
                                 AppUser = users[2],
-                                IsOwner = true,
-                                Role = "ProjectManager"
+                                Role = "Owner",
+                                IsOwner = true
                             },
                             new ProjectParticipant
                             {
                                 AppUser = users[0],
-                                IsOwner = false,
-                                Role = "BusinessUser"
+                                Role = "Developer",
+                                IsOwner = false
                             },
                         },
                         Tickets = new List<Ticket>

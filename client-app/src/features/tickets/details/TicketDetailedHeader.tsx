@@ -19,7 +19,7 @@ export default observer(function TicketDetailedHeader({ ticket }: Props) {
                 <Header size="huge" content={ticket.title} />
                 <p>Created: {format(ticket.startDate!, "dd MMM yyyy 'at' HH:mm")}</p>
                 <p>
-                  Submitted by <strong>Bob</strong>
+                  Submitted by <strong>{ticket.submitter}</strong>
                 </p>
               </Item.Content>
             </Item>

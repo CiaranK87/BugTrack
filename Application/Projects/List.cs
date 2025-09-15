@@ -11,7 +11,10 @@ namespace Application.Projects
 {
     public class List
     {
-        public class Query : IRequest<Result<List<ProjectDto>>> {}
+        public class Query : IRequest<Result<List<ProjectDto>>>
+        {
+            public string UserId { get; set; }
+        }
 
         public class Handler : IRequestHandler<Query, Result<List<ProjectDto>>>
         {
@@ -24,11 +27,12 @@ namespace Application.Projects
             _context = context;
             }
             public async Task<Result<List<ProjectDto>>> Handle(Query request, CancellationToken cancellationToken)
-            {
+{
                 var projects = await _context.Projects
                     .Include(p => p.Tickets)
                     .Include(p => p.Participants)
                         .ThenInclude(p => p.AppUser)
+                    .Where(p => p.Participants.Any(pp => pp.AppUserId == request.UserId))
                     .ToListAsync(cancellationToken);
 
                 var projectDtos = _mapper.Map<List<ProjectDto>>(projects);

@@ -171,4 +171,8 @@ private setTicket = (ticket: Ticket) => {
       });
     }
   };
+  clear = () => {
+  this.ticketRegistry.clear();
+  this.selectedTicket = undefined;
+}
 }
