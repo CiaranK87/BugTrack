@@ -141,7 +141,7 @@ namespace Persistence
                             new ProjectParticipant
                             {
                                 AppUser = users[2],
-                                Role = "User",                            
+                                Role = "Developer",                            
                                 IsOwner = false
                             },
                         }
