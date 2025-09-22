@@ -6,7 +6,7 @@ using Persistence;
 
 namespace Application.Projects
 {
-    public class AddMember
+    public class AddParticipant
     {
         public class Command : IRequest<Result<Unit>>
         {
@@ -39,9 +39,9 @@ namespace Application.Projects
                 if (user == null) 
                     return Result<Unit>.Failure("User not found");
 
-                // Check if user is already a member
+                // Check if user is already a participant
                 if (project.Participants.Any(p => p.AppUserId == request.UserId))
-                    return Result<Unit>.Failure("User is already a member of this project");
+                    return Result<Unit>.Failure("User is already a participant of this project");
 
                 // Add the participant
                 project.Participants.Add(new ProjectParticipant
@@ -55,7 +55,7 @@ namespace Application.Projects
                 var result = await _context.SaveChangesAsync(cancellationToken) > 0;
 
                 if (!result) 
-                    return Result<Unit>.Failure("Failed to add member to project");
+                    return Result<Unit>.Failure("Failed to add participant to project");
 
                 return Result<Unit>.Success(Unit.Value);
             }

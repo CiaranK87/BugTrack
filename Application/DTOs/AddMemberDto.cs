@@ -1,5 +1,5 @@
-public class AddMemberDto
+public class AddParticipantDto
 {
-    public string UserId { get; set; }  // or Email if you're doing email-based invites
+    public string UserId { get; set; }
     public string Role { get; set; }
 }

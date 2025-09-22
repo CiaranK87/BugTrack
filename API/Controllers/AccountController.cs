@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
-    
+
     [ApiController]
     [Route("api/[controller]")]
     public class AccountController : ControllerBase
@@ -29,7 +29,7 @@ namespace API.Controllers
         {
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
 
-            if(user == null) return Unauthorized();
+            if (user == null) return Unauthorized();
 
             var result = await _userManager.CheckPasswordAsync(user, loginDto.Password);
 
@@ -37,17 +37,17 @@ namespace API.Controllers
 
             return Unauthorized();
         }
-        
+
         [AllowAnonymous]
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
         {
-            if(await _userManager.Users.AnyAsync(x => x.UserName == registerDto.Username))
+            if (await _userManager.Users.AnyAsync(x => x.UserName == registerDto.Username))
             {
                 ModelState.AddModelError("username", "Username is already taken");
                 return ValidationProblem();
             }
-            if(await _userManager.Users.AnyAsync(x => x.Email == registerDto.Email))
+            if (await _userManager.Users.AnyAsync(x => x.Email == registerDto.Email))
             {
                 ModelState.AddModelError("email", "Email is already taken");
                 return ValidationProblem();

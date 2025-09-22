@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { User, UserFormValues } from "../models/user";
+import { User, UserFormValues, UserSearchDto } from "../models/user";
 import agent from "../api/agent";
 import { store } from "./store";
 import { router } from "../router/Routes";
@@ -10,6 +10,8 @@ export default class UserStore {
   profile: Profile | null = null;
   userRegistry = new Map<string, User>();
   loadingProfile = false;
+  userSearchResults: UserSearchDto[] = [];
+  loadingUsers = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -66,6 +68,22 @@ export default class UserStore {
       console.log(error);
     }
   };
+
+  searchUsers = async (query: string) => {
+  this.loadingUsers = true;
+  try {
+    const users = await agent.Users.search(query);
+    runInAction(() => {
+      this.userSearchResults = users;
+    });
+  } catch (error) {
+    console.error(error);
+  } finally {
+    runInAction(() => {
+      this.loadingUsers = false;
+    });
+  }
+};
 
   
   

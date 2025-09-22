@@ -120,40 +120,40 @@ namespace API.Controllers
         }
 
 
-        // Add member to project ************************************************************************************
+        // Add participant to project ************************************************************************************
 
         [Authorize]
-        [HttpPost("{projectId}/members")]
-        public async Task<IActionResult> AddProjectMember(Guid projectId, [FromBody] AddMemberDto addMemberDto)
+        [HttpPost("{projectId}/participants")]
+        public async Task<IActionResult> AddProjectParticipant(Guid projectId, [FromBody] AddParticipantDto addParticipantDto)
         {
-            // Check if user can manage this project
             var authorized = await _authorizationService.AuthorizeAsync(
                 User, projectId, "ProjectOwnerOrManager");
 
             if (!authorized.Succeeded) 
-                return Forbid("Only project owners can add members");
+                return Forbid("Only project owners can add participants");
 
-            var command = new AddMember.Command 
+            var command = new AddParticipant.Command 
             { 
                 ProjectId = projectId,
-                UserId = addMemberDto.UserId,
-                Role = addMemberDto.Role
+                UserId = addParticipantDto.UserId,
+                Role = addParticipantDto.Role
             };
 
             return HandleResult(await Mediator.Send(command));
         }
 
+
         [Authorize]
-        [HttpPut("{projectId}/members/{userId}")]
-        public async Task<IActionResult> UpdateMemberRole(Guid projectId, string userId, [FromBody] UpdateRoleDto updateRoleDto)
+        [HttpPut("{projectId}/participants/{userId}")]
+        public async Task<IActionResult> UpdateParticipantRole(Guid projectId, string userId, [FromBody] UpdateRoleDto updateRoleDto)
         {
             var authorized = await _authorizationService.AuthorizeAsync(
                 User, projectId, "ProjectOwnerOrManager");
 
             if (!authorized.Succeeded) 
-                return Forbid("Only project owners can update member roles");
+                return Forbid("Only project owners can update participant roles");
 
-            var command = new UpdateMemberRole.Command 
+            var command = new UpdateParticipantRole.Command 
             { 
                 ProjectId = projectId, 
                 UserId = userId, 
@@ -164,31 +164,30 @@ namespace API.Controllers
         }
 
         [Authorize]
-        [HttpDelete("{projectId}/members/{userId}")]
-        public async Task<IActionResult> RemoveProjectMember(Guid projectId, string userId)
+        [HttpDelete("{projectId}/participants/{userId}")]
+        public async Task<IActionResult> RemoveProjectParticipant(Guid projectId, string userId)
         {
             var authorized = await _authorizationService.AuthorizeAsync(
                 User, projectId, "ProjectOwnerOrManager");
 
             if (!authorized.Succeeded) 
-                return Forbid("Only project owners can remove members");
+                return Forbid("Only project owners can remove participants");
 
-            var command = new RemoveMember.Command { ProjectId = projectId, UserId = userId };
+            var command = new RemoveParticipant.Command { ProjectId = projectId, UserId = userId };
             return HandleResult(await Mediator.Send(command));
         }
 
         [Authorize]
-        [HttpGet("{projectId}/members")]
-        public async Task<IActionResult> GetProjectMembers(Guid projectId)
+        [HttpGet("{projectId}/participants")]
+        public async Task<IActionResult> GetProjectParticipants(Guid projectId)
         {
-            // Any project member can view the member list
             var authorized = await _authorizationService.AuthorizeAsync(
                 User, projectId, "ProjectContributor");
 
             if (!authorized.Succeeded) 
                 return Forbid();
 
-            return HandleResult(await Mediator.Send(new ListMembers.Query { ProjectId = projectId }));
+            return HandleResult(await Mediator.Send(new ListParticipants.Query { ProjectId = projectId }));
         }
     }
 }

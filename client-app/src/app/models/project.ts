@@ -56,3 +56,21 @@ export class ProjectFormValues {
     }
   }
 }
+
+export interface ProjectParticipantDto {
+  userId: string;
+  username: string;
+  displayName: string;
+  email: string;
+  role: string;
+  isOwner: boolean;
+}
+
+export interface AddParticipantDto {
+  userId: string;
+  role: string;
+}
+
+export interface UpdateRoleDto {
+  role: string;
+}

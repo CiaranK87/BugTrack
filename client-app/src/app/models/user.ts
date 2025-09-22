@@ -12,6 +12,12 @@ export interface UserFormValues {
   username?: string;
 }
 
+export interface UserSearchDto {
+  id: string;
+  name: string;
+  username: string;
+}
+
 export interface DecodedToken {
   unique_name: string;
   role?: string[];

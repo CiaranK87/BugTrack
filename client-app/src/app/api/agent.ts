@@ -1,9 +1,9 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { Project, ProjectFormValues } from "../models/project";
+import { AddParticipantDto, Project, ProjectFormValues, ProjectParticipantDto, UpdateRoleDto } from "../models/project";
 import { toast } from "react-toastify";
 import { router } from "../router/Routes";
 import { store } from "../stores/store";
-import { User, UserFormValues } from "../models/user";
+import { User, UserFormValues, UserSearchDto } from "../models/user";
 import { Ticket } from "../models/ticket";
 import { Profile } from "../models/profile";
 
@@ -82,6 +82,10 @@ const Projects = {
   participate: (id: string) => requests.post<void>(`/projects/${id}/participate`, {}),
   getUserProjects: (username: string) => requests.get<Project[]>(`/profiles/${username}/projects`),
   getUserRole: (projectId: string) => requests.get<string>(`/projects/${projectId}/role`),
+  listParticipants: (projectId: string) => requests.get<ProjectParticipantDto[]>(`/projects/${projectId}/participants`),
+  addParticipant: (projectId: string, participant: AddParticipantDto) => requests.post<void>(`/projects/${projectId}/participants`, participant),
+  updateParticipantRole: (projectId: string, userId: string, role: UpdateRoleDto) => requests.put<void>(`/projects/${projectId}/participants/${userId}`, role),
+  removeParticipant: (projectId: string, userId: string) => requests.del<void>(`/projects/${projectId}/participants/${userId}`)
 };
 
 const Tickets = {
@@ -104,11 +108,16 @@ const Profiles = {
   updateProfile: (profile: Partial<Profile>) => requests.put<void>(`/profiles`, profile),
 };
 
+const Users = {
+  search: (query: string) => requests.get<UserSearchDto[]>(`/users/search?query=${query}`),
+};
+
 const agent = {
   Projects,
   Account,
   Tickets,
   Profiles,
+  Users,
 };
 
 export default agent;

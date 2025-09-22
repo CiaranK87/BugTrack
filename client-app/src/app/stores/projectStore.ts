@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { Project, ProjectFormValues } from "../models/project";
+import { AddParticipantDto, Project, ProjectFormValues, ProjectParticipantDto, UpdateRoleDto } from "../models/project";
 import agent from "../api/agent";
 import { v4 as uuid } from "uuid";
 import { store } from "./store";
@@ -14,7 +14,10 @@ export default class ProjectStore {
   loadingInitial = false;
   userProjects: Project[] = [];
   loadingUserProjects = false;
-   projectRoles: Record<string, string> = {};
+  projectRoles: Record<string, string> = {};
+  projectParticipants = new Map<string, ProjectParticipantDto[]>();
+  loadingParticipants = false;
+  submittingParticipant = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -39,26 +42,26 @@ export default class ProjectStore {
     }
   };
 
-loadProject = async (id: string) => {
-  this.setLoadingInitial(true);
-  try {
-    const project = await agent.Projects.details(id);
-    runInAction(() => {
-      this.setProject(project);
-      this.selectedProject = project;
-    });
-    this.setLoadingInitial(false);
-    return project;
-  } catch (error) {
-    console.log("Failed to load project", error);
-    runInAction(() => {
-      this.selectedProject = undefined;
-    });
-    this.setLoadingInitial(false);
-    
-    router.navigate('/forbidden');
-  }
-};
+  loadProject = async (id: string) => {
+    this.setLoadingInitial(true);
+    try {
+      const project = await agent.Projects.details(id);
+      runInAction(() => {
+        this.setProject(project);
+        this.selectedProject = project;
+      });
+      this.setLoadingInitial(false);
+      return project;
+    } catch (error) {
+      console.log("Failed to load project", error);
+      runInAction(() => {
+        this.selectedProject = undefined;
+      });
+      this.setLoadingInitial(false);
+      
+      router.navigate('/forbidden');
+    }
+  };
 
   loadUserProjects = async (username: string) => {
   this.loadingUserProjects = true;
@@ -68,20 +71,20 @@ loadProject = async (id: string) => {
       this.userProjects = projects;
       this.loadingUserProjects = false;
     });
-  } catch (error) {
-    console.log(error);
-    runInAction(() => {
-      this.loadingUserProjects = false;
-    });
+    } catch (error) {
+      console.log(error);
+      runInAction(() => {
+        this.loadingUserProjects = false;
+      });
+    }
   }
-}
 
-loadUserRoleForProject = async (projectId: string) => {
-  const role = await agent.Projects.getUserRole(projectId);
-  runInAction(() => {
-    this.projectRoles[projectId] = role;
-  });
-};
+  loadUserRoleForProject = async (projectId: string) => {
+    const role = await agent.Projects.getUserRole(projectId);
+    runInAction(() => {
+      this.projectRoles[projectId] = role;
+    });
+  };
 
 
 
@@ -154,6 +157,44 @@ loadUserRoleForProject = async (projectId: string) => {
     }
   };
 
+  
+  cancelProjectToggle = async () => {
+    this.loading = true;
+    try {
+      await agent.Projects.participate(this.selectedProject!.id);
+      runInAction(() => {
+        this.selectedProject!.isCancelled = !this.selectedProject?.isCancelled;
+        this.projectRegistry.set(this.selectedProject!.id, this.selectedProject!);
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      runInAction(() => (this.loading = false));
+    }
+  };
+  clear = () => {
+  this.projectRegistry.clear();
+  this.selectedProject = undefined;
+}
+
+//*************************************************PARTICIPANTS************************************************************** */
+
+  loadProjectParticipants = async (projectId: string) => {
+    this.loadingParticipants = true;
+    try {
+      const participants = await agent.Projects.listParticipants(projectId);
+      runInAction(() => {
+        this.projectParticipants.set(projectId, participants);
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      runInAction(() => {
+        this.loadingParticipants = false;
+      });
+    }
+  };
+
   updateParticipants = async () => {
     const user = store.userStore.user;
     this.loading = true;
@@ -177,23 +218,62 @@ loadUserRoleForProject = async (projectId: string) => {
       runInAction(() => (this.loading = false));
     }
   };
-
-  cancelProjectToggle = async () => {
-    this.loading = true;
+  
+  addProjectParticipant = async (projectId: string, participants: AddParticipantDto) => {
+    this.submittingParticipant = true;
     try {
-      await agent.Projects.participate(this.selectedProject!.id);
-      runInAction(() => {
-        this.selectedProject!.isCancelled = !this.selectedProject?.isCancelled;
-        this.projectRegistry.set(this.selectedProject!.id, this.selectedProject!);
-      });
+      await agent.Projects.addParticipant(projectId, participants);
+      await this.loadProjectParticipants(projectId);
+      return true;
     } catch (error) {
       console.log(error);
+      return false;
     } finally {
-      runInAction(() => (this.loading = false));
+      runInAction(() => {
+        this.submittingParticipant = false;
+      });
     }
   };
-  clear = () => {
-  this.projectRegistry.clear();
-  this.selectedProject = undefined;
-}
+  
+  
+  updateParticipantRole = async (projectId: string, userId: string, role: UpdateRoleDto) => {
+    try {
+      await agent.Projects.updateParticipantRole(projectId, userId, role);
+      await this.loadProjectParticipants(projectId);
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  };
+
+  removeParticipant = async (projectId: string, userId: string) => {
+    try {
+      await agent.Projects.removeParticipant(projectId, userId);
+      await this.loadProjectParticipants(projectId);
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  };
+
+
+  get currentUserCanManage() {
+    const user = store.userStore.user;
+    const project = this.selectedProject;
+
+    if (!user || !project) return false;
+
+    if (project.isOwner) return true;
+
+    const participant = this.currentProjectParticipants.find(p => p.userId === user.id);
+    return participant?.role === "Manager";
+  }
+
+
+  get currentProjectParticipants() {
+    if (!this.selectedProject) return [];
+    return this.projectParticipants.get(this.selectedProject.id) || [];
+  }
 }

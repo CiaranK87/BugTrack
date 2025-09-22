@@ -6,7 +6,7 @@ using Persistence;
 
 namespace Application.Projects
 {
-    public class RemoveMember
+    public class RemoveParticipant
     {
         public class Command : IRequest<Result<Unit>>
         {
@@ -36,7 +36,7 @@ namespace Application.Projects
                     .FirstOrDefault(p => p.AppUserId == request.UserId);
 
                 if (participant == null)
-                    return Result<Unit>.Failure("User is not a member of this project");
+                    return Result<Unit>.Failure("User is not a participant of this project");
 
                 // Prevent removing the last owner
                 var ownerCount = project.Participants.Count(p => p.IsOwner);
@@ -48,7 +48,7 @@ namespace Application.Projects
                 var result = await _context.SaveChangesAsync(cancellationToken) > 0;
 
                 if (!result)
-                    return Result<Unit>.Failure("Failed to remove member from project");
+                    return Result<Unit>.Failure("Failed to remove participant from project");
 
                 return Result<Unit>.Success(Unit.Value);
             }

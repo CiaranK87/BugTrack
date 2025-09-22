@@ -8,14 +8,14 @@ using Persistence;
 
 namespace Application.Projects
 {
-    public class ListMembers
+    public class ListParticipants
     {
-        public class Query : IRequest<Result<List<ProjectMemberDto>>>
+        public class Query : IRequest<Result<List<ProjectParticipantDto>>>
         {
             public Guid ProjectId { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Result<List<ProjectMemberDto>>>
+        public class Handler : IRequestHandler<Query, Result<List<ProjectParticipantDto>>>
         {
             private readonly DataContext _context;
             private readonly IMapper _mapper;
@@ -26,7 +26,7 @@ namespace Application.Projects
                 _mapper = mapper;
             }
 
-            public async Task<Result<List<ProjectMemberDto>>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<List<ProjectParticipantDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
                 var project = await _context.Projects
                     .Include(p => p.Participants)
@@ -34,10 +34,10 @@ namespace Application.Projects
                     .FirstOrDefaultAsync(p => p.Id == request.ProjectId, cancellationToken);
 
                 if (project == null)
-                    return Result<List<ProjectMemberDto>>.Failure("Project not found");
+                    return Result<List<ProjectParticipantDto>>.Failure("Project not found");
 
-                var members = project.Participants
-                    .Select(p => new ProjectMemberDto
+                var participants = project.Participants
+                    .Select(p => new ProjectParticipantDto
                     {
                         UserId = p.AppUserId,
                         Username = p.AppUser.UserName,
@@ -48,7 +48,7 @@ namespace Application.Projects
                     })
                     .ToList();
 
-                return Result<List<ProjectMemberDto>>.Success(members);
+                return Result<List<ProjectParticipantDto>>.Success(participants);
             }
         }
     }
