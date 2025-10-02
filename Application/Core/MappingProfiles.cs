@@ -44,7 +44,8 @@ namespace Application.Core
             CreateMap<Ticket, Ticket>();
             CreateMap<Ticket, TicketDto>();
             CreateMap<TicketDto, Ticket>();
-            CreateMap<EditTicketDto, Ticket>();
+            CreateMap<EditTicketDto, Ticket>()
+                .ForMember(dest => dest.Submitter, opt => opt.Ignore());
         }
     }
 }

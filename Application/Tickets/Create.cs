@@ -32,6 +32,7 @@ namespace Application.Tickets
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
+                request.Ticket.CreatedAt = DateTime.UtcNow;
                 request.Ticket.Updated = DateTime.UtcNow;
                 _context.Tickets.Add(request.Ticket);
 

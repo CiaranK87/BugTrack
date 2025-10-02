@@ -34,7 +34,7 @@ export default class UserStore {
   store.projectStore.clear();
   store.ticketStore.clear();
   
-  router.navigate("/projects");
+  router.navigate("/dashboard");
   store.modalStore.closeModal();
 };
 
@@ -46,7 +46,7 @@ export default class UserStore {
       this.user = user;
       this.userRegistry.set(user.username, user);
     });
-    router.navigate("/projects");
+    router.navigate("/dashboard");
     store.modalStore.closeModal();
   };
 

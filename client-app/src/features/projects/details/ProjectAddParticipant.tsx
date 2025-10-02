@@ -73,8 +73,8 @@ export default observer(function ProjectAddParticipant() {
             fluid
             selection
             options={[
-              { key: 'contributor', text: 'Contributor', value: 'Contributor' },
-              { key: 'manager', text: 'Manager', value: 'Manager' },
+              { key: 'projectManager', text: 'ProjectManager', value: 'ProjectManager' },
+              { key: 'developer', text: 'Developer', value: 'Developer' },
             ]}
             value={selectedRole}
             onChange={(_, { value }) => setSelectedRole(value as string)}

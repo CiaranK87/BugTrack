@@ -10,6 +10,7 @@ export interface Ticket {
   startDate: Date | null;
   endDate: Date | null;
   updated?: Date | null;
+  createdAt: string;
   projectId: string;
 }
 

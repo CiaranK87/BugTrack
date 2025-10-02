@@ -36,6 +36,7 @@ export default observer(function TicketForm() {
     startDate: null,
     endDate: null,
     projectId: projectId || "",
+    createdAt: new Date().toISOString()
   });
 
   const [projectUsersAsOptions, setProjectUsersAsOptions] = useState<{ text: string; value: string }[]>([]);

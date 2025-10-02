@@ -2,6 +2,9 @@ import { makeAutoObservable, runInAction } from "mobx";
 import { Ticket } from "../models/ticket";
 import agent from "../api/agent";
 import { v4 as uuid } from "uuid";
+import { priorityOptions } from "../common/options/priorityOptions";
+import { severityOptions } from "../common/options/severityOptions";
+import { statusOptions } from "../common/options/statusOptions";
 
 export default class TicketStore {
   ticketRegistry = new Map<string, Ticket>();
@@ -66,10 +69,26 @@ export default class TicketStore {
     const tickets = await agent.Tickets.listByProject(projectId);
     
     const processedTickets = tickets.map(ticket => {
-      const normalize = (d: any) => d ? new Date(d + 'Z') : null;
-      ticket.startDate = normalize(ticket.startDate);
-      ticket.endDate = normalize(ticket.endDate);
-      ticket.updated = normalize(ticket.updated);
+      const normalizeDate = (d: any) => d ? new Date(d + 'Z') : null;
+      const normalize = (value: string, allowed: string[]) => {
+        if (!value) return "";
+        const trimmed = value.trim();
+        const direct = allowed.find(a => a === trimmed);
+        if (direct) return direct;
+        const ci = allowed.find(a => a.toLowerCase() === trimmed.toLowerCase());
+        return ci || "";
+      };
+      const allowedPriorities = priorityOptions.map(o => o.value as string);
+      const allowedSeverities = severityOptions.map(o => o.value as string);
+      const allowedStatuses = statusOptions.map(o => o.value as string);
+
+      ticket.priority = normalize(ticket.priority, allowedPriorities);
+      ticket.severity = normalize(ticket.severity, allowedSeverities);
+      ticket.status = normalize(ticket.status, allowedStatuses);
+
+      ticket.startDate = normalizeDate(ticket.startDate);
+      ticket.endDate = normalizeDate(ticket.endDate);
+      ticket.updated = normalizeDate(ticket.updated);
       return ticket;
     });
     
@@ -93,12 +112,26 @@ export default class TicketStore {
 
 
 private setTicket = (ticket: Ticket) => {
-    
-    const normalize = (d: any) => d ? new Date(d + 'Z') : null;
+    const normalizeDate = (d: any) => d ? new Date(d + 'Z') : null;
+    const normalize = (value: string, allowed: string[]) => {
+      if (!value) return "";
+      const trimmed = value.trim();
+      const direct = allowed.find(a => a === trimmed);
+      if (direct) return direct;
+      const ci = allowed.find(a => a.toLowerCase() === trimmed.toLowerCase());
+      return ci || "";
+    };
+    const allowedPriorities = priorityOptions.map(o => o.value as string);
+    const allowedSeverities = severityOptions.map(o => o.value as string);
+    const allowedStatuses = statusOptions.map(o => o.value as string);
 
-    ticket.startDate = normalize(ticket.startDate);
-    ticket.endDate = normalize(ticket.endDate);
-    ticket.updated = normalize(ticket.updated);
+    ticket.priority = normalize(ticket.priority, allowedPriorities);
+    ticket.severity = normalize(ticket.severity, allowedSeverities);
+    ticket.status = normalize(ticket.status, allowedStatuses);
+    
+    ticket.startDate = normalizeDate(ticket.startDate);
+    ticket.endDate = normalizeDate(ticket.endDate);
+    ticket.updated = normalizeDate(ticket.updated);
     this.ticketRegistry.set(ticket.id, ticket);
   };
 

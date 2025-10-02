@@ -267,8 +267,8 @@ export default class ProjectStore {
 
     if (project.isOwner) return true;
 
-    const participant = this.currentProjectParticipants.find(p => p.userId === user.id);
-    return participant?.role === "Manager";
+    const participant = this.currentProjectParticipants.find(p => p.username === user.username);
+    return participant?.role === "ProjectManager";
   }
 
 

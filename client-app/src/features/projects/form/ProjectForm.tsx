@@ -26,12 +26,17 @@ export default observer(function ProjectForm() {
 
   const validationSchema = Yup.object({
     projectTitle: Yup.string().required("The project title is required"),
-    projectOwner: Yup.string().required("The project owner is required"),
     description: Yup.string().required("The project description is required"),
     startDate: Yup.string().required("The project start date is required"),
   });
 
   function handleFormSubmit(project: ProjectFormValues) {
+  // Normalize startDate to UTC noon to preserve selected calendar day across timezones
+  if (project.startDate) {
+    const d = project.startDate as Date;
+    const utcNoon = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), 12, 0, 0));
+    project.startDate = utcNoon;
+  }
   if (!project.id) {
     const newProject = {
       ...project,
@@ -72,7 +77,7 @@ export default observer(function ProjectForm() {
         {({ handleSubmit, isValid, isSubmitting, dirty }) => (
           <Form className="ui form" onSubmit={handleSubmit} autoComplete="off">
             <MyTextInput name="projectTitle" placeholder="project Title" />
-            <MyTextInput placeholder="Project Owner" name="projectOwner" />
+            
             <MyTextArea rows={2} placeholder="Project Description" name="description" />
             <MyDateInput
               placeholderText="Project start date"

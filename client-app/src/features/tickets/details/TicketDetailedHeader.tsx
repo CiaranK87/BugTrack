@@ -2,13 +2,26 @@ import { observer } from "mobx-react-lite";
 import { Button, Header, Item, Segment } from "semantic-ui-react";
 import { Ticket } from "../../../app/models/ticket";
 import { Link } from "react-router-dom";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
+import { useStore } from "../../../app/stores/store";
 
 interface Props {
   ticket: Ticket;
 }
 
 export default observer(function TicketDetailedHeader({ ticket }: Props) {
+  const createdDate = ticket.createdAt ? parseISO(ticket.createdAt) : null;
+
+  const { projectStore, userStore } = useStore();
+  const currentUser = userStore.user;
+  const project = projectStore.projectRegistry.get(ticket.projectId);
+
+  // 👇 Only Owner and Submitter can manage
+  const isSubmitter = ticket.submitter === currentUser?.username;
+  const isProjectOwner = project?.isOwner;
+
+  const canManageTicket = isSubmitter || isProjectOwner;
+
   return (
     <Segment.Group>
       <Segment basic attached="top" style={{ padding: "0", background: "white" }}>
@@ -17,7 +30,7 @@ export default observer(function TicketDetailedHeader({ ticket }: Props) {
             <Item>
               <Item.Content>
                 <Header size="huge" content={ticket.title} />
-                <p>Created: {format(ticket.startDate!, "dd MMM yyyy 'at' HH:mm")}</p>
+                {createdDate && <p>Created: {format(createdDate, "dd MMM yyyy 'at' HH:mm")}</p>}
                 <p>
                   Submitted by <strong>{ticket.submitter}</strong>
                 </p>
@@ -29,9 +42,11 @@ export default observer(function TicketDetailedHeader({ ticket }: Props) {
       <Segment clearing attached="bottom">
         <Button color="teal">Collaborate</Button>
         <Button>Cancel collaboration</Button>
-        <Button as={Link} to={`/projects/${ticket.projectId}/tickets/${ticket.id}`} color="orange" floated="right">
-          Manage Ticket
-        </Button>
+        {canManageTicket && (
+          <Button as={Link} to={`/projects/${ticket.projectId}/tickets/${ticket.id}`} color="orange" floated="right">
+            Manage Ticket
+          </Button>
+        )}
       </Segment>
     </Segment.Group>
   );

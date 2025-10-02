@@ -30,10 +30,8 @@ namespace API.Controllers
         public async Task<IActionResult> GetProjects()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            Console.WriteLine($"Getting projects for user: {userId}");
 
             var result = await Mediator.Send(new List.Query { UserId = userId });
-            Console.WriteLine($"Query returned {result.Value?.Count ?? 0} projects");
 
             return HandleResult(result);
         }
