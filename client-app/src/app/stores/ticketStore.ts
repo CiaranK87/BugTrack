@@ -132,6 +132,7 @@ private setTicket = (ticket: Ticket) => {
     ticket.startDate = normalizeDate(ticket.startDate);
     ticket.endDate = normalizeDate(ticket.endDate);
     ticket.updated = normalizeDate(ticket.updated);
+    ticket.createdAt = normalizeDate(ticket.createdAt);
     this.ticketRegistry.set(ticket.id, ticket);
   };
 
@@ -171,7 +172,7 @@ private setTicket = (ticket: Ticket) => {
 
 
   updateTicket = async (ticket: Ticket) => {
-    this.loading;
+    this.loading = true;
     try {
       await agent.Tickets.update(ticket);
       const fresh = await agent.Tickets.details(ticket.id);

@@ -12,7 +12,7 @@ export default observer(function ProjectAddParticipant() {
 
  
   const [selectedUser, setSelectedUser] = useState<string>('');
-  const [selectedRole, setSelectedRole] = useState<string>('Contributor');
+  const [selectedRole, setSelectedRole] = useState<string>('User');
   const [loading, setLoading] = useState(false);
 
 
@@ -75,6 +75,7 @@ export default observer(function ProjectAddParticipant() {
             options={[
               { key: 'projectManager', text: 'ProjectManager', value: 'ProjectManager' },
               { key: 'developer', text: 'Developer', value: 'Developer' },
+              { key: 'user', text: 'User', value: 'User' },
             ]}
             value={selectedRole}
             onChange={(_, { value }) => setSelectedRole(value as string)}

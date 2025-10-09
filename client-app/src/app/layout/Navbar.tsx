@@ -5,7 +5,7 @@ import { observer } from "mobx-react-lite";
 
 export default observer(function Navbar() {
   const {
-    userStore: { user, logout },
+    userStore: { user, logout, isAdmin, canCreateProjects },
   } = useStore();
 
   return (
@@ -17,6 +17,12 @@ export default observer(function Navbar() {
         </Menu.Item>
         <Menu.Item as={NavLink} to="/projects" name="Projects" />
         <Menu.Item as={NavLink} to="/tickets" name="Tickets" />
+        {canCreateProjects && (
+          <Menu.Item as={NavLink} to="/createProject" name="Create Project" />
+        )}
+        {isAdmin && (
+          <Menu.Item as={NavLink} to="/admin/users" name="Admin" />
+        )}
         <Menu.Item as={NavLink} to="/errors" name="Errors" />
         <Menu.Item position="right">
           <Image avatar spaced="right" src={"/assets/user.png"} />

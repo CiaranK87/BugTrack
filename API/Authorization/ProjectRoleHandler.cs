@@ -10,32 +10,39 @@ namespace API.Authorization
     {
         private readonly DataContext _context;
         private readonly IUserAccessor _userAccessor;
+        private readonly ILogger<ProjectRoleHandler> _logger;
 
-        public ProjectRoleHandler(DataContext context, IUserAccessor userAccessor)
+        public ProjectRoleHandler(DataContext context, IUserAccessor userAccessor, ILogger<ProjectRoleHandler> logger)
         {
             _context = context;
             _userAccessor = userAccessor;
+            _logger = logger;
         }
 
         protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext context,
         ProjectRoleRequirement requirement)
         {
-            if (context.User.IsInRole("Admin"))
+            var globalRoleClaim = context.User.FindFirst("globalrole")?.Value;
+            if (globalRoleClaim == "Admin")
+            {
+                context.Succeed(requirement);
+                return;
+            }
+            
+            if (requirement.AllowedRoles.Contains("Owner") && globalRoleClaim == "ProjectManager")
             {
                 context.Succeed(requirement);
                 return;
             }
 
-            string? projectIdString = null;
+            string projectIdString = null;
 
-            // Use resource directly if it's a Guid or string
             if (context.Resource is Guid guidResource)
                 projectIdString = guidResource.ToString();
             else if (context.Resource is string stringResource)
                 projectIdString = stringResource;
 
-            // Fallback: extract from route
             if (projectIdString == null && context.Resource is AuthorizationFilterContext authContext)
             {
                 if (!authContext.HttpContext.Request.RouteValues.TryGetValue("projectId", out var pIdObj))
@@ -50,7 +57,6 @@ namespace API.Authorization
             if (string.IsNullOrEmpty(currentUserId))
                 return;
 
-            // Check participant role
             var participant = await _context.ProjectParticipants
                 .AsNoTracking()
                 .Where(pp => pp.AppUserId == currentUserId && pp.ProjectId == projectGuid)
@@ -59,19 +65,51 @@ namespace API.Authorization
 
             if (participant == null) return;
 
-            // Owner shortcut
             if (participant.IsOwner && requirement.AllowedRoles.Contains("Owner"))
             {
                 context.Succeed(requirement);
                 return;
             }
-
-            // Match role string
-            if (!string.IsNullOrWhiteSpace(participant.Role) &&
-                requirement.AllowedRoles.Contains(participant.Role))
+            
+            if (!string.IsNullOrWhiteSpace(participant.Role))
             {
-                context.Succeed(requirement);
+                if (requirement.AllowedRoles.Contains(participant.Role))
+                {
+                    context.Succeed(requirement);
+                    return;
+                }
+
+                if (IsRoleInHierarchy(participant.Role, requirement.AllowedRoles))
+                {
+                    context.Succeed(requirement);
+                    return;
+                }
             }
+        }
+
+        private bool IsRoleInHierarchy(string userRole, IEnumerable<string> allowedRoles)
+        {
+            var roleHierarchy = new Dictionary<string, int>
+            {
+                { "Owner", 4 },
+                { "ProjectManager", 3 },
+                { "Developer", 2 },
+                { "User", 1 }
+            };
+
+            if (!roleHierarchy.TryGetValue(userRole, out var userRoleLevel))
+                return false;
+
+            foreach (var role in allowedRoles)
+            {
+                if (roleHierarchy.TryGetValue(role, out var allowedRoleLevel) &&
+                    userRoleLevel >= allowedRoleLevel)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
     }

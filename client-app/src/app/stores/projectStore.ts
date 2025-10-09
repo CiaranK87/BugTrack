@@ -80,10 +80,14 @@ export default class ProjectStore {
   }
 
   loadUserRoleForProject = async (projectId: string) => {
-    const role = await agent.Projects.getUserRole(projectId);
-    runInAction(() => {
-      this.projectRoles[projectId] = role;
-    });
+    try {
+      const role = await agent.Projects.getUserRole(projectId);
+      runInAction(() => {
+        this.projectRoles[projectId] = role;
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
 
@@ -268,7 +272,11 @@ export default class ProjectStore {
     if (project.isOwner) return true;
 
     const participant = this.currentProjectParticipants.find(p => p.username === user.username);
-    return participant?.role === "ProjectManager";
+    if (!participant) return false;
+    
+    // Only Owners and ProjectManagers can manage the project
+    return participant.role === "Owner" ||
+           participant.role === "ProjectManager";
   }
 
 

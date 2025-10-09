@@ -12,8 +12,9 @@ interface Props {
 }
 
 export default observer(function ProjectParticipants({ projectId }: Props) {
-  const { projectStore } = useStore();
+  const { projectStore, userStore } = useStore();
   const navigate = useNavigate();
+  const { isAdmin } = userStore;
 
   const [editingParticipantId, setEditingParticipantId] = useState<string | null>(null);
   const [editingRole, setEditingRole] = useState<string>('');
@@ -69,10 +70,10 @@ export default observer(function ProjectParticipants({ projectId }: Props) {
     <div>
       <Header as="h3">
         Project Participants
-        {currentUserCanManage && (
-          <Button 
-            primary 
-            floated="right" 
+        {(currentUserCanManage || isAdmin) && (
+          <Button
+            primary
+            floated="right"
             content="Add Participant"
             onClick={() => navigate(`/projects/${projectId}/participants/add`)}
           />
@@ -107,7 +108,7 @@ export default observer(function ProjectParticipants({ projectId }: Props) {
                       options={[
                         { key: 'Developer', text: 'Developer', value: 'Developer' },
                         { key: 'ProjectManager', text: 'ProjectManager', value: 'ProjectManager' },
-                        { key: 'Contributor', text: 'Contributor', value: 'Contributor' },
+                        { key: 'User', text: 'User', value: 'User' },
                       ]}
                       value={editingRole}
                       onChange={(_, { value }) => setEditingRole(value as string)}
@@ -130,7 +131,7 @@ export default observer(function ProjectParticipants({ projectId }: Props) {
                     size="mini"
                     content="Edit Role"
                     onClick={() => handleEditRole(participant)}
-                    disabled={!currentUserCanManage}
+                    disabled={!currentUserCanManage && !isAdmin}
                   />
                 )}
                 <Button
@@ -138,7 +139,7 @@ export default observer(function ProjectParticipants({ projectId }: Props) {
                   color="red"
                   content="Remove"
                   onClick={() => handleRemoveParticipant(participant.userId, participant.displayName)}
-                  disabled={!currentUserCanManage}
+                  disabled={!currentUserCanManage && !isAdmin}
                 />
               </Table.Cell>
             </Table.Row>

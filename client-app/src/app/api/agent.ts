@@ -3,7 +3,7 @@ import { AddParticipantDto, Project, ProjectFormValues, ProjectParticipantDto, U
 import { toast } from "react-toastify";
 import { router } from "../router/Routes";
 import { store } from "../stores/store";
-import { User, UserFormValues, UserSearchDto } from "../models/user";
+import { User, UserFormValues, UserSearchDto, UserDto } from "../models/user";
 import { Ticket } from "../models/ticket";
 import { Profile } from "../models/profile";
 
@@ -49,7 +49,11 @@ axios.interceptors.response.use(
         }
         break;
       case 401:
-        toast.error("Unauthorized");
+        store.commonStore.setToken(null);
+        store.userStore.user = null;
+        store.userStore.userRegistry.clear();
+        router.navigate("/");
+        toast.error("Session expired. Please log in again.");
         break;
       case 403:
         toast.error("Forbidden");
@@ -110,6 +114,8 @@ const Profiles = {
 
 const Users = {
   search: (query: string) => requests.get<UserSearchDto[]>(`/users/search?query=${query}`),
+  list: () => requests.get<UserDto[]>("/users/list"),
+  updateRole: (userId: string, role: string) => requests.put<UserDto>(`/users/${userId}/role`, { role }),
 };
 
 const agent = {

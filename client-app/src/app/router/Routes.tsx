@@ -13,6 +13,7 @@ import TicketForm from "../../features/tickets/form/TicketForm";
 import ProfilePage from "../../features/profiles/ProfilePage";
 import Dashboard from "../../features/dashboard/Dashboard";
 import ProjectAddParticipant from "../../features/projects/details/ProjectAddParticipant";
+import UserManagement from "../../features/admin/UserManagement";
 
 export const routes: RouteObject[] = [
   {
@@ -21,6 +22,7 @@ export const routes: RouteObject[] = [
     children: [
       { path: "projects", element: <ProjectDashboard /> },
       { path: "dashboard", element: <Dashboard /> },
+      { path: "admin/users", element: <UserManagement /> },
 
       
       { path: "projects/:projectId/tickets/create", element: <TicketForm key="createTicket" /> },

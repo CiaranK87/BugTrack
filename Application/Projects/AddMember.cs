@@ -26,7 +26,6 @@ namespace Application.Projects
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
-                // Check if project exists
                 var project = await _context.Projects
                     .Include(p => p.Participants)
                     .FirstOrDefaultAsync(p => p.Id == request.ProjectId, cancellationToken);
@@ -34,16 +33,13 @@ namespace Application.Projects
                 if (project == null) 
                     return Result<Unit>.Failure("Project not found");
 
-                // Check if user exists
                 var user = await _context.Users.FindAsync(request.UserId);
                 if (user == null) 
                     return Result<Unit>.Failure("User not found");
 
-                // Check if user is already a participant
                 if (project.Participants.Any(p => p.AppUserId == request.UserId))
                     return Result<Unit>.Failure("User is already a participant of this project");
 
-                // Add the participant
                 project.Participants.Add(new ProjectParticipant
                 {
                     AppUserId = request.UserId,

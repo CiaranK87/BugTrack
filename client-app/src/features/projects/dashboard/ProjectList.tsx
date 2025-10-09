@@ -5,14 +5,17 @@ import ProjectListItem from "./ProjectListItem";
 import { NavLink } from "react-router-dom";
 
 export default observer(function ProjectList() {
-  const { projectStore } = useStore();
+  const { projectStore, userStore } = useStore();
   const { projectsByStartDate } = projectStore;
+  const { canCreateProjects } = userStore;
 
   return (
     <>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <Header sub color="teal" size="huge">ACTIVE PROJECTS</Header>
-        <Button as={NavLink} to="/createProject" basic color="teal" content="Create Project" size="small"/>
+        {canCreateProjects && (
+          <Button as={NavLink} to="/createProject" basic color="teal" content="Create Project" size="small"/>
+        )}
       </div>
       {projectsByStartDate.map((project) => (
           <ProjectListItem key={project.id} project={project} />

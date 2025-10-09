@@ -11,7 +11,8 @@ interface Props {
 
 export default observer(function ProjectDetailedHeader({ project }: Props) {
   const {
-    projectStore: { updateParticipants, loading, cancelProjectToggle },
+    projectStore: { updateParticipants, loading, cancelProjectToggle, currentUserCanManage },
+    userStore: { isAdmin }
   } = useStore();
   return (
     <Segment.Group>
@@ -39,16 +40,18 @@ export default observer(function ProjectDetailedHeader({ project }: Props) {
         </Segment>
       </Segment>
       <Segment clearing attached="bottom">
-        {project.isOwner ? (
+        {(project.isOwner || currentUserCanManage || isAdmin) ? (
           <>
-            <Button
-              color={project.isCancelled ? "green" : "red"}
-              floated="left"
-              basic
-              content={project.isCancelled ? "Reopen Project" : "Cancel Project"}
-              onClick={cancelProjectToggle}
-              loading={loading}
-            />
+            {(project.isOwner || isAdmin) && (
+              <Button
+                color={project.isCancelled ? "green" : "red"}
+                floated="left"
+                basic
+                content={project.isCancelled ? "Reopen Project" : "Cancel Project"}
+                onClick={cancelProjectToggle}
+                loading={loading}
+              />
+            )}
 
             <Button disabled={project.isCancelled} as={Link} to={`/manageProject/${project.id}`} color="orange" floated="right">
               Manage Project

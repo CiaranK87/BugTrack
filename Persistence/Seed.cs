@@ -37,18 +37,24 @@ namespace Persistence
             if (bob != null && !await userManager.IsInRoleAsync(bob, "ProjectManager"))
             {
                 await userManager.AddToRoleAsync(bob, "ProjectManager");
+                bob.GlobalRole = "ProjectManager";
+                await userManager.UpdateAsync(bob);
             }
 
             var jane = await userManager.FindByEmailAsync("jane@test.com");
             if (jane != null && !await userManager.IsInRoleAsync(jane, "Admin"))
             {
                 await userManager.AddToRoleAsync(jane, "Admin");
+                jane.GlobalRole = "Admin";
+                await userManager.UpdateAsync(jane);
             }
 
             var tim = await userManager.FindByEmailAsync("tim@test.com");
             if (tim != null && !await userManager.IsInRoleAsync(tim, "User"))
             {
                 await userManager.AddToRoleAsync(tim, "User");
+                tim.GlobalRole = "User";
+                await userManager.UpdateAsync(tim);
             }
 
                 var projects = new List<Project>
@@ -57,6 +63,7 @@ namespace Persistence
                     {
                         ProjectTitle = "Past Project 1",
                         Description = "This is past project 1 description",
+                        ProjectOwner = "bob",
                         StartDate = DateTime.UtcNow.AddMonths(-2),
                         Participants = new List<ProjectParticipant>
                         {
@@ -108,19 +115,20 @@ namespace Persistence
                     {
                         ProjectTitle = "Past Project 2",
                         Description = "This is past project 2 description ",
+                        ProjectOwner = "tim",
                         StartDate = DateTime.UtcNow.AddMonths(-1),
                         Participants = new List<ProjectParticipant>
                         {
                             new ProjectParticipant
                             {
                                 AppUser = users[2],
-                                Role = "Owner",                            
+                                Role = "Owner",
                                 IsOwner = true
                             },
                             new ProjectParticipant
                             {
                                 AppUser = users[1],
-                                Role = "Developer",                            
+                                Role = "Developer",
                                 IsOwner = false
                             },
                         }
@@ -129,19 +137,20 @@ namespace Persistence
                     {
                         ProjectTitle = "Future Project 1",
                         Description = "This is future project 1 description",
+                        ProjectOwner = "jane",
                         StartDate = DateTime.UtcNow.AddMonths(1),
                         Participants = new List<ProjectParticipant>
                         {
                             new ProjectParticipant
                             {
                                 AppUser = users[1],
-                                Role = "Owner",                            
+                                Role = "Owner",
                                 IsOwner = true
                             },
                             new ProjectParticipant
                             {
                                 AppUser = users[2],
-                                Role = "Developer",                            
+                                Role = "Developer",
                                 IsOwner = false
                             },
                         }
@@ -150,6 +159,7 @@ namespace Persistence
                     {
                         ProjectTitle = "Future Project 2",
                         Description = "This is future project 2 description",
+                        ProjectOwner = "bob",
                         StartDate = DateTime.UtcNow.AddMonths(2),
                         Participants = new List<ProjectParticipant>
                         {
@@ -173,6 +183,7 @@ namespace Persistence
                     {
                         ProjectTitle = "Future Project 3",
                         Description = "This is future project 3 description",
+                        ProjectOwner = "tim",
                         StartDate = DateTime.UtcNow.AddMonths(3),
                         Participants = new List<ProjectParticipant>
                         {

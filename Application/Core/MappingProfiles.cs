@@ -41,11 +41,13 @@ namespace Application.Core
                 .ForMember(dest => dest.Image, opt => opt.Ignore());
 
             // Tickets
-            CreateMap<Ticket, Ticket>();
+            CreateMap<Ticket, Ticket>()
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore());
             CreateMap<Ticket, TicketDto>();
             CreateMap<TicketDto, Ticket>();
             CreateMap<EditTicketDto, Ticket>()
-                .ForMember(dest => dest.Submitter, opt => opt.Ignore());
+                .ForMember(dest => dest.Submitter, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore());
         }
     }
 }

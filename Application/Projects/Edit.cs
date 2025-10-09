@@ -20,7 +20,6 @@ namespace Application.Projects
         {
             public CommandValidator()
             {
-                // Validate the DTO, not the domain entity
                 RuleFor(x => x.ProjectDto).NotNull();
                 RuleFor(x => x.ProjectDto.ProjectTitle).NotEmpty();
                 RuleFor(x => x.ProjectDto.Description).MaximumLength(1000);
@@ -48,7 +47,6 @@ namespace Application.Projects
                 if (project == null)
                     return Result<Unit>.Failure("Project not found");
 
-                // Map editable fields from DTO to existing entity
                 _mapper.Map(request.ProjectDto, project);
 
                 var result = await _context.SaveChangesAsync(cancellationToken) > 0;

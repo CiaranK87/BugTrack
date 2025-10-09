@@ -39,13 +39,11 @@ namespace Application.Projects
             {
                 var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == _userAccessor.GetUsername());
 
-                // Ensure the project owner is set to the current user creating the project
                 if (user != null)
                 {
                     request.Project.ProjectOwner = string.IsNullOrWhiteSpace(user.DisplayName) ? user.UserName : user.DisplayName;
                 }
 
-                // Use the StartDate provided by the client without normalization to preserve the selected date
 
                 var participant = new ProjectParticipant
                 {

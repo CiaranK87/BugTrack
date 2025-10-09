@@ -29,12 +29,10 @@ namespace Application.Tickets
                 var ticket = await _context.Tickets.FindAsync(request.Ticket.Id);
                 if (ticket == null) return null;
 
-                // Preserve immutable fields
                 var existingSubmitter = ticket.Submitter;
 
                 _mapper.Map(request.Ticket, ticket);
 
-                // Restore preserved fields
                 ticket.Submitter = existingSubmitter;
                 ticket.Updated = DateTime.UtcNow;
 

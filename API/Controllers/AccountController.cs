@@ -1,11 +1,12 @@
 using System.Security.Claims;
-using API.DTOs;
+using Application.DTOs;
 using API.Services;
 using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Persistence;
 
 namespace API.Controllers
 {
@@ -16,10 +17,12 @@ namespace API.Controllers
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly TokenService _tokenService;
-        public AccountController(UserManager<AppUser> userManager, TokenService tokenService)
+        private readonly DataContext _context;
+        public AccountController(UserManager<AppUser> userManager, TokenService tokenService, DataContext context)
         {
             _tokenService = tokenService;
             _userManager = userManager;
+            _context = context;
         }
 
         [AllowAnonymous]
@@ -33,7 +36,7 @@ namespace API.Controllers
 
             var result = await _userManager.CheckPasswordAsync(user, loginDto.Password);
 
-            if (result) return await CreateUserObject(user);
+            if (result) return CreateUserObject(user);
 
             return Unauthorized();
         }
@@ -62,28 +65,45 @@ namespace API.Controllers
 
             var result = await _userManager.CreateAsync(user, registerDto.Password);
 
-            if (result.Succeeded) return await CreateUserObject(user);
+            if (result.Succeeded) return CreateUserObject(user);
 
             return BadRequest(result.Errors);
         }
 
         [Authorize]
         [HttpGet]
-
         public async Task<ActionResult<UserDto>> GetCurrentUser()
         {
             var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
+            
+            user = await _context.Users
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == user.Id);
 
-            return await CreateUserObject(user);
+            return CreateUserObject(user);
         }
 
-        private async Task<UserDto> CreateUserObject(AppUser user)
+        [Authorize]
+        [HttpPost("refreshToken")]
+        public async Task<ActionResult<UserDto>> RefreshToken()
+        {
+            var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
+            
+            user = await _context.Users
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == user.Id);
+
+            return CreateUserObject(user);
+        }
+
+        private UserDto CreateUserObject(AppUser user)
         {
             return new UserDto
             {
                 DisplayName = user.DisplayName,
-                Token = await _tokenService.CreateToken(user),
-                Username = user.UserName
+                Token = _tokenService.CreateToken(user),
+                Username = user.UserName,
+                GlobalRole = user.GlobalRole ?? "User"
             };
         }
     }

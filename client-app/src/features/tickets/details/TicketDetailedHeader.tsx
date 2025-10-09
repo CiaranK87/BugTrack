@@ -2,7 +2,6 @@ import { observer } from "mobx-react-lite";
 import { Button, Header, Item, Segment } from "semantic-ui-react";
 import { Ticket } from "../../../app/models/ticket";
 import { Link } from "react-router-dom";
-import { format, parseISO } from "date-fns";
 import { useStore } from "../../../app/stores/store";
 
 interface Props {
@@ -10,17 +9,20 @@ interface Props {
 }
 
 export default observer(function TicketDetailedHeader({ ticket }: Props) {
-  const createdDate = ticket.createdAt ? parseISO(ticket.createdAt) : null;
 
   const { projectStore, userStore } = useStore();
   const currentUser = userStore.user;
   const project = projectStore.projectRegistry.get(ticket.projectId);
 
-  // 👇 Only Owner and Submitter can manage
   const isSubmitter = ticket.submitter === currentUser?.username;
+  const isAssigned = ticket.assigned === currentUser?.username;
   const isProjectOwner = project?.isOwner;
+  const isAdmin = userStore.isAdmin;
+  
+  const participant = projectStore.currentProjectParticipants.find(p => p.username === currentUser?.username);
+  const isProjectManager = participant?.role === "ProjectManager";
 
-  const canManageTicket = isSubmitter || isProjectOwner;
+  const canManageTicket = isSubmitter || isAssigned || isProjectOwner || isProjectManager || isAdmin;
 
   return (
     <Segment.Group>
@@ -30,7 +32,7 @@ export default observer(function TicketDetailedHeader({ ticket }: Props) {
             <Item>
               <Item.Content>
                 <Header size="huge" content={ticket.title} />
-                {createdDate && <p>Created: {format(createdDate, "dd MMM yyyy 'at' HH:mm")}</p>}
+                <p>Created: {ticket.createdAt ? new Date(ticket.createdAt + 'Z').toUTCString().replace('GMT', '').trim().slice(0, -3) : 'Never'}</p>
                 <p>
                   Submitted by <strong>{ticket.submitter}</strong>
                 </p>

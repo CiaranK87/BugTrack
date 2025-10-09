@@ -14,6 +14,7 @@ namespace Application.Projects
         public class Query : IRequest<Result<List<ProjectDto>>>
         {
             public string UserId { get; set; }
+            public string GlobalRole { get; set; }
         }
 
         public class Handler : IRequestHandler<Query, Result<List<ProjectDto>>>
@@ -27,16 +28,30 @@ namespace Application.Projects
             _context = context;
             }
             public async Task<Result<List<ProjectDto>>> Handle(Query request, CancellationToken cancellationToken)
-{
-                var projects = await _context.Projects
-                    .Include(p => p.Tickets)
-                    .Include(p => p.Participants)
-                        .ThenInclude(p => p.AppUser)
-                    .Where(p => p.Participants.Any(pp => pp.AppUserId == request.UserId))
-                    .ToListAsync(cancellationToken);
+            {
+                if (request.GlobalRole == "Admin")
+                {
+                    var projects = await _context.Projects
+                        .Include(p => p.Tickets)
+                        .Include(p => p.Participants)
+                            .ThenInclude(p => p.AppUser)
+                        .ToListAsync(cancellationToken);
 
-                var projectDtos = _mapper.Map<List<ProjectDto>>(projects);
-                return Result<List<ProjectDto>>.Success(projectDtos);
+                    var projectDtos = _mapper.Map<List<ProjectDto>>(projects);
+                    return Result<List<ProjectDto>>.Success(projectDtos);
+                }
+                else
+                {
+                    var projects = await _context.Projects
+                        .Include(p => p.Tickets)
+                        .Include(p => p.Participants)
+                            .ThenInclude(p => p.AppUser)
+                        .Where(p => p.Participants.Any(pp => pp.AppUserId == request.UserId))
+                        .ToListAsync(cancellationToken);
+
+                    var projectDtos = _mapper.Map<List<ProjectDto>>(projects);
+                    return Result<List<ProjectDto>>.Success(projectDtos);
+                }
             }
         }
     }

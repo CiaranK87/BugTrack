@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { User, UserFormValues, UserSearchDto } from "../models/user";
+import { User, UserFormValues, UserSearchDto, UserDto } from "../models/user";
 import agent from "../api/agent";
 import { store } from "./store";
 import { router } from "../router/Routes";
@@ -12,6 +12,9 @@ export default class UserStore {
   loadingProfile = false;
   userSearchResults: UserSearchDto[] = [];
   loadingUsers = false;
+  users: UserDto[] = [];
+  loadingUserList = false;
+  updatingUserRole = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -45,6 +48,7 @@ export default class UserStore {
     runInAction(() => {
       this.user = user;
       this.userRegistry.set(user.username, user);
+      
     });
     router.navigate("/dashboard");
     store.modalStore.closeModal();
@@ -63,9 +67,18 @@ export default class UserStore {
       runInAction(() => {
         this.user = user;
         this.userRegistry.set(user.username, user);
+        
       });
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      // If we get a 401 error, clear the token and user
+      if (error?.response?.status === 401) {
+        runInAction(() => {
+          store.commonStore.setToken(null);
+          this.user = null;
+          this.userRegistry.clear();
+        });
+      }
     }
   };
 
@@ -134,6 +147,56 @@ export default class UserStore {
   
   return roles;
   }
+
+  get isAdmin() {
+    return this.user?.globalRole === "Admin";
+  }
+
+  get isProjectManager() {
+    return this.user?.globalRole === "ProjectManager";
+  }
+
+  get canCreateProjects() {
+    return this.isAdmin || this.isProjectManager;
+  }
+
+  loadUsers = async () => {
+    this.loadingUserList = true;
+    try {
+      const users = await agent.Users.list();
+      runInAction(() => {
+        this.users = users;
+      });
+    } catch (error) {
+      console.error("Failed to load users:", error);
+      throw error;
+    } finally {
+      runInAction(() => {
+        this.loadingUserList = false;
+      });
+    }
+  };
+
+  updateUserRole = async (userId: string, role: string) => {
+    this.updatingUserRole = true;
+    try {
+      const updatedUser = await agent.Users.updateRole(userId, role);
+      runInAction(() => {
+        const index = this.users.findIndex(u => u.id === userId);
+        if (index !== -1) {
+          this.users[index] = updatedUser;
+        }
+      });
+      return updatedUser;
+    } catch (error) {
+      console.error("Failed to update user role:", error);
+      throw error;
+    } finally {
+      runInAction(() => {
+        this.updatingUserRole = false;
+      });
+    }
+  };
   
   getUserById(username: string): User | undefined {
     return this.userRegistry.get(username);

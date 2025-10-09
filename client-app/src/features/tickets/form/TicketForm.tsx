@@ -18,11 +18,11 @@ import { severityOptions } from "../../../app/common/options/severityOptions";
 
 export default observer(function TicketForm() {
   const navigate = useNavigate();
-  const { ticketStore, projectStore } = useStore();
+  const { ticketStore, projectStore, userStore } = useStore();
   const { createTicket, updateTicket, loading, loadTicket, loadingInitial } = ticketStore;
-  const { loadProject, projectRegistry } = projectStore;
+  const { loadProject, projectRegistry, loadUserRoleForProject, projectRoles } = projectStore;
   const { id, projectId } = useParams<{ id: string; projectId: string }>();
-  const { user } = useStore().userStore;
+  const { user, isAdmin } = userStore;
 
   const [ticket, setTicket] = useState<Ticket>({
     id: "",
@@ -36,10 +36,11 @@ export default observer(function TicketForm() {
     startDate: null,
     endDate: null,
     projectId: projectId || "",
-    createdAt: new Date().toISOString()
+    createdAt: ""
   });
 
   const [projectUsersAsOptions, setProjectUsersAsOptions] = useState<{ text: string; value: string }[]>([]);
+  const [loadingUserRole, setLoadingUserRole] = useState(true);
 
 useEffect(() => {
   if (id) {
@@ -55,7 +56,11 @@ useEffect(() => {
 }, [id, loadTicket]);
 
 useEffect(() => {
-  if (projectId) {
+if (projectId) {
+  setLoadingUserRole(true);
+  
+  loadUserRoleForProject(projectId).then(() => {
+    setLoadingUserRole(false);
     loadProject(projectId).then(() => {
       const project = projectRegistry.get(projectId);
       const options = project?.participants?.map(p => ({
@@ -64,8 +69,9 @@ useEffect(() => {
       })) || [];
       setProjectUsersAsOptions(options);
     });
-  }
-}, [projectId, loadProject, projectRegistry]);
+  });
+}
+}, [projectId, loadProject, projectRegistry, loadUserRoleForProject]);
 
   const validationSchema = Yup.object({
     title: Yup.string().required("The ticket title is required"),
@@ -86,6 +92,7 @@ function handleFormSubmit(ticket: Ticket) {
       id: uuid(),
       submitter: user!.username,
       projectId: projectId!,
+      createdAt: new Date().toISOString()
     };
     createTicket(newTicket).then(() => {
       projectStore.loadProjects();
@@ -106,7 +113,21 @@ function handleFormSubmit(ticket: Ticket) {
   }
 }
 
-  if (loadingInitial) return <LoadingComponent content="Loading ticket..." />;
+  const userRole = projectRoles[projectId || ""];
+  const isSubmitter = ticket.submitter === user?.username;
+  const canEditTicket = isAdmin || userRole === "Owner" || userRole === "ProjectManager" || userRole === "Developer" || isSubmitter;
+
+  if (loadingInitial || loadingUserRole) return <LoadingComponent content="Loading ticket..." />;
+  
+  if (!canEditTicket) {
+    return (
+      <Segment>
+        <Header content="Access Denied" />
+        <p>You don't have permission to create or edit tickets in this project.</p>
+        <Button onClick={() => navigate(`/projects/${projectId}`)}>Back to Project</Button>
+      </Segment>
+    );
+  }
 
   return (
     <Segment clearing>

@@ -1,10 +1,13 @@
 using Application.Core;
 using Application.Tickets;
-using Application.DTOs;
+using Application.Interfaces;
 using AutoMapper;
 using Domain;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
+using Persistence;
 
 namespace API.Controllers
 {
@@ -14,27 +17,75 @@ namespace API.Controllers
     {
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
+        private readonly DataContext _context;
+        private readonly IUserAccessor _userAccessor;
 
-        public TicketsController(IMediator mediator, IMapper mapper)
+        public TicketsController(IMediator mediator, IMapper mapper, DataContext context, IUserAccessor userAccessor)
         {
             _mediator = mediator;
             _mapper = mapper;
+            _context = context;
+            _userAccessor = userAccessor;
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<TicketDto>> GetTicket(Guid id)
         {
-            var result = await _mediator.Send(new Details.Query { Id = id });
-            if (result.Value == null) return NotFound();
-
-            return Ok(_mapper.Map<TicketDto>(result.Value));
+            var globalRoleClaim = User.FindFirst("globalrole")?.Value;
+            var isGlobalAdmin = globalRoleClaim == "Admin";
             
+            var ticketResult = await _mediator.Send(new Details.Query { Id = id });
+            if (ticketResult.Value == null) return NotFound();
+            
+            var ticket = ticketResult.Value;
+            
+            if (!isGlobalAdmin)
+            {
+                var currentUserId = _userAccessor.GetUserId();
+                var currentUser = await _context.Users
+                    .AsNoTracking()
+                    .Where(u => u.Id == currentUserId)
+                    .Select(u => u.UserName)
+                    .FirstOrDefaultAsync();
+                
+                var isSubmitter = ticket.Submitter == currentUser;
+                
+                if (isSubmitter)
+                {
+                    return Ok(_mapper.Map<TicketDto>(ticket));
+                }
+                
+                var projectOwner = await _context.ProjectParticipants
+                    .AsNoTracking()
+                    .Where(pp => pp.AppUserId == currentUserId && pp.ProjectId == ticket.ProjectId && pp.IsOwner)
+                    .FirstOrDefaultAsync();
+                
+                var isProjectOwner = projectOwner != null;
+                
+                if (isProjectOwner)
+                {
+                    return Ok(_mapper.Map<TicketDto>(ticket));
+                }
+                
+                var authorized = await HttpContext.RequestServices
+                    .GetService<IAuthorizationService>()
+                    .AuthorizeAsync(User, ticket.ProjectId, "ProjectAnyRole");
+
+                if (!authorized.Succeeded)
+                    return Forbid();
+            }
+
+            return Ok(_mapper.Map<TicketDto>(ticket));
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<List<TicketDto>>> GetTickets()
         {
-            var result = await _mediator.Send(new Application.Tickets.List.Query());
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var globalRole = User.FindFirst("globalrole")?.Value;
+            
+            var result = await _mediator.Send(new Application.Tickets.List.Query { UserId = userId, GlobalRole = globalRole });
             if (!result.IsSuccess) return BadRequest(result.Error);
             
             var dtoList = result.Value.Select(t => _mapper.Map<TicketDto>(t)).ToList();
@@ -44,12 +95,26 @@ namespace API.Controllers
         [HttpGet("project/{projectId}")]
         public async Task<ActionResult<List<TicketDto>>> GetTicketsByProject(Guid projectId)
         {
+            var globalRoleClaim = User.FindFirst("globalrole")?.Value;
+            var isGlobalAdmin = globalRoleClaim == "Admin";
+            
+            if (!isGlobalAdmin)
+            {
+                var authorized = await HttpContext.RequestServices
+                    .GetService<IAuthorizationService>()
+                    .AuthorizeAsync(User, projectId, "ProjectAnyRole");
+
+                if (!authorized.Succeeded)
+                    return Forbid();
+            }
+
             var result = await _mediator.Send(new ListByProjectId.Query { ProjectId = projectId });
             var dtoList = result.Value.Select(t => _mapper.Map<TicketDto>(t)).ToList();
             return Ok(dtoList);
         }
 
         [HttpPost]
+        [Authorize(Policy = "ProjectContributor")]
         public async Task<IActionResult> CreateTicket([FromBody] TicketDto ticketDto)
         {
             var ticket = _mapper.Map<Ticket>(ticketDto);
@@ -59,9 +124,86 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> EditTicket(Guid id, [FromBody] EditTicketDto editDto)
         {
-            var ticket = _mapper.Map<Ticket>(editDto);
-            ticket.Id = id;
-            return HandleResult(await _mediator.Send(new Edit.Command { Ticket = ticket }));
+            var ticketResult = await _mediator.Send(new Details.Query { Id = id });
+            if (ticketResult.Value == null)
+            {
+                return NotFound();
+            }
+            
+            var ticket = ticketResult.Value;
+            
+            var globalRoleClaim = User.FindFirst("globalrole")?.Value;
+            var isGlobalAdmin = globalRoleClaim == "Admin";
+            
+            if (!isGlobalAdmin)
+            {
+                var currentUserId = _userAccessor.GetUserId();
+                var currentUser = await _context.Users
+                    .AsNoTracking()
+                    .Where(u => u.Id == currentUserId)
+                    .Select(u => u.UserName)
+                    .FirstOrDefaultAsync();
+                
+                var isSubmitter = ticket.Submitter == currentUser;
+                var isAssigned = ticket.Assigned == currentUser;
+                
+                if (!isSubmitter && !isAssigned)
+                {
+                    var authorized = await HttpContext.RequestServices
+                        .GetService<IAuthorizationService>()
+                        .AuthorizeAsync(User, ticket, "CanEditTicket");
+
+                    if (!authorized.Succeeded)
+                    {
+                        return Forbid();
+                    }
+                }
+            }
+
+            var updatedTicket = _mapper.Map<Ticket>(editDto);
+            updatedTicket.Id = id;
+            return HandleResult(await _mediator.Send(new Edit.Command { Ticket = updatedTicket }));
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteTicket(Guid id)
+        {
+            var ticketResult = await _mediator.Send(new Details.Query { Id = id });
+            if (ticketResult.Value == null)
+            {
+                return NotFound();
+            }
+            
+            var ticket = ticketResult.Value;
+            
+            var globalRoleClaim = User.FindFirst("globalrole")?.Value;
+            var isGlobalAdmin = globalRoleClaim == "Admin";
+            
+            if (!isGlobalAdmin)
+            {
+                var currentUserId = _userAccessor.GetUserId();
+                var currentUser = await _context.Users
+                    .AsNoTracking()
+                    .Where(u => u.Id == currentUserId)
+                    .Select(u => u.UserName)
+                    .FirstOrDefaultAsync();
+                
+                var isSubmitter = ticket.Submitter == currentUser;
+                
+                if (!isSubmitter)
+                {
+                    var authorized = await HttpContext.RequestServices
+                        .GetService<IAuthorizationService>()
+                        .AuthorizeAsync(User, ticket, "CanDeleteTicket");
+
+                    if (!authorized.Succeeded)
+                    {
+                        return Forbid();
+                    }
+                }
+            }
+
+            return HandleResult(await _mediator.Send(new Delete.Command { Id = id }));
         }
 
         private IActionResult HandleResult<T>(Result<T> result)

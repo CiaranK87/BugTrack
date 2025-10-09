@@ -38,7 +38,6 @@ namespace Application.Projects
                 if (participant == null)
                     return Result<Unit>.Failure("User is not a participant of this project");
 
-                // Prevent removing the last owner
                 var ownerCount = project.Participants.Count(p => p.IsOwner);
                 if (participant.IsOwner && ownerCount <= 1)
                     return Result<Unit>.Failure("Cannot remove the last owner from the project");
