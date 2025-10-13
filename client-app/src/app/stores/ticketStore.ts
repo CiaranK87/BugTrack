@@ -206,7 +206,12 @@ private setTicket = (ticket: Ticket) => {
     }
   };
   clear = () => {
-  this.ticketRegistry.clear();
-  this.selectedTicket = undefined;
-}
+    this.ticketRegistry.clear();
+    this.projectTickets.clear();
+    this.selectedTicket = undefined;
+    this.editMode = false;
+    this.loading = false;
+    this.loadingInitial = false;
+    this.loadingProjectIds.clear();
+  }
 }

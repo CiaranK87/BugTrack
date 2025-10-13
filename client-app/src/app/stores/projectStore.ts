@@ -177,9 +177,18 @@ export default class ProjectStore {
     }
   };
   clear = () => {
-  this.projectRegistry.clear();
-  this.selectedProject = undefined;
-}
+    this.projectRegistry.clear();
+    this.selectedProject = undefined;
+    this.editMode = false;
+    this.loading = false;
+    this.loadingInitial = false;
+    this.userProjects = [];
+    this.loadingUserProjects = false;
+    this.projectRoles = {};
+    this.projectParticipants.clear();
+    this.loadingParticipants = false;
+    this.submittingParticipant = false;
+  }
 
 //*************************************************PARTICIPANTS************************************************************** */
 

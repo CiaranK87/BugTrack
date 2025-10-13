@@ -58,6 +58,11 @@ export default class UserStore {
     store.commonStore.setToken(null);
     this.user = null;
     this.userRegistry.clear();
+    
+    // Clear all stores to prevent data persisting after logout
+    store.projectStore.clear();
+    store.ticketStore.clear();
+    
     router.navigate("/");
   };
 

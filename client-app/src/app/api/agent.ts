@@ -49,11 +49,17 @@ axios.interceptors.response.use(
         }
         break;
       case 401:
+        // Only show session expired toast if the user was previously logged in
+        const wasLoggedIn = store.userStore.user !== null;
         store.commonStore.setToken(null);
         store.userStore.user = null;
         store.userStore.userRegistry.clear();
+        store.projectStore.clear();
+        store.ticketStore.clear();
         router.navigate("/");
-        toast.error("Session expired. Please log in again.");
+        if (wasLoggedIn) {
+          toast.error("Session expired. Please log in again.");
+        }
         break;
       case 403:
         toast.error("Forbidden");

@@ -1,10 +1,7 @@
 using Application.Core;
 using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Persistence;
 
 namespace Application.Projects
@@ -20,7 +17,6 @@ namespace Application.Projects
         public class Handler : IRequestHandler<Query, Result<List<ProjectDto>>>
         {
         private readonly DataContext _context;
-        private readonly ILogger<List> _logger;
         private readonly IMapper _mapper;
             public Handler(DataContext context, IMapper mapper)
             {
