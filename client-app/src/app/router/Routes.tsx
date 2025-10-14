@@ -6,6 +6,7 @@ import ProjectDetails from "../../features/projects/details/ProjectDetails";
 import TestError from "../../features/errors/TestError";
 import NotFound from "../../features/errors/NotFound";
 import ServerError from "../../features/errors/ServerError";
+import NetworkError from "../../features/errors/NetworkError";
 import LoginForm from "../../features/users/LoginForm";
 import TicketDashboard from "../../features/tickets/dashboard/TicketDashboard";
 import TicketDetails from "../../features/tickets/details/TicketDetails";
@@ -39,6 +40,7 @@ export const routes: RouteObject[] = [
       { path: "errors", element: <TestError /> },
       { path: "not-found", element: <NotFound /> },
       { path: "server-error", element: <ServerError /> },
+      { path: "network-error", element: <NetworkError /> },
       { path: "*", element: <Navigate replace to="/not-found" /> },
     ],
   },

@@ -29,6 +29,13 @@ axios.interceptors.response.use(
     return response;
   },
   (error: AxiosError) => {
+    if (!error.response) {
+      router.navigate("/network-error", {
+        state: { from: window.location.pathname }
+      });
+      return Promise.reject(error);
+    }
+
     const { data, status, config } = error.response as AxiosResponse;
     switch (status) {
       case 400:
