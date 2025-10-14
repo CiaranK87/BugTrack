@@ -31,7 +31,6 @@ export default observer(function ProjectForm() {
   });
 
   function handleFormSubmit(project: ProjectFormValues) {
-  // Normalize startDate to UTC noon to preserve selected calendar day across timezones
   if (project.startDate) {
     const d = project.startDate as Date;
     const utcNoon = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), 12, 0, 0));
@@ -42,10 +41,8 @@ export default observer(function ProjectForm() {
       ...project,
       id: uuid(),
     };
-    console.log("Creating project:", newProject);
     createProject(newProject)
       .then(() => {
-        console.log("✅ Project created, navigating");
         navigate(`/projects/${newProject.id}`);
       })
       .catch(error => {
@@ -54,7 +51,6 @@ export default observer(function ProjectForm() {
   } else {
     updateProject(project)
       .then(() => {
-        console.log("✅ Project updated, navigating");
         navigate(`/projects/${project.id}`);
       })
       .catch(error => {

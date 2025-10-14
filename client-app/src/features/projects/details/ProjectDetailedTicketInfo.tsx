@@ -17,7 +17,7 @@ export default observer(function ProjectDetailedTicketInfo({ projectId }: Props)
 
   useEffect(() => {
     loadTicketsByProject(projectId);
-  }, [projectId]);
+  }, [projectId, loadTicketsByProject]);
 
 
   const getPriorityColor = (priority: string) => {

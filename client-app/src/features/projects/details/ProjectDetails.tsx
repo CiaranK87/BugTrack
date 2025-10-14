@@ -5,21 +5,19 @@ import { observer } from "mobx-react-lite";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import ProjectDetailedHeader from "./ProjectDetailedHeader";
-import ProjectDetailedInfo from "./ProjectDetailedInfo";
 import ProjectDetailedTicketInfo from "./ProjectDetailedTicketInfo";
 import ProjectParticipants from "./ProjectParticipants";
 
 export default observer(function ProjectDetails() {
-  const { ticketStore, projectStore } = useStore();
+  const { projectStore } = useStore();
   const { selectedProject, loadProject, loadingInitial } = projectStore;
   const { id } = useParams<{ id: string }>();
 
 useEffect(() => {
   if (id) {
     loadProject(id);
-    ticketStore.loadTicketsByProject(id);
   }
-}, [id]);
+}, [id, loadProject]);
 
   if (loadingInitial || !selectedProject) return <LoadingComponent />;
 
