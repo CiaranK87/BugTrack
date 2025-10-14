@@ -33,7 +33,18 @@ axios.interceptors.response.use(
     switch (status) {
       case 400:
         if (config.method === "get" && Object.prototype.hasOwnProperty.call(data.errors, "id")) {
-          router.navigate("/not-found");
+          let fromPath = window.location.pathname;
+          
+          if (config.url && config.url.includes('/tickets/')) {
+            fromPath = '/tickets';
+          }
+          else if (config.url && config.url.includes('/projects/')) {
+            fromPath = '/projects';
+          }
+          
+          router.navigate("/not-found", {
+            state: { from: fromPath }
+          });
         }
 
         if (data.errors) {
@@ -49,7 +60,6 @@ axios.interceptors.response.use(
         }
         break;
       case 401:
-        // Only show session expired toast if the user was previously logged in
         const wasLoggedIn = store.userStore.user !== null;
         store.commonStore.setToken(null);
         store.userStore.user = null;
@@ -65,7 +75,18 @@ axios.interceptors.response.use(
         toast.error("Forbidden");
         break;
       case 404:
-        router.navigate("/not-found");
+        let fromPath = window.location.pathname;
+        
+        if (config.url && config.url.includes('/tickets/')) {
+          fromPath = '/tickets';
+        }
+        else if (config.url && config.url.includes('/projects/')) {
+          fromPath = '/projects';
+        }
+        
+        router.navigate("/not-found", {
+          state: { from: fromPath }
+        });
         break;
       case 500:
         store.commonStore.setServerError(data);
