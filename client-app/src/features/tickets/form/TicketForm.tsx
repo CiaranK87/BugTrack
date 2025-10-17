@@ -36,7 +36,7 @@ export default observer(function TicketForm() {
     startDate: null,
     endDate: null,
     projectId: projectId || "",
-    createdAt: ""
+    createdAt: null
   });
 
   const [projectUsersAsOptions, setProjectUsersAsOptions] = useState<{ text: string; value: string }[]>([]);
@@ -92,7 +92,7 @@ function handleFormSubmit(ticket: Ticket) {
       id: uuid(),
       submitter: user!.username,
       projectId: projectId!,
-      createdAt: new Date().toISOString()
+      createdAt: new Date()
     };
     createTicket(newTicket).then(() => {
       projectStore.loadProjects();
@@ -111,6 +111,10 @@ function handleFormSubmit(ticket: Ticket) {
       navigate(`/projects/${projectId}`);
     });
   }
+}
+
+function handleCancel() {
+  navigate(`/projects/${projectId}`);
 }
 
   const userRole = projectRoles[projectId || ""];
@@ -161,7 +165,7 @@ function handleFormSubmit(ticket: Ticket) {
               type="submit"
               content="Submit"
             />
-            <Button floated="right" type="button" content="Cancel" />
+            <Button floated="right" type="button" content="Cancel" onClick={handleCancel} />
           </Form>
         )}
       </Formik>

@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { Button, Header, Item, Segment } from "semantic-ui-react";
+import { Button, Header, Item, Segment, Image } from "semantic-ui-react";
 import { Ticket } from "../../../app/models/ticket";
 import { Link } from "react-router-dom";
 import { useStore } from "../../../app/stores/store";
@@ -33,17 +33,28 @@ export default observer(function TicketDetailedHeader({ ticket }: Props) {
               <Item.Content>
                 <Header size="huge" content={ticket.title} />
                 <p>Created: {ticket.createdAt ? new Date(ticket.createdAt + 'Z').toUTCString().replace('GMT', '').trim().slice(0, -3) : 'Never'}</p>
-                <p>
-                  Submitted by <strong>{ticket.submitter}</strong>
-                </p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginTop: '10px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <Image avatar size="mini" src="/assets/user.png" style={{ marginRight: '8px' }} />
+                    <span style={{ fontSize: '0.9em', color: '#666' }}>
+                      Submitted by <strong>{ticket.submitter}</strong>
+                    </span>
+                  </div>
+                  {ticket.assigned && (
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <Image avatar size="mini" src="/assets/user.png" style={{ marginRight: '8px' }} />
+                      <span style={{ fontSize: '0.9em', color: '#666' }}>
+                        Assigned to <strong>{ticket.assigned}</strong>
+                      </span>
+                    </div>
+                  )}
+                </div>
               </Item.Content>
             </Item>
           </Item.Group>
         </Segment>
       </Segment>
       <Segment clearing attached="bottom">
-        <Button color="teal">Collaborate</Button>
-        <Button>Cancel collaboration</Button>
         {canManageTicket && (
           <Button as={Link} to={`/projects/${ticket.projectId}/tickets/${ticket.id}`} color="orange" floated="right">
             Manage Ticket

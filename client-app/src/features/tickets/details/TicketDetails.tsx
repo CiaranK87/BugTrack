@@ -7,7 +7,6 @@ import { useEffect } from "react";
 import TicketDetailedHeader from "./TicketDetailedHeader";
 import TicketDetailedInfo from "./TicketDetailedInfo";
 import TicketDetailedChat from "./TicketDetailedChat";
-import TicketDetailedSidebar from "./TicketDetailedSidebar";
 
 export default observer(function TicketDetails() {
   const { ticketStore } = useStore();
@@ -25,10 +24,9 @@ export default observer(function TicketDetails() {
       <Grid.Column width={10}>
         <TicketDetailedHeader ticket={ticket} />
         <TicketDetailedInfo ticket={ticket} />
-        <TicketDetailedChat />
       </Grid.Column>
       <Grid.Column width={6}>
-        <TicketDetailedSidebar />
+        <TicketDetailedChat />
       </Grid.Column>
     </Grid>
   );
