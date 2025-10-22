@@ -11,6 +11,7 @@ export interface UserFormValues {
   password: string;
   displayName?: string;
   username?: string;
+  role?: string;
 }
 
 export interface UserSearchDto {

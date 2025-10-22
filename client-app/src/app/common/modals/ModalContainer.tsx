@@ -6,13 +6,14 @@ export default observer(function ModalContainer() {
   const { modalStore } = useStore();
 
   return (
-    <Modal 
-      open={modalStore.open} 
-      onClose={modalStore.closeModal} 
+    <Modal
+      open={modalStore.open}
+      onClose={modalStore.closeModal}
       size="mini"
       dimmer="blurring"
+      centered={true}
     >
-      <Modal.Content style={{ padding: '2rem' }}>
+      <Modal.Content style={{ padding: '1.5rem' }}>
         {modalStore.body}
       </Modal.Content>
     </Modal>

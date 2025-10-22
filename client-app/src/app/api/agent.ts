@@ -139,6 +139,7 @@ const Account = {
   current: () => requests.get<User>("/account"),
   login: (user: UserFormValues) => requests.post<User>("/account/login", user),
   register: (user: UserFormValues) => requests.post<User>("/account/register", user),
+  adminRegister: (user: UserFormValues) => requests.post<User>("/account/admin/register", user),
 };
 
 const Profiles = {
@@ -150,6 +151,8 @@ const Users = {
   search: (query: string) => requests.get<UserSearchDto[]>(`/users/search?query=${query}`),
   list: () => requests.get<UserDto[]>("/users/list"),
   updateRole: (userId: string, role: string) => requests.put<UserDto>(`/users/${userId}/role`, { role }),
+  update: (userId: string, user: Partial<UserDto>) => requests.put<UserDto>(`/users/${userId}`, user),
+  delete: (userId: string) => requests.del<void>(`/users/${userId}`),
 };
 
 const agent = {

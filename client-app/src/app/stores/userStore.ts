@@ -54,14 +54,28 @@ export default class UserStore {
     store.modalStore.closeModal();
   };
 
+  adminRegister = async (creds: UserFormValues) => {
+    try {
+      const user = await agent.Account.adminRegister(creds);
+      runInAction(() => {
+        this.loadUsers();
+      });
+      return user;
+    } catch (error) {
+      console.error("Failed to create user:", error);
+      throw error;
+    }
+  };
+
   logout = () => {
-    store.commonStore.setToken(null);
-    this.user = null;
-    this.userRegistry.clear();
-    
-    // Clear all stores to prevent data persisting after logout
-    store.projectStore.clear();
-    store.ticketStore.clear();
+    runInAction(() => {
+      store.commonStore.setToken(null);
+      this.user = null;
+      this.userRegistry.clear();
+      
+      store.projectStore.clear();
+      store.ticketStore.clear();
+    });
     
     router.navigate("/");
   };
@@ -76,7 +90,6 @@ export default class UserStore {
       });
     } catch (error: any) {
       console.log(error);
-      // If we get a 401 error, clear the token and user
       if (error?.response?.status === 401) {
         runInAction(() => {
           store.commonStore.setToken(null);
@@ -200,6 +213,34 @@ export default class UserStore {
       runInAction(() => {
         this.updatingUserRole = false;
       });
+    }
+  };
+
+  updateUser = async (userId: string, user: Partial<UserDto>) => {
+    try {
+      const updatedUser = await agent.Users.update(userId, user);
+      runInAction(() => {
+        const index = this.users.findIndex(u => u.id === userId);
+        if (index !== -1) {
+          this.users[index] = updatedUser;
+        }
+      });
+      return updatedUser;
+    } catch (error) {
+      console.error("Failed to update user:", error);
+      throw error;
+    }
+  };
+
+  deleteUser = async (userId: string) => {
+    try {
+      await agent.Users.delete(userId);
+      runInAction(() => {
+        this.users = this.users.filter(u => u.id !== userId);
+      });
+    } catch (error) {
+      console.error("Failed to delete user:", error);
+      throw error;
     }
   };
   

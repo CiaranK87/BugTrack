@@ -70,6 +70,47 @@ namespace API.Controllers
             return BadRequest(result.Errors);
         }
 
+        [Authorize(Policy = "CanManageGlobalRoles")]
+        [HttpPost("admin/register")]
+        public async Task<ActionResult<UserDto>> AdminRegister([FromBody] AdminRegisterDto registerDto)
+        {
+            if (await _userManager.Users.AnyAsync(x => x.UserName == registerDto.Username))
+            {
+                ModelState.AddModelError("username", "Username is already taken");
+                return ValidationProblem();
+            }
+            if (await _userManager.Users.AnyAsync(x => x.Email == registerDto.Email))
+            {
+                ModelState.AddModelError("email", "Email is already taken");
+                return ValidationProblem();
+            }
+
+            var user = new AppUser
+            {
+                DisplayName = registerDto.DisplayName,
+                Email = registerDto.Email,
+                UserName = registerDto.Username,
+                JobTitle = registerDto.JobTitle
+            };
+
+            var result = await _userManager.CreateAsync(user, registerDto.Password);
+
+            if (result.Succeeded)
+            {
+                var roleToSet = registerDto.Role ?? "User";
+                user.GlobalRole = roleToSet;
+                await _context.SaveChangesAsync();
+                
+                var createdUser = await _context.Users
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(u => u.Id == user.Id);
+                
+                return CreateUserObject(createdUser);
+            }
+
+            return BadRequest(result.Errors);
+        }
+
         [Authorize]
         [HttpGet]
         public async Task<ActionResult<UserDto>> GetCurrentUser()

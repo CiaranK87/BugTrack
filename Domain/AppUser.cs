@@ -8,6 +8,8 @@ namespace Domain
         public string JobTitle { get; set; }
         public string Bio { get; set; }
         public string GlobalRole { get; set; } = "User";
+        public bool IsDeleted { get; set; } = false;
+        public DateTime? DeletedAt { get; set; }
         public ICollection<ProjectParticipant> ProjectParticipants { get; set; }
     }
 }
