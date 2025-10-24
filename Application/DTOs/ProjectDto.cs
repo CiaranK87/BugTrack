@@ -18,6 +18,10 @@ namespace Application.Projects
 
         public bool IsCancelled { get; set; }
 
+        public bool IsDeleted { get; set; }
+
+        public DateTime? DeletedDate { get; set; }
+
         public int TicketCount { get; set; }
 
         public ProfileDto Owner { get; set; }

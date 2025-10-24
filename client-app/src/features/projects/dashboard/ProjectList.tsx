@@ -17,7 +17,7 @@ export default observer(function ProjectList() {
           <Button as={NavLink} to="/createProject" basic color="teal" content="Create Project" size="small"/>
         )}
       </div>
-      {projectsByStartDate.map((project) => (
+      {projectsByStartDate.filter(p => !p.isDeleted).map((project) => (
           <ProjectListItem key={project.id} project={project} />
       ))}
     </>

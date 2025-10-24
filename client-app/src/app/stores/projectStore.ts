@@ -42,6 +42,22 @@ export default class ProjectStore {
     }
   };
 
+  loadDeletedProjects = async () => {
+    this.setLoadingInitial(true);
+    try {
+      const projects = await agent.Projects.listDeleted();
+      runInAction(() => {
+        projects.forEach((project) => {
+          this.setProject(project);
+        });
+        this.setLoadingInitial(false);
+      });
+    } catch (error) {
+      console.log(error);
+      this.setLoadingInitial(false);
+    }
+  };
+
   loadProject = async (id: string) => {
     this.setLoadingInitial(true);
     try {
@@ -149,6 +165,22 @@ export default class ProjectStore {
     this.loading = true;
     try {
       await agent.Projects.delete(id);
+      runInAction(() => {
+        this.projectRegistry.delete(id);
+        this.loading = false;
+      });
+    } catch (error) {
+      console.log(error);
+      runInAction(() => {
+        this.loading = false;
+      });
+    }
+  };
+
+  adminDeleteProject = async (id: string) => {
+    this.loading = true;
+    try {
+      await agent.Projects.adminDelete(id);
       runInAction(() => {
         this.projectRegistry.delete(id);
         this.loading = false;

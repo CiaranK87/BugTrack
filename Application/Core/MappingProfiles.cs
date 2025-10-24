@@ -48,6 +48,10 @@ namespace Application.Core
             CreateMap<EditTicketDto, Ticket>()
                 .ForMember(dest => dest.Submitter, opt => opt.Ignore())
                 .ForMember(dest => dest.CreatedAt, opt => opt.Ignore());
+            
+            // Ticket with Project
+            CreateMap<Ticket, TicketDto>()
+                .ForMember(dest => dest.ProjectTitle, opt => opt.MapFrom(src => src.Project != null ? src.Project.ProjectTitle : null));
         }
     }
 }

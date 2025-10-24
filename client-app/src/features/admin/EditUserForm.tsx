@@ -6,7 +6,7 @@ import { observer } from "mobx-react-lite";
 import * as Yup from "yup";
 import ValidationError from "../errors/ValidationError";
 
-export default observer(function EditUserForm({ userId }: { userId: string }) {
+export default observer(function EditUserForm({ userId, onSuccess }: { userId: string; onSuccess?: () => void }) {
   const { userStore, modalStore } = useStore();
   const user = userStore.users.find(u => u.id === userId);
 
@@ -35,6 +35,7 @@ export default observer(function EditUserForm({ userId }: { userId: string }) {
           return userStore.updateUser(userId, updateData)
             .then(() => {
               modalStore.closeModal();
+              if (onSuccess) onSuccess();
             })
             .catch((error) => setErrors({ error }));
         }}

@@ -54,7 +54,7 @@ namespace API.Controllers
                     return Forbid();
             }
 
-            return HandleResult(await Mediator.Send(new Details.Query { Id = projectId }));
+            return HandleResult(await Mediator.Send(new Details.Query { Id = projectId, IsAdmin = isGlobalAdmin }));
         }
 
 
@@ -94,6 +94,20 @@ namespace API.Controllers
             if (!authorized.Succeeded) return Forbid();
 
             return HandleResult(await Mediator.Send(new Delete.Command { Id = projectId }));
+        }
+
+        [Authorize(Policy = "RequireAdminRole")]
+        [HttpDelete("{projectId}/admin-delete")]
+        public async Task<IActionResult> AdminDeleteProject(Guid projectId)
+        {
+            return HandleResult(await Mediator.Send(new Delete.Command { Id = projectId }));
+        }
+
+        [Authorize(Policy = "RequireAdminRole")]
+        [HttpGet("admin/deleted")]
+        public async Task<IActionResult> GetDeletedProjects()
+        {
+            return HandleResult(await Mediator.Send(new ListDeleted.Query()));
         }
 
         [Authorize]

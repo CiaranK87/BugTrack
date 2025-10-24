@@ -30,8 +30,10 @@ axios.interceptors.response.use(
   },
   (error: AxiosError) => {
     if (!error.response) {
+      const currentPath = window.location.pathname;
+      localStorage.setItem('lastValidPath', currentPath);
       router.navigate("/network-error", {
-        state: { from: window.location.pathname }
+        state: { from: currentPath }
       });
       return Promise.reject(error);
     }
@@ -117,6 +119,8 @@ const Projects = {
   create: (project: ProjectFormValues) => requests.post<void>("/projects", project),
   update: (project: ProjectFormValues) => requests.put<void>(`/projects/${project.id}`, project),
   delete: (id: string) => requests.del<void>(`/projects/${id}`),
+  adminDelete: (id: string) => requests.del<void>(`/projects/${id}/admin-delete`),
+  listDeleted: () => requests.get<Project[]>("/projects/admin/deleted"),
   participate: (id: string) => requests.post<void>(`/projects/${id}/participate`, {}),
   getUserProjects: (username: string) => requests.get<Project[]>(`/profiles/${username}/projects`),
   getUserRole: (projectId: string) => requests.get<string>(`/projects/${projectId}/role`),

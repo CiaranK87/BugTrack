@@ -42,7 +42,7 @@ namespace Application.Projects
                         .Include(p => p.Tickets)
                         .Include(p => p.Participants)
                             .ThenInclude(p => p.AppUser)
-                        .Where(p => p.Participants.Any(pp => pp.AppUserId == request.UserId))
+                        .Where(p => !p.IsDeleted && p.Participants.Any(pp => pp.AppUserId == request.UserId))
                         .ToListAsync(cancellationToken);
 
                     var projectDtos = _mapper.Map<List<ProjectDto>>(projects);

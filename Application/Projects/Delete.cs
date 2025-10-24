@@ -23,9 +23,10 @@ namespace Application.Projects
             {
                 var project = await _context.Projects.FindAsync(request.Id);
 
-                if(project == null) return null; 
+                if(project == null) return null;
 
-                _context.Remove(project);
+                project.IsDeleted = true;
+                project.DeletedDate = DateTime.UtcNow;
 
                 var result = await _context.SaveChangesAsync() > 0;
 

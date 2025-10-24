@@ -1,3 +1,5 @@
+import { Project } from "./project";
+
 export interface Ticket {
   id: string;
   title: string;
@@ -12,6 +14,8 @@ export interface Ticket {
   updated?: Date | null;
   createdAt?: Date | null;
   projectId: string;
+  projectTitle?: string;
+  project?: Project;
 }
 
 export interface TicketFormValues {

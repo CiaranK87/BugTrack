@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { Button, Header, Item, Segment, Image } from "semantic-ui-react";
 import { Ticket } from "../../../app/models/ticket";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useStore } from "../../../app/stores/store";
 
 interface Props {
@@ -9,10 +9,12 @@ interface Props {
 }
 
 export default observer(function TicketDetailedHeader({ ticket }: Props) {
-
+  const navigate = useNavigate();
   const { projectStore, userStore } = useStore();
   const currentUser = userStore.user;
-  const project = projectStore.projectRegistry.get(ticket.projectId);
+  
+  // Use project from ticket if available, otherwise try to get from store
+  const project = ticket.project || projectStore.projectRegistry.get(ticket.projectId);
 
   const isSubmitter = ticket.submitter === currentUser?.username;
   const isAssigned = ticket.assigned === currentUser?.username;
@@ -31,7 +33,21 @@ export default observer(function TicketDetailedHeader({ ticket }: Props) {
           <Item.Group>
             <Item>
               <Item.Content>
-                <Header size="huge" content={ticket.title} />
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <Header size="huge" content={ticket.title} />
+                  {(project || ticket.projectTitle) && (
+                    <span
+                      style={{
+                        fontSize: '0.9em',
+                        color: '#666',
+                        cursor: 'pointer'
+                      }}
+                      onClick={() => navigate(`/projects/${ticket.projectId}`)}
+                    >
+                      Project - <strong>{project?.projectTitle || ticket.projectTitle}</strong>
+                    </span>
+                  )}
+                </div>
                 <p>Created: {ticket.createdAt ? new Date(ticket.createdAt + 'Z').toUTCString().replace('GMT', '').trim().slice(0, -3) : 'Never'}</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginTop: '10px' }}>
                   <div style={{ display: 'flex', alignItems: 'center' }}>

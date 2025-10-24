@@ -3,15 +3,27 @@ import { Button, Icon, Item, Label, Segment } from "semantic-ui-react";
 import { Project } from "../../../app/models/project";
 import ProjectListItemParticipant from "./ProjectListItemParticipant";
 import { format } from "date-fns";
+import { useStore } from "../../../app/stores/store";
 
 interface Props {
   project: Project;
 }
 
 export default function ProjectListItem({ project }: Props) {
+  const { projectStore, userStore } = useStore();
+  const { adminDeleteProject } = projectStore;
+  const { user } = userStore;
+  const isAdmin = user?.globalRole === "Admin";
+
+  const handleAdminDelete = async () => {
+    if (window.confirm("Are you sure you want to delete this project?")) {
+      await adminDeleteProject(project.id);
+    }
+  };
   return (
     <Segment.Group style={{ marginBottom: "30px" }}>
       <Segment>
+        {project.isDeleted && <Label attached="top" color="black" content="Deleted" style={{ textAlign: "center" }} />}
         {project.isCancelled && <Label attached="top" color="red" content="Cancelled" style={{ textAlign: "center" }} />}
         <Item.Group>
           <Item>
@@ -54,6 +66,15 @@ export default function ProjectListItem({ project }: Props) {
       <Segment clearing>
         <span>description - {project.description}</span>
         <Button as={Link} to={`/projects/${project.id}`} color="teal" floated="right" content="View" />
+        {isAdmin && !project.isDeleted && (
+          <Button
+            color="red"
+            floated="right"
+            content="Delete"
+            onClick={handleAdminDelete}
+            style={{ marginRight: '10px' }}
+          />
+        )}
       </Segment>
     </Segment.Group>
   );

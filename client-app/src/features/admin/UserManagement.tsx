@@ -1,23 +1,25 @@
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
-import { Header, Segment, Table, Dropdown, Label, Icon, Loader, Button, Confirm } from "semantic-ui-react";
+import { Header, Segment, Table, Dropdown, Label, Icon, Loader, Button, Confirm, Tab } from "semantic-ui-react";
 import { useStore } from "../../app/stores/store";
 import { toast } from "react-toastify";
 import AdminRegisterForm from "./AdminRegisterForm";
 import EditUserForm from "./EditUserForm";
+import DeletedProjectsManagement from "./DeletedProjectsManagement";
 
 export default observer(function UserManagement() {
   const { userStore, modalStore } = useStore();
   const { users, loadingUserList: loading, updateUserRole, updatingUserRole, deleteUser, user: currentUser } = userStore;
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleteUserId, setDeleteUserId] = useState("");
+  const [activeTab, setActiveTab] = useState(0);
 
   useEffect(() => {
     userStore.loadUsers();
   }, [userStore]);
 
   const handleEdit = (userId: string) => {
-    modalStore.openModal(<EditUserForm userId={userId} />);
+    modalStore.openModal(<EditUserForm userId={userId} onSuccess={() => userStore.loadUsers()} />);
   };
 
   const handleDelete = (userId: string) => {
@@ -72,92 +74,116 @@ export default observer(function UserManagement() {
     );
   }
 
+  const panes = [
+    {
+      menuItem: 'User Management',
+      render: () => (
+        <Segment attached="bottom">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <Header as="h2" icon="users" content="User Management" subheader="Manage global user roles" />
+            <Button
+              positive
+              content="Add New User"
+              icon="user plus"
+              onClick={() => modalStore.openModal(<AdminRegisterForm />)}
+              size="small"
+            />
+          </div>
+          
+          <Table celled>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell>Username</Table.HeaderCell>
+                <Table.HeaderCell>Display Name</Table.HeaderCell>
+                <Table.HeaderCell>Email</Table.HeaderCell>
+                <Table.HeaderCell>Global Role</Table.HeaderCell>
+                <Table.HeaderCell>Job Title</Table.HeaderCell>
+                <Table.HeaderCell>Actions</Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
+              {users.map((user) => (
+                <Table.Row key={user.id}>
+                  <Table.Cell>
+                    <Header as="h4" image>
+                      <Icon name="user" />
+                      <Header.Content>{user.username}</Header.Content>
+                    </Header>
+                  </Table.Cell>
+                  <Table.Cell>{user.displayName}</Table.Cell>
+                  <Table.Cell>{user.email}</Table.Cell>
+                  <Table.Cell>
+                    <Label color={getRoleColor(user.globalRole)} size="large">
+                      {user.globalRole}
+                    </Label>
+                  </Table.Cell>
+                  <Table.Cell>{user.jobTitle || "N/A"}</Table.Cell>
+                  <Table.Cell>
+                    <Button.Group>
+                      <Button
+                        icon="edit"
+                        color="blue"
+                        onClick={() => handleEdit(user.id)}
+                        disabled={user.globalRole === "Admin" && user.username !== currentUser?.username}
+                        title="Edit User"
+                      />
+                      <Button
+                        icon="trash"
+                        color="red"
+                        onClick={() => handleDelete(user.id)}
+                        disabled={user.globalRole === "Admin" || user.username === currentUser?.username}
+                        title="Delete User"
+                      />
+                      <Dropdown
+                        text="Role"
+                        icon="user"
+                        floating
+                        labeled
+                        button
+                        className="icon"
+                        loading={updatingUserRole}
+                        disabled={updatingUserRole || (user.globalRole === "Admin" && user.username !== currentUser?.username)}
+                      >
+                        <Dropdown.Menu>
+                          {roleOptions.map((option) => (
+                            <Dropdown.Item
+                              key={option.key}
+                              active={user.globalRole === option.value}
+                              onClick={() => handleRoleChange(user.id, option.value)}
+                              disabled={user.globalRole === option.value || (user.globalRole === "Admin" && user.username !== currentUser?.username)}
+                            >
+                              {option.text}
+                            </Dropdown.Item>
+                          ))}
+                        </Dropdown.Menu>
+                      </Dropdown>
+                    </Button.Group>
+                  </Table.Cell>
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table>
+        </Segment>
+      )
+    },
+    {
+      menuItem: 'Deleted Projects',
+      render: () => (
+        <Segment attached="bottom">
+          <DeletedProjectsManagement />
+        </Segment>
+      )
+    }
+  ];
+
   return (
-    <Segment>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-        <Header as="h2" icon="users" content="User Management" subheader="Manage global user roles" />
-        <Button
-          positive
-          content="Add New User"
-          icon="user plus"
-          onClick={() => modalStore.openModal(<AdminRegisterForm />)}
-          size="small"
-        />
-      </div>
-      
-      <Table celled>
-        <Table.Header>
-          <Table.Row>
-            <Table.HeaderCell>Username</Table.HeaderCell>
-            <Table.HeaderCell>Display Name</Table.HeaderCell>
-            <Table.HeaderCell>Email</Table.HeaderCell>
-            <Table.HeaderCell>Global Role</Table.HeaderCell>
-            <Table.HeaderCell>Job Title</Table.HeaderCell>
-            <Table.HeaderCell>Actions</Table.HeaderCell>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          {users.map((user) => (
-            <Table.Row key={user.id}>
-              <Table.Cell>
-                <Header as="h4" image>
-                  <Icon name="user" />
-                  <Header.Content>{user.username}</Header.Content>
-                </Header>
-              </Table.Cell>
-              <Table.Cell>{user.displayName}</Table.Cell>
-              <Table.Cell>{user.email}</Table.Cell>
-              <Table.Cell>
-                <Label color={getRoleColor(user.globalRole)} size="large">
-                  {user.globalRole}
-                </Label>
-              </Table.Cell>
-              <Table.Cell>{user.jobTitle || "N/A"}</Table.Cell>
-              <Table.Cell>
-                <Button.Group>
-                  <Button
-                    icon="edit"
-                    color="blue"
-                    onClick={() => handleEdit(user.id)}
-                    disabled={user.globalRole === "Admin" && user.username !== currentUser?.username}
-                    title="Edit User"
-                  />
-                  <Button
-                    icon="trash"
-                    color="red"
-                    onClick={() => handleDelete(user.id)}
-                    disabled={user.globalRole === "Admin" || user.username === currentUser?.username}
-                    title="Delete User"
-                  />
-                  <Dropdown
-                    text="Role"
-                    icon="user"
-                    floating
-                    labeled
-                    button
-                    className="icon"
-                    loading={updatingUserRole}
-                    disabled={updatingUserRole || (user.globalRole === "Admin" && user.username !== currentUser?.username)}
-                  >
-                    <Dropdown.Menu>
-                      {roleOptions.map((option) => (
-                        <Dropdown.Item
-                          key={option.key}
-                          active={user.globalRole === option.value}
-                          onClick={() => handleRoleChange(user.id, option.value)}
-                          disabled={user.globalRole === option.value || (user.globalRole === "Admin" && user.username !== currentUser?.username)}
-                        >
-                          {option.text}
-                        </Dropdown.Item>
-                      ))}
-                    </Dropdown.Menu>
-                  </Dropdown>
-                </Button.Group>
-              </Table.Cell>
-            </Table.Row>
-          ))}
-        </Table.Body>
-      </Table>
+    <div>
+      <Tab
+        menu={{ attached: true, tabular: true }}
+        panes={panes}
+        activeIndex={activeTab}
+        onTabChange={(_, data) => setActiveTab(data.activeIndex as number)}
+      />
       
       <Confirm
         open={confirmOpen}
@@ -165,6 +191,6 @@ export default observer(function UserManagement() {
         onCancel={() => setConfirmOpen(false)}
         onConfirm={confirmDelete}
       />
-    </Segment>
+    </div>
   );
 });

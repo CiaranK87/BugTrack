@@ -1,6 +1,7 @@
 using Application.Core;
 using Domain;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace Application.Tickets
@@ -22,7 +23,9 @@ namespace Application.Tickets
 
             public async Task<Result<Ticket>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var ticket = await _context.Tickets.FindAsync(request.Id);
+                var ticket = await _context.Tickets
+                    .Include(t => t.Project)
+                    .FirstOrDefaultAsync(t => t.Id == request.Id);
 
                 return Result<Ticket>.Success(ticket);
             }

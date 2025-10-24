@@ -13,4 +13,5 @@ public class TicketDto
     public DateTime? EndDate { get; set; }
     public DateTime Updated { get; set; }
     public Guid ProjectId { get; set; }
+    public string ProjectTitle { get; set; }
 }

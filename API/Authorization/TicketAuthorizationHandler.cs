@@ -150,12 +150,8 @@ namespace API.Authorization
                     break;
 
                 case TicketOperation.Delete:
-                    // Owners and ProjectManagers can delete tickets
-                    // Also, ticket submitters can delete their own tickets
-                    if (participant.IsOwner ||
-                        role == "Owner" ||
-                        role == "ProjectManager" ||
-                        (!string.IsNullOrEmpty(ticketSubmitter) && ticketSubmitter == currentUser))
+                    // Only ticket submitters can delete their own tickets
+                    if (!string.IsNullOrEmpty(ticketSubmitter) && ticketSubmitter == currentUser)
                     {
                         context.Succeed(requirement);
                     }
