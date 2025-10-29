@@ -11,8 +11,8 @@ export default observer(function ProjectDashboard() {
   const { loadProjects, projectRegistry } = projectStore;
 
   useEffect(() => {
-    if (projectRegistry.size <= 1) loadProjects();
-  }, [loadProjects, projectRegistry.size]);
+    loadProjects();
+  }, [loadProjects]);
 
   if (projectStore.loadingInitial) return <LoadingComponent content="Loading Projects..." />;
 
