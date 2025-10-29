@@ -1,4 +1,4 @@
-import { Segment, List, Label, Item, Image } from "semantic-ui-react";
+import { Segment, List, Item, Image } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import { Profile } from "../../../app/models/profile";
@@ -17,10 +17,7 @@ export default observer(function ProjectDetailedSidebar({ participants }: Props)
         <List relaxed divided>
           {participants.map((participant) => (
             <Item style={{ position: "relative" }} key={participant.username}>
-              <Label style={{ position: "absolute" }} color="orange" ribbon="right">
-                Owner
-              </Label>
-              <Image size="tiny" src={participant.image || "/assets/user.png"} />
+              <Image size="tiny" src="/assets/user.png" />
               <Item.Content verticalAlign="middle">
                 <Item.Header as="h3">
                   <Link to={`/profiles/${participant.username}`}>{participant.displayName}</Link>

@@ -16,14 +16,17 @@ export default observer(function ProjectDetailedInfo({ project: { participants, 
       </Segment>
       <Segment attached>
         <List relaxed divided>
-          {participants.map((participant) => (
+          {participants
+            .slice()
+            .sort((a, b) => a.username === owner?.username ? -1 : b.username === owner?.username ? 1 : 0)
+            .map((participant) => (
             <Item style={{ position: "relative" }} key={participant.username}>
               {participant.username === owner?.username && (
                 <Label style={{ position: "absolute" }} color="orange" ribbon="right">
                   Owner
                 </Label>
               )}
-              <Image size="tiny" src={participant.image || "/assets/user.png"} />
+              <Image size="tiny" src="/assets/user.png" />
               <Item.Content verticalAlign="middle">
                 <Item.Header as="h3">
                   <Link to={`/profiles/${participant.username}`}>{participant.displayName}</Link>

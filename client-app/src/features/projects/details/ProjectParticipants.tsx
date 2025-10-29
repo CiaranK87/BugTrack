@@ -91,7 +91,10 @@ export default observer(function ProjectParticipants({ projectId }: Props) {
         </Table.Header>
         
         <Table.Body>
-          {currentProjectParticipants.map(participant => (
+          {currentProjectParticipants
+            .slice()
+            .sort((a, b) => a.isOwner && !b.isOwner ? -1 : !a.isOwner && b.isOwner ? 1 : 0)
+            .map(participant => (
             <Table.Row key={participant.userId}>
               <Table.Cell>{participant.displayName}</Table.Cell>
               <Table.Cell>{participant.username}</Table.Cell>

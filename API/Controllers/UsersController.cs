@@ -25,8 +25,8 @@ public class UsersController : ControllerBase
 
         var users = await _context.Users
             .Where(u =>
-                (u.DisplayName != null && u.DisplayName.Contains(query)) ||
-                u.UserName.Contains(query)
+                (u.DisplayName != null && u.DisplayName.ToLower().Contains(query.ToLower())) ||
+                u.UserName.ToLower().Contains(query.ToLower())
             )
             .Select(u => new UserSearchDto
             {
