@@ -11,7 +11,8 @@ namespace Application.Tickets
     {
         public class Command : IRequest<Result<Unit>>
         {
-            public Ticket Ticket { get; set; }
+            public EditTicketDto EditDto { get; set; }
+            public Guid Id { get; set; }
         }
 
         public class Handler : IRequestHandler<Command, Result<Unit>>
@@ -27,41 +28,28 @@ namespace Application.Tickets
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
-                var ticket = await _context.Tickets.FindAsync(request.Ticket.Id);
+                var ticket = await _context.Tickets.FindAsync(request.Id);
                 if (ticket == null) return null;
 
+                // Store the original submitter
                 var existingSubmitter = ticket.Submitter;
 
-                _mapper.Map(request.Ticket, ticket);
-
+                // Update the ticket properties manually instead of using AutoMapper
+                ticket.Title = request.EditDto.Title;
+                ticket.Description = request.EditDto.Description;
+                ticket.Assigned = request.EditDto.Assigned;
+                ticket.Priority = request.EditDto.Priority;
+                ticket.Severity = request.EditDto.Severity;
+                ticket.Status = request.EditDto.Status;
+                ticket.StartDate = request.EditDto.StartDate ?? DateTime.UtcNow;
+                ticket.EndDate = request.EditDto.EndDate ?? DateTime.UtcNow;
+                
+                // Preserve the original submitter and set updated timestamp
                 ticket.Submitter = existingSubmitter;
                 ticket.Updated = DateTime.UtcNow;
 
-                // If the ticket is assigned to someone, ensure they are a project participant
-                if (!string.IsNullOrEmpty(ticket.Assigned))
-                {
-                    var assignedUser = await _context.Users
-                        .FirstOrDefaultAsync(u => u.UserName == ticket.Assigned, cancellationToken);
-                    
-                    if (assignedUser != null)
-                    {
-                        var existingParticipant = await _context.ProjectParticipants
-                            .FirstOrDefaultAsync(pp => pp.ProjectId == ticket.ProjectId && pp.AppUserId == assignedUser.Id, cancellationToken);
-                        
-                        // If the user is not already a participant, add them as a regular user
-                        if (existingParticipant == null)
-                        {
-                            var participant = new ProjectParticipant
-                            {
-                                ProjectId = ticket.ProjectId,
-                                AppUserId = assignedUser.Id,
-                                IsOwner = false,
-                                Role = "User"
-                            };
-                            _context.ProjectParticipants.Add(participant);
-                        }
-                    }
-                }
+                // Explicitly mark the entity as modified
+                _context.Entry(ticket).State = EntityState.Modified;
 
                 var success = await _context.SaveChangesAsync() > 0;
                 return success ? Result<Unit>.Success(Unit.Value)
