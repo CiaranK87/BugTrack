@@ -37,7 +37,6 @@ namespace Application.Tickets
                 request.Ticket.Updated = DateTime.UtcNow;
                 _context.Tickets.Add(request.Ticket);
 
-                // If the ticket is assigned to someone, ensure they are a project participant
                 if (!string.IsNullOrEmpty(request.Ticket.Assigned))
                 {
                     var assignedUser = await _context.Users
@@ -48,7 +47,6 @@ namespace Application.Tickets
                         var existingParticipant = await _context.ProjectParticipants
                             .FirstOrDefaultAsync(pp => pp.ProjectId == request.Ticket.ProjectId && pp.AppUserId == assignedUser.Id, cancellationToken);
                         
-                        // If the user is not already a participant, add them as a regular user
                         if (existingParticipant == null)
                         {
                             var participant = new ProjectParticipant

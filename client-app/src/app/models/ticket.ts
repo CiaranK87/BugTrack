@@ -9,6 +9,7 @@ export interface Ticket {
   priority: string;
   severity: string;
   status: string;
+  closedDate: Date | null;
   startDate: Date | null;
   endDate: Date | null;
   updated?: Date | null;

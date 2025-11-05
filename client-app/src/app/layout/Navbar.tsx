@@ -26,7 +26,7 @@ export default observer(function Navbar() {
         <Menu.Item as={NavLink} to="/errors" name="Errors" />
         <Menu.Item position="right">
           <Image avatar spaced="right" src={"/assets/user.png"} />
-          <Dropdown pointing="top left" text={user?.displayName}>
+          <Dropdown pointing="top left" text={`${user?.displayName} (${user?.globalRole})`}>
             <Dropdown.Menu>
               <Dropdown.Item as={Link} to={`/profile/${user?.username}`} text="My Profile" icon="user" />
               <Dropdown.Item onClick={logout} text="Logout" icon="power" />

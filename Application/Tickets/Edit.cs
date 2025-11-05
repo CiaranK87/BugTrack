@@ -31,24 +31,32 @@ namespace Application.Tickets
                 var ticket = await _context.Tickets.FindAsync(request.Id);
                 if (ticket == null) return null;
 
-                // Store the original submitter
                 var existingSubmitter = ticket.Submitter;
 
-                // Update the ticket properties manually instead of using AutoMapper
                 ticket.Title = request.EditDto.Title;
                 ticket.Description = request.EditDto.Description;
                 ticket.Assigned = request.EditDto.Assigned;
                 ticket.Priority = request.EditDto.Priority;
                 ticket.Severity = request.EditDto.Severity;
+                
+                var previousStatus = ticket.Status;
                 ticket.Status = request.EditDto.Status;
+                
+                if (previousStatus != "Closed" && ticket.Status == "Closed")
+                {
+                    ticket.ClosedDate = DateTime.UtcNow;
+                }
+                else if (ticket.Status != "Closed")
+                {
+                    ticket.ClosedDate = null;
+                }
+                
                 ticket.StartDate = request.EditDto.StartDate ?? DateTime.UtcNow;
                 ticket.EndDate = request.EditDto.EndDate ?? DateTime.UtcNow;
                 
-                // Preserve the original submitter and set updated timestamp
                 ticket.Submitter = existingSubmitter;
                 ticket.Updated = DateTime.UtcNow;
 
-                // Explicitly mark the entity as modified
                 _context.Entry(ticket).State = EntityState.Modified;
 
                 var success = await _context.SaveChangesAsync() > 0;

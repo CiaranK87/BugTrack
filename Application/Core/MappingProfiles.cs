@@ -10,7 +10,6 @@ namespace Application.Core
     {
         public MappingProfiles()
         {
-            // Project mappings
             CreateMap<Project, Project>();
             CreateMap<Project, ProjectDto>()
                 .ForMember(
@@ -33,14 +32,12 @@ namespace Application.Core
                 .ForMember(dest => dest.Tickets, opt => opt.Ignore())
                 .ForMember(dest => dest.ProjectOwner, opt => opt.Ignore());
 
-            // User profile
             CreateMap<AppUser, ProfileDto>()
                 .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.UserName))
                 .ForMember(dest => dest.DisplayName, opt => opt.MapFrom(src => src.DisplayName))
                 .ForMember(dest => dest.Bio, opt => opt.MapFrom(src => src.Bio))
                 .ForMember(dest => dest.Image, opt => opt.Ignore());
 
-            // Tickets
             CreateMap<Ticket, Ticket>()
                 .ForMember(dest => dest.CreatedAt, opt => opt.Ignore());
             CreateMap<Ticket, TicketDto>();
@@ -50,7 +47,6 @@ namespace Application.Core
                 .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
                 .ForMember(dest => dest.ProjectId, opt => opt.Ignore());
             
-            // Ticket with Project
             CreateMap<Ticket, TicketDto>()
                 .ForMember(dest => dest.ProjectTitle, opt => opt.MapFrom(src => src.Project != null ? src.Project.ProjectTitle : null));
         }

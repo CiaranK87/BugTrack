@@ -33,7 +33,6 @@ namespace Application.Projects
                             .ThenInclude(pp => pp.AppUser)
                         .Where(x => x.Id == request.Id);
                     
-                    // Only filter out deleted projects for non-admins
                     if (!request.IsAdmin)
                     {
                         projectQuery = projectQuery.Where(x => !x.IsDeleted);

@@ -9,13 +9,20 @@ import TicketDetailedInfo from "./TicketDetailedInfo";
 import TicketDetailedChat from "./TicketDetailedChat";
 
 export default observer(function TicketDetails() {
-  const { ticketStore } = useStore();
+  const { ticketStore, projectStore } = useStore();
   const { selectedTicket: ticket, loadTicket, loadingInitial } = ticketStore;
   const { id } = useParams();
 
   useEffect(() => {
-    if (id) loadTicket(id);
-  }, [id, loadTicket]);
+    if (id) {
+      loadTicket(id).then((ticket) => {
+        if (ticket) {
+          projectStore.loadUserRoleForProject(ticket.projectId);
+          projectStore.loadProjectParticipants(ticket.projectId);
+        }
+      });
+    }
+  }, [id, loadTicket, projectStore]);
 
   if (loadingInitial || !ticket) return <LoadingComponent />;
 

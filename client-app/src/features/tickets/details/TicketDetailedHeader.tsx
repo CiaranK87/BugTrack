@@ -1,8 +1,9 @@
 import { observer } from "mobx-react-lite";
-import { Button, Header, Item, Segment, Image } from "semantic-ui-react";
+import { Button, Header, Item, Segment, Image, Confirm } from "semantic-ui-react";
 import { Ticket } from "../../../app/models/ticket";
 import { Link, useNavigate } from "react-router-dom";
 import { useStore } from "../../../app/stores/store";
+import { useState } from "react";
 
 interface Props {
   ticket: Ticket;
@@ -10,10 +11,10 @@ interface Props {
 
 export default observer(function TicketDetailedHeader({ ticket }: Props) {
   const navigate = useNavigate();
-  const { projectStore, userStore } = useStore();
+  const { projectStore, userStore, ticketStore } = useStore();
   const currentUser = userStore.user;
+  const [isClosing, setIsClosing] = useState(false);
   
-  // Use project from ticket if available, otherwise try to get from store
   const project = ticket.project || projectStore.projectRegistry.get(ticket.projectId);
 
   const isSubmitter = ticket.submitter === currentUser?.username;
@@ -21,10 +22,60 @@ export default observer(function TicketDetailedHeader({ ticket }: Props) {
   const isProjectOwner = project?.isOwner;
   const isAdmin = userStore.isAdmin;
   
-  const participant = projectStore.currentProjectParticipants.find(p => p.username === currentUser?.username);
+  const projectParticipants = projectStore.projectParticipants.get(ticket.projectId) || [];
+  const participant = projectParticipants.find(p => p.username === currentUser?.username);
   const isProjectManager = participant?.role === "ProjectManager";
+  const isDeveloper = participant?.role === "Developer";
 
-  const canManageTicket = isSubmitter || isAssigned || isProjectOwner || isProjectManager || isAdmin;
+  const canManageTicket = isSubmitter || isAssigned || isProjectOwner || isProjectManager || isDeveloper || isAdmin;
+  
+  const canCloseTicket = isAdmin || isProjectManager || isDeveloper;
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [showReopenConfirm, setShowReopenConfirm] = useState(false);
+
+  const handleMarkAsClosed = async () => {
+    setIsClosing(true);
+    try {
+      const updatedTicket = {
+        ...ticket,
+        status: "Closed",
+        closedDate: new Date()
+      };
+      await ticketStore.updateTicket(updatedTicket);
+      ticketStore.loadTicketsByProject(ticket.projectId);
+    } catch (error) {
+      console.error("Failed to mark ticket as closed:", error);
+    } finally {
+      setIsClosing(false);
+      setShowConfirm(false);
+    }
+  };
+
+  const handleReopenTicket = async () => {
+    setIsClosing(true);
+    try {
+      const updatedTicket = {
+        ...ticket,
+        status: "Open",
+        closedDate: null
+      };
+      await ticketStore.updateTicket(updatedTicket);
+      ticketStore.loadTicketsByProject(ticket.projectId);
+    } catch (error) {
+      console.error("Failed to reopen ticket:", error);
+    } finally {
+      setIsClosing(false);
+      setShowReopenConfirm(false);
+    }
+  };
+
+  const handleConfirmClose = () => {
+    setShowConfirm(true);
+  };
+
+  const handleConfirmReopen = () => {
+    setShowReopenConfirm(true);
+  };
 
   return (
     <Segment.Group>
@@ -72,9 +123,52 @@ export default observer(function TicketDetailedHeader({ ticket }: Props) {
       </Segment>
       <Segment clearing attached="bottom">
         {canManageTicket && (
-          <Button as={Link} to={`/projects/${ticket.projectId}/tickets/${ticket.id}`} color="orange" floated="right">
-            Manage Ticket
-          </Button>
+          <>
+            {ticket.status !== "Closed" ? (
+              canCloseTicket && (
+                <Button
+                  color="green"
+                  floated="right"
+                  loading={isClosing}
+                  onClick={handleConfirmClose}
+                  content="Mark as Closed"
+                />
+              )
+            ) : (
+              canCloseTicket && (
+                <Button
+                  color="blue"
+                  floated="right"
+                  loading={isClosing}
+                  onClick={handleConfirmReopen}
+                  content="Reopen Ticket"
+                />
+              )
+            )}
+            
+            <Confirm
+              open={showConfirm}
+              content="Are you sure you want to mark this ticket as closed? You can reopen it later if needed."
+              onCancel={() => setShowConfirm(false)}
+              onConfirm={handleMarkAsClosed}
+              confirmButton="Yes, close it"
+              cancelButton="Cancel"
+              size="small"
+            />
+            
+            <Confirm
+              open={showReopenConfirm}
+              content="Are you sure you want to reopen this ticket? It will be set to 'Open' status."
+              onCancel={() => setShowReopenConfirm(false)}
+              onConfirm={handleReopenTicket}
+              confirmButton="Yes, reopen it"
+              cancelButton="Cancel"
+              size="small"
+            />
+            <Button as={Link} to={`/projects/${ticket.projectId}/tickets/${ticket.id}`} color="orange" floated="right">
+              Manage Ticket
+            </Button>
+          </>
         )}
       </Segment>
     </Segment.Group>

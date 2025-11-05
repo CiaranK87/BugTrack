@@ -5,14 +5,14 @@ import { Header } from "semantic-ui-react";
 
 export default observer(function TicketList() {
   const { ticketStore } = useStore();
-  const { ticketsByStartDate } = ticketStore;
+  const { activeTickets } = ticketStore;
 
   return (
     <>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <Header sub color="teal" size="huge">ACTIVE TICKETS</Header>
       </div>
-      {ticketsByStartDate.map((ticket) => (
+      {activeTickets.map((ticket) => (
         <TicketListItem key={ticket.id} ticket={ticket} />
       ))}
     </>

@@ -45,7 +45,7 @@ public class UsersController : ControllerBase
     public async Task<ActionResult<List<UserDto>>> GetUsers()
     {
         var users = await _context.Users
-            .Where(u => !u.IsDeleted) // Only return non-deleted users
+            .Where(u => !u.IsDeleted)
             .Select(u => new UserDto
             {
                 Id = u.Id,
@@ -70,7 +70,6 @@ public class UsersController : ControllerBase
         if (user == null)
             return NotFound("User not found");
 
-        // Prevent admins from modifying other admins
         if (user.GlobalRole == "Admin" && user.Id != currentUserId)
             return Forbid("Admins cannot modify other admins");
 
@@ -78,7 +77,6 @@ public class UsersController : ControllerBase
         if (!validRoles.Contains(updateRoleDto.Role))
             return BadRequest("Invalid role");
 
-        // Prevent admins from demoting themselves
         if (user.Id == currentUserId && updateRoleDto.Role != "Admin")
             return BadRequest("Admins cannot demote themselves");
 
@@ -106,21 +104,17 @@ public class UsersController : ControllerBase
         if (user == null)
             return NotFound("User not found");
 
-        // Prevent admins from modifying other admins
         if (user.GlobalRole == "Admin" && user.Id != currentUserId)
             return Forbid("Admins cannot modify other admins");
 
-        // Store old username for ticket updates
         var oldUsername = user.UserName;
 
-        // Update user properties
         user.DisplayName = updateUserDto.DisplayName ?? user.DisplayName;
         user.Email = updateUserDto.Email ?? user.Email;
         user.UserName = updateUserDto.Username ?? user.UserName;
         user.JobTitle = updateUserDto.JobTitle;
         user.Bio = updateUserDto.Bio;
 
-        // If username changed, update all ticket references
         if (oldUsername != user.UserName)
         {
             var ticketsToUpdate = await _context.Tickets
@@ -160,15 +154,12 @@ public class UsersController : ControllerBase
         if (user == null)
             return NotFound("User not found");
 
-        // Prevent admins from deleting other admins
         if (user.GlobalRole == "Admin" && user.Id != currentUserId)
             return Forbid("Admins cannot delete other admins");
 
-        // Prevent admins from deleting themselves
         if (user.Id == currentUserId)
             return BadRequest("Admins cannot delete themselves");
 
-        // Soft delete the user
         user.IsDeleted = true;
         user.DeletedAt = DateTime.UtcNow;
 

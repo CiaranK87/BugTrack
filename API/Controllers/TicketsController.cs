@@ -160,7 +160,6 @@ namespace API.Controllers
                 }
             }
 
-            // Pass the DTO directly instead of mapping it in the controller
             return HandleResult(await _mediator.Send(new Edit.Command { EditDto = editDto, Id = id }));
         }
 

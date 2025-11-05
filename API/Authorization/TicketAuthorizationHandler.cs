@@ -104,7 +104,6 @@ namespace API.Authorization
             if (participant == null)
                 return;
 
-            // Handle "Contributor" as an alias for "User"
             var role = participant.Role;
             if (role == "Contributor")
                 role = "User";
@@ -112,7 +111,6 @@ namespace API.Authorization
             switch (requirement.Operation)
             {
                 case TicketOperation.Read:
-                    // All project participants can read tickets
                     if (participant.IsOwner ||
                         role == "Owner" ||
                         role == "ProjectManager" ||
@@ -124,7 +122,6 @@ namespace API.Authorization
                     break;
 
                 case TicketOperation.Create:
-                    // Owners, ProjectManagers, Developers, and Users can create tickets
                     if (participant.IsOwner ||
                         role == "Owner" ||
                         role == "ProjectManager" ||
@@ -136,8 +133,6 @@ namespace API.Authorization
                     break;
 
                 case TicketOperation.Edit:
-                    // Owners, ProjectManagers, Developers can edit tickets
-                    // Also, ticket submitters and assigned users can edit tickets
                     if (participant.IsOwner ||
                         role == "Owner" ||
                         role == "ProjectManager" ||
@@ -149,8 +144,17 @@ namespace API.Authorization
                     }
                     break;
 
+                case TicketOperation.Close:
+                    if (participant.IsOwner ||
+                        role == "Owner" ||
+                        role == "ProjectManager" ||
+                        role == "Developer")
+                    {
+                        context.Succeed(requirement);
+                    }
+                    break;
+
                 case TicketOperation.Delete:
-                    // Only ticket submitters can delete their own tickets
                     if (!string.IsNullOrEmpty(ticketSubmitter) && ticketSubmitter == currentUser)
                     {
                         context.Succeed(requirement);
@@ -175,6 +179,7 @@ namespace API.Authorization
         Read,
         Create,
         Edit,
+        Close,
         Delete
     }
 }

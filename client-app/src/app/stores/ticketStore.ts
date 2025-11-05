@@ -22,6 +22,18 @@ export default class TicketStore {
     return Array.from(this.ticketRegistry.values()).sort((a, b) => a.startDate!.getTime() - b.startDate!.getTime());
   }
 
+  get activeTickets() {
+    return Array.from(this.ticketRegistry.values())
+      .filter(ticket => ticket.status !== "Closed")
+      .sort((a, b) => a.startDate!.getTime() - b.startDate!.getTime());
+  }
+
+  get closedTickets() {
+    return Array.from(this.ticketRegistry.values())
+      .filter(ticket => ticket.status === "Closed")
+      .sort((a, b) => (b.closedDate?.getTime() || 0) - (a.closedDate?.getTime() || 0));
+  }
+
   loadTickets = async () => {
     this.setLoadingInitial(true);
     try {
@@ -89,6 +101,7 @@ export default class TicketStore {
       ticket.startDate = normalizeDate(ticket.startDate);
       ticket.endDate = normalizeDate(ticket.endDate);
       ticket.updated = normalizeDate(ticket.updated);
+      ticket.closedDate = normalizeDate(ticket.closedDate);
       return ticket;
     });
     
@@ -133,6 +146,7 @@ private setTicket = (ticket: Ticket) => {
     ticket.endDate = normalizeDate(ticket.endDate);
     ticket.updated = normalizeDate(ticket.updated);
     ticket.createdAt = normalizeDate(ticket.createdAt);
+    ticket.closedDate = normalizeDate(ticket.closedDate);
     this.ticketRegistry.set(ticket.id, ticket);
   };
 
