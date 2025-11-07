@@ -39,7 +39,9 @@ namespace API.Services
             {
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddHours(1),
-                SigningCredentials = creds
+                SigningCredentials = creds,
+                Issuer = "http://localhost:5000",
+                Audience = "http://localhost:5000"
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();

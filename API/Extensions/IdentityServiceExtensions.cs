@@ -14,7 +14,7 @@ namespace API.Extensions
         {
             services.AddIdentityCore<AppUser>(opt =>
             {
-                opt.Password.RequireNonAlphanumeric = false;
+                opt.Password.RequireNonAlphanumeric = true;
                 opt.User.RequireUniqueEmail = true;
             })
             .AddRoles<IdentityRole>()
@@ -31,8 +31,10 @@ namespace API.Extensions
                     {
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = key,
-                        ValidateIssuer = false,
-                        ValidateAudience = false
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidIssuer = "http://localhost:5000",
+                        ValidAudience = "http://localhost:5000"
                     };
                 });
 

@@ -36,7 +36,9 @@ namespace Application.Comments
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (attachment == null)
+            {
                 return (null, null);
+            }
 
             var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
             var filePath = Path.Combine(uploadsFolder, attachment.FilePath);
@@ -49,7 +51,7 @@ namespace Application.Comments
                 ContentType = attachment.ContentType,
                 FileSize = attachment.FileSize,
                 UploadedAt = attachment.UploadedAt,
-                DownloadUrl = $"/api/comments/attachments/{attachment.Id}/download"
+                DownloadUrl = $"/api/tickets/{request.TicketId}/comments/{request.CommentId}/attachments/{attachment.Id}/download"
             };
 
             return (attachmentDto, filePath);

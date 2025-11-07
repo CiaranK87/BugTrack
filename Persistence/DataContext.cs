@@ -32,7 +32,6 @@ namespace Persistence
                 .WithMany(p => p.Participants)
                 .HasForeignKey(pp => pp.ProjectId);
 
-            // Comment relationships
             builder.Entity<Comment>()
                 .HasOne(c => c.Ticket)
                 .WithMany(t => t.Comments)
@@ -45,7 +44,6 @@ namespace Persistence
                 .HasForeignKey(c => c.AuthorId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // CommentAttachment relationships
             builder.Entity<CommentAttachment>()
                 .HasOne(ca => ca.Comment)
                 .WithMany(c => c.Attachments)

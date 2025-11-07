@@ -3,6 +3,8 @@ import { CommentAttachment } from '../../../app/models/comment';
 
 interface Props {
   attachment: CommentAttachment;
+  ticketId: string;
+  commentId: string;
   onDownload?: (attachmentId: string) => void;
   onDelete?: (attachmentId: string) => void;
   showDeleteButton?: boolean;
@@ -10,6 +12,8 @@ interface Props {
 
 export default function FileAttachment({
   attachment,
+  ticketId,
+  commentId,
   onDownload,
   onDelete,
   showDeleteButton = false
@@ -18,13 +22,16 @@ export default function FileAttachment({
     if (onDownload) {
       onDownload(attachment.id);
     } else {
-      // Default download behavior - create a temporary link and click it
       const link = document.createElement('a');
-      link.href = `http://localhost:5000/api/comments/attachments/${attachment.id}/download`;
+      const downloadUrl = attachment.downloadUrl ||
+        `http://localhost:5000/api/tickets/${ticketId}/comments/${commentId}/attachments/${attachment.id}/download`;
+      link.href = downloadUrl;
       link.download = attachment.originalFileName || attachment.fileName;
       document.body.appendChild(link);
       link.click();
-      document.body.removeChild(link);
+      setTimeout(() => {
+        document.body.removeChild(link);
+      }, 100);
     }
   };
 

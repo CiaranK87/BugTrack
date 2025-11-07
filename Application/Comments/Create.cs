@@ -57,7 +57,6 @@ namespace Application.Comments
 
                 _context.Comments.Add(comment);
                 
-                // Handle attachments if any
                 if (request.Attachments != null && request.Attachments.Count > 0)
                 {
                     foreach (var file in request.Attachments)
@@ -75,14 +74,12 @@ namespace Application.Comments
                 if (!success)
                     return Result<CommentDto>.Failure("Failed to create comment");
                 
-                // Reload the comment with all related data
                 await _context.Entry(comment)
                     .Collection(c => c.Attachments)
                     .Query()
                     .Include(a => a.UploadedBy)
                     .LoadAsync();
                 
-                // Load the Author data
                 await _context.Entry(comment)
                     .Reference(c => c.Author)
                     .LoadAsync();
@@ -135,11 +132,11 @@ namespace Application.Comments
                     AuthorId = comment.AuthorId,
                     AuthorUsername = comment.Author?.UserName,
                     AuthorDisplayName = comment.Author?.DisplayName,
-                    Attachments = comment.Attachments?.Select(MapToCommentAttachmentDto).ToList() ?? new List<CommentAttachmentDto>()
+                    Attachments = comment.Attachments?.Select(a => MapToCommentAttachmentDto(a, comment.TicketId, comment.Id)).ToList() ?? new List<CommentAttachmentDto>()
                 };
             }
 
-            private static CommentAttachmentDto MapToCommentAttachmentDto(CommentAttachment attachment)
+            private static CommentAttachmentDto MapToCommentAttachmentDto(CommentAttachment attachment, Guid ticketId, Guid commentId)
             {
                 return new CommentAttachmentDto
                 {
@@ -149,7 +146,7 @@ namespace Application.Comments
                     ContentType = attachment.ContentType,
                     FileSize = attachment.FileSize,
                     UploadedAt = attachment.UploadedAt,
-                    DownloadUrl = $"/api/comments/attachments/{attachment.Id}/download"
+                    DownloadUrl = $"/api/tickets/{ticketId}/comments/{commentId}/attachments/{attachment.Id}/download"
                 };
             }
         }

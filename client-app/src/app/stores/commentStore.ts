@@ -14,7 +14,6 @@ export default class CommentStore {
     makeAutoObservable(this);
   }
 
-  // Initialize SignalR connection
   initConnection = () => {
     if (this.connection) {
       this.connection.stop();
@@ -46,47 +45,36 @@ export default class CommentStore {
     return connection;
   };
 
-  // Connect to SignalR hub
   connect = async (ticketId: string) => {
     if (!this.connection) {
       this.connection = this.initConnection();
       
-      // Start the connection
       await this.connection.start()
         .catch(err => console.error('Error starting SignalR connection:', err));
     }
 
-    // Join the ticket group to receive real-time updates
     await this.connection.invoke('JoinTicketGroup', ticketId)
       .catch(err => console.error('Error joining ticket group:', err));
       
-    // Set up event handlers
     this.setupEventHandlers();
   };
   
-  // Set up SignalR event handlers
   setupEventHandlers = () => {
     if (!this.connection) return;
     
-    // Clear existing handlers to avoid duplicates
     this.connection.off('ReceiveComment');
     this.connection.off('CommentUpdated');
     this.connection.off('CommentDeleted');
     this.connection.off('AttachmentAdded');
     this.connection.off('AttachmentDeleted');
     
-    // Set up new handlers
     this.connection.on('ReceiveComment', (comment: Comment) => {
       runInAction(() => {
-        // Check if comment already exists to avoid duplicates
         if (!this.comments.find(c => c.id === comment.id)) {
-          // Ensure the comment has the necessary user information
-          // If not, try to get it from the current user
           if (!comment.authorUsername || !comment.authorDisplayName) {
             console.warn('Received comment without author information:', comment);
           }
           
-          // Add new comment to the end of the array (bottom of list)
           this.comments = [...this.comments, comment];
         }
       });
@@ -114,9 +102,12 @@ export default class CommentStore {
           if (!this.comments[commentIndex].attachments) {
             this.comments[commentIndex].attachments = [];
           }
-          // Check if attachment already exists to avoid duplicates
           if (!this.comments[commentIndex].attachments.find(a => a.id === attachment.id)) {
-            this.comments[commentIndex].attachments.push(attachment);
+            const attachmentWithDownloadUrl = {
+              ...attachment,
+              downloadUrl: `/api/tickets/${this.currentTicketId}/comments/${commentId}/attachments/${attachment.id}/download`
+            };
+            this.comments[commentIndex].attachments.push(attachmentWithDownloadUrl);
           }
         }
       });
@@ -132,17 +123,13 @@ export default class CommentStore {
     });
   };
 
-  // Disconnect from SignalR hub
   disconnect = () => {
     if (this.connection) {
-      // Just stop the connection without trying to leave the group
-      // The server will handle cleaning up the group when the connection closes
       this.connection.stop();
       this.connection = null;
     }
   };
 
-  // Load comments for a ticket
   loadComments = async (ticketId: string) => {
     try {
       const response = await fetch(`http://localhost:5000/api/tickets/${ticketId}/comments`, {
@@ -165,8 +152,15 @@ export default class CommentStore {
 
       const comments = await response.json() as Comment[];
       runInAction(() => {
-        // Sort comments by creation date (oldest first, newest last)
-        this.comments = comments.sort((a, b) =>
+        const commentsWithDownloadUrls = comments.map(comment => ({
+          ...comment,
+          attachments: comment.attachments.map(attachment => ({
+            ...attachment,
+            downloadUrl: attachment.downloadUrl || `/api/tickets/${comment.ticketId}/comments/${comment.id}/attachments/${attachment.id}/download`
+          }))
+        }));
+        
+        this.comments = commentsWithDownloadUrls.sort((a, b) =>
           new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
         );
       });
@@ -176,14 +170,12 @@ export default class CommentStore {
     }
   };
 
-  // Create a new comment
   createComment = async (ticketId: string, content: string, attachments: File[] = []) => {
     this.loading = true;
     try {
       const formData = new FormData();
       formData.append('content', content);
 
-      // Add attachments if any
       if (attachments && attachments.length > 0) {
         for (let i = 0; i < attachments.length; i++) {
           formData.append('attachments', attachments[i]);
@@ -203,8 +195,6 @@ export default class CommentStore {
         throw new Error('Failed to create comment');
       }
 
-      // Don't add the comment here - it will be received through SignalR
-      // This prevents duplicate comments from appearing
       runInAction(() => {
         this.loading = false;
       });
@@ -217,7 +207,6 @@ export default class CommentStore {
     }
   };
 
-  // Update an existing comment
   updateComment = async (ticketId: string, commentId: string, content: string) => {
     try {
       const response = await fetch(`http://localhost:5000/api/tickets/${ticketId}/comments/${commentId}`, {
@@ -247,7 +236,6 @@ export default class CommentStore {
     }
   };
 
-  // Delete a comment
   deleteComment = async (ticketId: string, commentId: string) => {
     try {
       const response = await fetch(`http://localhost:5000/api/tickets/${ticketId}/comments/${commentId}`, {
@@ -271,7 +259,6 @@ export default class CommentStore {
     }
   };
 
-  // Add an attachment to a comment
   addAttachment = async (ticketId: string, commentId: string, file: File) => {
     try {
       const formData = new FormData();
@@ -297,7 +284,11 @@ export default class CommentStore {
           if (!this.comments[commentIndex].attachments) {
             this.comments[commentIndex].attachments = [];
           }
-          this.comments[commentIndex].attachments.push(newAttachment);
+          const attachmentWithDownloadUrl = {
+            ...newAttachment,
+            downloadUrl: newAttachment.downloadUrl || `/api/tickets/${ticketId}/comments/${commentId}/attachments/${newAttachment.id}/download`
+          };
+          this.comments[commentIndex].attachments.push(attachmentWithDownloadUrl);
         }
       });
     } catch (error) {
@@ -306,7 +297,6 @@ export default class CommentStore {
     }
   };
 
-  // Delete an attachment
   deleteAttachment = async (ticketId: string, commentId: string, attachmentId: string) => {
     try {
       const response = await fetch(`http://localhost:5000/api/tickets/${ticketId}/comments/${commentId}/attachments/${attachmentId}`, {
@@ -333,13 +323,42 @@ export default class CommentStore {
     }
   };
 
-  // Helper method to get current ticket ID (would be passed from component)
   getCurrentTicketId = (): string | null => {
-    // This would be set by the component when navigating to a ticket
     return this.currentTicketId;
   };
 
-  // Helper method to set current ticket ID
+  downloadAttachment = async (ticketId: string, commentId: string, attachmentId: string, fileName: string) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/tickets/${ticketId}/comments/${commentId}/attachments/${attachmentId}/download`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('jwt')}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to download attachment: ${response.status} ${response.statusText}`);
+      }
+
+      const blob = await response.blob();
+      
+      const url = window.URL.createObjectURL(blob);
+      
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error downloading attachment:', error);
+      throw error;
+    }
+  };
+
   setCurrentTicketId = (ticketId: string) => {
     this.currentTicketId = ticketId;
   };

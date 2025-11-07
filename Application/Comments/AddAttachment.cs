@@ -58,7 +58,6 @@ namespace Application.Comments
                 _context.CommentAttachments.Add(attachment);
                 await _context.SaveChangesAsync(cancellationToken);
 
-                // Reload to get all related data
                 await _context.Entry(attachment)
                     .Reference(a => a.UploadedBy)
                     .LoadAsync();
@@ -109,7 +108,7 @@ namespace Application.Comments
                     ContentType = attachment.ContentType,
                     FileSize = attachment.FileSize,
                     UploadedAt = attachment.UploadedAt,
-                    DownloadUrl = $"/api/comments/attachments/{attachment.Id}/download"
+                    DownloadUrl = $"/api/tickets/{attachment.Comment.TicketId}/comments/{attachment.CommentId}/attachments/{attachment.Id}/download"
                 };
             }
         }

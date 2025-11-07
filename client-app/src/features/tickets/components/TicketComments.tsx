@@ -15,7 +15,6 @@ export default observer(function TicketComments({ ticketId }: Props) {
   const isConnecting = useRef(false);
 
   useEffect(() => {
-    // Only connect if not already connected or connecting
     if (!connection && !isConnecting.current) {
       isConnecting.current = true;
       connect(ticketId)
@@ -27,10 +26,8 @@ export default observer(function TicketComments({ ticketId }: Props) {
         });
     }
 
-    // Load comments for the ticket
     commentStore.loadComments(ticketId);
 
-    // Cleanup function
     return () => {
       if (connection) {
         disconnect();

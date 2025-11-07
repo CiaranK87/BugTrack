@@ -26,7 +26,7 @@ export default observer(function DeletedProjectsManagement() {
     adminDeleteProject(deleteProjectId)
       .then(() => {
         toast.success("Project permanently deleted successfully");
-        projectStore.loadDeletedProjects(); // Refresh the list
+        projectStore.loadDeletedProjects();
       })
       .catch(() => {
         toast.error("Failed to delete project");

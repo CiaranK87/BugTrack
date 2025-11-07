@@ -6,7 +6,6 @@ export default function NetworkError() {
   const location = useLocation();
 
   const handleRetry = () => {
-    // Try to get the from path from location state, otherwise use localStorage or default to dashboard
     const fromPath = location.state?.from || localStorage.getItem('lastValidPath') || '/dashboard';
     navigate(fromPath);
     setTimeout(() => window.location.reload(), 100);

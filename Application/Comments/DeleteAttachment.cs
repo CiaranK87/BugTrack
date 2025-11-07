@@ -42,7 +42,6 @@ namespace Application.Comments
                 if (attachment == null || attachment.UploadedById != userId)
                     return Result<Unit>.Failure("Attachment not found or access denied");
 
-                // Delete physical file
                 var filePath = Path.Combine(Directory.GetCurrentDirectory(), "uploads", attachment.FilePath);
                 if (File.Exists(filePath))
                 {

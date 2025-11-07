@@ -52,7 +52,6 @@ namespace API.Controllers
             
             if (result.IsSuccess)
             {
-                // Notify all clients in the ticket group about the new comment
                 await _hubContext.Clients.Group($"Ticket_{ticketId}").SendAsync("ReceiveComment", result.Value);
                 return CreatedAtAction(nameof(GetComment), new { ticketId, id = result.Value.Id }, result.Value);
             }
@@ -67,7 +66,6 @@ namespace API.Controllers
             
             if (result.IsSuccess)
             {
-                // Notify all clients in the ticket group about the updated comment
                 await _hubContext.Clients.Group($"Ticket_{ticketId}").SendAsync("CommentUpdated", result.Value);
                 return Ok(result.Value);
             }
@@ -82,7 +80,6 @@ namespace API.Controllers
             
             if (result.IsSuccess)
             {
-                // Notify all clients in the ticket group about the deleted comment
                 await _hubContext.Clients.Group($"Ticket_{ticketId}").SendAsync("CommentDeleted", id);
                 return NoContent();
             }
@@ -97,7 +94,6 @@ namespace API.Controllers
             
             if (result.IsSuccess)
             {
-                // Notify all clients in the ticket group about the new attachment
                 await _hubContext.Clients.Group($"Ticket_{ticketId}").SendAsync("AttachmentAdded", commentId, result.Value);
                 return CreatedAtAction(nameof(GetAttachment), new { ticketId, commentId, id = result.Value.Id }, result.Value);
             }
@@ -126,7 +122,6 @@ namespace API.Controllers
             
             if (result.IsSuccess)
             {
-                // Notify all clients in the ticket group about the deleted attachment
                 await _hubContext.Clients.Group($"Ticket_{ticketId}").SendAsync("AttachmentDeleted", commentId, attachmentId);
                 return NoContent();
             }

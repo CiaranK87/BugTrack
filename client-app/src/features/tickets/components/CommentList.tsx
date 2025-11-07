@@ -35,13 +35,10 @@ const CommentList: React.FC<Props> = observer(({ ticketId }) => {
   };
 
   const canDeleteComment = (comment: any) => {
-    // Check by username
     if (comment.authorUsername) {
       return userStore.isCurrentUser(comment.authorUsername);
     }
     
-    // If username is not available, we can't determine if the user can delete the comment
-    // This should be fixed by ensuring authorUsername is always populated
     console.warn('Comment missing authorUsername:', comment);
     return false;
   };
@@ -131,7 +128,11 @@ const CommentList: React.FC<Props> = observer(({ ticketId }) => {
                     whiteSpace: 'pre-wrap',
                     wordBreak: 'break-word',
                     marginBottom: '12px',
-                    minHeight: '40px' // Ensure consistent content area
+                    minHeight: '40px', // Ensure consistent content area
+                    padding: '8px',
+                    borderRadius: '4px',
+                    border: '1px solid rgba(0, 0, 0, 0.1)',
+                    backgroundColor: '#fafbfc' // Lighter grey than attachment background
                   }}>
                     {typeof comment.content === 'string' ? comment.content : JSON.stringify(comment.content)}
                   </div>
@@ -158,6 +159,9 @@ const CommentList: React.FC<Props> = observer(({ ticketId }) => {
                           <FileAttachment
                             key={attachment.id}
                             attachment={attachment}
+                            ticketId={ticketId}
+                            commentId={comment.id}
+                            onDownload={(attachmentId) => commentStore.downloadAttachment(ticketId, comment.id, attachmentId, attachment.originalFileName || attachment.fileName)}
                             onDelete={(attachmentId) => commentStore.deleteAttachment(ticketId, comment.id, attachmentId)}
                             showDeleteButton={canDeleteComment(comment)}
                           />

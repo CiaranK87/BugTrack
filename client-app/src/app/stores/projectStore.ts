@@ -315,7 +315,6 @@ export default class ProjectStore {
     const participant = this.currentProjectParticipants.find(p => p.username === user.username);
     if (!participant) return false;
     
-    // Only Owners and ProjectManagers can manage the project
     return participant.role === "Owner" ||
            participant.role === "ProjectManager";
   }

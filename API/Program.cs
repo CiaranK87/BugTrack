@@ -12,10 +12,7 @@ using Persistence;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers(opt =>
-{
-    opt.Filters.Add(new AuthorizeFilter());
-});
+builder.Services.AddControllers();
 
 
 builder.Services.AddApplicationServices(builder.Configuration);
