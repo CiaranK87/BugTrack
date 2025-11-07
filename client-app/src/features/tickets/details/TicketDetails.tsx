@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import TicketDetailedHeader from "./TicketDetailedHeader";
 import TicketDetailedInfo from "./TicketDetailedInfo";
-import TicketDetailedChat from "./TicketDetailedChat";
+import TicketComments from "../components/TicketComments";
 
 export default observer(function TicketDetails() {
   const { ticketStore, projectStore } = useStore();
@@ -33,7 +33,7 @@ export default observer(function TicketDetails() {
         <TicketDetailedInfo ticket={ticket} />
       </Grid.Column>
       <Grid.Column width={6}>
-        <TicketDetailedChat />
+        <TicketComments ticketId={ticket.id} />
       </Grid.Column>
     </Grid>
   );

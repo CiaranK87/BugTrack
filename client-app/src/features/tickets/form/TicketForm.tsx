@@ -33,6 +33,7 @@ export default observer(function TicketForm() {
     priority: "",
     severity: "",
     status: "",
+    closedDate: null,
     startDate: null,
     endDate: null,
     projectId: projectId || "",

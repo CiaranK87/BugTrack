@@ -1,6 +1,7 @@
 using API.Authorization;
 using API.Extensions;
 using API.Middleware;
+using API.Hubs;
 using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -83,11 +84,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseRouting();
+
 app.UseCors("CorsPolicy");
-app.UseHttpsRedirection();
+
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
+app.MapHub<TicketCommentHub>("/hubs/comments");
 
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;

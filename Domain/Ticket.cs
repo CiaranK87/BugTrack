@@ -18,5 +18,6 @@ namespace Domain
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public Guid ProjectId { get; set; }
         public Project Project { get; set; }
+        public ICollection<Comment> Comments { get; set; } = new List<Comment>();
     }
 }

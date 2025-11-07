@@ -13,6 +13,8 @@ namespace Persistence
         public DbSet<Project> Projects{ get; set; }
         public DbSet<ProjectParticipant> ProjectParticipants{ get; set; }
         public DbSet<Ticket> Tickets{ get; set; }
+        public DbSet<Comment> Comments{ get; set; }
+        public DbSet<CommentAttachment> CommentAttachments{ get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -29,6 +31,32 @@ namespace Persistence
                 .HasOne(pp => pp.Project)
                 .WithMany(p => p.Participants)
                 .HasForeignKey(pp => pp.ProjectId);
+
+            // Comment relationships
+            builder.Entity<Comment>()
+                .HasOne(c => c.Ticket)
+                .WithMany(t => t.Comments)
+                .HasForeignKey(c => c.TicketId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<Comment>()
+                .HasOne(c => c.Author)
+                .WithMany()
+                .HasForeignKey(c => c.AuthorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // CommentAttachment relationships
+            builder.Entity<CommentAttachment>()
+                .HasOne(ca => ca.Comment)
+                .WithMany(c => c.Attachments)
+                .HasForeignKey(ca => ca.CommentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<CommentAttachment>()
+                .HasOne(ca => ca.UploadedBy)
+                .WithMany()
+                .HasForeignKey(ca => ca.UploadedById)
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
     }
