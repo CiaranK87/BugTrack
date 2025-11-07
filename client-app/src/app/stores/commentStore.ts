@@ -80,6 +80,12 @@ export default class CommentStore {
       runInAction(() => {
         // Check if comment already exists to avoid duplicates
         if (!this.comments.find(c => c.id === comment.id)) {
+          // Ensure the comment has the necessary user information
+          // If not, try to get it from the current user
+          if (!comment.authorUsername || !comment.authorDisplayName) {
+            console.warn('Received comment without author information:', comment);
+          }
+          
           // Add new comment to the end of the array (bottom of list)
           this.comments = [...this.comments, comment];
         }

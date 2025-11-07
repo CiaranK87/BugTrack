@@ -62,7 +62,7 @@ export default observer(function AdminRegisterForm() {
                 selection
                 options={roleOptions}
                 value={selectedRole}
-                onChange={(e, data) => setSelectedRole(data.value as string)}
+                onChange={(_, data) => setSelectedRole(data.value as string)}
               />
             </SemanticForm.Field>
             <ErrorMessage

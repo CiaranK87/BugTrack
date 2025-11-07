@@ -17,7 +17,7 @@ export default observer(function ProjectListItemParticipant({ participants }: Pr
           key={participant.username}
           trigger={
             <List.Item key={participant.username} as={Link} to={`/profiles/${participant.username}`}>
-              <Image size="mini" circular src={participant.image || "assets/user.png"} />
+              <Image size="mini" circular src="assets/user.png" />
             </List.Item>
           }
         >

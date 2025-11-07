@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { Formik, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Button, Header, Icon, Segment, Label } from 'semantic-ui-react';
 import MyTextArea from '../../../app/common/form/MyTextArea';

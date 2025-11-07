@@ -35,7 +35,15 @@ const CommentList: React.FC<Props> = observer(({ ticketId }) => {
   };
 
   const canDeleteComment = (comment: any) => {
-    return userStore.isCurrentUser(comment.authorUsername);
+    // Check by username
+    if (comment.authorUsername) {
+      return userStore.isCurrentUser(comment.authorUsername);
+    }
+    
+    // If username is not available, we can't determine if the user can delete the comment
+    // This should be fixed by ensuring authorUsername is always populated
+    console.warn('Comment missing authorUsername:', comment);
+    return false;
   };
 
   return (
@@ -150,7 +158,6 @@ const CommentList: React.FC<Props> = observer(({ ticketId }) => {
                           <FileAttachment
                             key={attachment.id}
                             attachment={attachment}
-                            ticketId={ticketId}
                             onDelete={(attachmentId) => commentStore.deleteAttachment(ticketId, comment.id, attachmentId)}
                             showDeleteButton={canDeleteComment(comment)}
                           />

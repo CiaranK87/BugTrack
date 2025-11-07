@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 
 export default observer(function DeletedProjectsManagement() {
   const { projectStore } = useStore();
-  const { projectsByStartDate, loadingInitial, adminDeleteProject, loading } = projectStore;
+  const { projectsByStartDate, loadingInitial, adminDeleteProject } = projectStore;
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleteProjectId, setDeleteProjectId] = useState("");
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
@@ -37,7 +37,7 @@ export default observer(function DeletedProjectsManagement() {
       });
   };
 
-  const handleRestore = (projectId: string) => {
+  const handleRestore = (_projectId: string) => {
     // We'll implement this later
     toast.info("Restore functionality coming soon");
   };

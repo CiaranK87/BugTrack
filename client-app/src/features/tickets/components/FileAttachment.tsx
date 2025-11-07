@@ -3,7 +3,6 @@ import { CommentAttachment } from '../../../app/models/comment';
 
 interface Props {
   attachment: CommentAttachment;
-  ticketId?: string;
   onDownload?: (attachmentId: string) => void;
   onDelete?: (attachmentId: string) => void;
   showDeleteButton?: boolean;
@@ -11,7 +10,6 @@ interface Props {
 
 export default function FileAttachment({
   attachment,
-  ticketId,
   onDownload,
   onDelete,
   showDeleteButton = false

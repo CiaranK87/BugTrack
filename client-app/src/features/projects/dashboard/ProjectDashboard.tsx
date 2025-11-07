@@ -8,7 +8,7 @@ import ProjectFilters from "./ProjectFilters";
 
 export default observer(function ProjectDashboard() {
   const { projectStore } = useStore();
-  const { loadProjects, projectRegistry } = projectStore;
+  const { loadProjects } = projectStore;
 
   useEffect(() => {
     loadProjects();

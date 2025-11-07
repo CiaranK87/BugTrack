@@ -82,6 +82,11 @@ namespace Application.Comments
                     .Include(a => a.UploadedBy)
                     .LoadAsync();
                 
+                // Load the Author data
+                await _context.Entry(comment)
+                    .Reference(c => c.Author)
+                    .LoadAsync();
+                
                 return Result<CommentDto>.Success(MapToCommentDto(comment));
             }
 
