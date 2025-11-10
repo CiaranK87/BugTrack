@@ -137,6 +137,7 @@ function handleCancel() {
   return (
     <Segment clearing>
       <Header content="Ticket Details" sub color="teal" />
+      <div style={{ marginBottom: '20px' }}></div>
       <Formik
         validationSchema={validationSchema}
         enableReinitialize
@@ -145,18 +146,19 @@ function handleCancel() {
       >
         {({ handleSubmit, isValid, isSubmitting, dirty }) => (
           <Form className="ui form" onSubmit={handleSubmit} autoComplete="off">
-            <MyTextInput name="title" placeholder="Title" />
-            <MyTextArea rows={3} placeholder="Description" name="description" />
-            <MySelectInput 
-              options={projectUsersAsOptions} 
-              placeholder="Assign to" 
-              name="assigned" 
+            <MyTextInput name="title" placeholder="Title" label="Title" />
+            <MyTextArea rows={3} placeholder="Description" name="description" label="Description" />
+            <MySelectInput
+              options={projectUsersAsOptions}
+              placeholder="Assign to"
+              name="assigned"
+              label="Assigned To"
             />
-            <MySelectInput options={priorityOptions} placeholder="Priority" name="priority" />
-            <MySelectInput options={severityOptions} placeholder="Severity" name="severity" />
-            <MySelectInput options={statusOptions} placeholder="Status" name="status" />
-            <MyDateInput placeholderText="Start Date" name="startDate" dateFormat="MMMM d, yyyy" />
-            <MyDateInput placeholderText="End Date" name="endDate" dateFormat="MMMM d, yyyy" />
+            <MySelectInput options={priorityOptions} placeholder="Priority" name="priority" label="Priority" />
+            <MySelectInput options={severityOptions} placeholder="Severity" name="severity" label="Severity" />
+            <MySelectInput options={statusOptions} placeholder="Status" name="status" label="Status" />
+            <MyDateInput placeholderText="Start Date" name="startDate" dateFormat="MMMM d, yyyy" label="Start Date" />
+            <MyDateInput placeholderText="End Date" name="endDate" dateFormat="MMMM d, yyyy" label="End Date" />
             
             <Button
               disabled={isSubmitting || !dirty || !isValid}

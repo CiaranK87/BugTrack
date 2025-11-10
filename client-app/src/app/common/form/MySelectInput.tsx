@@ -12,7 +12,13 @@ export default function MySelectInput(props: Props) {
   const [field, meta, helpers] = useField(props.name);
   return (
     <Form.Field error={meta.touched && !!meta.error}>
-      <label>{props.label}</label>
+      <label style={{
+        color: '#4DB6AC',
+        fontSize: '0.9em',
+        fontWeight: 'bold',
+        marginBottom: '1px',
+        marginLeft: '4px'
+      }}>{props.label}</label>
       <Select
         clearable
         options={props.options}

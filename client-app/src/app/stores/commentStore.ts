@@ -17,7 +17,9 @@ export default class CommentStore {
   initConnection = () => {
     if (this.connection) {
       this.connection.stop();
-      this.connection = null;
+      runInAction(() => {
+        this.connection = null;
+      });
     }
 
     const connection = new HubConnectionBuilder()
@@ -39,7 +41,9 @@ export default class CommentStore {
 
     connection.onclose(() => {
       console.log('SignalR connection closed');
-      this.connection = null;
+      runInAction(() => {
+        this.connection = null;
+      });
     });
 
     return connection;
@@ -47,14 +51,19 @@ export default class CommentStore {
 
   connect = async (ticketId: string) => {
     if (!this.connection) {
-      this.connection = this.initConnection();
+      const newConnection = this.initConnection();
+      runInAction(() => {
+        this.connection = newConnection;
+      });
       
-      await this.connection.start()
-        .catch(err => console.error('Error starting SignalR connection:', err));
+      await newConnection.start()
+        .catch((err: any) => console.error('Error starting SignalR connection:', err));
     }
 
-    await this.connection.invoke('JoinTicketGroup', ticketId)
-      .catch(err => console.error('Error joining ticket group:', err));
+    if (this.connection) {
+      await this.connection.invoke('JoinTicketGroup', ticketId)
+        .catch((err: any) => console.error('Error joining ticket group:', err));
+    }
       
     this.setupEventHandlers();
   };
@@ -126,7 +135,9 @@ export default class CommentStore {
   disconnect = () => {
     if (this.connection) {
       this.connection.stop();
-      this.connection = null;
+      runInAction(() => {
+        this.connection = null;
+      });
     }
   };
 

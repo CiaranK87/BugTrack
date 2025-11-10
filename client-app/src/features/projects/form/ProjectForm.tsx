@@ -64,6 +64,7 @@ export default observer(function ProjectForm() {
   return (
     <Segment clearing>
       <Header content="Project Details" sub color="teal" />
+      <div style={{ marginBottom: '20px' }}></div>
       <Formik
         validationSchema={validationSchema}
         enableReinitialize
@@ -72,13 +73,14 @@ export default observer(function ProjectForm() {
       >
         {({ handleSubmit, isValid, isSubmitting, dirty }) => (
           <Form className="ui form" onSubmit={handleSubmit} autoComplete="off">
-            <MyTextInput name="projectTitle" placeholder="project Title" />
+            <MyTextInput name="projectTitle" placeholder="project Title" label="Project Title" />
             
-            <MyTextArea rows={2} placeholder="Project Description" name="description" />
+            <MyTextArea rows={2} placeholder="Project Description" name="description" label="Project Description" />
             <MyDateInput
               placeholderText="Project start date"
               name="startDate"
               dateFormat="MMMM d, yyyy"
+              label="Start Date"
             />
             <Button
               disabled={isSubmitting || !dirty || !isValid}

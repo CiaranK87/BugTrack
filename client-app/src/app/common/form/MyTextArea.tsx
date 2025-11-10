@@ -12,7 +12,13 @@ export default function MyTextArea(props: Props) {
   const [field, meta] = useField(props.name);
   return (
     <Form.Field error={meta.touched && !!meta.error}>
-      {props.label && <label>{props.label}</label>}
+      {props.label && <label style={{
+        color: '#4DB6AC',
+        fontSize: '0.9em',
+        fontWeight: 'bold',
+        marginBottom: '1px',
+        marginLeft: '4px'
+      }}>{props.label}</label>}
       <textarea
         {...field}
         placeholder={props.placeholder}

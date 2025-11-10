@@ -62,7 +62,6 @@ export default observer(function CommentForm({ ticketId }: Props) {
             />
             <ErrorMessage
               name='content'
-              render={() => <Label basic color='red' pointing content='Comment content is required' />}
             />
             
             <div style={{

@@ -27,8 +27,7 @@ export default observer(function TicketFilters({ onFilterChange, currentFilter =
           onClick={() => onFilterChange?.('closed')}
           label={{ color: 'grey', content: closedTickets.length }}
         />
-        <Menu.Item content="All Collaborators" />
-        <Menu.Item content="All Submitters" />
+
       </Menu>
 
       <Header />
