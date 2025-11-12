@@ -1,6 +1,5 @@
 export const statusOptions = [
   { text: "Open", value: "Open" },
   { text: "In Progress", value: "In Progress" },
-  { text: "Pending", value: "Pending" },
   { text: "Closed", value: "Closed" },
 ];

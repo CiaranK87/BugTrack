@@ -1,22 +1,22 @@
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
-import { Header, Segment, Table, Button, Confirm, Modal, Icon } from "semantic-ui-react";
+import { Header, Segment, Table, Button, Confirm, Modal, Icon, Label } from "semantic-ui-react";
 import { useStore } from "../../app/stores/store";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import LoadingComponent from "../../app/layout/LoadingComponent";
 import { format } from "date-fns";
 
-export default observer(function DeletedProjectsManagement() {
+export default observer(function ProjectManagement() {
   const { projectStore } = useStore();
-  const { deletedProjects, loadingInitial, adminDeleteProject, restoreProject } = projectStore;
+  const { projectsByStartDate, loadingInitial, deleteProject, restoreProject } = projectStore;
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleteProjectId, setDeleteProjectId] = useState("");
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<any>(null);
 
   useEffect(() => {
-    projectStore.loadDeletedProjects();
+    projectStore.loadProjects();
   }, [projectStore]);
 
   const handleDelete = (projectId: string) => {
@@ -25,7 +25,7 @@ export default observer(function DeletedProjectsManagement() {
   };
 
   const confirmDelete = () => {
-    adminDeleteProject(deleteProjectId)
+    deleteProject(deleteProjectId)
       .then(() => {
         toast.success("Project deleted successfully");
         projectStore.loadProjects();
@@ -57,22 +57,32 @@ export default observer(function DeletedProjectsManagement() {
     setDetailsModalOpen(true);
   };
 
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'Active': return 'green';
+      case 'Cancelled': return 'grey';
+      default: return 'grey';
+    }
+  };
+
+  const activeProjectsList = projectsByStartDate.filter(p => !p.isDeleted);
+
   return (
     <div style={{ minHeight: '100vh', position: 'relative' }}>
       {loadingInitial ? (
-        <LoadingComponent content="Loading deleted projects..." />
+        <LoadingComponent content="Loading projects..." />
       ) : (
         <Segment>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <Header as="h2" icon="trash" content="Deleted Projects" subheader="Manage deleted projects" />
+            <Header as="h2" icon="folder open" content="Project Management" subheader="Manage all projects" />
           </div>
           
-          {deletedProjects.length === 0 ? (
+          {activeProjectsList.length === 0 ? (
             <Segment placeholder>
               <Header icon>
-                <Icon name="trash" />
+                <Icon name="folder open" />
               </Header>
-              <p>No deleted projects found</p>
+              <p>No projects found</p>
             </Segment>
           ) : (
             <Table celled>
@@ -81,13 +91,13 @@ export default observer(function DeletedProjectsManagement() {
                   <Table.HeaderCell>Project Title</Table.HeaderCell>
                   <Table.HeaderCell>Owner</Table.HeaderCell>
                   <Table.HeaderCell>Start Date</Table.HeaderCell>
+                  <Table.HeaderCell>Status</Table.HeaderCell>
                   <Table.HeaderCell>Tickets</Table.HeaderCell>
-                  <Table.HeaderCell>Deleted Date</Table.HeaderCell>
                   <Table.HeaderCell>Actions</Table.HeaderCell>
                 </Table.Row>
               </Table.Header>
               <Table.Body>
-                {deletedProjects.map((project) => (
+                {activeProjectsList.map((project) => (
                   <Table.Row key={project.id}>
                     <Table.Cell>
                       <Header as="h4">
@@ -96,8 +106,12 @@ export default observer(function DeletedProjectsManagement() {
                     </Table.Cell>
                     <Table.Cell>{project.projectOwner || "Unknown"}</Table.Cell>
                     <Table.Cell>{project.startDate ? new Date(project.startDate).toLocaleDateString() : "N/A"}</Table.Cell>
+                    <Table.Cell>
+                      <Label color={getStatusColor(project.isCancelled ? 'Cancelled' : 'Active')} size="small">
+                        {project.isCancelled ? 'Cancelled' : 'Active'}
+                      </Label>
+                    </Table.Cell>
                     <Table.Cell>{project.ticketCount || 0}</Table.Cell>
-                    <Table.Cell>{(project as any).deletedDate ? format(new Date((project as any).deletedDate), 'MMM dd, yyyy') : "N/A"}</Table.Cell>
                     <Table.Cell>
                       <Button.Group>
                         <Button
@@ -106,18 +120,21 @@ export default observer(function DeletedProjectsManagement() {
                           onClick={() => handleViewDetails(project)}
                           title="View Details"
                         />
-                        <Button
-                          icon="undo"
-                          color="green"
-                          onClick={() => handleRestore(project.id)}
-                          title="Restore Project"
-                        />
-                        <Button
-                          icon="trash"
-                          color="red"
-                          onClick={() => handleDelete(project.id)}
-                          title="Permanently Delete"
-                        />
+                        {project.isDeleted ? (
+                          <Button
+                            icon="undo"
+                            color="green"
+                            onClick={() => handleRestore(project.id)}
+                            title="Restore Project"
+                          />
+                        ) : (
+                          <Button
+                            icon="trash"
+                            color="red"
+                            onClick={() => handleDelete(project.id)}
+                            title="Delete Project"
+                          />
+                        )}
                       </Button.Group>
                     </Table.Cell>
                   </Table.Row>
@@ -128,7 +145,7 @@ export default observer(function DeletedProjectsManagement() {
           
           <Confirm
             open={confirmOpen}
-            content="Are you sure you want to permanently delete this project? This action cannot be undone."
+            content="Are you sure you want to delete this project? This will move it to the deleted projects list."
             onCancel={() => setConfirmOpen(false)}
             onConfirm={confirmDelete}
           />
@@ -146,8 +163,15 @@ export default observer(function DeletedProjectsManagement() {
                   <p><strong>Description:</strong> {selectedProject.description}</p>
                   <p><strong>Owner:</strong> {selectedProject.projectOwner}</p>
                   <p><strong>Start Date:</strong> {selectedProject.startDate ? new Date(selectedProject.startDate).toLocaleDateString() : "N/A"}</p>
-                  <p><strong>Deleted Date:</strong> {selectedProject.deletedDate ? format(new Date(selectedProject.deletedDate), 'MMM dd, yyyy') : "N/A"}</p>
+                  <p><strong>Status:</strong> 
+                    <Label color={getStatusColor(selectedProject.isCancelled ? 'Cancelled' : 'Active')} size="small" style={{ marginLeft: '5px' }}>
+                      {selectedProject.isCancelled ? 'Cancelled' : 'Active'}
+                    </Label>
+                  </p>
                   <p><strong>Tickets:</strong> {selectedProject.ticketCount || 0}</p>
+                  {selectedProject.isDeleted && (
+                    <p><strong>Deleted Date:</strong> {selectedProject.deletedDate ? format(new Date(selectedProject.deletedDate), 'MMM dd, yyyy') : "N/A"}</p>
+                  )}
                 </div>
               )}
             </Modal.Content>

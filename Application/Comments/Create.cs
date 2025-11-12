@@ -17,6 +17,7 @@ namespace Application.Comments
         {
             public string Content { get; set; }
             public Guid TicketId { get; set; }
+            public Guid? ParentCommentId { get; set; }
             public List<IFormFile> Attachments { get; set; } = new List<IFormFile>();
         }
 
@@ -52,6 +53,7 @@ namespace Application.Comments
                     Content = request.Content,
                     TicketId = request.TicketId,
                     AuthorId = userId,
+                    ParentCommentId = request.ParentCommentId,
                     CreatedAt = DateTime.UtcNow
                 };
 
@@ -132,6 +134,7 @@ namespace Application.Comments
                     AuthorId = comment.AuthorId,
                     AuthorUsername = comment.Author?.UserName,
                     AuthorDisplayName = comment.Author?.DisplayName,
+                    ParentCommentId = comment.ParentCommentId,
                     Attachments = comment.Attachments?.Select(a => MapToCommentAttachmentDto(a, comment.TicketId, comment.Id)).ToList() ?? new List<CommentAttachmentDto>()
                 };
             }

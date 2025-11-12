@@ -16,6 +16,8 @@ namespace Domain
         public DateTime EndDate { get; set; }
         public DateTime Updated { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public bool IsDeleted { get; set; }
+        public DateTime? DeletedDate { get; set; }
         public Guid ProjectId { get; set; }
         public Project Project { get; set; }
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();

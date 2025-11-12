@@ -29,7 +29,9 @@ namespace Application.Profiles
 {
                 var projects = await _context.Projects
                     .Include(p => p.Tickets)
-                    .Where(p => p.ProjectOwner == request.Username || 
+                    .Include(p => p.Participants)
+                    .ThenInclude(pa => pa.AppUser)
+                    .Where(p => p.ProjectOwner == request.Username ||
                             p.Participants.Any(pa => pa.AppUser.UserName == request.Username))
                     .ToListAsync(cancellationToken);
 

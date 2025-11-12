@@ -100,7 +100,25 @@ namespace API.Controllers
         [HttpDelete("{projectId}/admin-delete")]
         public async Task<IActionResult> AdminDeleteProject(Guid projectId)
         {
-            return HandleResult(await Mediator.Send(new Delete.Command { Id = projectId }));
+            var project = await _context.Projects.FindAsync(projectId);
+            
+            if (project == null)
+            {
+                return NotFound();
+            }
+            
+            if (!project.IsDeleted)
+            {
+                return BadRequest("Project must be soft deleted first");
+            }
+
+            // Hard delete the project
+            _context.Projects.Remove(project);
+            var result = await _context.SaveChangesAsync() > 0;
+            
+            if (!result) return BadRequest("Failed to permanently delete project");
+            
+            return NoContent();
         }
 
         [Authorize(Policy = "RequireAdminRole")]
@@ -108,6 +126,33 @@ namespace API.Controllers
         public async Task<IActionResult> GetDeletedProjects()
         {
             return HandleResult(await Mediator.Send(new ListDeleted.Query()));
+        }
+
+        [Authorize(Policy = "RequireAdminRole")]
+        [HttpPut("{projectId}/restore")]
+        public async Task<IActionResult> RestoreProject(Guid projectId)
+        {
+            var project = await _context.Projects.FindAsync(projectId);
+                
+            if (project == null)
+            {
+                return NotFound();
+            }
+            
+            if (!project.IsDeleted)
+            {
+                return BadRequest("Project is not deleted");
+            }
+
+            // Restore the project
+            project.IsDeleted = false;
+            project.DeletedDate = null;
+            
+            var result = await _context.SaveChangesAsync() > 0;
+            
+            if (!result) return BadRequest("Failed to restore project");
+            
+            return NoContent();
         }
 
         [Authorize]

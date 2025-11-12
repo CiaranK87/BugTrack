@@ -7,5 +7,6 @@ namespace Application.DTOs
     {
         public string Content { get; set; }
         public List<IFormFile> Attachments { get; set; } = new List<IFormFile>();
+        public Guid? ParentCommentId { get; set; }
     }
 }

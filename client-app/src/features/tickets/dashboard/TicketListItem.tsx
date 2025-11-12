@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
-import { Button, Card, Item, Segment } from "semantic-ui-react";
+import { Button, Card, Item, Segment, Confirm, Icon } from "semantic-ui-react";
 import { useStore } from "../../../app/stores/store";
 import { SyntheticEvent, useState } from "react";
 import { Ticket } from "../../../app/models/ticket";
+import React from "react";
 
 interface Props {
   ticket: Ticket;
@@ -13,18 +14,26 @@ export default function TicketListItem({ ticket }: Props) {
   const { deleteTicket, loading } = ticketStore;
 
   const [target, setTarget] = useState("");
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
 function handleTicketDelete(e: SyntheticEvent<HTMLButtonElement>, id: string) {
+  e.stopPropagation();
   setTarget(e.currentTarget.name);
-  deleteTicket(id).then(() => {
+  setConfirmOpen(true);
+}
+
+function confirmDelete() {
+  deleteTicket(target).then(() => {
     if (ticket.projectId) {
       projectStore.loadProjects();
     }
+    setConfirmOpen(false);
   });
 }
 
   return (
-    <Segment.Group>
+    <React.Fragment>
+      <Segment.Group>
       <Segment>
         <Item.Group>
           <Item>
@@ -43,17 +52,18 @@ function handleTicketDelete(e: SyntheticEvent<HTMLButtonElement>, id: string) {
 </Card.Meta>
       </Segment>
       <Segment secondary>Assigned/collaborators go here</Segment>
-      <Segment clearing>
+      <Segment clearing style={{ position: 'relative' }}>
         <span>{ticket.description}</span>
         <Button as={Link} to={`/tickets/${ticket.id}`} color="teal" floated="right" content="View" />
-        <Button
-          loading={loading && target === ticket.id}
-          onClick={(e) => handleTicketDelete(e, ticket.id)}
-          color="red"
-          floated="right"
-          content="Delete"
-        />
       </Segment>
-    </Segment.Group>
+      </Segment.Group>
+      
+      <Confirm
+      open={confirmOpen}
+      content="Are you sure you want to delete this ticket? This will move it to the deleted tickets list."
+      onCancel={() => setConfirmOpen(false)}
+      onConfirm={confirmDelete}
+      />
+    </React.Fragment>
   );
 }

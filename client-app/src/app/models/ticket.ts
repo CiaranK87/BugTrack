@@ -14,6 +14,8 @@ export interface Ticket {
   endDate: Date | null;
   updated?: Date | null;
   createdAt?: Date | null;
+  isDeleted?: boolean;
+  deletedDate?: Date | null;
   projectId: string;
   projectTitle?: string;
   project?: Project;

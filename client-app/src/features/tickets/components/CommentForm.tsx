@@ -8,9 +8,11 @@ import { observer } from 'mobx-react-lite';
 
 interface Props {
   ticketId: string;
+  parentCommentId?: string;
+  isReply?: boolean;
 }
 
-export default observer(function CommentForm({ ticketId }: Props) {
+export default observer(function CommentForm({ ticketId, parentCommentId, isReply = false }: Props) {
   const { commentStore } = useStore();
   const { createComment, loading } = commentStore;
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -33,11 +35,15 @@ export default observer(function CommentForm({ ticketId }: Props) {
 
   const handleFormSubmit = async (values: { content: string }, { resetForm }: { resetForm: () => void }) => {
     try {
-      await createComment(ticketId, values.content, selectedFiles);
+      await createComment(ticketId, values.content, selectedFiles, parentCommentId);
       resetForm();
       setSelectedFiles([]);
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
+      }
+      
+      if (isReply && parentCommentId) {
+        window.dispatchEvent(new CustomEvent('closeReplyForm', { detail: { commentId: parentCommentId } }));
       }
     } catch (error) {
       console.error('Failed to create comment:', error);
@@ -46,7 +52,7 @@ export default observer(function CommentForm({ ticketId }: Props) {
 
   return (
     <Segment clearing>
-      <Header content='Add Comment' sub color='teal' />
+      <Header content={isReply ? 'Add Reply' : 'Add Comment'} sub color='teal' />
       <Formik
         initialValues={{ content: '' }}
         validationSchema={validationSchema}

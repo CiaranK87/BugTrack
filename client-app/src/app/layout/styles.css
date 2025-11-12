@@ -38,3 +38,8 @@ body {
   font-weight: normal;
 }
 
+
+/* Hide dropdown arrow for iconless dropdown */
+.iconless-dropdown > .dropdown.icon {
+  display: none !important;
+}

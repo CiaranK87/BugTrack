@@ -8,6 +8,7 @@ import { router } from "../router/Routes";
 
 export default class ProjectStore {
   projectRegistry = new Map<string, Project>();
+  deletedProjectRegistry = new Map<string, Project>();
   selectedProject: Project | undefined = undefined;
   editMode = false;
   loading = false;
@@ -25,6 +26,14 @@ export default class ProjectStore {
 
   get projectsByStartDate() {
     return Array.from(this.projectRegistry.values()).sort((a, b) => a.startDate!.getDate() - b.startDate!.getDate());
+  }
+
+  get deletedProjects() {
+    return Array.from(this.deletedProjectRegistry.values()).sort((a, b) => {
+      const dateA = new Date(a.deletedDate || 0);
+      const dateB = new Date(b.deletedDate || 0);
+      return dateB.getTime() - dateA.getTime();
+    });
   }
 
   loadProjects = async () => {
@@ -48,7 +57,7 @@ export default class ProjectStore {
       const projects = await agent.Projects.listDeleted();
       runInAction(() => {
         projects.forEach((project) => {
-          this.setProject(project);
+          this.deletedProjectRegistry.set(project.id, project);
         });
         this.setLoadingInitial(false);
       });
@@ -84,6 +93,15 @@ export default class ProjectStore {
   try {
     const projects = await agent.Projects.getUserProjects(username);
     runInAction(() => {
+      const user = store.userStore.user;
+      projects.forEach(project => {
+        if (user) {
+          project.isParticipant = project.participants!.some((p) => p.username === user.username);
+          project.isOwner = project.ownerUsername === user.username;
+          project.owner = project.participants?.find((x) => x.username === project.ownerUsername);
+        }
+        project.startDate = new Date(project.startDate!);
+      });
       this.userProjects = projects;
       this.loadingUserProjects = false;
     });
@@ -120,7 +138,12 @@ export default class ProjectStore {
       project.owner = project.participants?.find((x) => x.username === project.ownerUsername);
     }
     project.startDate = new Date(project.startDate!);
-    this.projectRegistry.set(project.id, project);
+    
+    if (!project.isDeleted) {
+      this.projectRegistry.set(project.id, project);
+    } else {
+      this.deletedProjectRegistry.set(project.id, project);
+    }
     0;
   };
 
@@ -166,7 +189,13 @@ export default class ProjectStore {
     try {
       await agent.Projects.delete(id);
       runInAction(() => {
-        this.projectRegistry.delete(id);
+        const project = this.projectRegistry.get(id);
+        if (project) {
+          (project as any).isDeleted = true;
+          (project as any).deletedDate = new Date();
+          this.projectRegistry.delete(id);
+          this.deletedProjectRegistry.set(id, project);
+        }
         this.loading = false;
       });
     } catch (error) {
@@ -183,6 +212,7 @@ export default class ProjectStore {
       await agent.Projects.adminDelete(id);
       runInAction(() => {
         this.projectRegistry.delete(id);
+        this.deletedProjectRegistry.delete(id);
         this.loading = false;
       });
     } catch (error) {
@@ -193,7 +223,28 @@ export default class ProjectStore {
     }
   };
 
-  
+  restoreProject = async (id: string) => {
+    this.loading = true;
+    try {
+      await agent.Projects.restore(id);
+      runInAction(() => {
+        const project = this.deletedProjectRegistry.get(id);
+        if (project) {
+          project.isDeleted = false;
+          (project as any).deletedDate = undefined;
+          this.deletedProjectRegistry.delete(id);
+          this.projectRegistry.set(id, project);
+        }
+        this.loading = false;
+      });
+    } catch (error) {
+      console.log(error);
+      runInAction(() => {
+        this.loading = false;
+      });
+    }
+  };
+
   cancelProjectToggle = async () => {
     this.loading = true;
     try {
@@ -210,6 +261,7 @@ export default class ProjectStore {
   };
   clear = () => {
     this.projectRegistry.clear();
+    this.deletedProjectRegistry.clear();
     this.selectedProject = undefined;
     this.editMode = false;
     this.loading = false;

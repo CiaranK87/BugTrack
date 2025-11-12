@@ -103,7 +103,7 @@ namespace Persistence
                                 Assigned = "bob",
                                 Priority = "Medium",
                                 Severity = "Medium",
-                                Status = "Pending",
+                                Status = "Open",
                                 StartDate = DateTime.UtcNow,
                                 EndDate = DateTime.UtcNow.AddDays(5),
                                 Updated = DateTime.UtcNow

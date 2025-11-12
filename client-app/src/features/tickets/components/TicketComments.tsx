@@ -62,8 +62,8 @@ export default observer(function TicketComments({ ticketId }: Props) {
           {commentStore.comments.length}
         </Label>
       </div>
-      <CommentList ticketId={ticketId} />
       <CommentForm ticketId={ticketId} />
+      <CommentList ticketId={ticketId} />
     </Segment>
   );
 });

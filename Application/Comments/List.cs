@@ -36,17 +36,45 @@ namespace Application.Comments
                 .OrderByDescending(c => c.CreatedAt)
                 .ToListAsync(cancellationToken);
 
-            var commentDtos = comments.Select(c => new CommentDto
+            // Build parent-child relationships
+            var rootComments = comments.Where(c => c.ParentCommentId == null).ToList();
+            var allReplies = comments.Where(c => c.ParentCommentId != null).ToList();
+
+            var commentDtos = rootComments.Select(rootComment => new CommentDto
             {
-                Id = c.Id,
-                Content = c.Content,
-                CreatedAt = c.CreatedAt,
-                UpdatedAt = c.UpdatedAt,
-                TicketId = c.TicketId,
-                AuthorId = c.AuthorId,
-                AuthorUsername = c.Author?.UserName,
-                AuthorDisplayName = c.Author?.DisplayName,
-                Attachments = c.Attachments?.Select(a => new CommentAttachmentDto
+                Id = rootComment.Id,
+                Content = rootComment.Content,
+                CreatedAt = rootComment.CreatedAt,
+                UpdatedAt = rootComment.UpdatedAt,
+                TicketId = rootComment.TicketId,
+                AuthorId = rootComment.AuthorId,
+                AuthorUsername = rootComment.Author?.UserName,
+                AuthorDisplayName = rootComment.Author?.DisplayName,
+                ParentCommentId = rootComment.ParentCommentId,
+                Replies = allReplies.Where(r => r.ParentCommentId == rootComment.Id)
+                    .Select(reply => new CommentDto
+                    {
+                        Id = reply.Id,
+                        Content = reply.Content,
+                        CreatedAt = reply.CreatedAt,
+                        UpdatedAt = reply.UpdatedAt,
+                        TicketId = reply.TicketId,
+                        AuthorId = reply.AuthorId,
+                        AuthorUsername = reply.Author?.UserName,
+                        AuthorDisplayName = reply.Author?.DisplayName,
+                        ParentCommentId = reply.ParentCommentId,
+                        Attachments = reply.Attachments?.Select(a => new CommentAttachmentDto
+                        {
+                            Id = a.Id,
+                            FileName = a.FileName,
+                            OriginalFileName = a.OriginalFileName,
+                            ContentType = a.ContentType,
+                            FileSize = a.FileSize,
+                            UploadedAt = a.UploadedAt,
+                            DownloadUrl = $"/api/tickets/{reply.TicketId}/comments/{reply.Id}/attachments/{a.Id}/download"
+                        }).ToList() ?? new List<CommentAttachmentDto>()
+                    }).ToList(),
+                Attachments = rootComment.Attachments?.Select(a => new CommentAttachmentDto
                 {
                     Id = a.Id,
                     FileName = a.FileName,
@@ -54,7 +82,7 @@ namespace Application.Comments
                     ContentType = a.ContentType,
                     FileSize = a.FileSize,
                     UploadedAt = a.UploadedAt,
-                    DownloadUrl = $"/api/tickets/{c.TicketId}/comments/{c.Id}/attachments/{a.Id}/download"
+                    DownloadUrl = $"/api/tickets/{rootComment.TicketId}/comments/{rootComment.Id}/attachments/{a.Id}/download"
                 }).ToList() ?? new List<CommentAttachmentDto>()
             }).ToList();
 

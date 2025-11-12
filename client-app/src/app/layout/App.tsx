@@ -21,6 +21,11 @@ function App() {
     }
   }, [commonStore, userStore]);
 
+  // Scroll to top when navigating to a new page
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   if (!commonStore.appLoaded) return <LoadingComponent content="Loading app..." />;
 
   return (

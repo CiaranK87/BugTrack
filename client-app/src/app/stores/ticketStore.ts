@@ -8,6 +8,7 @@ import { statusOptions } from "../common/options/statusOptions";
 
 export default class TicketStore {
   ticketRegistry = new Map<string, Ticket>();
+  deletedTicketRegistry = new Map<string, Ticket>();
   projectTickets = new Map<string, Ticket[]>();
   selectedTicket: Ticket | undefined = undefined;
   editMode = false;
@@ -19,18 +20,19 @@ export default class TicketStore {
   }
 
   get ticketsByStartDate() {
-    return Array.from(this.ticketRegistry.values()).sort((a, b) => a.startDate!.getTime() - b.startDate!.getTime());
+    return Array.from(this.ticketRegistry.values())
+      .sort((a, b) => a.startDate!.getTime() - b.startDate!.getTime());
   }
 
   get activeTickets() {
     return Array.from(this.ticketRegistry.values())
-      .filter(ticket => ticket.status !== "Closed")
+      .filter(ticket => ticket.status !== "Closed" && !ticket.isDeleted)
       .sort((a, b) => a.startDate!.getTime() - b.startDate!.getTime());
   }
 
   get closedTickets() {
     return Array.from(this.ticketRegistry.values())
-      .filter(ticket => ticket.status === "Closed")
+      .filter(ticket => ticket.status === "Closed" && !ticket.isDeleted)
       .sort((a, b) => (b.closedDate?.getTime() || 0) - (a.closedDate?.getTime() || 0));
   }
 
@@ -38,7 +40,7 @@ export default class TicketStore {
     this.setLoadingInitial(true);
     try {
       const tickets = await agent.Tickets.list();
-      tickets.forEach((ticket) => {
+      tickets.filter(ticket => !ticket.isDeleted).forEach((ticket) => {
         this.setTicket(ticket);
       });
       this.setLoadingInitial(false);
@@ -80,7 +82,7 @@ export default class TicketStore {
   try {
     const tickets = await agent.Tickets.listByProject(projectId);
     
-    const processedTickets = tickets.map(ticket => {
+    const processedTickets = tickets.filter(ticket => !ticket.isDeleted).map(ticket => {
       const normalizeDate = (d: any) => d ? new Date(d + 'Z') : null;
       const normalize = (value: string, allowed: string[]) => {
         if (!value) return "";
@@ -219,8 +221,98 @@ private setTicket = (ticket: Ticket) => {
       });
     }
   };
+
+  loadDeletedTickets = async () => {
+    this.setLoadingInitial(true);
+    try {
+      const tickets = await agent.Tickets.listDeleted();
+      runInAction(() => {
+        this.deletedTicketRegistry.clear();
+        tickets.forEach((ticket) => {
+          this.setDeletedTicket(ticket);
+        });
+        this.setLoadingInitial(false);
+      });
+    } catch (error) {
+      console.log(error);
+      runInAction(() => {
+        this.setLoadingInitial(false);
+      });
+    }
+  };
+
+  adminDeleteTicket = async (id: string) => {
+    this.loading = true;
+    try {
+      await agent.Tickets.adminDelete(id);
+      runInAction(() => {
+        this.ticketRegistry.delete(id);
+        this.deletedTicketRegistry.delete(id);
+        this.loading = false;
+      });
+    } catch (error) {
+      console.log(error);
+      runInAction(() => {
+        this.loading = false;
+      });
+    }
+  };
+
+  restoreTicket = async (id: string) => {
+    this.loading = true;
+    try {
+      await agent.Tickets.restore(id);
+      runInAction(() => {
+        this.deletedTicketRegistry.delete(id);
+        this.loading = false;
+      });
+      this.loadDeletedTickets();
+    } catch (error) {
+      console.log(error);
+      runInAction(() => {
+        this.loading = false;
+      });
+    }
+  };
+
+  private setDeletedTicket = (ticket: Ticket) => {
+    const normalizeDate = (d: any) => d ? new Date(d + 'Z') : null;
+    const normalize = (value: string, allowed: string[]) => {
+      if (!value) return "";
+      const trimmed = value.trim();
+      const direct = allowed.find(a => a === trimmed);
+      if (direct) return direct;
+      const ci = allowed.find(a => a.toLowerCase() === trimmed.toLowerCase());
+      return ci || "";
+    };
+    const allowedPriorities = priorityOptions.map(o => o.value as string);
+    const allowedSeverities = severityOptions.map(o => o.value as string);
+    const allowedStatuses = statusOptions.map(o => o.value as string);
+
+    ticket.priority = normalize(ticket.priority, allowedPriorities);
+    ticket.severity = normalize(ticket.severity, allowedSeverities);
+    ticket.status = normalize(ticket.status, allowedStatuses);
+    
+    ticket.startDate = normalizeDate(ticket.startDate);
+    ticket.endDate = normalizeDate(ticket.endDate);
+    ticket.updated = normalizeDate(ticket.updated);
+    ticket.createdAt = normalizeDate(ticket.createdAt);
+    ticket.closedDate = normalizeDate(ticket.closedDate);
+    this.deletedTicketRegistry.set(ticket.id, ticket);
+  };
+
+  get deletedTickets() {
+    return Array.from(this.deletedTicketRegistry.values())
+      .sort((a, b) => {
+        const aTime = a.deletedDate ? new Date(a.deletedDate).getTime() : 0;
+        const bTime = b.deletedDate ? new Date(b.deletedDate).getTime() : 0;
+        return bTime - aTime;
+      });
+  }
+
   clear = () => {
     this.ticketRegistry.clear();
+    this.deletedTicketRegistry.clear();
     this.projectTickets.clear();
     this.selectedTicket = undefined;
     this.editMode = false;

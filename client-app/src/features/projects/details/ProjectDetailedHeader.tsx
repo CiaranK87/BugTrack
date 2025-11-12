@@ -40,7 +40,7 @@ export default observer(function ProjectDetailedHeader({ project }: Props) {
         </Segment>
       </Segment>
       <Segment clearing attached="bottom">
-        {(project.isOwner || currentUserCanManage || isAdmin) ? (
+        {(project.isOwner || currentUserCanManage || isAdmin) && (
           <>
             {(project.isOwner || isAdmin) && (
               <Button
@@ -57,14 +57,6 @@ export default observer(function ProjectDetailedHeader({ project }: Props) {
               Manage Project
             </Button>
           </>
-        ) : project.isParticipant ? (
-          <Button loading={loading} onClick={updateParticipants}>
-            Cancel participation
-          </Button>
-        ) : (
-          <Button disabled={project.isCancelled} loading={loading} onClick={updateParticipants} color="teal">
-            Join Project
-          </Button>
         )}
       </Segment>
     </Segment.Group>

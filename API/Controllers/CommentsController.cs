@@ -48,7 +48,12 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<CommentDto>> CreateComment(Guid ticketId, [FromForm] CreateCommentDto commentDto)
         {
-            var result = await _mediator.Send(new Create.Command { TicketId = ticketId, Content = commentDto.Content, Attachments = commentDto.Attachments });
+            var result = await _mediator.Send(new Create.Command {
+                TicketId = ticketId,
+                Content = commentDto.Content,
+                Attachments = commentDto.Attachments,
+                ParentCommentId = commentDto.ParentCommentId
+            });
             
             if (result.IsSuccess)
             {

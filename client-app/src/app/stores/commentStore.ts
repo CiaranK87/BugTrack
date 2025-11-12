@@ -5,7 +5,6 @@ import { Comment, CommentAttachment } from '../models/comment';
 
 export default class CommentStore {
   comments: Comment[] = [];
-  hubConnection: HubConnection | null = null;
   connection: HubConnection | null = null;
   currentTicketId: string | null = null;
   loading: boolean = false;
@@ -79,11 +78,33 @@ export default class CommentStore {
     
     this.connection.on('ReceiveComment', (comment: Comment) => {
       runInAction(() => {
-        if (!this.comments.find(c => c.id === comment.id)) {
-          if (!comment.authorUsername || !comment.authorDisplayName) {
-            console.warn('Received comment without author information:', comment);
+        if (!comment.authorUsername || !comment.authorDisplayName) {
+          console.warn('Received comment without author information:', comment);
+        }
+        
+        if (comment.parentCommentId) {
+          const parentIndex = this.comments.findIndex(c => c.id === comment.parentCommentId);
+          if (parentIndex !== -1) {
+            if (!this.comments[parentIndex].replies) {
+              this.comments[parentIndex].replies = [];
+            }
+
+            const updatedReplies = [...this.comments[parentIndex].replies, comment];
+            
+            const updatedParentComment = {
+              ...this.comments[parentIndex],
+              replies: updatedReplies
+            };
+
+            this.comments = [
+              ...this.comments.slice(0, parentIndex),
+              updatedParentComment,
+              ...this.comments.slice(parentIndex + 1)
+            ];
+          } else {
+            this.comments = [...this.comments, comment];
           }
-          
+        } else {
           this.comments = [...this.comments, comment];
         }
       });
@@ -181,11 +202,15 @@ export default class CommentStore {
     }
   };
 
-  createComment = async (ticketId: string, content: string, attachments: File[] = []) => {
+  createComment = async (ticketId: string, content: string, attachments: File[] = [], parentCommentId?: string) => {
     this.loading = true;
     try {
       const formData = new FormData();
       formData.append('content', content);
+
+      if (parentCommentId) {
+        formData.append('parentCommentId', parentCommentId);
+      }
 
       if (attachments && attachments.length > 0) {
         for (let i = 0; i < attachments.length; i++) {
@@ -262,7 +287,25 @@ export default class CommentStore {
       }
 
       runInAction(() => {
-        this.comments = this.comments.filter(c => c.id !== commentId);
+        const topLevelIndex = this.comments.findIndex(c => c.id === commentId);
+        if (topLevelIndex !== -1) {
+          this.comments = this.comments.filter(c => c.id !== commentId);
+        } else {
+          const updatedComments = this.comments.map(comment => {
+            if (comment.replies) {
+              const updatedReplies = comment.replies.filter(reply => reply.id !== commentId);
+              if (updatedReplies.length !== comment.replies.length) {
+                return {
+                  ...comment,
+                  replies: updatedReplies
+                };
+              }
+            }
+            return comment;
+          });
+          
+          this.comments = updatedComments;
+        }
       });
     } catch (error) {
       console.error('Error deleting comment:', error);

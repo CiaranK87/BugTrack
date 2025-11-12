@@ -1,4 +1,4 @@
-import { Grid } from "semantic-ui-react";
+import { Grid, Segment, Header } from "semantic-ui-react";
 import { useStore } from "../../../app/stores/store";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
 import { observer } from "mobx-react-lite";
@@ -27,14 +27,33 @@ export default observer(function TicketDetails() {
   if (loadingInitial || !ticket) return <LoadingComponent />;
 
   return (
-    <Grid>
-      <Grid.Column width={10}>
-        <TicketDetailedHeader ticket={ticket} />
-        <TicketDetailedInfo ticket={ticket} />
-      </Grid.Column>
-      <Grid.Column width={6}>
-        <TicketComments ticketId={ticket.id} />
-      </Grid.Column>
-    </Grid>
+    <div style={{ padding: '20px' }}>
+      <Grid stackable>
+        <Grid.Row>
+          <Grid.Column width={16}>
+            <TicketDetailedHeader ticket={ticket} />
+          </Grid.Column>
+        </Grid.Row>
+        
+        <Grid.Row>
+          <Grid.Column width={16}>
+            <TicketDetailedInfo ticket={ticket} />
+          </Grid.Column>
+        </Grid.Row>
+        
+        <Grid.Row>
+          <Grid.Column width={16}>
+            <Segment>
+              <Header as="h3" dividing>
+                <Header.Content>
+                  Discussion & Comments
+                </Header.Content>
+              </Header>
+              <TicketComments ticketId={ticket.id} />
+            </Segment>
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
+    </div>
   );
 });

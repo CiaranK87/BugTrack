@@ -7,6 +7,8 @@ export interface Comment {
   authorId: string;
   authorUsername: string;
   authorDisplayName: string;
+  parentCommentId?: string;
+  replies: Comment[];
   attachments: CommentAttachment[];
 }
 

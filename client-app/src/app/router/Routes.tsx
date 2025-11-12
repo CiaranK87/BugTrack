@@ -1,6 +1,7 @@
 import { Navigate, RouteObject, createBrowserRouter } from "react-router-dom";
 import App from "../layout/App";
 import ProjectDashboard from "../../features/projects/dashboard/ProjectDashboard";
+import EnhancedProjectDashboard from "../../features/projects/dashboard/EnhancedProjectDashboard";
 import ProjectForm from "../../features/projects/form/ProjectForm";
 import ProjectDetails from "../../features/projects/details/ProjectDetails";
 import TestError from "../../features/errors/TestError";
@@ -9,21 +10,33 @@ import ServerError from "../../features/errors/ServerError";
 import NetworkError from "../../features/errors/NetworkError";
 import LoginForm from "../../features/users/LoginForm";
 import TicketDashboard from "../../features/tickets/dashboard/TicketDashboard";
+import EnhancedTicketDashboard from "../../features/tickets/dashboard/EnhancedTicketDashboard";
 import TicketDetails from "../../features/tickets/details/TicketDetails";
 import TicketForm from "../../features/tickets/form/TicketForm";
 import ProfilePage from "../../features/profiles/ProfilePage";
 import Dashboard from "../../features/dashboard/Dashboard";
+import UnifiedDashboard from "../../features/dashboard/UnifiedDashboard";
 import ProjectAddParticipant from "../../features/projects/details/ProjectAddParticipant";
 import UserManagement from "../../features/admin/UserManagement";
+import DeletedProjectsManagement from "../../features/admin/DeletedProjectsManagement";
+import DeletedTicketsManagement from "../../features/admin/DeletedTicketsManagement";
+import TicketManagement from "../../features/admin/TicketManagement";
 
 export const routes: RouteObject[] = [
   {
     path: "/",
     element: <App />,
     children: [
-      { path: "projects", element: <ProjectDashboard /> },
-      { path: "dashboard", element: <Dashboard /> },
+      { path: "projects", element: <EnhancedProjectDashboard /> },
+      { path: "projects/legacy", element: <ProjectDashboard /> },
+      { path: "dashboard", element: <UnifiedDashboard /> },
+      { path: "dashboard/legacy", element: <Dashboard /> },
+      { path: "tickets", element: <EnhancedTicketDashboard /> },
+      { path: "tickets/legacy", element: <TicketDashboard /> },
       { path: "admin/users", element: <UserManagement /> },
+      { path: "admin/deleted-projects", element: <DeletedProjectsManagement /> },
+      { path: "admin/deleted-tickets", element: <DeletedTicketsManagement /> },
+      { path: "admin/tickets", element: <TicketManagement /> },
 
       
       { path: "projects/:projectId/tickets/create", element: <TicketForm key="createTicket" /> },
@@ -32,7 +45,6 @@ export const routes: RouteObject[] = [
 
       { path: "createProject", element: <ProjectForm key="createProject" /> },
       { path: "manageProject/:id", element: <ProjectForm key="manageProject" /> },
-      { path: "tickets", element: <TicketDashboard /> },
       { path: "tickets/:id", element: <TicketDetails /> },
       { path: "/projects/:id/participants/add", element: <ProjectAddParticipant /> },
       { path: "login", element: <LoginForm /> },

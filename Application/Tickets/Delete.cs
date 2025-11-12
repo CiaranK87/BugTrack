@@ -25,9 +25,8 @@ namespace Application.Tickets
 
                 if(ticket == null) return null;
 
-
-
-                _context.Remove(ticket);
+                ticket.IsDeleted = true;
+                ticket.DeletedDate = DateTime.UtcNow;
 
                 var result = await _context.SaveChangesAsync() > 0;
 

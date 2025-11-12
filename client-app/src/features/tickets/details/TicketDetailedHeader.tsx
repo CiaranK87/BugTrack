@@ -14,6 +14,7 @@ export default observer(function TicketDetailedHeader({ ticket }: Props) {
   const { projectStore, userStore, ticketStore } = useStore();
   const currentUser = userStore.user;
   const [isClosing, setIsClosing] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   
   const project = ticket.project || projectStore.projectRegistry.get(ticket.projectId);
 
@@ -77,6 +78,19 @@ export default observer(function TicketDetailedHeader({ ticket }: Props) {
     setShowReopenConfirm(true);
   };
 
+  const handleDeleteTicket = async () => {
+    try {
+      await ticketStore.deleteTicket(ticket.id);
+      navigate('/tickets');
+    } catch (error) {
+      console.error("Failed to delete ticket:", error);
+    }
+  };
+
+  const handleConfirmDelete = () => {
+    setShowDeleteConfirm(true);
+  };
+
   return (
     <Segment.Group>
       <Segment basic attached="top" style={{ padding: "0", background: "white" }}>
@@ -121,7 +135,7 @@ export default observer(function TicketDetailedHeader({ ticket }: Props) {
           </Item.Group>
         </Segment>
       </Segment>
-      <Segment clearing attached="bottom">
+      <Segment clearing attached="bottom" style={{ position: 'relative' }}>
         {canManageTicket && (
           <>
             {ticket.status !== "Closed" ? (
@@ -145,7 +159,7 @@ export default observer(function TicketDetailedHeader({ ticket }: Props) {
                 />
               )
             )}
-            
+           
             <Confirm
               open={showConfirm}
               content="Are you sure you want to mark this ticket as closed? You can reopen it later if needed."
@@ -155,13 +169,23 @@ export default observer(function TicketDetailedHeader({ ticket }: Props) {
               cancelButton="Cancel"
               size="small"
             />
-            
+           
             <Confirm
               open={showReopenConfirm}
               content="Are you sure you want to reopen this ticket? It will be set to 'Open' status."
               onCancel={() => setShowReopenConfirm(false)}
               onConfirm={handleReopenTicket}
               confirmButton="Yes, reopen it"
+              cancelButton="Cancel"
+              size="small"
+            />
+           
+            <Confirm
+              open={showDeleteConfirm}
+              content="Are you sure you want to delete this ticket? This action can be reversed by an administrator."
+              onCancel={() => setShowDeleteConfirm(false)}
+              onConfirm={handleDeleteTicket}
+              confirmButton="Yes, delete it"
               cancelButton="Cancel"
               size="small"
             />

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -10,9 +11,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20251112133128_AddJoinDateToUser")]
+    partial class AddJoinDateToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
@@ -117,9 +120,6 @@ namespace Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid?>("ParentCommentId")
-                        .HasColumnType("TEXT");
-
                     b.Property<Guid>("TicketId")
                         .HasColumnType("TEXT");
 
@@ -129,8 +129,6 @@ namespace Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
-
-                    b.HasIndex("ParentCommentId");
 
                     b.HasIndex("TicketId");
 
@@ -422,10 +420,6 @@ namespace Persistence.Migrations
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Domain.Comment", "ParentComment")
-                        .WithMany("Replies")
-                        .HasForeignKey("ParentCommentId");
-
                     b.HasOne("Domain.Ticket", "Ticket")
                         .WithMany("Comments")
                         .HasForeignKey("TicketId")
@@ -433,8 +427,6 @@ namespace Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Author");
-
-                    b.Navigation("ParentComment");
 
                     b.Navigation("Ticket");
                 });
@@ -546,8 +538,6 @@ namespace Persistence.Migrations
             modelBuilder.Entity("Domain.Comment", b =>
                 {
                     b.Navigation("Attachments");
-
-                    b.Navigation("Replies");
                 });
 
             modelBuilder.Entity("Domain.Project", b =>

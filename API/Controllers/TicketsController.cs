@@ -204,6 +204,70 @@ namespace API.Controllers
             return HandleResult(await _mediator.Send(new Delete.Command { Id = id }));
         }
 
+        [HttpGet("admin/deleted")]
+        [Authorize(Policy = "RequireAdminRole")]
+        public async Task<ActionResult<List<TicketDto>>> GetDeletedTickets()
+        {
+            var result = await _mediator.Send(new ListDeleted.Query());
+            var dtoList = result.Value.Select(t => _mapper.Map<TicketDto>(t)).ToList();
+            return Ok(dtoList);
+        }
+
+        [HttpDelete("{id}/admin-delete")]
+        [Authorize(Policy = "RequireAdminRole")]
+        public async Task<IActionResult> AdminDeleteTicket(Guid id)
+        {
+            var ticketResult = await _mediator.Send(new Details.Query { Id = id });
+            if (ticketResult.Value == null)
+            {
+                return NotFound();
+            }
+            
+            var ticket = ticketResult.Value;
+            
+            if (!ticket.IsDeleted)
+            {
+                return BadRequest("Ticket must be soft deleted first");
+            }
+
+            // Hard delete the ticket
+            _context.Tickets.Remove(ticket);
+            var result = await _context.SaveChangesAsync() > 0;
+            
+            if (!result) return BadRequest("Failed to permanently delete ticket");
+            
+            return NoContent();
+        }
+
+        [HttpPut("{id}/restore")]
+        [Authorize(Policy = "RequireAdminRole")]
+        public async Task<IActionResult> RestoreTicket(Guid id)
+        {
+            var ticket = await _context.Tickets
+                .Include(t => t.Project)
+                .FirstOrDefaultAsync(t => t.Id == id);
+                
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+            
+            if (!ticket.IsDeleted)
+            {
+                return BadRequest("Ticket is not deleted");
+            }
+
+            // Restore the ticket
+            ticket.IsDeleted = false;
+            ticket.DeletedDate = null;
+            
+            var result = await _context.SaveChangesAsync() > 0;
+            
+            if (!result) return BadRequest("Failed to restore ticket");
+            
+            return NoContent();
+        }
+
         private IActionResult HandleResult<T>(Result<T> result)
         {
             if (result == null) return NotFound();

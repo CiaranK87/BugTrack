@@ -3,13 +3,11 @@ import { observer } from "mobx-react-lite";
 import { useEffect } from "react";
 import { Container, Grid, Header, Segment, Icon } from "semantic-ui-react";
 import { useStore } from "../../app/stores/store";
-
-
 import StatisticGroup from "./components/StatisticGroup";
 import TicketStatusChart from "./components/TicketStatusChart";
 import RecentTickets from "./components/RecentTickets";
 import MyTasks from "./components/MyTasks";
-import TicketPriorityChart from "./components/TicketPriorityChart";
+import TicketSeverityChart from "./components/TicketSeverityChart";
 
 export default observer(function Dashboard() {
   const { projectStore, ticketStore, userStore } = useStore();
@@ -41,13 +39,14 @@ export default observer(function Dashboard() {
   const ticketStatusData = [
     { name: 'Open', value: openTickets, color: '#21ba45' },
     { name: 'In Progress', value: tickets.filter(t => t.status === 'In Progress').length, color: '#f2c037' },
-    { name: 'Pending', value: tickets.filter(t => t.status === 'Pending').length, color: '#db2828' },
+    { name: 'Closed', value: tickets.filter(t => t.status === 'Closed').length, color: '#db2828' },
   ].filter(item => item.value > 0);
 
-  const priorityData = [
-    { name: 'High', count: tickets.filter(t => t.priority === 'High').length },
-    { name: 'Medium', count: tickets.filter(t => t.priority === 'Medium').length },
-    { name: 'Low', count: tickets.filter(t => t.priority === 'Low').length },
+  const severityData = [
+    { name: 'Critical', count: tickets.filter(t => t.severity === 'Critical').length },
+    { name: 'High', count: tickets.filter(t => t.severity === 'High').length },
+    { name: 'Medium', count: tickets.filter(t => t.severity === 'Medium').length },
+    { name: 'Low', count: tickets.filter(t => t.severity === 'Low').length },
   ].filter(item => item.count > 0);
 
   return (
@@ -79,7 +78,7 @@ export default observer(function Dashboard() {
           <TicketStatusChart data={ticketStatusData} />
         </Grid.Column>
         <Grid.Column>
-          <TicketPriorityChart data={priorityData} />
+          <TicketSeverityChart data={severityData} />
         </Grid.Column>
       </Grid>
 

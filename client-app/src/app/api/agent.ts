@@ -121,6 +121,7 @@ const Projects = {
   delete: (id: string) => requests.del<void>(`/projects/${id}`),
   adminDelete: (id: string) => requests.del<void>(`/projects/${id}/admin-delete`),
   listDeleted: () => requests.get<Project[]>("/projects/admin/deleted"),
+  restore: (id: string) => requests.put<void>(`/projects/${id}/restore`, {}),
   participate: (id: string) => requests.post<void>(`/projects/${id}/participate`, {}),
   getUserProjects: (username: string) => requests.get<Project[]>(`/profiles/${username}/projects`),
   getUserRole: (projectId: string) => requests.get<string>(`/projects/${projectId}/role`),
@@ -137,6 +138,9 @@ const Tickets = {
   create: (ticket: Ticket) => requests.post<void>("/tickets", ticket),
   update: (ticket: Ticket) => requests.put<void>(`/tickets/${ticket.id}`, ticket),
   delete: (id: string) => requests.del<void>(`/tickets/${id}`),
+  listDeleted: () => requests.get<Ticket[]>("/tickets/admin/deleted"),
+  adminDelete: (id: string) => requests.del<void>(`/tickets/${id}/admin-delete`),
+  restore: (id: string) => requests.put<void>(`/tickets/${id}/restore`, {}),
 };
 
 const Account = {

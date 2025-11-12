@@ -1,11 +1,15 @@
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
-import { Header, Segment, Table, Dropdown, Label, Icon, Loader, Button, Confirm, Tab } from "semantic-ui-react";
+import { Header, Segment, Table, Dropdown, Label, Icon, Button, Confirm, Tab } from "semantic-ui-react";
 import { useStore } from "../../app/stores/store";
 import { toast } from "react-toastify";
+import LoadingComponent from "../../app/layout/LoadingComponent";
 import AdminRegisterForm from "./AdminRegisterForm";
 import EditUserForm from "./EditUserForm";
 import DeletedProjectsManagement from "./DeletedProjectsManagement";
+import DeletedTicketsManagement from "./DeletedTicketsManagement";
+import TicketManagement from "./TicketManagement";
+import ProjectManagement from "./ProjectManagement";
 
 export default observer(function UserManagement() {
   const { userStore, modalStore } = useStore();
@@ -67,11 +71,7 @@ export default observer(function UserManagement() {
   ];
 
   if (loading) {
-    return (
-      <Segment>
-        <Loader active>Loading users...</Loader>
-      </Segment>
-    );
+    return <LoadingComponent content="Loading users..." />;
   }
 
   const panes = [
@@ -167,30 +167,44 @@ export default observer(function UserManagement() {
       )
     },
     {
+      menuItem: 'Project Management',
+      render: () => <ProjectManagement />
+    },
+    {
+      menuItem: 'Ticket Management',
+      render: () => <TicketManagement />
+    },
+    {
       menuItem: 'Deleted Projects',
-      render: () => (
-        <Segment attached="bottom">
-          <DeletedProjectsManagement />
-        </Segment>
-      )
+      render: () => <DeletedProjectsManagement />
+    },
+    {
+      menuItem: 'Deleted Tickets',
+      render: () => <DeletedTicketsManagement />
     }
   ];
 
   return (
-    <div>
-      <Tab
-        menu={{ attached: true, tabular: true }}
-        panes={panes}
-        activeIndex={activeTab}
-        onTabChange={(_, data) => setActiveTab(data.activeIndex as number)}
-      />
-      
-      <Confirm
-        open={confirmOpen}
-        content="Are you sure you want to delete this user? This action cannot be undone."
-        onCancel={() => setConfirmOpen(false)}
-        onConfirm={confirmDelete}
-      />
+    <div style={{ minHeight: '100vh', position: 'relative' }}>
+      {loading ? (
+        <LoadingComponent content="Loading users..." />
+      ) : (
+        <div>
+          <Tab
+            menu={{ attached: true, tabular: true }}
+            panes={panes}
+            activeIndex={activeTab}
+            onTabChange={(_, data) => setActiveTab(data.activeIndex as number)}
+          />
+          
+          <Confirm
+            open={confirmOpen}
+            content="Are you sure you want to delete this user? This action cannot be undone."
+            onCancel={() => setConfirmOpen(false)}
+            onConfirm={confirmDelete}
+          />
+        </div>
+      )}
     </div>
   );
 });

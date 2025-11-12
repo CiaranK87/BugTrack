@@ -36,6 +36,8 @@ namespace Application.Core
                 .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.UserName))
                 .ForMember(dest => dest.DisplayName, opt => opt.MapFrom(src => src.DisplayName))
                 .ForMember(dest => dest.Bio, opt => opt.MapFrom(src => src.Bio))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.JoinDate, opt => opt.MapFrom(src => src.JoinDate))
                 .ForMember(dest => dest.Image, opt => opt.Ignore());
 
             CreateMap<Ticket, Ticket>()
@@ -49,6 +51,14 @@ namespace Application.Core
             
             CreateMap<Ticket, TicketDto>()
                 .ForMember(dest => dest.ProjectTitle, opt => opt.MapFrom(src => src.Project != null ? src.Project.ProjectTitle : null));
+
+            CreateMap<Comment, CommentDto>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.ToString()))
+                .ForMember(dest => dest.AuthorUsername, opt => opt.MapFrom(src => src.Author.UserName))
+                .ForMember(dest => dest.AuthorDisplayName, opt => opt.MapFrom(src => src.Author.DisplayName))
+                .ForMember(dest => dest.AuthorId, opt => opt.MapFrom(src => src.AuthorId))
+                .ForMember(dest => dest.ParentCommentId, opt => opt.MapFrom(src => src.ParentCommentId))
+                .ForMember(dest => dest.Replies, opt => opt.Ignore());
         }
     }
 }
