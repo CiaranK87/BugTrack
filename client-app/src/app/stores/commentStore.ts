@@ -89,7 +89,9 @@ export default class CommentStore {
               this.comments[parentIndex].replies = [];
             }
 
-            const updatedReplies = [...this.comments[parentIndex].replies, comment];
+            const updatedReplies = [...this.comments[parentIndex].replies, comment].sort((a, b) =>
+              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+            );
             
             const updatedParentComment = {
               ...this.comments[parentIndex],
@@ -189,11 +191,14 @@ export default class CommentStore {
           attachments: comment.attachments.map(attachment => ({
             ...attachment,
             downloadUrl: attachment.downloadUrl || `/api/tickets/${comment.ticketId}/comments/${comment.id}/attachments/${attachment.id}/download`
-          }))
+          })),
+          replies: comment.replies ? comment.replies.sort((a, b) =>
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          ) : []
         }));
         
         this.comments = commentsWithDownloadUrls.sort((a, b) =>
-          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
       });
     } catch (error) {

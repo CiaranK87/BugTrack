@@ -127,7 +127,8 @@ const CommentList: React.FC<Props> = observer(({ ticketId }) => {
                       color: '#888',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '6px'
+                      gap: '6px',
+                      fontWeight: 'bold'
                     }}>
                       <i className="clock icon" style={{
                         margin: 0,
@@ -214,7 +215,9 @@ const CommentList: React.FC<Props> = observer(({ ticketId }) => {
               {/* Display replies */}
               {comment.replies && comment.replies.length > 0 && (
                 <div style={{ marginTop: '12px', marginLeft: '20px', paddingLeft: '16px', borderLeft: '2px solid #e8e8e8' }}>
-                  {comment.replies.map((reply) => (
+                  {[...comment.replies].sort((a, b) =>
+                    new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+                  ).map((reply) => (
                     <div key={reply.id} style={{
                       backgroundColor: '#fff',
                       borderRadius: '8px',
