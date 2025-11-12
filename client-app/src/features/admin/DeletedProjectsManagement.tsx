@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
-import { Header, Segment, Table, Button, Confirm, Modal, Icon } from "semantic-ui-react";
+import { Header, Segment, Table, Button, Confirm, Modal, Icon, Input } from "semantic-ui-react";
 import { useStore } from "../../app/stores/store";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
@@ -14,6 +14,7 @@ export default observer(function DeletedProjectsManagement() {
   const [deleteProjectId, setDeleteProjectId] = useState("");
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<any>(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     projectStore.loadDeletedProjects();
@@ -57,6 +58,14 @@ export default observer(function DeletedProjectsManagement() {
     setDetailsModalOpen(true);
   };
 
+  // Filter deleted projects based on search term
+  const filteredDeletedProjects = deletedProjects.filter(project =>
+    project.projectTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (project.projectOwner && project.projectOwner.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (project.description && project.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (project.deletedDate && format(new Date(project.deletedDate), 'MMM dd, yyyy').toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+
   return (
     <div style={{ minHeight: '100vh', position: 'relative' }}>
       {loadingInitial ? (
@@ -65,9 +74,16 @@ export default observer(function DeletedProjectsManagement() {
         <Segment>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
             <Header as="h2" icon="trash" content="Deleted Projects" subheader="Manage deleted projects" />
+            <Input
+              icon="search"
+              placeholder="Search deleted projects..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{ width: '250px' }}
+            />
           </div>
           
-          {deletedProjects.length === 0 ? (
+          {filteredDeletedProjects.length === 0 ? (
             <Segment placeholder>
               <Header icon>
                 <Icon name="trash" />
@@ -87,7 +103,7 @@ export default observer(function DeletedProjectsManagement() {
                 </Table.Row>
               </Table.Header>
               <Table.Body>
-                {deletedProjects.map((project) => (
+                {filteredDeletedProjects.map((project) => (
                   <Table.Row key={project.id}>
                     <Table.Cell>
                       <Header as="h4">

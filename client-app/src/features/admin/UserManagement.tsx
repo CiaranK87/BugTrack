@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
-import { Header, Segment, Table, Dropdown, Label, Icon, Button, Confirm, Tab } from "semantic-ui-react";
+import { Header, Segment, Table, Dropdown, Label, Icon, Button, Confirm, Tab, Input } from "semantic-ui-react";
 import { useStore } from "../../app/stores/store";
 import { toast } from "react-toastify";
 import LoadingComponent from "../../app/layout/LoadingComponent";
@@ -17,6 +17,7 @@ export default observer(function UserManagement() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleteUserId, setDeleteUserId] = useState("");
   const [activeTab, setActiveTab] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     userStore.loadUsers();
@@ -63,6 +64,15 @@ export default observer(function UserManagement() {
     }
   };
 
+  // Filter users based on search term
+  const filteredUsers = users.filter(user =>
+    user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.displayName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (user.jobTitle && user.jobTitle.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    user.globalRole.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   const roleOptions = [
     { key: "user", text: "User", value: "User" },
     { key: "developer", text: "Developer", value: "Developer" },
@@ -81,13 +91,22 @@ export default observer(function UserManagement() {
         <Segment attached="bottom">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
             <Header as="h2" icon="users" content="User Management" subheader="Manage global user roles" />
-            <Button
-              positive
-              content="Add New User"
-              icon="user plus"
-              onClick={() => modalStore.openModal(<AdminRegisterForm />)}
-              size="small"
-            />
+            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+              <Input
+                icon="search"
+                placeholder="Search users..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{ width: '250px' }}
+              />
+              <Button
+                positive
+                content="Add New User"
+                icon="user plus"
+                onClick={() => modalStore.openModal(<AdminRegisterForm />)}
+                size="small"
+              />
+            </div>
           </div>
           
           <Table celled>
@@ -102,7 +121,7 @@ export default observer(function UserManagement() {
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {users.map((user) => (
+              {filteredUsers.map((user) => (
                 <Table.Row key={user.id}>
                   <Table.Cell>
                     <Header as="h4" image>

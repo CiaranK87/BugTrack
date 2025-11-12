@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
-import { Header, Segment, Table, Button, Confirm, Modal, Icon, Label } from "semantic-ui-react";
+import { Header, Segment, Table, Button, Confirm, Modal, Icon, Label, Input } from "semantic-ui-react";
 import { useStore } from "../../app/stores/store";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
@@ -14,6 +14,7 @@ export default observer(function TicketManagement() {
   const [deleteTicketId, setDeleteTicketId] = useState("");
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState<any>(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     ticketStore.loadTickets();
@@ -74,6 +75,18 @@ export default observer(function TicketManagement() {
   };
 
   const activeTicketsList = ticketsByStartDate.filter(ticket => !ticket.isDeleted);
+  
+  // Filter tickets based on search term
+  const filteredTickets = activeTicketsList.filter(ticket =>
+    ticket.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (ticket.submitter && ticket.submitter.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (ticket.assigned && ticket.assigned.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (ticket.description && ticket.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (ticket.project && ticket.project.projectTitle.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    ticket.priority.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    ticket.severity.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    ticket.status.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div style={{ minHeight: '100vh', position: 'relative' }}>
@@ -83,9 +96,16 @@ export default observer(function TicketManagement() {
         <Segment>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
             <Header as="h2" icon="ticket" content="Ticket Management" subheader="Manage all tickets" />
+            <Input
+              icon="search"
+              placeholder="Search tickets..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{ width: '250px' }}
+            />
           </div>
           
-          {activeTicketsList.length === 0 ? (
+          {filteredTickets.length === 0 ? (
             <Segment placeholder>
               <Header icon>
                 <Icon name="ticket" />
@@ -107,7 +127,7 @@ export default observer(function TicketManagement() {
                 </Table.Row>
               </Table.Header>
               <Table.Body>
-                {activeTicketsList.map((ticket) => (
+                {filteredTickets.map((ticket) => (
                   <Table.Row key={ticket.id}>
                     <Table.Cell>
                       <Header as="h4">

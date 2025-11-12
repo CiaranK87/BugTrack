@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
-import { Header, Segment, Table, Button, Confirm, Modal, Icon, Label } from "semantic-ui-react";
+import { Header, Segment, Table, Button, Confirm, Modal, Icon, Label, Input } from "semantic-ui-react";
 import { useStore } from "../../app/stores/store";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
@@ -14,6 +14,7 @@ export default observer(function ProjectManagement() {
   const [deleteProjectId, setDeleteProjectId] = useState("");
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<any>(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     projectStore.loadProjects();
@@ -66,6 +67,14 @@ export default observer(function ProjectManagement() {
   };
 
   const activeProjectsList = projectsByStartDate.filter(p => !p.isDeleted);
+  
+  // Filter projects based on search term
+  const filteredProjects = activeProjectsList.filter(project =>
+    project.projectTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (project.projectOwner && project.projectOwner.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (project.description && project.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (project.isCancelled ? 'cancelled' : 'active').includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div style={{ minHeight: '100vh', position: 'relative' }}>
@@ -75,9 +84,16 @@ export default observer(function ProjectManagement() {
         <Segment>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
             <Header as="h2" icon="folder open" content="Project Management" subheader="Manage all projects" />
+            <Input
+              icon="search"
+              placeholder="Search projects..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{ width: '250px' }}
+            />
           </div>
           
-          {activeProjectsList.length === 0 ? (
+          {filteredProjects.length === 0 ? (
             <Segment placeholder>
               <Header icon>
                 <Icon name="folder open" />
@@ -97,7 +113,7 @@ export default observer(function ProjectManagement() {
                 </Table.Row>
               </Table.Header>
               <Table.Body>
-                {activeProjectsList.map((project) => (
+                {filteredProjects.map((project) => (
                   <Table.Row key={project.id}>
                     <Table.Cell>
                       <Header as="h4">
