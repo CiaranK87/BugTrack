@@ -19,13 +19,15 @@ namespace API.Controllers
         private readonly IMapper _mapper;
         private readonly DataContext _context;
         private readonly IUserAccessor _userAccessor;
+        private readonly IAuthorizationService _authorizationService;
 
-        public TicketsController(IMediator mediator, IMapper mapper, DataContext context, IUserAccessor userAccessor)
+        public TicketsController(IMediator mediator, IMapper mapper, DataContext context, IUserAccessor userAccessor, IAuthorizationService authorizationService)
         {
             _mediator = mediator;
             _mapper = mapper;
             _context = context;
             _userAccessor = userAccessor;
+            _authorizationService = authorizationService;
         }
 
         [HttpGet("{id}")]
@@ -114,9 +116,14 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "ProjectContributor")]
         public async Task<IActionResult> CreateTicket([FromBody] TicketDto ticketDto)
         {
+            // Check authorization using the ProjectId from the ticket
+            var authorized = await _authorizationService.AuthorizeAsync(User, ticketDto.ProjectId, "ProjectContributor");
+
+            if (!authorized.Succeeded)
+                return Forbid();
+
             var ticket = _mapper.Map<Ticket>(ticketDto);
             return HandleResult(await _mediator.Send(new Create.Command { Ticket = ticket }));
         }

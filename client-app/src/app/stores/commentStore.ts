@@ -53,6 +53,7 @@ export default class CommentStore {
       const newConnection = this.initConnection();
       runInAction(() => {
         this.connection = newConnection;
+        this.currentTicketId = ticketId;
       });
       
       await newConnection.start()

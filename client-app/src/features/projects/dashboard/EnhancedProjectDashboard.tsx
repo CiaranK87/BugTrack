@@ -106,9 +106,6 @@ export default observer(function EnhancedProjectDashboard() {
             {project.isParticipant && !project.isOwner && (
               <Label size="tiny" color="green">PARTICIPANT</Label>
             )}
-            {project.isCancelled && (
-              <Label size="tiny" color="red">CANCELLED</Label>
-            )}
           </div>
           <div style={{ textAlign: 'right' }}>
             <Label size="tiny" basic>
@@ -118,9 +115,13 @@ export default observer(function EnhancedProjectDashboard() {
           </div>
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Label size="tiny" color={project.isCancelled ? "red" : "green"}>
-            {project.isCancelled ? "CANCELLED" : "ACTIVE"}
-          </Label>
+          <div>
+            <Label size="tiny" color={project.isCancelled ? "red" : "green"}>
+              {project.isCancelled ? "CANCELLED" : "ACTIVE"}
+            </Label>
+          </div>
+          <div style={{ textAlign: 'right' }}>
+          </div>
         </div>
         <div style={{ marginTop: '8px', fontSize: '0.75em', color: '#999' }}>
           Started: {format(new Date(project.startDate!), 'MMM dd, yyyy')}
@@ -173,20 +174,19 @@ export default observer(function EnhancedProjectDashboard() {
           )}
         </Grid.Column>
       </Grid>
-      <div style={{ marginTop: '10px' }}>
-        <Label size="small" color={project.isCancelled ? "red" : "green"}>
-          {project.isCancelled ? "CANCELLED" : "ACTIVE"}
-        </Label>
-        <div style={{ marginTop: '5px' }}>
+      <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <Label size="small" color={project.isCancelled ? "red" : "green"}>
+            {project.isCancelled ? "CANCELLED" : "ACTIVE"}
+          </Label>
           {project.isOwner && (
-            <Label size="small" color="orange">OWNER</Label>
+            <Label size="small" color="orange" style={{ marginLeft: '5px' }}>OWNER</Label>
           )}
           {project.isParticipant && !project.isOwner && (
-            <Label size="small" color="green">PARTICIPANT</Label>
+            <Label size="small" color="green" style={{ marginLeft: '5px' }}>PARTICIPANT</Label>
           )}
-          {project.isCancelled && (
-            <Label size="small" color="red">CANCELLED</Label>
-          )}
+        </div>
+        <div style={{ textAlign: 'right' }}>
         </div>
       </div>
     </Segment>
