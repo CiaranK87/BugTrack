@@ -8,10 +8,12 @@ import { useStore } from "../stores/store";
 import { useEffect } from "react";
 import LoadingComponent from "./LoadingComponent";
 import ModalContainer from "../common/modals/ModalContainer";
+import { useTheme } from "../context/ThemeContext";
 
 function App() {
   const location = useLocation();
   const { commonStore, userStore } = useStore();
+  const { darkMode } = useTheme();
 
   useEffect(() => {
     if (commonStore.token) {
@@ -26,12 +28,25 @@ function App() {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
+  // Apply dark mode class to body on initial load and when dark mode changes
+  useEffect(() => {
+    if (darkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+  }, [darkMode]);
+
   if (!commonStore.appLoaded) return <LoadingComponent content="Loading app..." />;
 
   return (
     <>
       <ModalContainer />
-      <ToastContainer position="bottom-right" hideProgressBar theme="colored" />
+      <ToastContainer
+        position="bottom-right"
+        hideProgressBar
+        theme={darkMode ? "dark" : "colored"}
+      />
       {location.pathname === "/" ? (
         <HomePage />
       ) : (

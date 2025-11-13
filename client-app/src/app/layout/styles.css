@@ -1,19 +1,645 @@
+/* Light mode styles */
 body {
-  background-color: #eaeaea !important;
+  background-color: #f8f9fa !important;
+  color: #212529 !important;
+  transition: all 0.3s ease;
 }
 
+/* Dark mode styles */
+body.dark-mode {
+  background-color: #1a1a1a !important;
+  color: #e9ecef !important;
+}
+
+/* Ensure all text elements are properly styled in dark mode */
+body.dark-mode,
+body.dark-mode div,
+body.dark-mode span,
+body.dark-mode p,
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6,
+body.dark-mode td,
+body.dark-mode th,
+body.dark-mode li,
+body.dark-mode a {
+  color: #e9ecef !important;
+}
+
+/* More specific text styling for dark mode */
+body.dark-mode .ui.card .content,
+body.dark-mode .ui.segment .content,
+body.dark-mode .ui.container .content {
+  color: #f7fafc !important;
+}
+
+body.dark-mode .ui.card .header,
+body.dark-mode .ui.segment .header,
+body.dark-mode .ui.container .header {
+  color: #f7fafc !important;
+}
+
+/* Semantic UI components dark mode overrides */
+body.dark-mode .ui.segment {
+  background-color: #2d3748 !important;
+  border-color: #4a5568 !important;
+  color: #e9ecef !important;
+}
+
+/* Comment styling in dark mode - most aggressive approach */
+body.dark-mode .ui.comments,
+body.dark-mode .ui.comments *,
+body.dark-mode .ui.comment,
+body.dark-mode .ui.comment *,
+body.dark-mode div[class*="comment"],
+body.dark-mode div[class*="Comment"] {
+  background-color: #1a202c !important;
+  background: #1a202c !important;
+}
+
+/* Override any white backgrounds in comments */
+body.dark-mode .ui.comments [style*="background: white"],
+body.dark-mode .ui.comments [style*="background:white"],
+body.dark-mode .ui.comments [style*="background-color: white"],
+body.dark-mode .ui.comments [style*="background-color:white"],
+body.dark-mode .ui.comment [style*="background: white"],
+body.dark-mode .ui.comment [style*="background:white"],
+body.dark-mode .ui.comment [style*="background-color: white"],
+body.dark-mode .ui.comment [style*="background-color:white"] {
+  background-color: #1a202c !important;
+  background: #1a202c !important;
+}
+
+/* Comment borders */
+body.dark-mode .ui.comments .comment,
+body.dark-mode .ui.comment {
+  border-color: #2d3748 !important;
+}
+
+/* Comment text styling */
+body.dark-mode .ui.comments .comment .text,
+body.dark-mode .ui.comments .comment .author,
+body.dark-mode .ui.comments .comment .metadata,
+body.dark-mode .ui.comment .text,
+body.dark-mode .ui.comment .author,
+body.dark-mode .ui.comment .metadata {
+  color: #e9ecef !important;
+}
+
+/* Comment form styling in dark mode */
+body.dark-mode .ui.comments .comment .form textarea {
+  background-color: #2d3748 !important;
+  color: #e9ecef !important;
+  border-color: #4a5568 !important;
+}
+
+body.dark-mode .ui.card {
+  background-color: #2d3748 !important;
+  border-color: #4a5568 !important;
+  color: #f7fafc !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;
+}
+
+body.dark-mode .ui.card > .content > .header {
+  color: #f7fafc !important;
+}
+
+body.dark-mode .ui.card > .content > .meta {
+  color: #cbd5e0 !important;
+}
+
+body.dark-mode .ui.card > .content > .description {
+  color: #e2e8f0 !important;
+}
+
+body.dark-mode .ui.form .field > label {
+  color: #e9ecef !important;
+}
+
+body.dark-mode .ui.input input {
+  background-color: #4a5568 !important;
+  border-color: #718096 !important;
+  color: #e9ecef !important;
+}
+
+body.dark-mode .ui.input input:focus {
+  border-color: #63b3ed !important;
+  background-color: #4a5568 !important;
+  color: #e9ecef !important;
+}
+
+body.dark-mode .ui.form input,
+body.dark-mode .ui.form textarea,
+body.dark-mode .ui.form select {
+  background-color: #4a5568 !important;
+  border-color: #718096 !important;
+  color: #e9ecef !important;
+}
+
+body.dark-mode .ui.form input:focus,
+body.dark-mode .ui.form textarea:focus,
+body.dark-mode .ui.form select:focus {
+  border-color: #63b3ed !important;
+  background-color: #4a5568 !important;
+  color: #e9ecef !important;
+}
+
+body.dark-mode .ui.button {
+  background-color: #4a5568 !important;
+  color: #e9ecef !important;
+}
+
+body.dark-mode .ui.button:hover {
+  background-color: #718096 !important;
+}
+
+body.dark-mode .ui.button.primary {
+  background-color: #3182ce !important;
+}
+
+body.dark-mode .ui.button.primary:hover {
+  background-color: #2c5282 !important;
+}
+
+/* Specific button colors for dark mode */
+body.dark-mode .ui.button.red,
+body.dark-mode .ui.button.negative {
+  background-color: #742a2a !important;
+  color: #f8d7da !important;
+}
+
+body.dark-mode .ui.button.red:hover,
+body.dark-mode .ui.button.negative:hover {
+  background-color: #9b2c2c !important;
+}
+
+body.dark-mode .ui.button.green,
+body.dark-mode .ui.button.positive {
+  background-color: #38a169 !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .ui.button.green:hover,
+body.dark-mode .ui.button.positive:hover {
+  background-color: #48bb78 !important;
+}
+
+body.dark-mode .ui.button.teal,
+body.dark-mode .ui.button.turquoise {
+  background-color: #1a4d66 !important;
+  color: #b3f5e0 !important;
+}
+
+body.dark-mode .ui.button.teal:hover,
+body.dark-mode .ui.button.turquoise:hover {
+  background-color: #234e52 !important;
+}
+
+body.dark-mode .ui.header.teal,
+body.dark-mode .ui.header.turquoise {
+  color: #b3f5e0 !important;
+}
+
+body.dark-mode .ui.dropdown .menu {
+  background-color: #4a5568 !important;
+  border-color: #718096 !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;
+}
+
+body.dark-mode .ui.dropdown .menu > .item {
+  color: #e9ecef !important;
+}
+
+body.dark-mode .ui.dropdown .menu > .item:hover {
+  background-color: #4a5568 !important;
+}
+
+body.dark-mode .ui.dropdown .menu > .selected.item {
+  background-color: #4a5568 !important;
+  color: #e9ecef !important;
+}
+
+/* Dark mode dropdown styling for selection dropdowns */
+body.dark-mode .ui.selection.dropdown {
+  background-color: #4a5568 !important;
+  color: #e9ecef !important;
+  border-color: #718096 !important;
+}
+
+body.dark-mode .ui.selection.dropdown .text {
+  color: #e9ecef !important;
+}
+
+body.dark-mode .ui.selection.dropdown .default.text {
+  color: #ffffff !important;
+}
+
+body.dark-mode .ui.selection.dropdown .placeholder {
+  color: #ffffff !important;
+}
+
+body.dark-mode .ui.menu:not(.inverted) {
+  background-color: #2d3748 !important;
+  border-color: #4a5568 !important;
+}
+
+body.dark-mode .ui.menu:not(.inverted) .item {
+  color: #e9ecef !important;
+}
+
+body.dark-mode .ui.menu:not(.inverted) .item:hover {
+  background-color: #4a5568 !important;
+}
+
+body.dark-mode .ui.menu:not(.inverted) .active.item {
+  background-color: #4a5568 !important;
+  color: #e9ecef !important;
+}
+
+body.dark-mode .ui.modal {
+  background-color: #2d3748 !important;
+  color: #e9ecef !important;
+}
+
+body.dark-mode .ui.modal > .header {
+  background-color: #2d3748 !important;
+  color: #e9ecef !important;
+  border-bottom-color: #4a5568 !important;
+}
+
+body.dark-mode .ui.modal > .content {
+  background-color: #2d3748 !important;
+  color: #e9ecef !important;
+}
+
+body.dark-mode .ui.modal > .actions {
+  background-color: #2d3748 !important;
+  border-top-color: #4a5568 !important;
+}
+
+body.dark-mode .ui.header {
+  color: #ffffff !important;
+}
+
+/* More specific rules for dashboard headers */
+body.dark-mode .ui.segment .ui.header,
+body.dark-mode .ui.card .ui.header,
+body.dark-mode .ui.container .ui.header {
+  color: #ffffff !important;
+}
+
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5 {
+  color: #ffffff !important;
+}
+
+/* Even more specific rules for dashboard components */
+body.dark-mode .ui.segment h1,
+body.dark-mode .ui.segment h2,
+body.dark-mode .ui.segment h3,
+body.dark-mode .ui.segment h4,
+body.dark-mode .ui.segment h5,
+body.dark-mode .ui.card h1,
+body.dark-mode .ui.card h2,
+body.dark-mode .ui.card h3,
+body.dark-mode .ui.card h4,
+body.dark-mode .ui.card h5,
+body.dark-mode .ui.container h1,
+body.dark-mode .ui.container h2,
+body.dark-mode .ui.container h3,
+body.dark-mode .ui.container h4,
+body.dark-mode .ui.container h5 {
+  color: #ffffff !important;
+}
+
+/* Override any teal color in headers */
+body.dark-mode .ui.header.teal,
+body.dark-mode .ui.header[class*="teal"],
+body.dark-mode h1.teal,
+body.dark-mode h2.teal,
+body.dark-mode h3.teal,
+body.dark-mode h4.teal,
+body.dark-mode h5.teal {
+  color: #ffffff !important;
+}
+
+/* Force white color for all headers in dark mode */
+body.dark-mode .ui.header,
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6 {
+  color: #ffffff !important;
+}
+
+/* Specific override for dashboard components */
+body.dark-mode .ui.segment .ui.header,
+body.dark-mode .ui.card .ui.header,
+body.dark-mode .ui.container .ui.header,
+body.dark-mode .ui.segment h1,
+body.dark-mode .ui.segment h2,
+body.dark-mode .ui.segment h3,
+body.dark-mode .ui.segment h4,
+body.dark-mode .ui.segment h5,
+body.dark-mode .ui.segment h6,
+body.dark-mode .ui.card h1,
+body.dark-mode .ui.card h2,
+body.dark-mode .ui.card h3,
+body.dark-mode .ui.card h4,
+body.dark-mode .ui.card h5,
+body.dark-mode .ui.card h6,
+body.dark-mode .ui.container h1,
+body.dark-mode .ui.container h2,
+body.dark-mode .ui.container h3,
+body.dark-mode .ui.container h4,
+body.dark-mode .ui.container h5,
+body.dark-mode .ui.container h6 {
+  color: #ffffff !important;
+}
+
+/* Override any inline styles that might be setting teal color */
+body.dark-mode [style*="color: teal"],
+body.dark-mode [style*="color:teal"],
+body.dark-mode [style*="color: #008080"],
+body.dark-mode [style*="color:#008080"],
+body.dark-mode [style*="color: rgb(0, 128, 128)"] {
+  color: #ffffff !important;
+}
+
+body.dark-mode .ui.divider {
+  border-color: #4a5568 !important;
+}
+
+body.dark-mode .ui.label {
+  background-color: #4a5568 !important;
+  color: #f7fafc !important;
+}
+
+/* Specific label colors for dark mode - darker pastel versions */
+body.dark-mode .ui.label.red,
+body.dark-mode .ui.label.negative {
+  background-color: #9b2c2c !important;
+  color: #fed7d7 !important;
+}
+
+body.dark-mode .ui.label.green,
+body.dark-mode .ui.label.positive {
+  background-color: #276749 !important;
+  color: #c6f6d5 !important;
+}
+
+body.dark-mode .ui.label.blue,
+body.dark-mode .ui.label.info {
+  background-color: #2c5282 !important;
+  color: #bee3f8 !important;
+}
+
+body.dark-mode .ui.label.yellow,
+body.dark-mode .ui.label.warning {
+  background-color: #b7791f !important;
+  color: #fef3c7 !important;
+}
+
+body.dark-mode .ui.label.purple,
+body.dark-mode .ui.label.violet {
+  background-color: #553c9a !important;
+  color: #e9d8fd !important;
+}
+
+body.dark-mode .ui.label.orange,
+body.dark-mode .ui.label.important {
+  background-color: #c05621 !important;
+  color: #fed7aa !important;
+}
+
+body.dark-mode .ui.label.teal {
+  background-color: #234e52 !important;
+  color: #81e6d9 !important;
+}
+
+body.dark-mode .ui.label.grey,
+body.dark-mode .ui.label.gray {
+  background-color: #4a5568 !important;
+  color: #e2e8f0 !important;
+}
+
+body.dark-mode .ui.table {
+  background-color: #2d3748 !important;
+  color: #e9ecef !important;
+}
+
+body.dark-mode .ui.table thead th {
+  background-color: #4a5568 !important;
+  color: #e9ecef !important;
+  border-color: #718096 !important;
+}
+
+body.dark-mode .ui.table tbody tr {
+  border-color: #4a5568 !important;
+}
+
+body.dark-mode .ui.table tbody tr:hover {
+  background-color: #4a5568 !important;
+}
+
+body.dark-mode .ui.progress .bar {
+  background-color: #4a5568 !important;
+}
+
+body.dark-mode .ui.accordion .title,
+body.dark-mode .ui.accordion .content {
+  color: #e9ecef !important;
+}
+
+body.dark-mode .ui.accordion .active.title {
+  background-color: #4a5568 !important;
+}
+
+body.dark-mode .ui.checkbox label {
+  color: #e9ecef !important;
+}
+
+body.dark-mode .ui.checkbox input:checked ~ .box:after,
+body.dark-mode .ui.checkbox input:checked ~ label:after {
+  color: #e9ecef !important;
+}
+
+body.dark-mode .ui.checkbox input:checked ~ .box:before,
+body.dark-mode .ui.checkbox input:checked ~ label:before {
+  background-color: #3182ce !important;
+  border-color: #3182ce !important;
+}
+
+/* Icon styling in dark mode */
+body.dark-mode .ui.icon.button,
+body.dark-mode .ui.button > .icon {
+  color: #e9ecef !important;
+}
+
+/* Role button in actions - make it more colorful in dark mode */
+body.dark-mode .ui.button[title*="Role"],
+body.dark-mode .ui.button[aria-label*="Role"] {
+  background-color: #3182ce !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .ui.button[title*="Role"] .icon,
+body.dark-mode .ui.button[aria-label*="Role"] .icon {
+  color: #ffffff !important;
+}
+
+/* Specific styling for role buttons in table actions */
+body.dark-mode .ui.table .ui.button[title*="Role"],
+body.dark-mode .ui.table .ui.button:has(.icon.key):not(.positive):not(.primary),
+body.dark-mode .ui.table .ui.button:has(.icon.id.card):not(.positive):not(.primary) {
+  background-color: #3182ce !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .ui.table .ui.button[title*="Role"] .icon,
+body.dark-mode .ui.table .ui.button:has(.icon.key):not(.positive):not(.primary) .icon,
+body.dark-mode .ui.table .ui.button:has(.icon.id.card):not(.positive):not(.primary) .icon {
+  color: #ffffff !important;
+}
+
+/* More aggressive rule for all buttons with key/id card icons */
+body.dark-mode .ui.button:not(.positive):not(.primary):not(.negative) i.icon.key,
+body.dark-mode .ui.button:not(.positive):not(.primary):not(.negative) i.icon.id.card {
+  background-color: #3182ce !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .ui.button:not(.positive):not(.primary):not(.negative):has(i.icon.key),
+body.dark-mode .ui.button:not(.positive):not(.primary):not(.negative):has(i.icon.id.card) {
+  background-color: #3182ce !important;
+  color: #ffffff !important;
+}
+
+/* Most specific rule for role buttons - use !important and higher specificity */
+body.dark-mode div.ui.table div.ui.button:not(.positive):not(.primary):not(.negative):has(i.icon.key),
+body.dark-mode div.ui.table div.ui.button:not(.positive):not(.primary):not(.negative):has(i.icon.id.card),
+body.dark-mode div.ui.segment div.ui.button:not(.positive):not(.primary):not(.negative):has(i.icon.key),
+body.dark-mode div.ui.segment div.ui.button:not(.positive):not(.primary):not(.negative):has(i.icon.id.card) {
+  background-color: #3182ce !important;
+  color: #ffffff !important;
+  border-color: #3182ce !important;
+}
+
+body.dark-mode div.ui.table div.ui.button:not(.positive):not(.primary):not(.negative):has(i.icon.key) i.icon,
+body.dark-mode div.ui.table div.ui.button:not(.positive):not(.primary):not(.negative):has(i.icon.id.card) i.icon,
+body.dark-mode div.ui.segment div.ui.button:not(.positive):not(.primary):not(.negative):has(i.icon.key) i.icon,
+body.dark-mode div.ui.segment div.ui.button:not(.positive):not(.primary):not(.negative):has(i.icon.id.card) i.icon {
+  color: #ffffff !important;
+}
+
+/* Universal override for any button with key or id card icon in dark mode */
+body.dark-mode button.ui.button[aria-label*="role"],
+body.dark-mode button.ui.button[title*="role"],
+body.dark-mode button.ui.button i.icon.key,
+body.dark-mode button.ui.button i.icon.id.card {
+  background-color: #3182ce !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode button.ui.button[aria-label*="role"] i.icon,
+body.dark-mode button.ui.button[title*="role"] i.icon,
+body.dark-mode button.ui.button:has(i.icon.key):not(.positive):not(.primary):not(.negative),
+body.dark-mode button.ui.button:has(i.icon.id.card):not(.positive):not(.primary):not(.negative) {
+  color: #ffffff !important;
+}
+
+/* Inverted menu styles - original gradient for light mode */
 .ui.inverted.top.fixed.menu {
   background-image: linear-gradient(135deg, rgb(20, 20, 20) 23%, rgb(7, 183, 243) 100%) !important;
 }
 
+/* Inverted menu dark mode adjustments */
+body.dark-mode .ui.inverted.top.fixed.menu {
+  background-image: linear-gradient(135deg, rgb(10, 10, 10) 23%, rgb(5, 130, 170) 100%) !important;
+}
+
+body.dark-mode .ui.inverted.menu .item {
+  color: #e9ecef !important;
+}
+
+body.dark-mode .ui.inverted.menu .item:hover {
+  background-color: #2d3748 !important;
+}
+
+body.dark-mode .ui.inverted.menu .active.item {
+  background-color: #2d3748 !important;
+  color: #63b3ed !important;
+}
+
+/* Calendar styles */
 .react-calendar {
   width: 100%;
-  border: "none";
+  border: none;
   box-shadow: 0 1px 2px 0 rgba(34, 36, 38, 0.15);
+}
+
+body.dark-mode .react-calendar {
+  background-color: #2d3748 !important;
+  color: #e9ecef !important;
+  border-color: #4a5568 !important;
+}
+
+body.dark-mode .react-calendar__tile {
+  background-color: transparent !important;
+  color: #e9ecef !important;
+}
+
+body.dark-mode .react-calendar__tile:enabled:hover,
+body.dark-mode .react-calendar__tile:enabled:focus {
+  background-color: #4a5568 !important;
+}
+
+body.dark-mode .react-calendar__tile--now {
+  background-color: #4a5568 !important;
+}
+
+body.dark-mode .react-calendar__tile--active {
+  background-color: #3182ce !important;
+  color: white !important;
+}
+
+body.dark-mode .react-calendar__month-view__days__day--weekend {
+  color: #fc8181 !important;
 }
 
 .react-datepicker-wrapper {
   width: 100%;
+}
+
+body.dark-mode .react-datepicker {
+  background-color: #2d3748 !important;
+  border-color: #4a5568 !important;
+}
+
+body.dark-mode .react-datepicker__header {
+  background-color: #4a5568 !important;
+  border-color: #718096 !important;
+}
+
+body.dark-mode .react-datepicker__day {
+  color: #e9ecef !important;
+}
+
+body.dark-mode .react-datepicker__day:hover {
+  background-color: #4a5568 !important;
+}
+
+body.dark-mode .react-datepicker__day--selected {
+  background-color: #3182ce !important;
+  color: white !important;
 }
 
 .masthead {
@@ -21,6 +647,10 @@ body {
   align-items: center;
   background-image: linear-gradient(135deg, rgb(20, 20, 20) 10%, rgb(7, 183, 243) 100%) !important;
   height: 100vh;
+}
+
+body.dark-mode .masthead {
+  background-image: linear-gradient(135deg, rgb(10, 10, 10) 10%, rgb(5, 130, 170) 100%) !important;
 }
 
 .masthead .ui.menu .ui.button,
@@ -38,8 +668,1134 @@ body {
   font-weight: normal;
 }
 
-
 /* Hide dropdown arrow for iconless dropdown */
 .iconless-dropdown > .dropdown.icon {
   display: none !important;
+}
+
+/* Toast notifications */
+body.dark-mode .Toastify__toast {
+  background-color: #2d3748 !important;
+  color: #e9ecef !important;
+}
+
+body.dark-mode .Toastify__toast--info {
+  background-color: #3182ce !important;
+}
+
+body.dark-mode .Toastify__toast--success {
+  background-color: #38a169 !important;
+}
+
+body.dark-mode .Toastify__toast--warning {
+  background-color: #d69e2e !important;
+}
+
+body.dark-mode .Toastify__toast--error {
+  background-color: #e53e3e !important;
+}
+
+/* Dark mode styles for inverted segments with specific colors */
+body.dark-mode .ui.segment.inverted {
+  background-color: #2d3748 !important;
+  color: #e9ecef !important;
+  border-color: #4a5568 !important;
+}
+
+body.dark-mode .ui.segment.inverted.teal {
+  background-color: #1a4d66 !important;
+  color: #b3f5e0 !important;
+  border-color: #234e52 !important;
+}
+
+body.dark-mode .ui.segment.inverted.blue {
+  background-color: #2c5282 !important;
+  color: #bee3f8 !important;
+  border-color: #2b6cb0 !important;
+}
+
+body.dark-mode .ui.segment.inverted.red {
+  background-color: #742a2a !important;
+  color: #fed7d7 !important;
+  border-color: #9b2c2c !important;
+}
+
+body.dark-mode .ui.segment.inverted.green {
+  background-color: #38a169 !important;
+  color: #c6f6d5 !important;
+  border-color: #48bb78 !important;
+}
+
+body.dark-mode .ui.segment.inverted.yellow {
+  background-color: #b7791f !important;
+  color: #fef3c7 !important;
+  border-color: #d69e2e !important;
+}
+
+/* Enhanced dark mode styles for dropdown menus */
+body.dark-mode .ui.dropdown .menu .item {
+  background-color: #4a5568 !important;
+  color: #e9ecef !important;
+}
+
+body.dark-mode .ui.dropdown .menu .item:hover {
+  background-color: #718096 !important;
+}
+
+body.dark-mode .ui.dropdown .menu .item.active {
+  background-color: #2d3748 !important;
+  color: #63b3ed !important;
+}
+
+/* Enhanced dark mode styles for tables */
+body.dark-mode .ui.table td,
+body.dark-mode .ui.table th {
+  background-color: #2d3748 !important;
+  color: #e9ecef !important;
+  border-color: #4a5568 !important;
+}
+
+body.dark-mode .ui.table tr:hover td,
+body.dark-mode .ui.table tr:hover th {
+  background-color: #4a5568 !important;
+}
+
+/* Dark mode styles for checkbox components */
+body.dark-mode .ui.checkbox .box,
+body.dark-mode .ui.checkbox label {
+  color: #e9ecef !important;
+}
+
+body.dark-mode .ui.checkbox input:not(:checked) ~ .box:before,
+body.dark-mode .ui.checkbox input:not(:checked) ~ label:before {
+  background-color: #4a5568 !important;
+  border-color: #718096 !important;
+}
+
+/* Dark mode styles for avatar images */
+body.dark-mode .ui.avatar.image,
+body.dark-mode .ui.avatar.image img {
+  background-color: #4a5568 !important;
+  border-color: #718096 !important;
+}
+
+/* Dark mode styles for dropdown pointing arrows */
+body.dark-mode .ui.dropdown.pointing .menu:after {
+  background-color: #4a5568 !important;
+  box-shadow: -1px -1px 0 0 #718096 !important;
+}
+
+/* Dark mode styles for dropdown dividers */
+body.dark-mode .ui.dropdown .menu .divider {
+  border-color: #4a5568 !important;
+}
+
+/* Dark mode styles for inverted menu items */
+body.dark-mode .ui.inverted.menu .item:before {
+  background-color: transparent !important;
+}
+
+/* Dark mode styles for active navigation items */
+body.dark-mode .ui.inverted.menu .active.item {
+  background-color: #2d3748 !important;
+  color: #63b3ed !important;
+}
+
+/* Dark mode styles for navigation links */
+body.dark-mode .ui.menu a.item,
+body.dark-mode .ui.inverted.menu a.item {
+  color: #e9ecef !important;
+}
+
+body.dark-mode .ui.menu a.item:hover,
+body.dark-mode .ui.inverted.menu a.item:hover {
+  color: #ffffff !important;
+}
+
+/* Dark mode styles for form field labels */
+body.dark-mode .ui.form .field > label,
+body.dark-mode .ui.form .inline.fields > label,
+body.dark-mode .ui.form .fields > label {
+  color: #e9ecef !important;
+}
+
+/* Dark mode styles for form field descriptions */
+body.dark-mode .ui.form .field .prompt,
+body.dark-mode .ui.form .field .description {
+  color: #cbd5e0 !important;
+}
+
+/* Dark mode styles for form validation messages */
+body.dark-mode .ui.form .error.message {
+  background-color: #742a2a !important;
+  color: #fed7d7 !important;
+  border-color: #9b2c2c !important;
+}
+
+/* Dark mode styles for success messages */
+body.dark-mode .ui.form .success.message {
+  background-color: #38a169 !important;
+  color: #c6f6d5 !important;
+  border-color: #48bb78 !important;
+}
+
+/* Dark mode styles for info messages */
+body.dark-mode .ui.form .info.message {
+  background-color: #2c5282 !important;
+  color: #bee3f8 !important;
+  border-color: #3182ce !important;
+}
+
+/* Dark mode styles for warning messages */
+body.dark-mode .ui.form .warning.message {
+  background-color: #b7791f !important;
+  color: #fef3c7 !important;
+  border-color: #d69e2e !important;
+}
+
+/* Enhanced dark mode styles for date picker components */
+body.dark-mode .react-datepicker__input-container input {
+  background-color: #4a5568 !important;
+  border-color: #718096 !important;
+  color: #e9ecef !important;
+}
+
+body.dark-mode .react-datepicker__input-container input:focus {
+  border-color: #63b3ed !important;
+  box-shadow: 0 0 0 0.2rem rgba(99, 179, 237, 0.25) !important;
+}
+
+body.dark-mode .react-datepicker__navigation {
+  color: #e9ecef !important;
+}
+
+body.dark-mode .react-datepicker__navigation:hover {
+  color: #ffffff !important;
+}
+
+body.dark-mode .react-datepicker__current-month,
+body.dark-mode .react-datepicker__day-name {
+  color: #e9ecef !important;
+}
+
+body.dark-mode .react-datepicker__day--disabled {
+  color: #718096 !important;
+}
+
+body.dark-mode .react-datepicker__day--outside-month {
+  color: #718096 !important;
+}
+
+/* Dark mode styles for custom date input components */
+body.dark-mode .ui.calendar .ui.input input {
+  background-color: #4a5568 !important;
+  border-color: #718096 !important;
+  color: #e9ecef !important;
+}
+
+body.dark-mode .ui.calendar .ui.input input:focus {
+  border-color: #63b3ed !important;
+}
+
+/* Dark mode styles for list components */
+body.dark-mode .ui.list .item {
+  color: #e9ecef !important;
+}
+
+body.dark-mode .ui.list .item .description {
+  color: #cbd5e0 !important;
+}
+
+body.dark-mode .ui.list .item .header {
+  color: #ffffff !important;
+}
+
+/* Dark mode styles for breadcrumb components */
+body.dark-mode .ui.breadcrumb {
+  color: #e9ecef !important;
+}
+
+body.dark-mode .ui.breadcrumb .divider {
+  color: #718096 !important;
+}
+
+body.dark-mode .ui.breadcrumb .active.section {
+  color: #ffffff !important;
+}
+
+body.dark-mode .ui.breadcrumb .section {
+  color: #e9ecef !important;
+}
+
+body.dark-mode .ui.breadcrumb .section:hover {
+  color: #ffffff !important;
+}
+
+/* Dark mode styles for pagination */
+body.dark-mode .ui.pagination.menu .item {
+  background-color: #4a5568 !important;
+  color: #e9ecef !important;
+  border-color: #718096 !important;
+}
+
+body.dark-mode .ui.pagination.menu .item:hover {
+  background-color: #718096 !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .ui.pagination.menu .item.active {
+  background-color: #3182ce !important;
+  color: #ffffff !important;
+}
+
+/* Dark mode styles for search components */
+body.dark-mode .ui.search {
+  color: #e9ecef !important;
+}
+
+body.dark-mode .ui.search .prompt {
+  background-color: #4a5568 !important;
+  border-color: #718096 !important;
+  color: #e9ecef !important;
+}
+
+body.dark-mode .ui.search .prompt:focus {
+  border-color: #63b3ed !important;
+}
+
+body.dark-mode .ui.search .results {
+  background-color: #4a5568 !important;
+  border-color: #718096 !important;
+}
+
+body.dark-mode .ui.search .results .result {
+  border-color: #718096 !important;
+}
+
+body.dark-mode .ui.search .results .result:hover {
+  background-color: #718096 !important;
+}
+
+body.dark-mode .ui.search .results .result .title {
+  color: #e9ecef !important;
+}
+
+body.dark-mode .ui.search .results .result .description {
+  color: #cbd5e0 !important;
+}
+
+/* Dark mode styles for statistic components */
+body.dark-mode .ui.statistic .value,
+body.dark-mode .ui.statistics .statistic .value {
+  color: #ffffff !important;
+}
+
+body.dark-mode .ui.statistic .label,
+body.dark-mode .ui.statistics .statistic .label {
+  color: #e9ecef !important;
+}
+
+/* Dark mode styles for rating components */
+body.dark-mode .ui.rating .icon {
+  color: #718096 !important;
+}
+
+body.dark-mode .ui.rating .active.icon {
+  color: #f6e05e !important;
+}
+
+body.dark-mode .ui.rating .selected.icon {
+  color: #f6e05e !important;
+}
+
+/* Dark mode styles for placeholder components */
+body.dark-mode .ui.placeholder {
+  background-color: #4a5568 !important;
+}
+
+body.dark-mode .ui.placeholder .image.header:after,
+body.dark-mode .ui.placeholder .line:after,
+body.dark-mode .ui.placeholder .line:before {
+  background-color: #718096 !important;
+}
+
+/* Dark mode styles for loader components */
+body.dark-mode .ui.loader {
+  color: #e9ecef !important;
+}
+
+body.dark-mode .ui.loader:before {
+  border-color: #718096 !important;
+}
+
+body.dark-mode .ui.loader:after {
+  border-color: #3182ce transparent transparent !important;
+}
+
+/* Dark mode styles for dimmer components */
+body.dark-mode .ui.dimmer {
+  background-color: rgba(0, 0, 0, 0.85) !important;
+}
+
+body.dark-mode .ui.dimmer .content {
+  color: #e9ecef !important;
+}
+
+/* Dark mode styles for reveal components */
+body.dark-mode .ui.reveal .visible.content,
+body.dark-mode .ui.reveal .hidden.content {
+  background-color: #4a5568 !important;
+  color: #e9ecef !important;
+}
+
+/* Dark mode styles for embed components */
+body.dark-mode .ui.embed {
+  background-color: #4a5568 !important;
+}
+
+/* Dark mode styles for rail components */
+body.dark-mode .ui.rail {
+  color: #e9ecef !important;
+}
+
+/* Dark mode styles for sticky components */
+body.dark-mode .ui.sticky {
+  color: #e9ecef !important;
+}
+
+/* Dark mode styles for text area components */
+body.dark-mode .ui.form textarea:focus {
+  border-color: #63b3ed !important;
+  background-color: #4a5568 !important;
+  color: #e9ecef !important;
+}
+
+/* Dark mode styles for checkbox labels */
+body.dark-mode .ui.checkbox label {
+  color: #e9ecef !important;
+}
+
+/* Dark mode styles for slider components */
+body.dark-mode .ui.slider .inner {
+  background-color: #4a5568 !important;
+}
+
+body.dark-mode .ui.slider .inner .track {
+  background-color: #718096 !important;
+}
+
+body.dark-mode .ui.slider .inner .thumb {
+  background-color: #3182ce !important;
+}
+
+/* Dark mode styles for progress bar */
+body.dark-mode .ui.progress .bar {
+  background-color: #3182ce !important;
+}
+
+body.dark-mode .ui.progress .bar .progress {
+  color: #ffffff !important;
+}
+
+body.dark-mode .ui.progress .label {
+  color: #e9ecef !important;
+}
+
+/* Dark mode styles for step components */
+body.dark-mode .ui.steps .step {
+  background-color: #4a5568 !important;
+  color: #e9ecef !important;
+  border-color: #718096 !important;
+}
+
+body.dark-mode .ui.steps .step:hover {
+  background-color: #718096 !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .ui.steps .step.active {
+  background-color: #3182ce !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .ui.steps .step .title {
+  color: #e9ecef !important;
+}
+
+body.dark-mode .ui.steps .step .description {
+  color: #cbd5e0 !important;
+}
+
+body.dark-mode .ui.steps .step.active .title {
+  color: #ffffff !important;
+}
+
+body.dark-mode .ui.steps .step.active .description {
+  color: #e9ecef !important;
+}
+
+/* Dark mode styles for Recharts components */
+body.dark-mode .recharts-wrapper {
+  background-color: transparent !important;
+}
+
+body.dark-mode .recharts-surface {
+  background-color: transparent !important;
+}
+
+/* Dark mode styles for chart tooltips */
+body.dark-mode .recharts-tooltip-wrapper {
+  background-color: #2d3748 !important;
+  border: 1px solid #4a5568 !important;
+  border-radius: 4px !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;
+}
+
+body.dark-mode .recharts-default-tooltip {
+  background-color: #2d3748 !important;
+  border: none !important;
+  border-radius: 4px !important;
+  padding: 10px !important;
+  color: #e9ecef !important;
+}
+
+body.dark-mode .recharts-tooltip-label {
+  color: #ffffff !important;
+  font-weight: bold !important;
+  margin-bottom: 5px !important;
+}
+
+body.dark-mode .recharts-tooltip-item {
+  color: #e9ecef !important;
+}
+
+body.dark-mode .recharts-tooltip-item-name {
+  color: #cbd5e0 !important;
+}
+
+body.dark-mode .recharts-tooltip-item-value {
+  color: #ffffff !important;
+  font-weight: bold !important;
+}
+
+/* Dark mode styles for chart axes */
+body.dark-mode .recharts-cartesian-axis-tick-value {
+  fill: #e9ecef !important;
+}
+
+body.dark-mode .recharts-cartesian-axis-line {
+  stroke: #4a5568 !important;
+}
+
+body.dark-mode .recharts-cartesian-axis-tick-line {
+  stroke: #4a5568 !important;
+}
+
+/* Dark mode styles for chart grid */
+body.dark-mode .recharts-cartesian-grid {
+  stroke: #4a5568 !important;
+  stroke-dasharray: 3 3 !important;
+}
+
+/* Dark mode styles for chart legend */
+body.dark-mode .recharts-legend-wrapper {
+  color: #e9ecef !important;
+}
+
+body.dark-mode .recharts-legend-item-text {
+  color: #e9ecef !important;
+}
+
+/* Dark mode styles for pie chart hover */
+body.dark-mode .recharts-pie-sector:hover {
+  filter: brightness(1.2) !important;
+  cursor: pointer !important;
+}
+
+/* Dark mode styles for bar chart hover */
+body.dark-mode .recharts-bar-rectangle:hover {
+  filter: brightness(1.2) !important;
+  cursor: pointer !important;
+}
+
+/* Dark mode styles for chart container segments */
+body.dark-mode .ui.segment:has(.recharts-wrapper) {
+  background-color: #2d3748 !important;
+  border-color: #4a5568 !important;
+}
+
+body.dark-mode .ui.segment:has(.recharts-wrapper) h3.ui.header {
+  color: #ffffff !important;
+}
+
+/* Dark mode styles for chart responsive container */
+body.dark-mode .recharts-responsive-container {
+  background-color: transparent !important;
+}
+
+/* Additional dark mode styles for chart interactions */
+body.dark-mode .recharts-tooltip-cursor {
+  stroke: #63b3ed !important;
+}
+
+body.dark-mode .recharts-brush {
+  fill: #4a5568 !important;
+  stroke: #718096 !important;
+}
+
+body.dark-mode .recharts-brush-text {
+  fill: #e9ecef !important;
+}
+
+body.dark-mode .recharts-brush-traveller {
+  fill: #3182ce !important;
+  stroke: #2c5282 !important;
+}
+
+/* Dark mode styles for reference lines */
+body.dark-mode .recharts-reference-line {
+  stroke: #718096 !important;
+}
+
+body.dark-mode .recharts-reference-line-label {
+  fill: #e9ecef !important;
+}
+
+/* Dark mode styles for scatter chart */
+body.dark-mode .recharts-scatter {
+  fill: #3182ce !important;
+}
+
+body.dark-mode .recharts-scatter:hover {
+  fill: #63b3ed !important;
+  cursor: pointer !important;
+}
+
+/* Dark mode styles for area chart */
+body.dark-mode .recharts-area {
+  fill-opacity: 0.3 !important;
+}
+
+body.dark-mode .recharts-area:hover {
+  fill-opacity: 0.5 !important;
+}
+
+/* Dark mode styles for line chart */
+body.dark-mode .recharts-line {
+  stroke: #3182ce !important;
+}
+
+body.dark-mode .recharts-line:hover {
+  stroke: #63b3ed !important;
+}
+
+body.dark-mode .recharts-dot {
+  fill: #3182ce !important;
+  stroke: #2c5282 !important;
+}
+
+body.dark-mode .recharts-dot:hover {
+  fill: #63b3ed !important;
+  stroke: #2c5aa0 !important;
+  r: 6 !important;
+}
+
+/* Dark mode styles for admin role dropdown buttons */
+body.dark-mode .ui.button.dropdown.labeled.icon.button,
+body.dark-mode .ui.labeled.icon.buttons .button {
+  background-color: #3182ce !important;
+  color: #ffffff !important;
+  border-color: #3182ce !important;
+}
+
+body.dark-mode .ui.button.dropdown.labeled.icon.button:hover,
+body.dark-mode .ui.labeled.icon.buttons .button:hover {
+  background-color: #2c5282 !important;
+  color: #ffffff !important;
+  border-color: #2c5282 !important;
+}
+
+/* More specific rule for role dropdown in admin user management */
+body.dark-mode .ui.table .ui.button.dropdown.labeled.icon.button,
+body.dark-mode .ui.table .ui.labeled.icon.buttons .button {
+  background-color: #3182ce !important;
+  color: #ffffff !important;
+  border-color: #3182ce !important;
+}
+
+body.dark-mode .ui.table .ui.button.dropdown.labeled.icon.button:hover,
+body.dark-mode .ui.table .ui.labeled.icon.buttons .button:hover {
+  background-color: #2c5282 !important;
+  color: #ffffff !important;
+  border-color: #2c5282 !important;
+}
+
+/* Dark mode styles for dropdown button text and icon */
+body.dark-mode .ui.button.dropdown.labeled.icon.button .text,
+body.dark-mode .ui.labeled.icon.buttons .button .text {
+  color: #ffffff !important;
+}
+
+body.dark-mode .ui.button.dropdown.labeled.icon.button .icon,
+body.dark-mode .ui.labeled.icon.buttons .button .icon {
+  color: #ffffff !important;
+}
+
+/* Dark mode styles for disabled role dropdown */
+body.dark-mode .ui.button.dropdown.labeled.icon.button:disabled,
+body.dark-mode .ui.labeled.icon.buttons .button:disabled,
+body.dark-mode .ui.table .ui.button.dropdown.labeled.icon.button:disabled,
+body.dark-mode .ui.table .ui.labeled.icon.buttons .button:disabled {
+  background-color: #4a5568 !important;
+  color: #718096 !important;
+  border-color: #4a5568 !important;
+  opacity: 0.6 !important;
+}
+
+body.dark-mode .ui.button.dropdown.labeled.icon.button:disabled .text,
+body.dark-mode .ui.labeled.icon.buttons .button:disabled .text,
+body.dark-mode .ui.table .ui.button.dropdown.labeled.icon.button:disabled .text,
+body.dark-mode .ui.table .ui.labeled.icon.buttons .button:disabled .text {
+  color: #718096 !important;
+}
+
+body.dark-mode .ui.button.dropdown.labeled.icon.button:disabled .icon,
+body.dark-mode .ui.labeled.icon.buttons .button:disabled .icon,
+body.dark-mode .ui.table .ui.button.dropdown.labeled.icon.button:disabled .icon,
+body.dark-mode .ui.table .ui.labeled.icon.buttons .button:disabled .icon {
+  color: #718096 !important;
+}
+
+/* Dark mode styles for profile page Bio section - more specific and aggressive */
+body.dark-mode div[style*="background: '#f8f9fa'"],
+body.dark-mode div[style*="background:#f8f9fa'"],
+body.dark-mode div[style*="background: #f8f9fa"],
+body.dark-mode div[style*="background:#f8f9fa"],
+body.dark-mode div[style*="background: rgb(248, 249, 250)"],
+body.dark-mode div[style*="background:rgb(248, 249, 250)"],
+body.dark-mode div[style*="background-color: '#f8f9fa'"],
+body.dark-mode div[style*="background-color:#f8f9fa'"],
+body.dark-mode div[style*="background-color: #f8f9fa"],
+body.dark-mode div[style*="background-color:#f8f9fa"],
+body.dark-mode div[style*="background-color: rgb(248, 249, 250)"],
+body.dark-mode div[style*="background-color:rgb(248, 249, 250)"] {
+  background-color: #2d3748 !important;
+  color: #e9ecef !important;
+}
+
+/* Even more specific rules for profile page */
+body.dark-mode .ui.grid .ui.row .ui.column div[style*="background: '#f8f9fa'"],
+body.dark-mode .ui.grid .ui.row .ui.column div[style*="background:#f8f9fa'"],
+body.dark-mode .ui.grid .ui.row .ui.column div[style*="background: #f8f9fa"],
+body.dark-mode .ui.grid .ui.row .ui.column div[style*="background:#f8f9fa"],
+body.dark-mode .ui.grid .ui.row .ui.column div[style*="background: rgb(248, 249, 250)"],
+body.dark-mode .ui.grid .ui.row .ui.column div[style*="background:rgb(248, 249, 250)"] {
+  background-color: #2d3748 !important;
+  color: #e9ecef !important;
+}
+
+/* Most specific rule using attribute contains selector with different quote styles */
+body.dark-mode div[style*='background: "#f8f9fa"'],
+body.dark-mode div[style*='background:"#f8f9fa"'],
+body.dark-mode div[style*='background: #f8f9fa'],
+body.dark-mode div[style*='background:#f8f9fa'],
+body.dark-mode div[style*='background: "rgb(248, 249, 250)"'],
+body.dark-mode div[style*='background:"rgb(248, 249, 250)"'] {
+  background-color: #2d3748 !important;
+  color: #e9ecef !important;
+}
+
+/* Universal override for any div with light grey background in dark mode */
+body.dark-mode div[style*="background: #f8"],
+body.dark-mode div[style*="background:#f8"],
+body.dark-mode div[style*="background: rgb(248"],
+body.dark-mode div[style*="background:rgb(248"] {
+  background-color: #2d3748 !important;
+  color: #e9ecef !important;
+}
+
+/* Dark mode styles for profile page Bio section using class */
+.bio-section {
+  min-height: 100px;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 5px;
+}
+
+body.dark-mode .bio-section {
+  background-color: #4a5568 !important;
+  color: #e9ecef !important;
+  border: 1px solid #718096 !important;
+}
+
+/* Dark mode styles for profile header segment using class */
+.profile-header-segment {
+  background: #f8f9fa;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+body.dark-mode .profile-header-segment {
+  background-color: #2d3748 !important;
+  color: #e9ecef !important;
+  border-color: #4a5568 !important;
+}
+
+/* Dark mode styles for comment components - override inline styles */
+body.dark-mode div[style*="backgroundColor: '#fff'"],
+body.dark-mode div[style*="backgroundColor:'#fff'"],
+body.dark-mode div[style*="background-color: '#fff'"],
+body.dark-mode div[style*="background-color:'#fff'"],
+body.dark-mode div[style*="backgroundColor: #fff'"],
+body.dark-mode div[style*="background-color: #fff'"],
+body.dark-mode div[style*="backgroundColor:#fff'"],
+body.dark-mode div[style*="background-color:#fff'"] {
+  background-color: #2d3748 !important;
+  color: #e9ecef !important;
+}
+
+/* Dark mode styles for comment content backgrounds */
+body.dark-mode div[style*="backgroundColor: '#fafbfc'"],
+body.dark-mode div[style*="backgroundColor:'#fafbfc'"],
+body.dark-mode div[style*="background-color: '#fafbfc'"],
+body.dark-mode div[style*="background-color:'#fafbfc'"],
+body.dark-mode div[style*="backgroundColor: #fafbfc'"],
+body.dark-mode div[style*="background-color: #fafbfc'"],
+body.dark-mode div[style*="backgroundColor:#fafbfc'"],
+body.dark-mode div[style*="background-color:#fafbfc'"] {
+  background-color: #4a5568 !important;
+  color: #e9ecef !important;
+}
+
+/* Dark mode styles for comment attachment backgrounds */
+body.dark-mode div[style*="backgroundColor: '#f8f9fa'"],
+body.dark-mode div[style*="backgroundColor:'#f8f9fa'"],
+body.dark-mode div[style*="background-color: '#f8f9fa'"],
+body.dark-mode div[style*="background-color:'#f8f9fa'"],
+body.dark-mode div[style*="backgroundColor: #f8f9fa'"],
+body.dark-mode div[style*="background-color: #f8f9fa'"],
+body.dark-mode div[style*="backgroundColor:#f8f9fa'"],
+body.dark-mode div[style*="background-color:#f8f9fa'"] {
+  background-color: #4a5568 !important;
+  color: #e9ecef !important;
+}
+
+/* Dark mode styles for comment text colors */
+body.dark-mode div[style*="color: '#333'"],
+body.dark-mode div[style*="color:'#333'"],
+body.dark-mode div[style*="color: #333'"],
+body.dark-mode div[style*="color:#333'"],
+body.dark-mode div[style*="color: '#444'"],
+body.dark-mode div[style*="color:'#444'"],
+body.dark-mode div[style*="color: #444'"],
+body.dark-mode div[style*="color:#444'"],
+body.dark-mode div[style*="color: '#666'"],
+body.dark-mode div[style*="color:'#666'"],
+body.dark-mode div[style*="color: #666'"],
+body.dark-mode div[style*="color:#666'"] {
+  color: #e9ecef !important;
+}
+
+/* Dark mode styles for comment metadata colors */
+body.dark-mode div[style*="color: '#888'"],
+body.dark-mode div[style*="color:'#888'"],
+body.dark-mode div[style*="color: #888'"],
+body.dark-mode div[style*="color:#888'"],
+body.dark-mode div[style*="color: '#aaa'"],
+body.dark-mode div[style*="color:'#aaa'"],
+body.dark-mode div[style*="color: #aaa'"],
+body.dark-mode div[style*="color:#aaa'"] {
+  color: #cbd5e0 !important;
+}
+
+/* Dark mode styles for comment borders */
+body.dark-mode div[style*="border: '1px solid #e8e8e8'"],
+body.dark-mode div[style*="border:'1px solid #e8e8e8'"],
+body.dark-mode div[style*="border: 1px solid #e8e8e8'"],
+body.dark-mode div[style*="border:1px solid #e8e8e8'"],
+body.dark-mode div[style*="borderLeft: '2px solid #e8e8e8'"],
+body.dark-mode div[style*="borderLeft:'2px solid #e8e8e8'"],
+body.dark-mode div[style*="border-left: '2px solid #e8e8e8'"],
+body.dark-mode div[style*="border-left: 2px solid #e8e8e8'"],
+body.dark-mode div[style*="borderLeft: 2px solid #e8e8e8'"] {
+  border-color: #4a5568 !important;
+}
+
+/* Dark mode styles for no comments placeholder */
+body.dark-mode div[style*="backgroundColor: '#f9f9f9'"],
+body.dark-mode div[style*="backgroundColor:'#f9f9f9'"],
+body.dark-mode div[style*="background-color: '#f9f9f9'"],
+body.dark-mode div[style*="background-color:'#f9f9f9'"],
+body.dark-mode div[style*="backgroundColor: #f9f9f9'"],
+body.dark-mode div[style*="background-color: #f9f9f9'"],
+body.dark-mode div[style*="backgroundColor:#f9f9f9'"],
+body.dark-mode div[style*="background-color:#f9f9f9'"] {
+  background-color: #2d3748 !important;
+  color: #cbd5e0 !important;
+  border-color: #4a5568 !important;
+}
+
+/* Dark mode styles for button icons in comments */
+body.dark-mode button[style*="color: '#888'"],
+body.dark-mode button[style*="color:'#888'"],
+body.dark-mode button[style*="color: #888'"],
+body.dark-mode button[style*="color:#888'"] {
+  color: #cbd5e0 !important;
+}
+
+body.dark-mode button[style*="color: '#888'"]:hover,
+body.dark-mode button[style*="color:'#888'"]:hover,
+body.dark-mode button[style*="color: #888'"]:hover,
+body.dark-mode button[style*="color:#888'"]:hover {
+  color: #e9ecef !important;
+}
+
+/* Comment component styles - using classes instead of inline styles */
+.no-comments-placeholder {
+  text-align: center;
+  padding: 40px 20px;
+  color: #888;
+  font-style: italic;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  border: 1px dashed #ddd;
+}
+
+.comment-container {
+  background-color: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  transition: all 0.2s ease;
+  min-height: 120px;
+}
+
+.comment-author {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.comment-username {
+  color: #888;
+  margin-left: 8px;
+  font-size: 0.85rem;
+}
+
+.comment-metadata {
+  font-size: 0.8rem;
+  color: #888;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: bold;
+}
+
+.comment-content {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #444;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin-bottom: 12px;
+  min-height: 40px;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: #fafbfc;
+}
+
+.comment-attachments {
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 12px;
+}
+
+.attachment-header {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+}
+
+.comment-edited {
+  font-size: 0.8rem;
+  color: #aaa;
+  font-style: italic;
+  display: flex;
+  align-items: center;
+}
+
+.comment-replies {
+  margin-top: 12px;
+  margin-left: 20px;
+  padding-left: 16px;
+  border-left: 2px solid #e8e8e8;
+}
+
+.comment-reply {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.reply-author {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.reply-username {
+  color: #888;
+  margin-left: 6px;
+  font-size: 0.8rem;
+}
+
+.reply-metadata {
+  font-size: 0.75rem;
+  color: #888;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.reply-content {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: #444;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin-bottom: 8px;
+  padding: 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  background-color: #fafbfc;
+}
+
+.reply-edited {
+  font-size: 0.75rem;
+  color: #aaa;
+  font-style: italic;
+  display: flex;
+  align-items: center;
+}
+
+.delete-button {
+  background: transparent;
+  color: #888;
+  padding: 4px;
+}
+
+/* Dark mode styles for comment classes */
+body.dark-mode .no-comments-placeholder {
+  background-color: #2d3748 !important;
+  color: #cbd5e0 !important;
+  border-color: #4a5568 !important;
+}
+
+body.dark-mode .comment-container {
+  background-color: #2d3748 !important;
+  border-color: #4a5568 !important;
+  color: #e9ecef !important;
+}
+
+body.dark-mode .comment-author {
+  color: #ffffff !important;
+}
+
+body.dark-mode .comment-username {
+  color: #cbd5e0 !important;
+}
+
+body.dark-mode .comment-metadata {
+  color: #cbd5e0 !important;
+}
+
+body.dark-mode .comment-content {
+  background-color: #4a5568 !important;
+  color: #e9ecef !important;
+  border-color: #718096 !important;
+}
+
+body.dark-mode .comment-attachments {
+  background-color: #4a5568 !important;
+  color: #e9ecef !important;
+}
+
+body.dark-mode .attachment-header {
+  color: #cbd5e0 !important;
+}
+
+body.dark-mode .comment-edited {
+  color: #cbd5e0 !important;
+}
+
+body.dark-mode .comment-replies {
+  border-color: #4a5568 !important;
+}
+
+body.dark-mode .comment-reply {
+  background-color: #2d3748 !important;
+  color: #e9ecef !important;
+}
+
+body.dark-mode .reply-author {
+  color: #ffffff !important;
+}
+
+body.dark-mode .reply-username {
+  color: #cbd5e0 !important;
+}
+
+body.dark-mode .reply-metadata {
+  color: #cbd5e0 !important;
+}
+
+body.dark-mode .reply-content {
+  background-color: #4a5568 !important;
+  color: #e9ecef !important;
+  border-color: #718096 !important;
+}
+
+body.dark-mode .reply-edited {
+  color: #cbd5e0 !important;
+}
+
+body.dark-mode .delete-button {
+  color: #cbd5e0 !important;
+}
+
+body.dark-mode .delete-button:hover {
+  color: #e9ecef !important;
+}
+
+/* Dark mode styles for profile page header segment */
+body.dark-mode .ui.segment[style*="background: '#f8f9fa'"],
+body.dark-mode .ui.segment[style*="background:#f8f9fa'"],
+body.dark-mode .ui.segment[style*="background: #f8f9fa"],
+body.dark-mode .ui.segment[style*="background:#f8f9fa"] {
+  background-color: #2d3748 !important;
+  color: #e9ecef !important;
+  border-color: #4a5568 !important;
+}
+
+/* Dark mode styles for profile page card meta text */
+body.dark-mode .ui.card .meta span[style*="color: '#666'"],
+body.dark-mode .ui.card .meta span[style*="color:#666'"],
+body.dark-mode .ui.card .meta span[style*="color: #666"],
+body.dark-mode .ui.card .meta span[style*="color:#666"] {
+  color: #cbd5e0 !important;
+}
+
+/* Dark mode styles for profile page card description text */
+body.dark-mode .ui.card .extra span[style*="color: '#666'"],
+body.dark-mode .ui.card .extra span[style*="color:#666'"],
+body.dark-mode .ui.card .extra span[style*="color: #666"],
+body.dark-mode .ui.card .extra span[style*="color:#666"] {
+  color: #cbd5e0 !important;
 }

@@ -68,30 +68,14 @@ const CommentList: React.FC<Props> = observer(({ ticketId }) => {
   return (
     <div style={{ marginTop: '20px' }}>
       {commentStore.comments.length === 0 ? (
-        <div style={{
-          textAlign: 'center',
-          padding: '40px 20px',
-          color: '#888',
-          fontStyle: 'italic',
-          backgroundColor: '#f9f9f9',
-          borderRadius: '8px',
-          border: '1px dashed #ddd'
-        }}>
+        <div className="no-comments-placeholder">
           <Icon name='comment outline' size='large' style={{ marginBottom: '10px', display: 'block' }} />
           No comments yet. Be the first to share your thoughts.
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {sortedComments.filter(comment => !comment.parentCommentId).map((comment) => (
-            <div key={comment.id} style={{
-              backgroundColor: '#fff',
-              border: '1px solid #e8e8e8',
-              borderRadius: '8px',
-              padding: '16px',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-              transition: 'all 0.2s ease',
-              minHeight: '120px'
-            }}>
+            <div key={comment.id} className="comment-container">
               <div style={{ display: 'flex', alignItems: 'flex-start' }}>
                 <Image
                   src='/assets/user.png'
@@ -107,29 +91,14 @@ const CommentList: React.FC<Props> = observer(({ ticketId }) => {
                     marginBottom: '8px'
                   }}>
                     <div>
-                      <span style={{
-                        fontWeight: '600',
-                        color: '#333',
-                        fontSize: '0.95rem'
-                      }}>
+                      <span className="comment-author">
                         {comment.authorDisplayName}
                       </span>
-                      <span style={{
-                        color: '#888',
-                        marginLeft: '8px',
-                        fontSize: '0.85rem'
-                      }}>
+                      <span className="comment-username">
                         @{comment.authorUsername}
                       </span>
                     </div>
-                    <div style={{
-                      fontSize: '0.8rem',
-                      color: '#888',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                      fontWeight: 'bold'
-                    }}>
+                    <div className="comment-metadata">
                       <i className="clock icon" style={{
                         margin: 0,
                         padding: 0,
@@ -144,36 +113,13 @@ const CommentList: React.FC<Props> = observer(({ ticketId }) => {
                     </div>
                   </div>
                   
-                  <div style={{
-                    fontSize: '0.95rem',
-                    lineHeight: '1.5',
-                    color: '#444',
-                    whiteSpace: 'pre-wrap',
-                    wordBreak: 'break-word',
-                    marginBottom: '12px',
-                    minHeight: '40px',
-                    padding: '8px',
-                    borderRadius: '4px',
-                    border: '1px solid rgba(0, 0, 0, 0.1)',
-                    backgroundColor: '#fafbfc'
-                  }}>
+                  <div className="comment-content">
                     {typeof comment.content === 'string' ? comment.content : JSON.stringify(comment.content)}
                   </div>
                   
                   {comment.attachments && comment.attachments.length > 0 && (
-                    <div style={{
-                      backgroundColor: '#f8f9fa',
-                      borderRadius: '6px',
-                      padding: '10px',
-                      marginBottom: '12px'
-                    }}>
-                      <div style={{
-                        fontSize: '0.9rem',
-                        color: '#666',
-                        marginBottom: '6px',
-                        display: 'flex',
-                        alignItems: 'center'
-                      }}>
+                    <div className="comment-attachments">
+                      <div className="attachment-header">
                         <Icon name='paperclip' style={{ marginRight: '6px' }} />
                         Attachments
                       </div>
@@ -194,13 +140,7 @@ const CommentList: React.FC<Props> = observer(({ ticketId }) => {
                   )}
                   
                   {comment.updatedAt && (
-                    <div style={{
-                      fontSize: '0.8rem',
-                      color: '#aaa',
-                      fontStyle: 'italic',
-                      display: 'flex',
-                      alignItems: 'center'
-                    }}>
+                    <div className="comment-edited">
                       <Icon name='edit' style={{
                         marginRight: '4px',
                         fontSize: '0.9em',
@@ -214,17 +154,11 @@ const CommentList: React.FC<Props> = observer(({ ticketId }) => {
               
               {/* Display replies */}
               {comment.replies && comment.replies.length > 0 && (
-                <div style={{ marginTop: '12px', marginLeft: '20px', paddingLeft: '16px', borderLeft: '2px solid #e8e8e8' }}>
+                <div className="comment-replies">
                   {[...comment.replies].sort((a, b) =>
                     new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
                   ).map((reply) => (
-                    <div key={reply.id} style={{
-                      backgroundColor: '#fff',
-                      borderRadius: '8px',
-                      padding: '12px',
-                      marginBottom: '8px',
-                      boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
-                    }}>
+                    <div key={reply.id} className="comment-reply">
                       <div style={{ display: 'flex', alignItems: 'flex-start' }}>
                         <Image
                           src='/assets/user.png'
@@ -240,28 +174,14 @@ const CommentList: React.FC<Props> = observer(({ ticketId }) => {
                             marginBottom: '6px'
                           }}>
                             <div>
-                              <span style={{
-                                fontWeight: '600',
-                                color: '#333',
-                                fontSize: '0.9rem'
-                              }}>
+                              <span className="reply-author">
                                 {reply.authorDisplayName}
                               </span>
-                              <span style={{
-                                color: '#888',
-                                marginLeft: '6px',
-                                fontSize: '0.8rem'
-                              }}>
+                              <span className="reply-username">
                                 @{reply.authorUsername}
                               </span>
                             </div>
-                            <div style={{
-                              fontSize: '0.75rem',
-                              color: '#888',
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '4px'
-                            }}>
+                            <div className="reply-metadata">
                               <i className="clock icon" style={{
                                 margin: 0,
                                 padding: 0,
@@ -276,29 +196,12 @@ const CommentList: React.FC<Props> = observer(({ ticketId }) => {
                             </div>
                           </div>
                           
-                          <div style={{
-                            fontSize: '0.9rem',
-                            lineHeight: '1.4',
-                            color: '#444',
-                            whiteSpace: 'pre-wrap',
-                            wordBreak: 'break-word',
-                            marginBottom: '8px',
-                            padding: '6px',
-                            borderRadius: '4px',
-                            border: '1px solid rgba(0, 0, 0, 0.05)',
-                            backgroundColor: '#fafbfc'
-                          }}>
+                          <div className="reply-content">
                             {typeof reply.content === 'string' ? reply.content : JSON.stringify(reply.content)}
                           </div>
                           
                           {reply.updatedAt && (
-                            <div style={{
-                              fontSize: '0.75rem',
-                              color: '#aaa',
-                              fontStyle: 'italic',
-                              display: 'flex',
-                              alignItems: 'center'
-                            }}>
+                            <div className="reply-edited">
                               <Icon name='edit' style={{
                                 marginRight: '3px',
                                 fontSize: '0.9em',
@@ -320,11 +223,7 @@ const CommentList: React.FC<Props> = observer(({ ticketId }) => {
                                 basic
                                 size='mini'
                                 title='Delete reply'
-                                style={{
-                                  background: 'transparent',
-                                  color: '#888',
-                                  padding: '4px'
-                                }}
+                                className="delete-button"
                                 onClick={() => showDeleteConfirm(reply.id)}
                               />
                               <Confirm
@@ -368,11 +267,7 @@ const CommentList: React.FC<Props> = observer(({ ticketId }) => {
                       basic
                       size='mini'
                       title='Delete comment'
-                      style={{
-                        background: 'transparent',
-                        color: '#888',
-                        padding: '4px'
-                      }}
+                      className="delete-button"
                       onClick={() => showDeleteConfirm(comment.id)}
                     />
                     <Confirm

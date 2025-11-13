@@ -45,7 +45,7 @@ export default observer(function ProfilePage() {
   return (
     <Container style={{ marginTop: '7em', maxWidth: '1200px' }}>
       {/* Header */}
-      <Segment style={{ background: '#f8f9fa', borderRadius: '10px', marginBottom: '20px' }}>
+      <Segment className="profile-header-segment">
         <Grid>
           <Grid.Row>
             <Grid.Column width={10}>
@@ -91,7 +91,7 @@ export default observer(function ProfilePage() {
                     </Label>
                   </div>
                   <p><strong>Bio:</strong></p>
-                  <div style={{ minHeight: '100px', padding: '10px', background: '#f8f9fa', borderRadius: '5px' }}>
+                  <div className="bio-section">
                     {profile.bio || "No bio provided yet."}
                   </div>
                 </Grid.Column>

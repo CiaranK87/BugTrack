@@ -5,6 +5,7 @@ export default class CommonStore {
   error: ServerError | null = null;
   token: string | null = localStorage.getItem("jwt");
   appLoaded = false;
+  darkMode: boolean = localStorage.getItem("darkMode") === "true";
 
   constructor() {
     makeAutoObservable(this);
@@ -16,6 +17,18 @@ export default class CommonStore {
           localStorage.setItem("jwt", token);
         } else {
           localStorage.removeItem("jwt");
+        }
+      }
+    );
+
+    reaction(
+      () => this.darkMode,
+      (darkMode) => {
+        localStorage.setItem("darkMode", darkMode.toString());
+        if (darkMode) {
+          document.body.classList.add("dark-mode");
+        } else {
+          document.body.classList.remove("dark-mode");
         }
       }
     );
@@ -31,5 +44,13 @@ export default class CommonStore {
 
   setAppLoaded = () => {
     this.appLoaded = true;
+  };
+
+  setDarkMode = (value: boolean) => {
+    this.darkMode = value;
+  };
+
+  toggleDarkMode = () => {
+    this.darkMode = !this.darkMode;
   };
 }

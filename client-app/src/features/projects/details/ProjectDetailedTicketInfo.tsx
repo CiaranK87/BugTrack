@@ -21,36 +21,36 @@ export default observer(function ProjectDetailedTicketInfo({ projectId }: Props)
 
 
   const getPriorityColor = (priority: string) => {
-  switch (priority?.toLowerCase()) {
-    case 'high':
-    case 'urgent':
-      return 'red';
-    case 'medium':
-      return 'yellow';
-    case 'low':
-      return 'green';
-    default:
-      return 'grey';
-  }
-};
+    switch (priority?.toLowerCase()) {
+      case 'high':
+      case 'urgent':
+        return 'red';
+      case 'medium':
+        return 'yellow';
+      case 'low':
+        return 'green';
+      default:
+        return 'grey';
+    }
+  };
 
-const getStatusColor = (status: string) => {
-  switch (status?.toLowerCase()) {
-    case 'open':
-    case 'new':
-      return 'blue';
-    case 'in progress':
-    case 'active':
-      return 'yellow';
-    case 'resolved':
-    case 'completed':
-      return 'green';
-    case 'closed':
-      return 'grey';
-    default:
-      return 'grey';
-  }
-};
+  const getStatusColor = (status: string) => {
+    switch (status?.toLowerCase()) {
+      case 'open':
+      case 'new':
+        return 'blue';
+      case 'in progress':
+      case 'active':
+        return 'yellow';
+      case 'resolved':
+      case 'completed':
+        return 'green';
+      case 'closed':
+        return 'grey';
+      default:
+        return 'grey';
+    }
+  };
 
   if (loadingInitial) return <LoadingComponent />;
 
