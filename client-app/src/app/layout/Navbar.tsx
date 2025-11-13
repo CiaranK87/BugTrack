@@ -1,15 +1,13 @@
-import { Container, Dropdown, Image, Menu, Checkbox } from "semantic-ui-react";
+import { Container, Dropdown, Image, Menu, Button, Icon } from "semantic-ui-react";
 import { Link, NavLink } from "react-router-dom";
 import { useStore } from "../stores/store";
 import { observer } from "mobx-react-lite";
-import { useTheme } from "../context/ThemeContext";
 
 export default observer(function Navbar() {
   const {
     userStore: { user, logout, isAdmin },
+    commonStore: { darkMode, toggleDarkMode }
   } = useStore();
-  
-  const { darkMode, toggleDarkMode } = useTheme();
 
   return (
     <Menu inverted fixed="top">
@@ -32,31 +30,43 @@ export default observer(function Navbar() {
             <Dropdown.Menu>
               <Dropdown.Item as={Link} to={`/profile/${user?.username}`} text="My Profile" icon="user" />
               <Dropdown.Divider />
-              <Dropdown.Item>
+              <Dropdown.Item
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  toggleDarkMode();
+                }}
+              >
                 <div
                   style={{
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    padding: '5px 0',
                     width: '100%'
                   }}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    toggleDarkMode();
-                  }}
                 >
-                  <span style={{ marginRight: '10px' }}>Dark Mode</span>
-                  <Checkbox
-                    toggle
-                    checked={darkMode}
+                  <span style={{ marginRight: '10px' }}>{darkMode ? 'Light Mode' : 'Dark Mode'}</span>
+                  <Button
+                    icon
+                    basic
+                    compact
+                    size="mini"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
+                      toggleDarkMode();
                     }}
-                    style={{ transform: 'scale(0.8)' }}
-                  />
+                    style={{
+                      padding: '5px',
+                      backgroundColor: darkMode ? 'rgba(255, 255, 255, 0.1)' : 'transparent',
+                      borderRadius: '4px'
+                    }}
+                  >
+                    <Icon
+                      name={darkMode ? 'sun' : 'moon'}
+                      color={darkMode ? 'yellow' : 'grey'}
+                    />
+                  </Button>
                 </div>
               </Dropdown.Item>
               <Dropdown.Divider />

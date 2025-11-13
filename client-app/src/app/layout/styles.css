@@ -1449,3 +1449,111 @@ body.dark-mode .ui.card .extra span[style*="color: #666"],
 body.dark-mode .ui.card .extra span[style*="color:#666"] {
   color: var(--dm-text-tertiary) !important;
 }
+
+/* Theme toggle slider animation */
+.theme-toggle-slider {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  margin: 0;
+  vertical-align: top;
+}
+
+.theme-toggle-slider input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.theme-toggle-slider .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.3s;
+  border-radius: 24px;
+}
+
+.theme-toggle-slider .slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+.theme-toggle-slider input:checked + .slider {
+  background-color: var(--dm-primary);
+}
+
+.theme-toggle-slider input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+/* Dark mode theme toggle */
+body.dark-mode .theme-toggle-slider .slider {
+  background-color: #555;
+}
+
+body.dark-mode .theme-toggle-slider input:checked + .slider {
+  background-color: var(--dm-primary);
+}
+
+/* Theme toggle slider animation - Semantic UI implementation */
+.theme-toggle-slider.ui.toggle.checkbox {
+  margin-right: 0 !important;
+}
+
+.theme-toggle-slider.ui.toggle.checkbox label {
+  cursor: pointer !important;
+  min-height: 1.5em !important;
+  padding-left: 3em !important;
+}
+
+.theme-toggle-slider.ui.toggle.checkbox label:before {
+  background-color: #ccc !important;
+  transition: background-color 0.3s ease, transform 0.3s ease !important;
+  height: 1.5em !important;
+  width: 3em !important;
+}
+
+.theme-toggle-slider.ui.toggle.checkbox label:after {
+  background-color: white !important;
+  transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) !important;
+  height: 1.2em !important;
+  width: 1.2em !important;
+  top: 0.15em !important;
+  left: 0.15em !important;
+  transform: translateX(0) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
+.theme-toggle-slider.ui.toggle.checkbox input:checked ~ label:before {
+  background-color: var(--dm-primary) !important;
+}
+
+.theme-toggle-slider.ui.toggle.checkbox input:checked ~ label:after {
+  transform: translateX(1.5em) !important;
+}
+
+/* Dark mode theme toggle */
+body.dark-mode .theme-toggle-slider.ui.toggle.checkbox label:before {
+  background-color: #555 !important;
+}
+
+body.dark-mode .theme-toggle-slider.ui.toggle.checkbox input:checked ~ label:before {
+  background-color: var(--dm-primary) !important;
+}
+
+/* Ensure smooth animation for the toggle handle */
+.theme-toggle-slider.ui.toggle.checkbox input:not(:checked) ~ label:after {
+  transform: translateX(0) !important;
+}
