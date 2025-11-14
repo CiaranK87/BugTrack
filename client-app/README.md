@@ -1,30 +1,49 @@
-# React + TypeScript + Vite
+# BugTrack Client App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React + TypeScript frontend application for bug tracking and project management.
 
-Currently, two official plugins are available:
+## Testing
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This project uses Vitest and React Testing Library for testing the client-side application.
 
-## Expanding the ESLint configuration
+### Running Tests
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+```bash
+# Run all tests
+npm run test
 
-- Configure the top-level `parserOptions` property like this:
+# Run tests in watch mode
+npm run test:watch
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+# Run tests with UI
+npm run test:ui
+
+# Run tests with coverage report
+npm run test:coverage
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+### Test Structure
+
+- Component tests are located alongside their components (e.g., `Component.test.tsx`)
+- Integration tests are in the `src/test/` directory
+- Global test setup is in `src/test/setup.ts`
+
+### Coverage
+
+Coverage reports are generated in the `coverage/` directory when running `npm run test:coverage`.
+
+### Note
+
+This README covers only the client-side testing. For server-side testing documentation, please refer to the root-level README or the API directory documentation.
+
+## Development
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Build for production
+npm run build

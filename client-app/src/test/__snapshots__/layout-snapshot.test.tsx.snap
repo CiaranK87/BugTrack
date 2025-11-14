@@ -1,0 +1,388 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Layout & Navigation Snapshot Tests > Navbar snapshot for admin user 1`] = `
+<DocumentFragment>
+  <div
+    class="ui inverted top fixed menu"
+  >
+    <div
+      class="ui container"
+    >
+      <a
+        class="header item"
+        href="/dashboard"
+      >
+        <img
+          alt="logo"
+          src="/assets/bug-logo.png"
+          style="margin-right: 10px;"
+        />
+        BugTrack
+      </a>
+      <a
+        class="item"
+        href="/projects"
+      >
+        Projects
+      </a>
+      <a
+        class="item"
+        href="/tickets"
+      >
+        Tickets
+      </a>
+      <a
+        class="item"
+        href="/admin/users"
+      >
+        Admin
+      </a>
+      <a
+        class="item"
+        href="/errors"
+      >
+        Errors
+      </a>
+      <div
+        class="right item"
+      >
+        <img
+          class="ui avatar right spaced image"
+          src="/assets/user.png"
+        />
+        <div
+          aria-expanded="false"
+          class="ui top left pointing dropdown"
+          role="listbox"
+          tabindex="0"
+        >
+          <div
+            aria-atomic="true"
+            aria-live="polite"
+            class="divider text"
+            role="alert"
+          >
+            Admin User (Admin)
+          </div>
+          <i
+            aria-hidden="true"
+            class="dropdown icon"
+          />
+          <div
+            class="menu transition"
+          >
+            <a
+              class="item"
+              href="/profile/admin"
+              role="option"
+            >
+              <i
+                aria-hidden="true"
+                class="user icon"
+              />
+              <span
+                class="text"
+              >
+                My Profile
+              </span>
+            </a>
+            <div
+              class="divider"
+            />
+            <div
+              class="item"
+              role="option"
+            >
+              <div
+                style="display: flex; align-items: center; justify-content: space-between; width: 100%;"
+              >
+                <span
+                  style="margin-right: 10px;"
+                >
+                  Dark Mode
+                </span>
+                <button
+                  class="ui mini basic compact icon button"
+                  style="padding: 5px; background-color: transparent; border-radius: 4px;"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="grey moon icon"
+                  />
+                </button>
+              </div>
+            </div>
+            <div
+              class="divider"
+            />
+            <div
+              class="item"
+              role="option"
+            >
+              <i
+                aria-hidden="true"
+                class="power icon"
+              />
+              <span
+                class="text"
+              >
+                Logout
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`Layout & Navigation Snapshot Tests > Navbar snapshot for regular user 1`] = `
+<DocumentFragment>
+  <div
+    class="ui inverted top fixed menu"
+  >
+    <div
+      class="ui container"
+    >
+      <a
+        class="header item"
+        href="/dashboard"
+      >
+        <img
+          alt="logo"
+          src="/assets/bug-logo.png"
+          style="margin-right: 10px;"
+        />
+        BugTrack
+      </a>
+      <a
+        class="item"
+        href="/projects"
+      >
+        Projects
+      </a>
+      <a
+        class="item"
+        href="/tickets"
+      >
+        Tickets
+      </a>
+      <div
+        class="right item"
+      >
+        <img
+          class="ui avatar right spaced image"
+          src="/assets/user.png"
+        />
+        <div
+          aria-expanded="false"
+          class="ui top left pointing dropdown"
+          role="listbox"
+          tabindex="0"
+        >
+          <div
+            aria-atomic="true"
+            aria-live="polite"
+            class="divider text"
+            role="alert"
+          >
+            Regular User (User)
+          </div>
+          <i
+            aria-hidden="true"
+            class="dropdown icon"
+          />
+          <div
+            class="menu transition"
+          >
+            <a
+              class="item"
+              href="/profile/user"
+              role="option"
+            >
+              <i
+                aria-hidden="true"
+                class="user icon"
+              />
+              <span
+                class="text"
+              >
+                My Profile
+              </span>
+            </a>
+            <div
+              class="divider"
+            />
+            <div
+              class="item"
+              role="option"
+            >
+              <div
+                style="display: flex; align-items: center; justify-content: space-between; width: 100%;"
+              >
+                <span
+                  style="margin-right: 10px;"
+                >
+                  Dark Mode
+                </span>
+                <button
+                  class="ui mini basic compact icon button"
+                  style="padding: 5px; background-color: transparent; border-radius: 4px;"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="grey moon icon"
+                  />
+                </button>
+              </div>
+            </div>
+            <div
+              class="divider"
+            />
+            <div
+              class="item"
+              role="option"
+            >
+              <i
+                aria-hidden="true"
+                class="power icon"
+              />
+              <span
+                class="text"
+              >
+                Logout
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`Layout & Navigation Snapshot Tests > Navbar snapshot with dark mode enabled 1`] = `
+<DocumentFragment>
+  <div
+    class="ui inverted top fixed menu"
+  >
+    <div
+      class="ui container"
+    >
+      <a
+        class="header item"
+        href="/dashboard"
+      >
+        <img
+          alt="logo"
+          src="/assets/bug-logo.png"
+          style="margin-right: 10px;"
+        />
+        BugTrack
+      </a>
+      <a
+        class="item"
+        href="/projects"
+      >
+        Projects
+      </a>
+      <a
+        class="item"
+        href="/tickets"
+      >
+        Tickets
+      </a>
+      <div
+        class="right item"
+      >
+        <img
+          class="ui avatar right spaced image"
+          src="/assets/user.png"
+        />
+        <div
+          aria-expanded="false"
+          class="ui top left pointing dropdown"
+          role="listbox"
+          tabindex="0"
+        >
+          <div
+            aria-atomic="true"
+            aria-live="polite"
+            class="divider text"
+            role="alert"
+          >
+            Dark Mode User (User)
+          </div>
+          <i
+            aria-hidden="true"
+            class="dropdown icon"
+          />
+          <div
+            class="menu transition"
+          >
+            <a
+              class="item"
+              href="/profile/darkuser"
+              role="option"
+            >
+              <i
+                aria-hidden="true"
+                class="user icon"
+              />
+              <span
+                class="text"
+              >
+                My Profile
+              </span>
+            </a>
+            <div
+              class="divider"
+            />
+            <div
+              class="item"
+              role="option"
+            >
+              <div
+                style="display: flex; align-items: center; justify-content: space-between; width: 100%;"
+              >
+                <span
+                  style="margin-right: 10px;"
+                >
+                  Light Mode
+                </span>
+                <button
+                  class="ui mini basic compact icon button"
+                  style="padding: 5px; background-color: rgba(255, 255, 255, 0.1); border-radius: 4px;"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="yellow sun icon"
+                  />
+                </button>
+              </div>
+            </div>
+            <div
+              class="divider"
+            />
+            <div
+              class="item"
+              role="option"
+            >
+              <i
+                aria-hidden="true"
+                class="power icon"
+              />
+              <span
+                class="text"
+              >
+                Logout
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
