@@ -4,6 +4,8 @@
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
 appsettings.json
+appsettings.*.json
+!appsettings.example.json
 .env
 
 # User-specific files
