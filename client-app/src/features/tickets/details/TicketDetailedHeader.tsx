@@ -4,6 +4,7 @@ import { Ticket } from "../../../app/models/ticket";
 import { Link, useNavigate } from "react-router-dom";
 import { useStore } from "../../../app/stores/store";
 import { useState } from "react";
+import { logger } from "../../../app/utils/logger";
 
 interface Props {
   ticket: Ticket;
@@ -45,7 +46,7 @@ export default observer(function TicketDetailedHeader({ ticket }: Props) {
       await ticketStore.updateTicket(updatedTicket);
       ticketStore.loadTicketsByProject(ticket.projectId);
     } catch (error) {
-      console.error("Failed to mark ticket as closed:", error);
+      logger.error("Failed to mark ticket as closed", error);
     } finally {
       setIsClosing(false);
       setShowConfirm(false);
@@ -63,7 +64,7 @@ export default observer(function TicketDetailedHeader({ ticket }: Props) {
       await ticketStore.updateTicket(updatedTicket);
       ticketStore.loadTicketsByProject(ticket.projectId);
     } catch (error) {
-      console.error("Failed to reopen ticket:", error);
+      logger.error("Failed to reopen ticket", error);
     } finally {
       setIsClosing(false);
       setShowReopenConfirm(false);
@@ -83,7 +84,7 @@ export default observer(function TicketDetailedHeader({ ticket }: Props) {
       await ticketStore.deleteTicket(ticket.id);
       navigate('/tickets');
     } catch (error) {
-      console.error("Failed to delete ticket:", error);
+      logger.error("Failed to delete ticket", error);
     }
   };
 

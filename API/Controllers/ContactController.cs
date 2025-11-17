@@ -74,8 +74,10 @@ namespace API.Controllers
 
         private async Task SendAccessRequestEmail(AccessRequestDto request)
         {
-            var adminEmail = _config.GetEnvironmentVariable("CONTACT_ADMIN_EMAIL") ?? "ciarank500@gmail.com";
-            var fromEmail = _config.GetEnvironmentVariable("CONTACT_FROM_EMAIL") ?? "onboarding@resend.dev";
+            var adminEmail = _config.GetEnvironmentVariable("CONTACT_ADMIN_EMAIL") ??
+                          throw new InvalidOperationException("CONTACT_ADMIN_EMAIL environment variable is not configured");
+            var fromEmail = _config.GetEnvironmentVariable("CONTACT_FROM_EMAIL") ??
+                          throw new InvalidOperationException("CONTACT_FROM_EMAIL environment variable is not configured");
             var resendApiKey = _config.GetEnvironmentVariable("RESEND_API_KEY");
 
             // Skip email sending if Resend API key is not configured

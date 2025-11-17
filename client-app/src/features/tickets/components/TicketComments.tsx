@@ -4,6 +4,7 @@ import { observer } from 'mobx-react-lite';
 import { useStore } from '../../../app/stores/store';
 import CommentList from './CommentList';
 import CommentForm from './CommentForm';
+import { logger } from '../../../app/utils/logger';
 
 interface Props {
   ticketId: string;
@@ -19,7 +20,7 @@ export default observer(function TicketComments({ ticketId }: Props) {
       isConnecting.current = true;
       connect(ticketId)
         .catch((error: any) => {
-          console.error('Error connecting to SignalR:', error);
+          logger.error('Error connecting to SignalR', error);
         })
         .finally(() => {
           isConnecting.current = false;

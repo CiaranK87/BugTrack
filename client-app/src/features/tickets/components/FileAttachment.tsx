@@ -2,6 +2,7 @@ import { Icon, Label, Button, Modal, Image } from 'semantic-ui-react';
 import { useState, useEffect } from 'react';
 import { CommentAttachment } from '../../../app/models/comment';
 import axios from 'axios';
+import { logger } from '../../../app/utils/logger';
 
 interface Props {
   attachment: CommentAttachment;
@@ -25,7 +26,7 @@ export default function FileAttachment({
     if (onDownload) {
       onDownload(attachment.id);
     } else {
-      console.log('Download clicked for attachment:', attachment);
+      logger.debug('Download clicked for attachment', attachment);
       
       try {
         let downloadUrl = attachment.downloadUrl;
@@ -58,7 +59,7 @@ export default function FileAttachment({
         }, 100);
         
       } catch (error) {
-        console.error('Failed to download file:', error);
+        logger.error('Failed to download file', error);
         const link = document.createElement('a');
         let downloadUrl = attachment.downloadUrl || `http://localhost:5000/api/tickets/${ticketId}/comments/${commentId}/attachments/${attachment.id}/download`;
         link.href = downloadUrl;
@@ -292,7 +293,7 @@ function AuthenticatedImage({ attachment, ticketId, commentId }: AuthenticatedIm
         
         return () => URL.revokeObjectURL(url);
       } catch (err) {
-        console.error('Failed to fetch image:', err);
+        logger.error('Failed to fetch image', err);
         setError('Failed to load image');
       } finally {
         setLoading(false);
@@ -328,11 +329,11 @@ function AuthenticatedImage({ attachment, ticketId, commentId }: AuthenticatedIm
         fluid
         style={{ maxHeight: '70vh', objectFit: 'contain' }}
         onError={() => {
-          console.error('Failed to display image from blob URL');
+          logger.error('Failed to display image from blob URL');
           setError('Failed to display image');
         }}
         onLoad={() => {
-          console.log('Image loaded successfully from blob URL');
+          logger.debug('Image loaded successfully from blob URL');
         }}
       />
     </div>

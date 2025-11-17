@@ -8,8 +8,16 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure Serilog
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 // Load environment variables from .env file
 if (builder.Environment.IsDevelopment())
@@ -109,43 +117,39 @@ try
     var userManager = services.GetRequiredService<UserManager<AppUser>>();
     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
-    Console.WriteLine("Attempting to connect to BugTrack database...");
+    Log.Information("Attempting to connect to BugTrack database...");
 
     // Apply migrations to the database
     try
     {
         await context.Database.MigrateAsync();
-        Console.WriteLine("Database migration completed successfully");
+        Log.Information("Database migration completed successfully");
     }
     catch (Exception migrateEx)
     {
-        Console.WriteLine($"Migration failed: {migrateEx.Message}");
-        Console.WriteLine("Please ensure the 'BugTrack' database exists in your Neon console.");
+        Log.Error(migrateEx, "Migration failed: {ErrorMessage}", migrateEx.Message);
+        Log.Information("Please ensure the 'BugTrack' database exists in your Neon console.");
     }
     
-    // Only seed data in development environment
-    if (app.Environment.IsDevelopment())
-    {
-        await Seed.SeedData(context, userManager, roleManager);
-    }
-    else
-    {
-        // In production, create roles if they don't exist
-        if (!await roleManager.RoleExistsAsync("Admin"))
-            await roleManager.CreateAsync(new IdentityRole("Admin"));
-        if (!await roleManager.RoleExistsAsync("ProjectManager"))
-            await roleManager.CreateAsync(new IdentityRole("ProjectManager"));
-        if (!await roleManager.RoleExistsAsync("Developer"))
-            await roleManager.CreateAsync(new IdentityRole("Developer"));
-        if (!await roleManager.RoleExistsAsync("User"))
-            await roleManager.CreateAsync(new IdentityRole("User"));
-        
-    }
+    // Create roles if they don't exist (needed for both dev and production)
+    if (!await roleManager.RoleExistsAsync("Admin"))
+        await roleManager.CreateAsync(new IdentityRole("Admin"));
+    if (!await roleManager.RoleExistsAsync("ProjectManager"))
+        await roleManager.CreateAsync(new IdentityRole("ProjectManager"));
+    if (!await roleManager.RoleExistsAsync("Developer"))
+        await roleManager.CreateAsync(new IdentityRole("Developer"));
+    if (!await roleManager.RoleExistsAsync("User"))
+        await roleManager.CreateAsync(new IdentityRole("User"));
+    
+    Log.Information("Application roles created/verified successfully");
 }
 catch (Exception ex)
 {
-    var logger = services.GetRequiredService<ILogger<Program>>();
-    logger.LogError(ex, "An error occurred during startup");
+    Log.Fatal(ex, "An error occurred during startup");
+}
+finally
+{
+    Log.CloseAndFlush();
 }
 
 app.Run();

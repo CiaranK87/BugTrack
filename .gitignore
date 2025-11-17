@@ -6,7 +6,12 @@
 appsettings.json
 appsettings.*.json
 !appsettings.example.json
+!appsettings.Production.json
 .env
+
+# Development documentation
+*.md
+!README.md
 
 # User-specific files
 *.rsuser

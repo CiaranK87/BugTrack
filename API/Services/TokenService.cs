@@ -35,7 +35,7 @@ namespace API.Services
 
             var tokenKey = _config.GetEnvironmentVariable("TOKEN_KEY") ??
                           _config["TokenKey"] ??
-                          "super secret key that needs to be at least 16 characters";
+                          throw new InvalidOperationException("TOKEN_KEY environment variable is not configured");
             
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

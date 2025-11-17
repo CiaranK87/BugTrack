@@ -4,6 +4,7 @@
  */
 
 import { format } from "date-fns";
+import { logger } from "../utils/logger";
 
 /**
  * Safely handles date values from various sources (string, Date, null, undefined)
@@ -17,7 +18,7 @@ export const safeGetDate = (dateValue: string | Date | null | undefined): Date =
     if (dateValue instanceof Date) {
       // Check if date is invalid
       if (isNaN(dateValue.getTime())) {
-        console.warn('Invalid Date object:', dateValue);
+        logger.warn('Invalid Date object', dateValue);
         return new Date(0);
       }
       return dateValue;
@@ -26,12 +27,12 @@ export const safeGetDate = (dateValue: string | Date | null | undefined): Date =
     // If it's a string, parse it
     const date = new Date(dateValue);
     if (isNaN(date.getTime())) {
-      console.warn('Invalid date string:', dateValue);
+      logger.warn('Invalid date string', dateValue);
       return new Date(0);
     }
     return date;
   } catch (error) {
-    console.warn('Error handling date:', dateValue, error);
+    logger.warn('Error handling date', { dateValue, error });
     return new Date(0);
   }
 };

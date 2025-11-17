@@ -7,6 +7,7 @@ import KanbanBoard from "../../../app/common/kanban/KanbanBoard";
 import { Ticket } from "../../../app/models/ticket";
 import { statusOptions } from "../../../app/common/options/statusOptions";
 import { formatDate } from "../../../app/services/dateService";
+import { logger } from "../../../app/utils/logger";
 
 type ViewMode = 'list' | 'kanban' | 'cards';
 
@@ -53,7 +54,7 @@ export default observer(function EnhancedTicketDashboard() {
             await updateTicket({ ...originalTicket, status: column.id });
             await loadTickets();
           } catch (error) {
-            console.error('Failed to update ticket status:', error);
+            logger.error('Failed to update ticket status', error);
             await loadTickets();
           }
           return;
@@ -237,7 +238,7 @@ export default observer(function EnhancedTicketDashboard() {
       try {
         if (dateValue instanceof Date) {
           if (isNaN(dateValue.getTime())) {
-            console.warn('Invalid Date object:', dateValue);
+            logger.warn('Invalid Date object', dateValue);
             return new Date(0);
           }
           return dateValue;
@@ -245,12 +246,12 @@ export default observer(function EnhancedTicketDashboard() {
         
         const date = new Date(dateValue);
         if (isNaN(date.getTime())) {
-          console.warn('Invalid date string:', dateValue);
+          logger.warn('Invalid date string', dateValue);
           return new Date(0);
         }
         return date;
       } catch (error) {
-        console.warn('Error handling date:', dateValue, error);
+        logger.warn('Error handling date', { dateValue, error });
         return new Date(0);
       }
     };

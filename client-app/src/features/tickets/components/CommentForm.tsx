@@ -5,6 +5,7 @@ import { Button, Header, Icon, Segment, Label } from 'semantic-ui-react';
 import MyTextArea from '../../../app/common/form/MyTextArea';
 import { useStore } from '../../../app/stores/store';
 import { observer } from 'mobx-react-lite';
+import { logger } from '../../../app/utils/logger';
 
 interface Props {
   ticketId: string;
@@ -46,7 +47,7 @@ export default observer(function CommentForm({ ticketId, parentCommentId, isRepl
         window.dispatchEvent(new CustomEvent('closeReplyForm', { detail: { commentId: parentCommentId } }));
       }
     } catch (error) {
-      console.error('Failed to create comment:', error);
+      logger.error('Failed to create comment', error);
     }
   };
 

@@ -6,6 +6,7 @@ import { priorityOptions } from "../common/options/priorityOptions";
 import { severityOptions } from "../common/options/severityOptions";
 import { statusOptions } from "../common/options/statusOptions";
 import { normalizeTicketDates, normalizeEnumValue } from "../services/dateService";
+import { logger } from "../utils/logger";
 
 export default class TicketStore {
   ticketRegistry = new Map<string, Ticket>();
@@ -46,7 +47,7 @@ export default class TicketStore {
       });
       this.setLoadingInitial(false);
     } catch (error) {
-      console.log(error);
+      logger.error("Failed to load tickets", error);
       this.setLoadingInitial(false);
     }
   };
@@ -67,7 +68,7 @@ export default class TicketStore {
         this.setLoadingInitial(false);
         return ticket;
       } catch (error) {
-        console.log(error);
+        logger.error("Failed to load ticket", error);
         this.setLoadingInitial(false);
       }
     }
@@ -101,7 +102,7 @@ export default class TicketStore {
       this.projectTickets.set(projectId, processedTickets);
     });
   } catch (error) {
-    console.log(error);
+    logger.error("Failed to create ticket", error);
     runInAction(() => {
       this.projectTickets.set(projectId, []);
     });
@@ -154,7 +155,7 @@ private setTicket = (ticket: Ticket) => {
         this.loading = false;
       });
     } catch (error) {
-      console.log(error);
+      logger.error("Failed to update ticket", error);
       runInAction(() => {
         this.loading = false;
       });
@@ -174,7 +175,7 @@ private setTicket = (ticket: Ticket) => {
         this.loading = false;
       });
     } catch (error) {
-      console.log(error);
+      logger.error("Failed to delete ticket", error);
       runInAction(() => {
         this.loading = false;
       });
@@ -190,7 +191,7 @@ private setTicket = (ticket: Ticket) => {
         this.loading = false;
       });
     } catch (error) {
-      console.log(error);
+      logger.error("Failed to restore ticket", error);
       runInAction(() => {
         this.loading = false;
       });
@@ -209,7 +210,7 @@ private setTicket = (ticket: Ticket) => {
         this.setLoadingInitial(false);
       });
     } catch (error) {
-      console.log(error);
+      logger.error("Failed to permanently delete ticket", error);
       runInAction(() => {
         this.setLoadingInitial(false);
       });
@@ -226,7 +227,7 @@ private setTicket = (ticket: Ticket) => {
         this.loading = false;
       });
     } catch (error) {
-      console.log(error);
+      logger.error("Failed to update ticket status", error);
       runInAction(() => {
         this.loading = false;
       });
@@ -243,7 +244,7 @@ private setTicket = (ticket: Ticket) => {
       });
       this.loadDeletedTickets();
     } catch (error) {
-      console.log(error);
+      logger.error("Failed to update ticket priority", error);
       runInAction(() => {
         this.loading = false;
       });

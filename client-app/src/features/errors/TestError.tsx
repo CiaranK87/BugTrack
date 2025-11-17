@@ -2,32 +2,33 @@ import { Button, Header, Segment } from "semantic-ui-react";
 import axios from "axios";
 import { useState } from "react";
 import ValidationError from "./ValidationError";
+import { logger } from "../../app/utils/logger";
 
 export default function TestErrors() {
   const baseUrl = "http://localhost:5000/api/";
   const [errors, setErrors] = useState(null);
 
   function handleNotFound() {
-    axios.get(baseUrl + "buggy/not-found").catch((err) => console.log(err.response));
+    axios.get(baseUrl + "buggy/not-found").catch((err) => logger.debug("Not found error", err.response));
   }
 
   function handleBadRequest() {
-    axios.get(baseUrl + "buggy/bad-request").catch((err) => console.log(err.response));
+    axios.get(baseUrl + "buggy/bad-request").catch((err) => logger.debug("Bad request error", err.response));
   }
 
   function handleServerError() {
-    axios.get(baseUrl + "buggy/server-error").catch((err) => console.log(err.response));
+    axios.get(baseUrl + "buggy/server-error").catch((err) => logger.debug("Server error", err.response));
   }
 
   function handleUnauthorized() {
-    axios.get(baseUrl + "buggy/unauthorized").catch((err) => console.log(err.response));
+    axios.get(baseUrl + "buggy/unauthorized").catch((err) => logger.debug("Unauthorized error", err.response));
   }
 
   function handleBadProjectGuid() {
-    axios.get(baseUrl + "projects/notaguid").catch((err) => console.log(err.response));
+    axios.get(baseUrl + "projects/notaguid").catch((err) => logger.debug("Bad project GUID error", err.response));
   }
   function handleBadTicketGuid() {
-    axios.get(baseUrl + "tickets/notaguid").catch((err) => console.log(err.response));
+    axios.get(baseUrl + "tickets/notaguid").catch((err) => logger.debug("Bad ticket GUID error", err.response));
   }
 
   function handleProjectValidationError() {

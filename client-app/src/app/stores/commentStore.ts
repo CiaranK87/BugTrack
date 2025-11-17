@@ -2,6 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import * as signalR from '@microsoft/signalr';
 import { Comment, CommentAttachment } from '../models/comment';
+import { logger } from '../utils/logger';
 
 export default class CommentStore {
   comments: Comment[] = [];
@@ -22,7 +23,7 @@ export default class CommentStore {
     }
 
     const connection = new HubConnectionBuilder()
-      .withUrl('http://localhost:5000/hubs/comments', {
+      .withUrl(`${import.meta.env.VITE_API_URL?.replace('/api', '')}/hubs/comments`, {
         accessTokenFactory: () => {
           const token = localStorage.getItem('jwt');
           return token || '';
@@ -35,11 +36,11 @@ export default class CommentStore {
       .build();
 
     connection.onreconnected(() => {
-      console.log('SignalR reconnected');
+      logger.info('SignalR reconnected');
     });
 
     connection.onclose(() => {
-      console.log('SignalR connection closed');
+      logger.info('SignalR connection closed');
       runInAction(() => {
         this.connection = null;
       });
@@ -57,12 +58,12 @@ export default class CommentStore {
       });
       
       await newConnection.start()
-        .catch((err: any) => console.error('Error starting SignalR connection:', err));
+        .catch((err: any) => logger.error('Error starting SignalR connection', err));
     }
 
     if (this.connection) {
       await this.connection.invoke('JoinTicketGroup', ticketId)
-        .catch((err: any) => console.error('Error joining ticket group:', err));
+        .catch((err: any) => logger.error('Error joining ticket group', err));
     }
       
     this.setupEventHandlers();
@@ -80,7 +81,7 @@ export default class CommentStore {
     this.connection.on('ReceiveComment', (comment: Comment) => {
       runInAction(() => {
         if (!comment.authorUsername || !comment.authorDisplayName) {
-          console.warn('Received comment without author information:', comment);
+          logger.warn('Received comment without author information', comment);
         }
         
         if (comment.parentCommentId) {
@@ -167,7 +168,7 @@ export default class CommentStore {
 
   loadComments = async (ticketId: string) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/tickets/${ticketId}/comments`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/tickets/${ticketId}/comments`, {
         credentials: 'include',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('jwt')}`
@@ -181,7 +182,7 @@ export default class CommentStore {
       const contentType = response.headers.get('content-type');
       if (!contentType || !contentType.includes('application/json')) {
         const text = await response.text();
-        console.error('Non-JSON response:', text);
+        logger.error('Non-JSON response', text);
         throw new Error('Server returned non-JSON response');
       }
 
@@ -203,7 +204,7 @@ export default class CommentStore {
         );
       });
     } catch (error) {
-      console.error('Error loading comments:', error);
+      logger.error('Error loading comments', error);
       throw error;
     }
   };
@@ -224,7 +225,7 @@ export default class CommentStore {
         }
       }
 
-      const response = await fetch(`http://localhost:5000/api/tickets/${ticketId}/comments`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/tickets/${ticketId}/comments`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -241,7 +242,7 @@ export default class CommentStore {
         this.loading = false;
       });
     } catch (error) {
-      console.error('Error creating comment:', error);
+      logger.error('Error creating comment', error);
       runInAction(() => {
         this.loading = false;
       });
@@ -251,7 +252,7 @@ export default class CommentStore {
 
   updateComment = async (ticketId: string, commentId: string, content: string) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/tickets/${ticketId}/comments/${commentId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/tickets/${ticketId}/comments/${commentId}`, {
         method: 'PUT',
         credentials: 'include',
         headers: {
@@ -273,14 +274,14 @@ export default class CommentStore {
         }
       });
     } catch (error) {
-      console.error('Error updating comment:', error);
+      logger.error('Error updating comment', error);
       throw error;
     }
   };
 
   deleteComment = async (ticketId: string, commentId: string) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/tickets/${ticketId}/comments/${commentId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/tickets/${ticketId}/comments/${commentId}`, {
         method: 'DELETE',
         credentials: 'include',
         headers: {
@@ -314,7 +315,7 @@ export default class CommentStore {
         }
       });
     } catch (error) {
-      console.error('Error deleting comment:', error);
+      logger.error('Error deleting comment', error);
       throw error;
     }
   };
@@ -324,7 +325,7 @@ export default class CommentStore {
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await fetch(`http://localhost:5000/api/tickets/${ticketId}/comments/${commentId}/attachments`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/tickets/${ticketId}/comments/${commentId}/attachments`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -352,14 +353,14 @@ export default class CommentStore {
         }
       });
     } catch (error) {
-      console.error('Error adding attachment:', error);
+      logger.error('Error adding attachment', error);
       throw error;
     }
   };
 
   deleteAttachment = async (ticketId: string, commentId: string, attachmentId: string) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/tickets/${ticketId}/comments/${commentId}/attachments/${attachmentId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/tickets/${ticketId}/comments/${commentId}/attachments/${attachmentId}`, {
         method: 'DELETE',
         credentials: 'include',
         headers: {
@@ -378,7 +379,7 @@ export default class CommentStore {
         }
       });
     } catch (error) {
-      console.error('Error deleting attachment:', error);
+      logger.error('Error deleting attachment', error);
       throw error;
     }
   };
@@ -389,7 +390,7 @@ export default class CommentStore {
 
   downloadAttachment = async (ticketId: string, commentId: string, attachmentId: string, fileName: string) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/tickets/${ticketId}/comments/${commentId}/attachments/${attachmentId}/download`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/tickets/${ticketId}/comments/${commentId}/attachments/${attachmentId}/download`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -414,7 +415,7 @@ export default class CommentStore {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Error downloading attachment:', error);
+      logger.error('Error downloading attachment', error);
       throw error;
     }
   };

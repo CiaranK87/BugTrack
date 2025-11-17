@@ -23,10 +23,11 @@ namespace API.Extensions
             .AddSignInManager<SignInManager<AppUser>>()
             .AddRoleManager<RoleManager<IdentityRole>>();
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
-                config.GetEnvironmentVariable("TOKEN_KEY") ??
-                config["TokenKey"] ??
-                "super secret key that needs to be at least 16 characters"));
+            var tokenKey = config.GetEnvironmentVariable("TOKEN_KEY") ??
+                          config["TokenKey"] ??
+                          throw new InvalidOperationException("TOKEN_KEY environment variable is not configured");
+            
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenKey));
 
             // Configure JWT settings based on environment
             var isDevelopment = config.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";

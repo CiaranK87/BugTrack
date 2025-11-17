@@ -15,6 +15,7 @@ import MyDateInput from "../../../app/common/form/MyDateInput";
 import { v4 as uuid } from "uuid";
 import { statusOptions } from "../../../app/common/options/statusOptions";
 import { severityOptions } from "../../../app/common/options/severityOptions";
+import { logger } from "../../../app/utils/logger";
 
 export default observer(function TicketForm() {
   const navigate = useNavigate();
@@ -102,7 +103,7 @@ function handleFormSubmit(ticket: Ticket) {
       
   } else {
     if (!ticket.id || typeof ticket.id !== 'string') {
-      console.error('Invalid ticket id:', ticket.id);
+      logger.error('Invalid ticket id', ticket.id);
       return;
     }
     

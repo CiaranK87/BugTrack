@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using Microsoft.Extensions.Configuration;
+using Serilog;
 
 namespace API.Controllers
 {
@@ -18,11 +20,14 @@ namespace API.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly TokenService _tokenService;
         private readonly DataContext _context;
-        public AccountController(UserManager<AppUser> userManager, TokenService tokenService, DataContext context)
+        private readonly IConfiguration _configuration;
+        
+        public AccountController(UserManager<AppUser> userManager, TokenService tokenService, DataContext context, IConfiguration configuration)
         {
             _tokenService = tokenService;
             _userManager = userManager;
             _context = context;
+            _configuration = configuration;
         }
 
         [AllowAnonymous]
@@ -45,6 +50,14 @@ namespace API.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
         {
+            // Check if registration is allowed
+            var allowRegistration = _configuration.GetValue<bool>("SecuritySettings:AllowRegistration", true);
+            if (!allowRegistration)
+            {
+                Log.Warning("Registration attempt when registration is disabled for email: {Email}", registerDto.Email);
+                return BadRequest(new { message = "User registration is currently disabled" });
+            }
+
             if (await _userManager.Users.AnyAsync(x => x.UserName == registerDto.Username))
             {
                 ModelState.AddModelError("username", "Username is already taken");
@@ -65,8 +78,13 @@ namespace API.Controllers
 
             var result = await _userManager.CreateAsync(user, registerDto.Password);
 
-            if (result.Succeeded) return CreateUserObject(user);
+            if (result.Succeeded)
+            {
+                Log.Information("New user registered: {Username} ({Email})", user.UserName, user.Email);
+                return CreateUserObject(user);
+            }
 
+            Log.Error("User registration failed for {Email}: {Errors}", registerDto.Email, string.Join(", ", result.Errors.Select(e => e.Description)));
             return BadRequest(result.Errors);
         }
 

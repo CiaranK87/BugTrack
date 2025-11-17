@@ -5,6 +5,7 @@ import { v4 as uuid } from "uuid";
 import { store } from "./store";
 import { Profile } from "../models/profile";
 import { router } from "../router/Routes";
+import { logger } from "../utils/logger";
 
 export default class ProjectStore {
   projectRegistry = new Map<string, Project>();
@@ -46,7 +47,7 @@ export default class ProjectStore {
       });
       this.setLoadingInitial(false);
     } catch (error) {
-      console.log(error);
+      logger.error("Failed to load projects", error);
       this.setLoadingInitial(false);
     }
   };
@@ -62,7 +63,7 @@ export default class ProjectStore {
         this.setLoadingInitial(false);
       });
     } catch (error) {
-      console.log(error);
+      logger.error("Failed to load deleted projects", error);
       this.setLoadingInitial(false);
     }
   };
@@ -78,7 +79,7 @@ export default class ProjectStore {
       this.setLoadingInitial(false);
       return project;
     } catch (error) {
-      console.log("Failed to load project", error);
+      logger.error("Failed to load project", error);
       runInAction(() => {
         this.selectedProject = undefined;
       });
@@ -106,7 +107,7 @@ export default class ProjectStore {
       this.loadingUserProjects = false;
     });
     } catch (error) {
-      console.log(error);
+      logger.error("Failed to load user projects", error);
       runInAction(() => {
         this.loadingUserProjects = false;
       });
@@ -120,7 +121,7 @@ export default class ProjectStore {
         this.projectRoles[projectId] = role;
       });
     } catch (error) {
-      console.error(error);
+      logger.error("Failed to load user role for project", error);
     }
   };
 
@@ -165,7 +166,7 @@ export default class ProjectStore {
         this.selectedProject = newProject;
       });
     } catch (error) {
-      console.log(error);
+      logger.error("Failed to create project", error);
     }
   };
 
@@ -180,7 +181,7 @@ export default class ProjectStore {
         }
       });
     } catch (error) {
-      console.log(error);
+      logger.error("Failed to update project", error);
     }
   };
 
@@ -199,7 +200,7 @@ export default class ProjectStore {
         this.loading = false;
       });
     } catch (error) {
-      console.log(error);
+      logger.error("Failed to delete project", error);
       runInAction(() => {
         this.loading = false;
       });
@@ -216,7 +217,7 @@ export default class ProjectStore {
         this.loading = false;
       });
     } catch (error) {
-      console.log(error);
+      logger.error("Failed to admin delete project", error);
       runInAction(() => {
         this.loading = false;
       });
@@ -238,7 +239,7 @@ export default class ProjectStore {
         this.loading = false;
       });
     } catch (error) {
-      console.log(error);
+      logger.error("Failed to restore project", error);
       runInAction(() => {
         this.loading = false;
       });
@@ -254,7 +255,7 @@ export default class ProjectStore {
         this.projectRegistry.set(this.selectedProject!.id, this.selectedProject!);
       });
     } catch (error) {
-      console.log(error);
+      logger.error("Failed to toggle project participation", error);
     } finally {
       runInAction(() => (this.loading = false));
     }
@@ -284,7 +285,7 @@ export default class ProjectStore {
         this.projectParticipants.set(projectId, participants);
       });
     } catch (error) {
-      console.log(error);
+      logger.error("Failed to load project participants", error);
     } finally {
       runInAction(() => {
         this.loadingParticipants = false;
@@ -310,7 +311,7 @@ export default class ProjectStore {
         this.projectRegistry.set(this.selectedProject!.id, this.selectedProject!);
       });
     } catch (error) {
-      console.log(error);
+      logger.error("Failed to update participants", error);
     } finally {
       runInAction(() => (this.loading = false));
     }
@@ -323,7 +324,7 @@ export default class ProjectStore {
       await this.loadProjectParticipants(projectId);
       return true;
     } catch (error) {
-      console.log(error);
+      logger.error("Failed to add project participant", error);
       return false;
     } finally {
       runInAction(() => {
@@ -339,7 +340,7 @@ export default class ProjectStore {
       await this.loadProjectParticipants(projectId);
       return true;
     } catch (error) {
-      console.log(error);
+      logger.error("Failed to update participant role", error);
       return false;
     }
   };
@@ -350,7 +351,7 @@ export default class ProjectStore {
       await this.loadProjectParticipants(projectId);
       return true;
     } catch (error) {
-      console.log(error);
+      logger.error("Failed to remove participant", error);
       return false;
     }
   };

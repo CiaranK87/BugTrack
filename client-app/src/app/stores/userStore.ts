@@ -4,6 +4,7 @@ import agent from "../api/agent";
 import { store } from "./store";
 import { router } from "../router/Routes";
 import { Profile } from "../models/profile";
+import { logger } from "../utils/logger";
 
 export default class UserStore {
   user: User | null = null;
@@ -62,7 +63,7 @@ export default class UserStore {
       });
       return user;
     } catch (error) {
-      console.error("Failed to create user:", error);
+      logger.error("Failed to create user", error);
       throw error;
     }
   };
@@ -89,7 +90,7 @@ export default class UserStore {
         
       });
     } catch (error: any) {
-      console.log(error);
+      logger.error("Failed to get current user", error);
       if (error?.response?.status === 401) {
         runInAction(() => {
           store.commonStore.setToken(null);
@@ -108,7 +109,7 @@ export default class UserStore {
       this.userSearchResults = users;
     });
   } catch (error) {
-    console.error(error);
+    logger.error("Failed to search users", error);
   } finally {
     runInAction(() => {
       this.loadingUsers = false;
@@ -127,7 +128,7 @@ export default class UserStore {
         this.loadingProfile = false;
       });
     } catch (error) {
-      console.log(error);
+      logger.error("Failed to load profile", error);
       runInAction(() => {
         this.loadingProfile = false;
       });
@@ -149,7 +150,7 @@ export default class UserStore {
         }
       });
     } catch (error: any) {
-      console.log("Profile update error:", error.response?.data || error.message);
+      logger.error("Profile update error", error.response?.data || error.message);
     }
   };
 
@@ -186,7 +187,7 @@ export default class UserStore {
         this.users = users;
       });
     } catch (error) {
-      console.error("Failed to load users:", error);
+      logger.error("Failed to load users", error);
       throw error;
     } finally {
       runInAction(() => {
@@ -207,7 +208,7 @@ export default class UserStore {
       });
       return updatedUser;
     } catch (error) {
-      console.error("Failed to update user role:", error);
+      logger.error("Failed to update user role", error);
       throw error;
     } finally {
       runInAction(() => {
@@ -227,7 +228,7 @@ export default class UserStore {
       });
       return updatedUser;
     } catch (error) {
-      console.error("Failed to update user:", error);
+      logger.error("Failed to update user", error);
       throw error;
     }
   };
@@ -239,7 +240,7 @@ export default class UserStore {
         this.users = this.users.filter(u => u.id !== userId);
       });
     } catch (error) {
-      console.error("Failed to delete user:", error);
+      logger.error("Failed to delete user", error);
       throw error;
     }
   };

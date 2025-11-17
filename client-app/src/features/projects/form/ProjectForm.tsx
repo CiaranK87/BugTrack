@@ -11,6 +11,7 @@ import MyTextInput from "../../../app/common/form/MyTextInput";
 import MyTextArea from "../../../app/common/form/MyTextArea";
 import MyDateInput from "../../../app/common/form/MyDateInput";
 import { v4 as uuid } from "uuid";
+import { logger } from "../../../app/utils/logger";
 
 export default observer(function ProjectForm() {
   const navigate = useNavigate();
@@ -46,7 +47,7 @@ export default observer(function ProjectForm() {
         navigate(`/projects/${newProject.id}`);
       })
       .catch(error => {
-        console.error("❌ Failed to create project", error);
+        logger.error("Failed to create project", error);
       });
   } else {
     updateProject(project)
@@ -54,7 +55,7 @@ export default observer(function ProjectForm() {
         navigate(`/projects/${project.id}`);
       })
       .catch(error => {
-        console.error("❌ Failed to update project", error);
+        logger.error("Failed to update project", error);
       });
   }
 }
