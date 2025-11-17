@@ -15,11 +15,9 @@ const sleep = (delay: number) => {
 
 // Use environment variable for API URL, fallback to localhost for development
 const getApiBaseUrl = () => {
-  if (import.meta.env.VITE_API_URL) {
-    return import.meta.env.VITE_API_URL;
-  }
-  // Default to localhost for development
-  return import.meta.env.DEV ? "http://localhost:5000/api" : "/api";
+  // Use the environment variable, which should be set in .env files
+  // This ensures we always use absolute URLs and avoid the Vercel domain being prepended
+  return import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 };
 
 axios.defaults.baseURL = getApiBaseUrl();
