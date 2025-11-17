@@ -11,7 +11,7 @@ interface Props {
 
 export default observer(function ProjectDetailedHeader({ project }: Props) {
   const {
-    projectStore: { updateParticipants, loading, cancelProjectToggle, currentUserCanManage },
+    projectStore: { loading, cancelProjectToggle, currentUserCanManage },
     userStore: { isAdmin }
   } = useStore();
   return (

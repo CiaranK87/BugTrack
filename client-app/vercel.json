@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "src/main.tsx",
+      "use": "@vitejs/plugin-react",
+      "config": "vite.config.ts"
+    }
+  ],
+  "routes": [
+    {
+      "src": "src/app/router/Routes.tsx",
+      "dest": "index.html"
+    }
+  ],
+  "env": {
+    "VITE_API_URL": "https://your-azure-api-url.azurewebsites.net"
+  }
+}

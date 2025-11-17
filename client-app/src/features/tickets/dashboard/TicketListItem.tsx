@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import { Button, Card, Item, Segment, Confirm, Icon } from "semantic-ui-react";
+import { Button, Card, Item, Segment, Confirm } from "semantic-ui-react";
 import { useStore } from "../../../app/stores/store";
-import { SyntheticEvent, useState } from "react";
+import { useState } from "react";
 import { Ticket } from "../../../app/models/ticket";
 import React from "react";
 
@@ -11,25 +11,18 @@ interface Props {
 
 export default function TicketListItem({ ticket }: Props) {
   const { ticketStore, projectStore } = useStore();
-  const { deleteTicket, loading } = ticketStore;
+  const { deleteTicket } = ticketStore;
 
-  const [target, setTarget] = useState("");
   const [confirmOpen, setConfirmOpen] = useState(false);
 
-function handleTicketDelete(e: SyntheticEvent<HTMLButtonElement>, id: string) {
-  e.stopPropagation();
-  setTarget(e.currentTarget.name);
-  setConfirmOpen(true);
-}
-
-function confirmDelete() {
-  deleteTicket(target).then(() => {
-    if (ticket.projectId) {
-      projectStore.loadProjects();
-    }
-    setConfirmOpen(false);
-  });
-}
+  function confirmDelete() {
+    deleteTicket(ticket.id).then(() => {
+      if (ticket.projectId) {
+        projectStore.loadProjects();
+      }
+      setConfirmOpen(false);
+    });
+  }
 
   return (
     <React.Fragment>

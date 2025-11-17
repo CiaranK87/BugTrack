@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
-import { Segment, Grid, Icon, Label, Header, Divider } from "semantic-ui-react";
+import { Segment, Grid, Icon, Label, Header } from "semantic-ui-react";
 import { Ticket } from "../../../app/models/ticket";
-import { format } from "date-fns";
+import { formatDateTime } from "../../../app/services/dateService";
 
 interface Props {
   ticket: Ticket;
@@ -93,10 +93,10 @@ export default observer(function TicketDetailedInfo({ ticket }: Props) {
               <Icon name="calendar" color="teal" />
               Dates
             </Header>
-            <p><strong>Created:</strong> {ticket.createdAt ? format(new Date(ticket.createdAt + 'Z'), 'MMM dd, yyyy HH:mm') : 'Never'}</p>
-            <p><strong>Updated:</strong> {ticket.updated ? format(new Date(ticket.updated + 'Z'), 'MMM dd, yyyy HH:mm') : 'Never'}</p>
+            <p><strong>Created:</strong> {ticket.createdAt ? formatDateTime(ticket.createdAt, 'MMM dd, yyyy HH:mm') : 'Never'}</p>
+            <p><strong>Updated:</strong> {ticket.updated ? formatDateTime(ticket.updated, 'MMM dd, yyyy HH:mm') : 'Never'}</p>
             {ticket.closedDate && (
-              <p><strong>Closed:</strong> {format(new Date(ticket.closedDate + 'Z'), 'MMM dd, yyyy HH:mm')}</p>
+              <p><strong>Closed:</strong> {formatDateTime(ticket.closedDate, 'MMM dd, yyyy HH:mm')}</p>
             )}
           </Grid.Column>
         </Grid>

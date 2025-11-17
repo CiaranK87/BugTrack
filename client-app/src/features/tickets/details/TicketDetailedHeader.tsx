@@ -87,10 +87,6 @@ export default observer(function TicketDetailedHeader({ ticket }: Props) {
     }
   };
 
-  const handleConfirmDelete = () => {
-    setShowDeleteConfirm(true);
-  };
-
   return (
     <Segment.Group>
       <Segment basic attached="top" style={{ padding: "0", background: "white" }}>

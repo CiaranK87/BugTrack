@@ -5,8 +5,8 @@ import { observer } from "mobx-react-lite";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
 import KanbanBoard from "../../../app/common/kanban/KanbanBoard";
 import { Ticket } from "../../../app/models/ticket";
-import { format } from "date-fns";
 import { statusOptions } from "../../../app/common/options/statusOptions";
+import { formatDate } from "../../../app/services/dateService";
 
 type ViewMode = 'list' | 'kanban' | 'cards';
 
@@ -148,7 +148,7 @@ export default observer(function EnhancedTicketDashboard() {
         </div>
         {ticket.updated && (
           <div style={{ marginTop: '8px', fontSize: '0.75em', color: '#999' }}>
-            Updated: {format(new Date(ticket.updated + 'Z'), 'MMM dd, yyyy')}
+            Updated: {formatDate(ticket.updated, 'MMM dd, yyyy')}
           </div>
         )}
       </Card.Content>
@@ -198,7 +198,7 @@ export default observer(function EnhancedTicketDashboard() {
           )}
           {ticket.updated && (
             <div style={{ fontSize: '0.8em', color: '#999' }}>
-              Updated: {format(new Date(ticket.updated + 'Z'), 'MMM dd, yyyy')}
+              Updated: {formatDate(ticket.updated, 'MMM dd, yyyy')}
             </div>
           )}
         </Grid.Column>
@@ -230,11 +230,36 @@ export default observer(function EnhancedTicketDashboard() {
       filtered = filtered.filter(ticket => filterStatus.includes(ticket.status));
     }
 
+    // Helper function to safely handle dates
+    const safeGetDate = (dateValue: string | Date | null | undefined): Date => {
+      if (!dateValue) return new Date(0);
+      
+      try {
+        if (dateValue instanceof Date) {
+          if (isNaN(dateValue.getTime())) {
+            console.warn('Invalid Date object:', dateValue);
+            return new Date(0);
+          }
+          return dateValue;
+        }
+        
+        const date = new Date(dateValue);
+        if (isNaN(date.getTime())) {
+          console.warn('Invalid date string:', dateValue);
+          return new Date(0);
+        }
+        return date;
+      } catch (error) {
+        console.warn('Error handling date:', dateValue, error);
+        return new Date(0);
+      }
+    };
+
     switch (sortBy) {
       case 'date-asc':
-        return filtered.sort((a, b) => new Date(a.startDate || 0).getTime() - new Date(b.startDate || 0).getTime());
+        return filtered.sort((a, b) => safeGetDate(a.startDate).getTime() - safeGetDate(b.startDate).getTime());
       case 'date-desc':
-        return filtered.sort((a, b) => new Date(b.startDate || 0).getTime() - new Date(a.startDate || 0).getTime());
+        return filtered.sort((a, b) => safeGetDate(b.startDate).getTime() - safeGetDate(a.startDate).getTime());
       case 'priority':
         const priorityOrder = ['Critical', 'High', 'Medium', 'Low'];
         return filtered.sort((a, b) => priorityOrder.indexOf(a.priority) - priorityOrder.indexOf(b.priority));

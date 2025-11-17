@@ -5,7 +5,7 @@ import { useStore } from "../../app/stores/store";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import LoadingComponent from "../../app/layout/LoadingComponent";
-import { format } from "date-fns";
+import { formatDate } from "../../app/services/dateService";
 
 export default observer(function TicketManagement() {
   const { ticketStore } = useStore();
@@ -160,7 +160,7 @@ export default observer(function TicketManagement() {
                       </Label>
                     </Table.Cell>
                     <Table.Cell>
-                      {ticket.createdAt ? format(new Date(ticket.createdAt + 'Z'), 'MMM dd, yyyy') : "N/A"}
+                      {ticket.createdAt ? formatDate(ticket.createdAt, 'MMM dd, yyyy') : "N/A"}
                     </Table.Cell>
                     <Table.Cell>
                       <Button.Group>
@@ -219,9 +219,9 @@ export default observer(function TicketManagement() {
                       {selectedTicket.status}
                     </Label>
                   </p>
-                  <p><strong>Created:</strong> {selectedTicket.createdAt ? format(new Date(selectedTicket.createdAt + 'Z'), 'MMM dd, yyyy') : "N/A"}</p>
+                  <p><strong>Created:</strong> {selectedTicket.createdAt ? formatDate(selectedTicket.createdAt, 'MMM dd, yyyy') : "N/A"}</p>
                   {selectedTicket.updated && (
-                    <p><strong>Updated:</strong> {format(new Date(selectedTicket.updated + 'Z'), 'MMM dd, yyyy')}</p>
+                    <p><strong>Updated:</strong> {formatDate(selectedTicket.updated, 'MMM dd, yyyy')}</p>
                   )}
                   {selectedTicket.project && (
                     <p><strong>Project:</strong> 

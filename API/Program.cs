@@ -11,6 +11,12 @@ using Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Load environment variables from .env file
+if (builder.Environment.IsDevelopment())
+{
+    DotNetEnv.Env.Load();
+}
+
 // Add services to the container.
 builder.Services.AddControllers();
 
@@ -75,6 +81,9 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 app.UseMiddleware<ExceptionMiddleware>();
 
+// Add security headers
+app.UseSecurityHeaders();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -100,13 +109,43 @@ try
     var userManager = services.GetRequiredService<UserManager<AppUser>>();
     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
-    await context.Database.MigrateAsync();
-    await Seed.SeedData(context, userManager, roleManager);
+    Console.WriteLine("Attempting to connect to BugTrack database...");
+
+    // Apply migrations to the database
+    try
+    {
+        await context.Database.MigrateAsync();
+        Console.WriteLine("Database migration completed successfully");
+    }
+    catch (Exception migrateEx)
+    {
+        Console.WriteLine($"Migration failed: {migrateEx.Message}");
+        Console.WriteLine("Please ensure the 'BugTrack' database exists in your Neon console.");
+    }
+    
+    // Only seed data in development environment
+    if (app.Environment.IsDevelopment())
+    {
+        await Seed.SeedData(context, userManager, roleManager);
+    }
+    else
+    {
+        // In production, create roles if they don't exist
+        if (!await roleManager.RoleExistsAsync("Admin"))
+            await roleManager.CreateAsync(new IdentityRole("Admin"));
+        if (!await roleManager.RoleExistsAsync("ProjectManager"))
+            await roleManager.CreateAsync(new IdentityRole("ProjectManager"));
+        if (!await roleManager.RoleExistsAsync("Developer"))
+            await roleManager.CreateAsync(new IdentityRole("Developer"));
+        if (!await roleManager.RoleExistsAsync("User"))
+            await roleManager.CreateAsync(new IdentityRole("User"));
+        
+    }
 }
 catch (Exception ex)
 {
     var logger = services.GetRequiredService<ILogger<Program>>();
-    logger.LogError(ex, "An error occurred during migration");
+    logger.LogError(ex, "An error occurred during startup");
 }
 
 app.Run();

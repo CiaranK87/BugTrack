@@ -4,8 +4,8 @@ import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import LoadingComponent from "../../app/layout/LoadingComponent";
 import { Link } from "react-router-dom";
-import { format } from "date-fns";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { safeGetDate, formatDate } from "../../app/services/dateService";
 
 export default observer(function UnifiedDashboard() {
   const { projectStore, ticketStore, userStore } = useStore();
@@ -46,10 +46,18 @@ export default observer(function UnifiedDashboard() {
   ];
 
   const recentTickets = allTickets
-    .sort((a, b) => new Date(b.updated || b.startDate || 0).getTime() - new Date(a.updated || a.startDate || 0).getTime());
+    .sort((a, b) => {
+      const dateA = a.updated ? safeGetDate(a.updated) : (a.startDate ? safeGetDate(a.startDate) : new Date(0));
+      const dateB = b.updated ? safeGetDate(b.updated) : (b.startDate ? safeGetDate(b.startDate) : new Date(0));
+      return dateB.getTime() - dateA.getTime();
+    });
   
   const recentProjects = activeProjects
-    .sort((a, b) => new Date(b.startDate || 0).getTime() - new Date(a.startDate || 0).getTime());
+    .sort((a, b) => {
+      const dateA = a.startDate ? safeGetDate(a.startDate) : new Date(0);
+      const dateB = b.startDate ? safeGetDate(b.startDate) : new Date(0);
+      return dateB.getTime() - dateA.getTime();
+    });
   
   const displayedTickets = showAllTickets ? recentTickets : recentTickets.slice(0, 3);
   const displayedProjects = showAllProjects ? recentProjects : recentProjects.slice(0, 3);
@@ -235,7 +243,7 @@ export default observer(function UnifiedDashboard() {
                       </div>
                     </div>
                     <div style={{ marginTop: '5px', fontSize: '0.75em', color: '#999' }}>
-                      Started: {format(new Date(project.startDate!), 'MMM dd, yyyy')}
+                      Started: {formatDate(project.startDate, 'MMM dd, yyyy')}
                     </div>
                   </Card.Content>
                 </Card>
@@ -319,7 +327,7 @@ export default observer(function UnifiedDashboard() {
                     </div>
                     {ticket.updated && (
                       <div style={{ marginTop: '5px', fontSize: '0.75em', color: '#999' }}>
-                        Updated: {format(new Date(ticket.updated + 'Z'), 'MMM dd, yyyy')}
+                        Updated: {formatDate(ticket.updated, 'MMM dd, yyyy')}
                       </div>
                     )}
                   </Card.Content>

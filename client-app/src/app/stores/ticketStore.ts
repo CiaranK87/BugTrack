@@ -5,6 +5,7 @@ import { v4 as uuid } from "uuid";
 import { priorityOptions } from "../common/options/priorityOptions";
 import { severityOptions } from "../common/options/severityOptions";
 import { statusOptions } from "../common/options/statusOptions";
+import { normalizeTicketDates, normalizeEnumValue } from "../services/dateService";
 
 export default class TicketStore {
   ticketRegistry = new Map<string, Ticket>();
@@ -83,28 +84,15 @@ export default class TicketStore {
     const tickets = await agent.Tickets.listByProject(projectId);
     
     const processedTickets = tickets.filter(ticket => !ticket.isDeleted).map(ticket => {
-      const normalizeDate = (d: any) => d ? new Date(d + 'Z') : null;
-      const normalize = (value: string, allowed: string[]) => {
-        if (!value) return "";
-        const trimmed = value.trim();
-        const direct = allowed.find(a => a === trimmed);
-        if (direct) return direct;
-        const ci = allowed.find(a => a.toLowerCase() === trimmed.toLowerCase());
-        return ci || "";
-      };
       const allowedPriorities = priorityOptions.map(o => o.value as string);
       const allowedSeverities = severityOptions.map(o => o.value as string);
       const allowedStatuses = statusOptions.map(o => o.value as string);
 
-      ticket.priority = normalize(ticket.priority, allowedPriorities);
-      ticket.severity = normalize(ticket.severity, allowedSeverities);
-      ticket.status = normalize(ticket.status, allowedStatuses);
+      ticket.priority = normalizeEnumValue(ticket.priority, allowedPriorities);
+      ticket.severity = normalizeEnumValue(ticket.severity, allowedSeverities);
+      ticket.status = normalizeEnumValue(ticket.status, allowedStatuses);
 
-      ticket.startDate = normalizeDate(ticket.startDate);
-      ticket.endDate = normalizeDate(ticket.endDate);
-      ticket.updated = normalizeDate(ticket.updated);
-      ticket.closedDate = normalizeDate(ticket.closedDate);
-      return ticket;
+      return normalizeTicketDates(ticket);
     });
     
     runInAction(() => {
@@ -127,30 +115,17 @@ export default class TicketStore {
 
 
 private setTicket = (ticket: Ticket) => {
-    const normalizeDate = (d: any) => d ? new Date(d + 'Z') : null;
-    const normalize = (value: string, allowed: string[]) => {
-      if (!value) return "";
-      const trimmed = value.trim();
-      const direct = allowed.find(a => a === trimmed);
-      if (direct) return direct;
-      const ci = allowed.find(a => a.toLowerCase() === trimmed.toLowerCase());
-      return ci || "";
-    };
-    const allowedPriorities = priorityOptions.map(o => o.value as string);
-    const allowedSeverities = severityOptions.map(o => o.value as string);
-    const allowedStatuses = statusOptions.map(o => o.value as string);
+  const allowedPriorities = priorityOptions.map(o => o.value as string);
+  const allowedSeverities = severityOptions.map(o => o.value as string);
+  const allowedStatuses = statusOptions.map(o => o.value as string);
 
-    ticket.priority = normalize(ticket.priority, allowedPriorities);
-    ticket.severity = normalize(ticket.severity, allowedSeverities);
-    ticket.status = normalize(ticket.status, allowedStatuses);
-    
-    ticket.startDate = normalizeDate(ticket.startDate);
-    ticket.endDate = normalizeDate(ticket.endDate);
-    ticket.updated = normalizeDate(ticket.updated);
-    ticket.createdAt = normalizeDate(ticket.createdAt);
-    ticket.closedDate = normalizeDate(ticket.closedDate);
-    this.ticketRegistry.set(ticket.id, ticket);
-  };
+  ticket.priority = normalizeEnumValue(ticket.priority, allowedPriorities);
+  ticket.severity = normalizeEnumValue(ticket.severity, allowedSeverities);
+  ticket.status = normalizeEnumValue(ticket.status, allowedStatuses);
+  
+  const normalizedTicket = normalizeTicketDates(ticket);
+  this.ticketRegistry.set(ticket.id, normalizedTicket);
+};
 
   private getTicket = (id: string) => {
     return this.ticketRegistry.get(id);
@@ -276,29 +251,16 @@ private setTicket = (ticket: Ticket) => {
   };
 
   private setDeletedTicket = (ticket: Ticket) => {
-    const normalizeDate = (d: any) => d ? new Date(d + 'Z') : null;
-    const normalize = (value: string, allowed: string[]) => {
-      if (!value) return "";
-      const trimmed = value.trim();
-      const direct = allowed.find(a => a === trimmed);
-      if (direct) return direct;
-      const ci = allowed.find(a => a.toLowerCase() === trimmed.toLowerCase());
-      return ci || "";
-    };
     const allowedPriorities = priorityOptions.map(o => o.value as string);
     const allowedSeverities = severityOptions.map(o => o.value as string);
     const allowedStatuses = statusOptions.map(o => o.value as string);
 
-    ticket.priority = normalize(ticket.priority, allowedPriorities);
-    ticket.severity = normalize(ticket.severity, allowedSeverities);
-    ticket.status = normalize(ticket.status, allowedStatuses);
+    ticket.priority = normalizeEnumValue(ticket.priority, allowedPriorities);
+    ticket.severity = normalizeEnumValue(ticket.severity, allowedSeverities);
+    ticket.status = normalizeEnumValue(ticket.status, allowedStatuses);
     
-    ticket.startDate = normalizeDate(ticket.startDate);
-    ticket.endDate = normalizeDate(ticket.endDate);
-    ticket.updated = normalizeDate(ticket.updated);
-    ticket.createdAt = normalizeDate(ticket.createdAt);
-    ticket.closedDate = normalizeDate(ticket.closedDate);
-    this.deletedTicketRegistry.set(ticket.id, ticket);
+    const normalizedTicket = normalizeTicketDates(ticket);
+    this.deletedTicketRegistry.set(ticket.id, normalizedTicket);
   };
 
   get deletedTickets() {

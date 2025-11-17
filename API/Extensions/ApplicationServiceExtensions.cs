@@ -6,6 +6,7 @@ using FluentValidation.AspNetCore;
 using Infrastructure.Security;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using Npgsql;
 
 namespace API.Extensions
 {
@@ -16,15 +17,26 @@ namespace API.Extensions
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
-            services.AddDbContext<DataContext>(opt => 
+            services.AddDbContext<DataContext>(opt =>
             {
-                opt.UseSqlite(config.GetConnectionString("defaultConnection"));
+                // Try to get connection string from environment variable first, then from configuration
+                var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING")
+                    ?? config.GetConnectionString("DefaultConnection");
+                
+                // Use PostgreSQL for all environments
+                opt.UseNpgsql(connectionString);
             });
 
             services.AddCors(opt => {
                 opt.AddPolicy("CorsPolicy", policy =>
                 {
-                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000").AllowCredentials();
+                    var allowedOrigins = config.GetEnvironmentVariable("ALLOWED_ORIGINS")?.Split(',')
+                        ?? new[] { "http://localhost:3000" };
+                    
+                    policy.AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .WithOrigins(allowedOrigins)
+                          .AllowCredentials();
                 });
             });
 

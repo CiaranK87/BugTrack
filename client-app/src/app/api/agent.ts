@@ -13,7 +13,16 @@ const sleep = (delay: number) => {
   });
 };
 
-axios.defaults.baseURL = "http://localhost:5000/api";
+// Use environment variable for API URL, fallback to localhost for development
+const getApiBaseUrl = () => {
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  // Default to localhost for development
+  return import.meta.env.DEV ? "http://localhost:5000/api" : "/api";
+};
+
+axios.defaults.baseURL = getApiBaseUrl();
 
 const responseBody = <T>(response: AxiosResponse<T>) => response.data;
 

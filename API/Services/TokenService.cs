@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Persistence;
+using API.Extensions;
 
 namespace API.Services
 {
@@ -32,16 +33,27 @@ namespace API.Services
                 new("globalrole", user.GlobalRole ?? "User"),
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["TokenKey"]));
+            var tokenKey = _config.GetEnvironmentVariable("TOKEN_KEY") ??
+                          _config["TokenKey"] ??
+                          "super secret key that needs to be at least 16 characters";
+            
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            // Configure token expiry based on environment
+            var isDevelopment = _config.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
+            var expiryTime = isDevelopment ? DateTime.UtcNow.AddDays(7) : DateTime.UtcNow.AddHours(1);
+            
+            var issuer = _config.GetEnvironmentVariable("JWT_ISSUER") ?? "http://localhost:5000";
+            var audience = _config.GetEnvironmentVariable("JWT_AUDIENCE") ?? "http://localhost:5000";
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddHours(1),
+                Expires = expiryTime,
                 SigningCredentials = creds,
-                Issuer = "http://localhost:5000",
-                Audience = "http://localhost:5000"
+                Issuer = issuer,
+                Audience = audience
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
