@@ -32,8 +32,7 @@ namespace API.Controllers
 
         [AllowAnonymous]
         [HttpPost("login")]
-
-        public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
+        public async Task<ActionResult<UserDto>> Login([FromBody] LoginDto loginDto)
         {
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
 
@@ -48,7 +47,7 @@ namespace API.Controllers
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
+        public async Task<ActionResult<UserDto>> Register([FromBody] RegisterDto registerDto)
         {
             // Check if registration is allowed
             var allowRegistration = _configuration.GetValue<bool>("SecuritySettings:AllowRegistration", true);
