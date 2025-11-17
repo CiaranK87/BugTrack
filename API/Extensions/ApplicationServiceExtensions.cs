@@ -30,7 +30,7 @@ namespace API.Extensions
             services.AddCors(opt => {
                 opt.AddPolicy("CorsPolicy", policy =>
                 {
-                    var allowedOrigins = config.GetEnvironmentVariable("ALLOWED_ORIGINS")?.Split(',')
+                    var allowedOrigins = config["ALLOWED_ORIGINS"]?.Split(',')
                         ?? new[] { "http://localhost:3000" };
                     
                     policy.AllowAnyHeader()
