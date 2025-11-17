@@ -90,22 +90,22 @@ namespace API.Controllers
             try
             {
                 var htmlContent = $@"
-<h3>New access request for BugTrack</h3>
-<p><strong>Name:</strong> {request.Name}</p>
-<p><strong>Email:</strong> {request.Email}</p>
-<p><strong>Message:</strong> {request.Message}</p>
-<p><strong>Requested at:</strong> {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC</p>
-<p>Please review this request and respond accordingly.</p>";
+                <h3>New access request for BugTrack</h3>
+                <p><strong>Name:</strong> {request.Name}</p>
+                <p><strong>Email:</strong> {request.Email}</p>
+                <p><strong>Message:</strong> {request.Message}</p>
+                <p><strong>Requested at:</strong> {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC</p>
+                <p>Please review this request and respond accordingly.</p>";
 
-                var plainTextContent = $@"
-New access request for BugTrack:
+                                var plainTextContent = $@"
+                New access request for BugTrack:
 
-Name: {request.Name}
-Email: {request.Email}
-Message: {request.Message}
-Requested at: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC
+                Name: {request.Name}
+                Email: {request.Email}
+                Message: {request.Message}
+                Requested at: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC
 
-Please review this request and respond accordingly.";
+                Please review this request and respond accordingly.";
 
                 var emailData = new
                 {
