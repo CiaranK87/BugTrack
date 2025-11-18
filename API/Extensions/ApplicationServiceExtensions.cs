@@ -30,8 +30,26 @@ namespace API.Extensions
             services.AddCors(opt => {
                 opt.AddPolicy("CorsPolicy", policy =>
                 {
-                    var allowedOrigins = config["ALLOWED_ORIGINS"]?.Split(',')
-                        ?? new[] { "https://ckbugtrack-app01.vercel.app" };
+                    var isDevelopment = config["ASPNETCORE_ENVIRONMENT"] == "Development";
+                    
+                    string[] allowedOrigins;
+                    
+                    if (isDevelopment)
+                    {
+                        var configuredOrigins = config["ALLOWED_ORIGINS"]?.Split(',')
+                            ?? new[] { "https://ckbugtrack-app01.vercel.app" };
+                        
+                        allowedOrigins = configuredOrigins
+                            .Concat(new[] { "http://localhost:3000", "https://localhost:3000" })
+                            .Distinct()
+                            .ToArray();
+                    }
+                    else
+                    {
+                        // Production: Only allow configured origins
+                        allowedOrigins = config["ALLOWED_ORIGINS"]?.Split(',')
+                            ?? new[] { "https://ckbugtrack-app01.vercel.app" };
+                    }
                     
                     policy.AllowAnyHeader()
                           .AllowAnyMethod()

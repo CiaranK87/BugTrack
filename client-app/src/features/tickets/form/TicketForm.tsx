@@ -13,7 +13,6 @@ import MySelectInput from "../../../app/common/form/MySelectInput";
 import { priorityOptions } from "../../../app/common/options/priorityOptions";
 import MyDateInput from "../../../app/common/form/MyDateInput";
 import { v4 as uuid } from "uuid";
-import { statusOptions } from "../../../app/common/options/statusOptions";
 import { severityOptions } from "../../../app/common/options/severityOptions";
 import { logger } from "../../../app/utils/logger";
 
@@ -33,7 +32,7 @@ export default observer(function TicketForm() {
     assigned: "",
     priority: "",
     severity: "",
-    status: "",
+    status: "Open",
     closedDate: null,
     startDate: null,
     endDate: null,
@@ -82,7 +81,6 @@ if (projectId) {
     assigned: Yup.string().required("Please assign to a user"),
     priority: Yup.string().required("Priority is required"),
     severity: Yup.string().required("Severity is required"),
-    status: Yup.string().required("Status is required"),
     startDate: Yup.string().required("Start date is required"),
     endDate: Yup.string().required("End date is required"),
   });
@@ -94,6 +92,7 @@ function handleFormSubmit(ticket: Ticket) {
       id: uuid(),
       submitter: user!.username,
       projectId: projectId!,
+      status: "Open",
       createdAt: new Date()
     };
     createTicket(newTicket).then(() => {
@@ -157,7 +156,6 @@ function handleCancel() {
             />
             <MySelectInput options={priorityOptions} placeholder="Priority" name="priority" label="Priority" />
             <MySelectInput options={severityOptions} placeholder="Severity" name="severity" label="Severity" />
-            <MySelectInput options={statusOptions} placeholder="Status" name="status" label="Status" />
             <MyDateInput placeholderText="Start Date" name="startDate" dateFormat="MMMM d, yyyy" label="Start Date" />
             <MyDateInput placeholderText="End Date" name="endDate" dateFormat="MMMM d, yyyy" label="End Date" />
             

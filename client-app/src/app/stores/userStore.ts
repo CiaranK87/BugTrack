@@ -55,6 +55,15 @@ export default class UserStore {
     store.modalStore.closeModal();
   };
 
+  changePassword = async (passwordData: { currentPassword: string; newPassword: string; confirmNewPassword: string }) => {
+    try {
+      await agent.Account.changePassword(passwordData);
+    } catch (error) {
+      logger.error("Failed to change password", error);
+      throw error;
+    }
+  };
+
   adminRegister = async (creds: UserFormValues) => {
     try {
       const user = await agent.Account.adminRegister(creds);

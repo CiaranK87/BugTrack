@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { Container, Grid, Header, Segment, Button, Icon, Card, Label, Menu } from "semantic-ui-react";
 import { useStore } from "../../app/stores/store";
 import ProfileEditForm from "./ProfileEditForm";
+import ChangePasswordForm from "../users/ChangePasswordForm";
 import { format } from "date-fns";
 
 export default observer(function ProfilePage() {
@@ -121,13 +122,22 @@ export default observer(function ProfilePage() {
                 </Menu.Menu>
               </Menu.Item>
               {userStore.isCurrentUser(profile.username) && (
-                <Menu.Item onClick={() => modalStore.openModal(<ProfileEditForm profile={profile} />)}>
-                  <Icon name="settings" />
-                  Account Settings
-                  <Menu.Menu>
-                    <Menu.Item>Update your profile information</Menu.Item>
-                  </Menu.Menu>
-                </Menu.Item>
+                <>
+                  <Menu.Item onClick={() => modalStore.openModal(<ProfileEditForm profile={profile} />)}>
+                    <Icon name="settings" />
+                    Account Settings
+                    <Menu.Menu>
+                      <Menu.Item>Update your profile information</Menu.Item>
+                    </Menu.Menu>
+                  </Menu.Item>
+                  <Menu.Item onClick={() => modalStore.openModal(<ChangePasswordForm />)}>
+                    <Icon name="lock" />
+                    Change Password
+                    <Menu.Menu>
+                      <Menu.Item>Update your account password</Menu.Item>
+                    </Menu.Menu>
+                  </Menu.Item>
+                </>
               )}
             </Menu>
           </Segment>

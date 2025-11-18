@@ -155,6 +155,8 @@ const Account = {
   login: (user: UserFormValues) => requests.post<User>("/account/login", user),
   register: (user: UserFormValues) => requests.post<User>("/account/register", user),
   adminRegister: (user: UserFormValues) => requests.post<User>("/account/admin/register", user),
+  changePassword: (passwordData: { currentPassword: string; newPassword: string; confirmNewPassword: string }) =>
+    requests.post<void>("/account/changePassword", passwordData),
 };
 
 const Profiles = {
