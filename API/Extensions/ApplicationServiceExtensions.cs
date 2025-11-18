@@ -31,7 +31,7 @@ namespace API.Extensions
                 opt.AddPolicy("CorsPolicy", policy =>
                 {
                     var allowedOrigins = config["ALLOWED_ORIGINS"]?.Split(',')
-                        ?? new[] { "http://localhost:3000" };
+                        ?? new[] { "https://ckbugtrack-app01.vercel.app" };
                     
                     policy.AllowAnyHeader()
                           .AllowAnyMethod()
