@@ -42,9 +42,6 @@ namespace Application.Comments
                 if (comment == null || comment.AuthorId != userId)
                     return Result<Unit>.Failure("Comment not found or access denied");
 
-                if (comment.Replies.Any())
-                    return Result<Unit>.Failure("Cannot delete a comment that has replies");
-
                 if (comment.Attachments.Any())
                 {
                     _context.CommentAttachments.RemoveRange(comment.Attachments);

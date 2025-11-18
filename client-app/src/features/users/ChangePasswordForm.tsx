@@ -16,8 +16,7 @@ export default observer(function ChangePasswordForm() {
     currentPassword: Yup.string().required("Current password is required"),
     newPassword: Yup.string()
       .required("New password is required")
-      .min(6, "Password must be at least 6 characters")
-      .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, "Password must contain at least one uppercase letter, one lowercase letter, and one number"),
+      .min(6, "Password must be at least 6 characters"),
     confirmNewPassword: Yup.string()
       .required("Please confirm your new password")
       .oneOf([Yup.ref('newPassword')], 'Passwords must match'),
