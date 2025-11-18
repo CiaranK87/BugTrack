@@ -17,6 +17,7 @@ namespace API.Extensions
             {
                 opt.Password.RequireNonAlphanumeric = true;
                 opt.User.RequireUniqueEmail = true;
+                opt.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+ ";
             })
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<DataContext>()
