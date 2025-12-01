@@ -1,3 +1,11 @@
+using System.Net;
+using System.Net.Http.Json;
+using Application.DTOs;
+using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
+using Persistence;
+using Xunit;
+
 namespace API.IntegrationTests
 {
     /// <summary>
@@ -27,11 +35,8 @@ namespace API.IntegrationTests
         [Fact]
         public async Task GetTickets_FullWorkflow_ReturnsCompleteTicketData()
         {
-            // Arrange
             var (client, context) = CreateAuthenticatedClient();
             client.AuthenticateAsAdmin();
-
-            // Act - Retrieve all tickets from the system
             var response = await client.GetAsync("/api/tickets");
 
             // Assert
@@ -39,13 +44,13 @@ namespace API.IntegrationTests
             
             var result = await response.Content.ReadFromJsonAsync<List<TicketDto>>();
             result.Should().NotBeNull();
-            result.Should().HaveCount(2); // We seeded 2 tickets in TestProgram
+            result.Should().HaveCount(2); // 2 tickets seeded in TestProgram
             
             var firstTicket = result.First(t => t.Id == TestProgram.Ticket1Id);
             firstTicket.Title.Should().Be("Test Ticket 1");
             firstTicket.Description.Should().Be("Test Description");
             firstTicket.Priority.Should().Be("Medium");
-            firstTicket.Severity.Should().Be("Minor");
+            firstTicket.Severity.Should().Be("Low");
             firstTicket.Status.Should().Be("Open");
             firstTicket.ProjectId.Should().Be(TestProgram.Project1Id);
         }
@@ -72,7 +77,7 @@ namespace API.IntegrationTests
             result.Submitter.Should().Be("admin");
             result.Assigned.Should().Be("testuser");
             result.Priority.Should().Be("Medium");
-            result.Severity.Should().Be("Minor");
+            result.Severity.Should().Be("Low");
             result.Status.Should().Be("Open");
             result.ProjectId.Should().Be(TestProgram.Project1Id);
         }
@@ -93,7 +98,7 @@ namespace API.IntegrationTests
             
             var result = await response.Content.ReadFromJsonAsync<List<TicketDto>>();
             result.Should().NotBeNull();
-            result.Should().HaveCount(1); // We seeded 1 ticket for this project
+            result.Should().HaveCount(1); // 1 ticket seeded for this project
             result.All(t => t.ProjectId == projectId).Should().BeTrue();
             
             // Validate the filtered ticket data
@@ -105,11 +110,8 @@ namespace API.IntegrationTests
         [Fact]
         public async Task CreateTicket_RealWorldScenario_CreatesTicketWithProperWorkflow()
         {
-            // Arrange
             var (client, context) = CreateAuthenticatedClient();
             client.AuthenticateAsAdmin();
-
-            // Arrange
             var ticketDto = new
             {
                 Title = "Critical authentication failure on mobile app",
@@ -147,11 +149,8 @@ namespace API.IntegrationTests
         [Fact]
         public async Task EditTicket_RealWorldUpdate_UpdatesTicketWithAuditTrail()
         {
-            // Arrange
             var (client, context) = CreateAuthenticatedClient();
             client.AuthenticateAsAdmin();
-
-            // Arrange
             var editDto = new
             {
                 Title = "Updated: Critical authentication failure on mobile app",
@@ -182,7 +181,6 @@ namespace API.IntegrationTests
         [Fact]
         public async Task DeleteTicket_RealWorldDeletion_PerformsSoftDeleteWithAudit()
         {
-            // Arrange
             var (client, context) = CreateAuthenticatedClient();
             client.AuthenticateAsAdmin();
 
@@ -216,7 +214,6 @@ namespace API.IntegrationTests
         [Fact]
         public async Task CreateTicket_WithoutProjectRole_ReturnsForbidden()
         {
-            // Arrange
             var factory = CreateFactory();
             var client = factory.CreateClient();
             var scope = factory.Services.CreateScope();
@@ -235,7 +232,7 @@ namespace API.IntegrationTests
                 Description = "This should fail due to lack of project permissions",
                 ProjectId = TestProgram.Project1Id,
                 Priority = "High",
-                Severity = "Major",
+                Severity = "Medium",
                 Submitter = "admin",
                 Assigned = "testuser",
                 Status = "Open"
@@ -250,18 +247,15 @@ namespace API.IntegrationTests
         [Fact]
         public async Task TicketWorkflow_CompleteBugLifecycle_DemonstratesRealWorldUsage()
         {
-            // Arrange
             var (client, context) = CreateAuthenticatedClient();
             client.AuthenticateAsDeveloperWithProjectRole(TestProgram.Project1Id, "Developer");
-
-            // Act 1
             var newTicketDto = new
             {
                 Title = "Performance issue in search results",
                 Description = "Search results take >5 seconds to load when user has >1000 records. This affects power users significantly.",
                 ProjectId = TestProgram.Project1Id,
                 Priority = "Medium",
-                Severity = "Major",
+                Severity = "Low",
                 Submitter = "testuser",
                 Assigned = "testuser",
                 Status = "Open"
@@ -271,17 +265,17 @@ namespace API.IntegrationTests
             createResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var createdTicket = await context.Tickets
+                .AsNoTracking()
                 .FirstOrDefaultAsync(t => t.Title == newTicketDto.Title);
             createdTicket.Should().NotBeNull();
             var newTicketId = createdTicket.Id;
 
-            // Act 2
             var updateDto = new
             {
                 Title = newTicketDto.Title,
                 Description = "Investigation complete: Need to implement database indexing for user records.",
                 Priority = "High",
-                Severity = "Major",
+                Severity = "Medium",
                 Status = "In Progress",
                 Assigned = "testuser",
                 ProjectId = TestProgram.Project1Id
@@ -290,18 +284,19 @@ namespace API.IntegrationTests
             var updateResponse = await client.PutAsJsonAsync($"/api/tickets/{newTicketId}", updateDto);
             updateResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var updatedTicket = await context.Tickets.FindAsync(newTicketId);
+            var updatedTicket = await context.Tickets
+                .AsNoTracking()
+                .FirstOrDefaultAsync(t => t.Id == newTicketId);
             updatedTicket.Should().NotBeNull();
             updatedTicket.Description.Should().Contain("Investigation complete");
             updatedTicket.Priority.Should().Be("High");
 
-            // Act 3
             var resolveDto = new
             {
                 Title = newTicketDto.Title,
-                Description = "Resolved: Implemented database indexing. Search now loads in <200ms.",
+                Description = "Implemented database indexing. Search now loads in <200ms.",
                 Priority = "High",
-                Severity = "Major",
+                Severity = "Medium",
                 Status = "Closed",
                 Assigned = "testuser",
                 ProjectId = TestProgram.Project1Id
@@ -311,7 +306,9 @@ namespace API.IntegrationTests
             resolveResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
             // Assert
-            var finalTicket = await context.Tickets.FindAsync(newTicketId);
+            var finalTicket = await context.Tickets
+                .AsNoTracking()
+                .FirstOrDefaultAsync(t => t.Id == newTicketId);
             finalTicket.Should().NotBeNull();
             finalTicket.Description.Should().Contain("database indexing");
             finalTicket.Priority.Should().Be("High"); // Escalated during process
@@ -321,7 +318,6 @@ namespace API.IntegrationTests
         [Fact]
         public async Task GetTicket_WithInvalidId_ReturnsNotFound()
         {
-            // Arrange
             var (client, context) = CreateAuthenticatedClient();
             client.AuthenticateAsAdmin();
 
@@ -336,7 +332,6 @@ namespace API.IntegrationTests
         [Fact]
         public async Task DeleteTicket_WithInvalidId_ReturnsNotFound()
         {
-            // Arrange
             var (client, context) = CreateAuthenticatedClient();
             client.AuthenticateAsAdmin();
 

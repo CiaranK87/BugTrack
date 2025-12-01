@@ -1,3 +1,13 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Moq;
+using Application.Comments;
+using Application.Interfaces;
+using Domain;
+using Persistence;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+
 namespace Application.UnitTests.Comments
 {
     public class CreateCommentHandlerTests : IDisposable
@@ -22,7 +32,6 @@ namespace Application.UnitTests.Comments
         [Fact]
         public async Task Handle_ValidComment_ShouldCreateCommentSuccessfully()
         {
-            // Arrange
             var user = new AppUser
             {
                 Id = "user123",
@@ -69,7 +78,6 @@ namespace Application.UnitTests.Comments
         [Fact]
         public async Task Handle_ReplyToComment_ShouldCreateReplySuccessfully()
         {
-            // Arrange
             var user = new AppUser
             {
                 Id = "user123",
@@ -120,7 +128,6 @@ namespace Application.UnitTests.Comments
         [Fact]
         public async Task Handle_CommentWithAttachments_ShouldCreateCommentWithAttachments()
         {
-            // Arrange
             var user = new AppUser
             {
                 Id = "user123",
@@ -170,7 +177,6 @@ namespace Application.UnitTests.Comments
         [Fact]
         public async Task Handle_EmptyContent_ShouldCreateCommentSuccessfully()
         {
-            // Arrange
             var user = new AppUser
             {
                 Id = "user123",
@@ -211,7 +217,6 @@ namespace Application.UnitTests.Comments
         [Fact]
         public async Task Handle_DatabaseFailure_ShouldReturnFailureResult()
         {
-            // Arrange
             var options = new DbContextOptionsBuilder<DataContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .Options;
@@ -254,7 +259,6 @@ namespace Application.UnitTests.Comments
         [Fact]
         public async Task Handle_CommentWithMultipleAttachments_ShouldCreateCommentWithAllAttachments()
         {
-            // Arrange
             var user = new AppUser
             {
                 Id = "user123",

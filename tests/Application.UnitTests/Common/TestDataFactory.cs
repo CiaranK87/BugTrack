@@ -1,3 +1,9 @@
+using Bogus;
+using Domain;
+using Application.DTOs;
+using Application.Projects;
+using System.Security.Claims;
+
 namespace Application.UnitTests.Common
 {
     public static class TestDataFactory
@@ -7,8 +13,8 @@ namespace Application.UnitTests.Common
             .RuleFor(t => t.Title, f => f.Lorem.Sentence(3, 6))
             .RuleFor(t => t.Description, f => f.Lorem.Paragraph())
             .RuleFor(t => t.Priority, f => f.PickRandom("Low", "Medium", "High", "Critical"))
-            .RuleFor(t => t.Severity, f => f.PickRandom("Minor", "Major", "Critical"))
-            .RuleFor(t => t.Status, f => f.PickRandom("Open", "In Progress", "Resolved", "Closed"))
+            .RuleFor(t => t.Severity, f => f.PickRandom("Low", "Medium", "High", "Critical"))
+            .RuleFor(t => t.Status, f => f.PickRandom("Open", "In Progress", "Closed"))
             .RuleFor(t => t.Submitter, f => f.Internet.UserName())
             .RuleFor(t => t.Assigned, f => f.Internet.UserName())
             .RuleFor(t => t.StartDate, f => f.Date.Recent())

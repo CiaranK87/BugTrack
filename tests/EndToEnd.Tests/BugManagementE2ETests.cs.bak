@@ -1,0 +1,150 @@
+using Microsoft.Playwright;
+using FluentAssertions;
+using Xunit;
+using EndToEnd.Tests.Pages;
+using EndToEnd.Tests.Helpers;
+
+namespace EndToEnd.Tests
+{
+    public class BugManagementE2ETests : IAsyncLifetime, IClassFixture<PlaywrightFixture>
+    {
+        private readonly PlaywrightFixture _playwrightFixture;
+        private AuthHelper? _authHelper;
+        private ProjectsPage? _projectsPage;
+        private TicketsPage? _ticketsPage;
+        private IPage? _page;
+
+        public BugManagementE2ETests(PlaywrightFixture playwrightFixture)
+        {
+            _playwrightFixture = playwrightFixture;
+        }
+
+        public async Task InitializeAsync()
+        {
+            var browser = _playwrightFixture.Browser;
+            _page = await browser.NewPageAsync();
+            await _page.GotoAsync(TestConfigurations.Urls.BaseUrl);
+            
+            // Initialize page objects after page is created
+            _authHelper = new AuthHelper(_page);
+            _projectsPage = new ProjectsPage(_page);
+            _ticketsPage = new TicketsPage(_page);
+        }
+
+        public async Task DisposeAsync()
+        {
+            if (_page != null)
+            {
+                await _page.CloseAsync();
+            }
+        }
+
+        [Fact]
+        public async Task UserCanCreateAndManageTicket_CompleteWorkflow()
+        {
+            // Arrange
+            var projectName = TestDataHelper.Projects.GenerateUniqueProjectName();
+            var projectDescription = TestDataHelper.Projects.GenerateUniqueProjectDescription();
+            var ticketTitle = TestDataHelper.Tickets.GenerateUniqueTicketTitle();
+            var ticketDescription = TestDataHelper.Tickets.GenerateUniqueTicketDescription();
+            var commentText = TestDataHelper.Comments.GenerateUniqueCommentText();
+
+            // Act & Assert - Login
+            await _authHelper.LoginAsUserAsync();
+
+            // Create project
+            await _projectsPage.NavigateToProjectsAsync();
+            await _projectsPage.CreateProjectAsync(projectName, projectDescription);
+            await _projectsPage.VerifyProjectExistsAsync(projectName);
+            TestDataHelper.Cleanup.TrackProject(projectName);
+
+            // Create ticket
+            await _ticketsPage.NavigateToTicketsAsync();
+            await _ticketsPage.CreateTicketAsync(ticketTitle, ticketDescription, "High", "Critical", projectName);
+            await _ticketsPage.VerifyTicketExistsAsync(ticketTitle);
+            TestDataHelper.Cleanup.TrackTicket(ticketTitle);
+
+            // Edit ticket
+            var updatedTicketTitle = $"{ticketTitle} - Updated";
+            await _ticketsPage.EditTicketAsync(updatedTicketTitle, "In Progress");
+            await _ticketsPage.VerifyTicketExistsAsync(updatedTicketTitle);
+
+            // Add comment
+            await _ticketsPage.GoToTicketDetailsAsync();
+            await _ticketsPage.AddCommentAsync(commentText);
+            await _ticketsPage.VerifyCommentExistsAsync(commentText);
+
+            // Resolve ticket
+            await _ticketsPage.EditTicketAsync(updatedTicketTitle, "Resolved");
+            await _ticketsPage.VerifyStatusExistsAsync("Resolved");
+
+            // Filter by status
+            await _ticketsPage.FilterByStatusAsync("Resolved");
+            await _ticketsPage.VerifyTicketExistsAsync(updatedTicketTitle);
+
+            var resolvedTickets = await _ticketsPage.GetTicketCountAsync();
+            resolvedTickets.Should().BeGreaterOrEqualTo(1);
+        }
+
+        [Fact]
+        public async Task UserCanSearchAndFilterTickets()
+        {
+            // Arrange
+            var searchTerm = TestDataHelper.SearchTerms.GetRandomSearchTerm();
+
+            // Act & Assert - Login
+            await _authHelper.LoginAsUserAsync();
+
+            // Navigate to tickets
+            await _ticketsPage.NavigateToTicketsAsync();
+
+            // Search tickets
+            await _ticketsPage.SearchTicketsAsync(searchTerm);
+            await _ticketsPage.VerifySearchResultsContainSearchTerm(searchTerm);
+
+            // Filter by priority
+            await _ticketsPage.FilterByPriorityAsync("High");
+            await _ticketsPage.VerifyFilteredTicketsHavePriority("High");
+        }
+
+        [Fact]
+        public async Task UserCanManageProjectMembers()
+        {
+            // Arrange
+            var memberEmail = TestDataHelper.Users.GenerateUniqueEmail();
+
+            // Act & Assert - Login as Project Manager
+            await _authHelper.LoginAsProjectManagerAsync();
+
+            // Navigate to projects and select first project
+            await _projectsPage.NavigateToProjectsAsync();
+            await _projectsPage.ClickFirstProjectAsync();
+
+            // Go to project members
+            await _projectsPage.GoToProjectMembersAsync();
+
+            // Add new member
+            await _projectsPage.AddMemberAsync(memberEmail, "Developer");
+            await _projectsPage.VerifyMemberExistsAsync(memberEmail);
+
+            // Edit member role
+            await _projectsPage.EditMemberRoleAsync("ProjectManager");
+            await _projectsPage.VerifyRoleExistsAsync("ProjectManager");
+        }
+
+        [Fact]
+        public async Task UnauthorizedUserCannotAccessAdminFeatures()
+        {
+            // Act & Assert - Login as regular user
+            await _authHelper.LoginAsUserAsync();
+
+            // Try to access admin page
+            await Page.GotoAsync($"{TestConfigurations.Urls.BaseUrl}/admin");
+            await _authHelper.VerifyAccessDeniedAsync();
+
+            // Try to access admin API endpoint
+            var response = await Page.APIRequest.GetAsync($"{TestConfigurations.Urls.ApiUrl}/api/tickets/admin/deleted");
+            response.Status.Should().Be(401);
+        }
+    }
+}

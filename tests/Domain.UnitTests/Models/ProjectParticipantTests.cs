@@ -3,9 +3,6 @@ using FluentAssertions;
 
 namespace Domain.UnitTests.Models
 {
-    /// <summary>
-    /// Project participant business logic tests for bug tracking team management
-    /// </summary>
     public class ProjectParticipantTests
     {
         [Fact]
@@ -20,7 +17,6 @@ namespace Domain.UnitTests.Models
             participant.IsOwner = true;
             participant.Role = "Owner";
             
-            // Project governance
             participant.IsOwner.Should().BeTrue();
             participant.Role.Should().Be("Owner");
             participant.AppUserId.Should().Be(userId);
@@ -39,7 +35,6 @@ namespace Domain.UnitTests.Models
             participant.Role = role;
             participant.IsOwner = isExpectedOwner;
             
-            // Real software development teams
             participant.Role.Should().Be(role);
             participant.IsOwner.Should().Be(isExpectedOwner);
         }
@@ -79,7 +74,6 @@ namespace Domain.UnitTests.Models
                 Role = "Developer"
             };
             
-            // Team coordination
             projectOwner.IsOwner.Should().BeTrue();
             projectOwner.Role.Should().Be("Owner");
             
@@ -112,7 +106,6 @@ namespace Domain.UnitTests.Models
             participant.IsOwner = true;
             participant.Role = "Owner";
             
-            // Team dynamics and motivation
             participant.IsOwner.Should().BeTrue();
             participant.Role.Should().Be("Owner");
             participant.AppUserId.Should().Be("developer-001");
@@ -121,7 +114,7 @@ namespace Domain.UnitTests.Models
         [Fact]
         public void ProjectParticipant_MultipleProjectInvolvement_ShouldReflectRealWorkload()
         {
-            var developerId = "fullstack-dev-001";
+            var developerId = "developer-001";
             
             var projectAParticipation = new ProjectParticipant
             {
@@ -147,7 +140,6 @@ namespace Domain.UnitTests.Models
                 Role = "Developer"
             };
             
-            // Resource management
             projectAParticipation.AppUserId.Should().Be(developerId);
             projectBParticipation.AppUserId.Should().Be(developerId);
             projectCParticipation.AppUserId.Should().Be(developerId);
@@ -193,7 +185,7 @@ namespace Domain.UnitTests.Models
             
             initialTeam.Add(new ProjectParticipant
             {
-                AppUserId = "founder-001",
+                AppUserId = "owner-001",
                 ProjectId = projectId,
                 IsOwner = true,
                 Role = "Owner"
@@ -202,7 +194,7 @@ namespace Domain.UnitTests.Models
             var expandedTeam = new List<ProjectParticipant>(initialTeam);
             expandedTeam.Add(new ProjectParticipant
             {
-                AppUserId = "backend-dev-002",
+                AppUserId = "developer-002",
                 ProjectId = projectId,
                 IsOwner = false,
                 Role = "Developer"
@@ -210,17 +202,16 @@ namespace Domain.UnitTests.Models
             
             expandedTeam.Add(new ProjectParticipant
             {
-                AppUserId = "frontend-dev-003",
+                AppUserId = "developer-003",
                 ProjectId = projectId,
                 IsOwner = false,
                 Role = "Developer"
             });
             
-            // Project scalability
-            expandedTeam.Should().HaveCount(3); // Founder + 2 developers
-            expandedTeam.Count(p => p.IsOwner).Should().Be(1); // Only one owner
-            expandedTeam.Count(p => p.Role.Contains("Developer")).Should().Be(2); // Two developers
-            expandedTeam.All(p => p.ProjectId == projectId).Should().BeTrue(); // All in same project
+            expandedTeam.Should().HaveCount(3);
+            expandedTeam.Count(p => p.IsOwner).Should().Be(1);
+            expandedTeam.Count(p => p.Role.Contains("Developer")).Should().Be(2);
+            expandedTeam.All(p => p.ProjectId == projectId).Should().BeTrue();
         }
     }
 }

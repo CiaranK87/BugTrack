@@ -1,0 +1,313 @@
+using Microsoft.Playwright;
+using FluentAssertions;
+using Xunit;
+using EndToEnd.Tests.Pages;
+using EndToEnd.Tests.Helpers;
+using System.Text;
+
+namespace EndToEnd.Tests
+{
+    public class CommentsAndAttachmentsE2ETests : IAsyncLifetime, IClassFixture<PlaywrightFixture>
+    {
+        private readonly PlaywrightFixture _playwrightFixture;
+        private AuthHelper? _authHelper;
+        private ProjectsPage? _projectsPage;
+        private TicketsPage? _ticketsPage;
+        private IPage? _page;
+
+        public CommentsAndAttachmentsE2ETests(PlaywrightFixture playwrightFixture)
+        {
+            _playwrightFixture = playwrightFixture;
+        }
+
+        public async Task InitializeAsync()
+        {
+            var browser = _playwrightFixture.Browser;
+            _page = await browser.NewPageAsync();
+            await _page.GotoAsync(TestConfigurations.Urls.BaseUrl);
+            
+            // Initialize page objects after page is created
+            _authHelper = new AuthHelper(_page);
+            _projectsPage = new ProjectsPage(_page);
+            _ticketsPage = new TicketsPage(_page);
+        }
+
+        public async Task DisposeAsync()
+        {
+            if (_page != null)
+            {
+                await _page.CloseAsync();
+            }
+        }
+
+        [Fact]
+        public async Task UserCanAddEditAndDeleteComments()
+        {
+            // Arrange
+            var projectName = TestDataHelper.Projects.GenerateUniqueProjectName();
+            var projectDescription = TestDataHelper.Projects.GenerateUniqueProjectDescription();
+            var ticketTitle = TestDataHelper.Tickets.GenerateUniqueTicketTitle();
+            var ticketDescription = TestDataHelper.Tickets.GenerateUniqueTicketDescription();
+            var initialComment = TestDataHelper.Comments.GenerateUniqueCommentText();
+            var updatedComment = TestDataHelper.Comments.GenerateUniqueCommentText();
+
+            // Act & Assert - Setup
+            await _authHelper.LoginAsUserAsync();
+            
+            // Create project and ticket
+            await _projectsPage.NavigateToProjectsAsync();
+            await _projectsPage.CreateProjectAsync(projectName, projectDescription);
+            await _projectsPage.VerifyProjectExistsAsync(projectName);
+            TestDataHelper.Cleanup.TrackProject(projectName);
+
+            await _ticketsPage.NavigateToTicketsAsync();
+            await _ticketsPage.CreateTicketAsync(ticketTitle, ticketDescription, "Medium", "Major", projectName);
+            await _ticketsPage.VerifyTicketExistsAsync(ticketTitle);
+            TestDataHelper.Cleanup.TrackTicket(ticketTitle);
+
+            // Add initial comment
+            await _ticketsPage.GoToTicketDetailsAsync();
+            await _ticketsPage.AddCommentAsync(initialComment);
+            await _ticketsPage.VerifyCommentExistsAsync(initialComment);
+
+            // Edit comment
+            await Page.ClickAsync("[data-testid='edit-comment-btn']:first-child");
+            await Page.FillAsync("[data-testid='comment-edit-input']", updatedComment);
+            await Page.ClickAsync("[data-testid='save-comment-btn']");
+            await _ticketsPage.VerifyCommentExistsAsync(updatedComment);
+
+            // Delete comment
+            await Page.ClickAsync("[data-testid='delete-comment-btn']:first-child");
+            await Page.ClickAsync("[data-testid='confirm-delete-btn']");
+            
+            // Verify comment is deleted
+            var commentExists = await Page.QuerySelectorAsync($"text={updatedComment}") is not null;
+            commentExists.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task UserCanUploadAndViewAttachments()
+        {
+            // Arrange
+            var projectName = TestDataHelper.Projects.GenerateUniqueProjectName();
+            var projectDescription = TestDataHelper.Projects.GenerateUniqueProjectDescription();
+            var ticketTitle = TestDataHelper.Tickets.GenerateUniqueTicketTitle();
+            var ticketDescription = TestDataHelper.Tickets.GenerateUniqueTicketDescription();
+            var fileName = TestDataHelper.Attachments.GenerateUniqueFileName();
+            var fileContent = TestDataHelper.Attachments.TestFileContent;
+
+            // Act & Assert - Setup
+            await _authHelper.LoginAsUserAsync();
+            
+            // Create project and ticket
+            await _projectsPage.NavigateToProjectsAsync();
+            await _projectsPage.CreateProjectAsync(projectName, projectDescription);
+            await _projectsPage.VerifyProjectExistsAsync(projectName);
+            TestDataHelper.Cleanup.TrackProject(projectName);
+
+            await _ticketsPage.NavigateToTicketsAsync();
+            await _ticketsPage.CreateTicketAsync(ticketTitle, ticketDescription, "Medium", "Major", projectName);
+            await _ticketsPage.VerifyTicketExistsAsync(ticketTitle);
+            TestDataHelper.Cleanup.TrackTicket(ticketTitle);
+
+            // Go to ticket details and upload attachment
+            await _ticketsPage.GoToTicketDetailsAsync();
+            
+            // Create a temporary file for upload
+            var tempFilePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), fileName);
+            await System.IO.File.WriteAllTextAsync(tempFilePath, fileContent);
+
+            try
+            {
+                // Upload file
+                await _page!.SetInputFilesAsync("[data-testid='attachment-input']", tempFilePath);
+                await _page!.ClickAsync("[data-testid='upload-attachment-btn']");
+
+                // Verify attachment appears
+                await _page!.WaitForSelectorAsync("[data-testid='attachment-item']",
+                    new PageWaitForSelectorOptions { Timeout = TestConfigurations.Timeouts.Default });
+                
+                var attachmentItem = await _page!.QuerySelectorAsync("[data-testid='attachment-item']");
+                attachmentItem.Should().NotBeNull();
+
+                // Verify file name is displayed
+                var fileNameElement = await _page!.QuerySelectorAsync("[data-testid='attachment-filename']");
+                var displayedFileName = await fileNameElement.TextContentAsync();
+                displayedFileName.Should().Contain(fileName);
+
+                // Download and verify attachment
+                var downloadPromise = _page!.WaitForDownloadAsync();
+                await _page!.ClickAsync("[data-testid='download-attachment-btn']");
+                var download = await downloadPromise;
+
+                var downloadedPath = await download.PathAsync();
+                var downloadedContent = await System.IO.File.ReadAllTextAsync(downloadedPath);
+                downloadedContent.Should().Be(fileContent);
+            }
+            finally
+            {
+                // Clean up temporary file
+                if (System.IO.File.Exists(tempFilePath))
+                {
+                    System.IO.File.Delete(tempFilePath);
+                }
+            }
+        }
+
+        [Fact]
+        public async Task UserCanDeleteAttachments()
+        {
+            // Arrange
+            var projectName = TestDataHelper.Projects.GenerateUniqueProjectName();
+            var projectDescription = TestDataHelper.Projects.GenerateUniqueProjectDescription();
+            var ticketTitle = TestDataHelper.Tickets.GenerateUniqueTicketTitle();
+            var ticketDescription = TestDataHelper.Tickets.GenerateUniqueTicketDescription();
+            var fileName = TestDataHelper.Attachments.GenerateUniqueFileName();
+
+            // Act & Assert - Setup
+            await _authHelper.LoginAsUserAsync();
+            
+            // Create project and ticket
+            await _projectsPage.NavigateToProjectsAsync();
+            await _projectsPage.CreateProjectAsync(projectName, projectDescription);
+            await _projectsPage.VerifyProjectExistsAsync(projectName);
+            TestDataHelper.Cleanup.TrackProject(projectName);
+
+            await _ticketsPage.NavigateToTicketsAsync();
+            await _ticketsPage.CreateTicketAsync(ticketTitle, ticketDescription, "Medium", "Major", projectName);
+            await _ticketsPage.VerifyTicketExistsAsync(ticketTitle);
+            TestDataHelper.Cleanup.TrackTicket(ticketTitle);
+
+            // Go to ticket details and upload attachment
+            await _ticketsPage.GoToTicketDetailsAsync();
+            
+            // Create a temporary file for upload
+            var tempFilePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), fileName);
+            await System.IO.File.WriteAllTextAsync(tempFilePath, "Test content for deletion");
+
+            try
+            {
+                // Upload file
+                await _page!.SetInputFilesAsync("[data-testid='attachment-input']", tempFilePath);
+                await _page!.ClickAsync("[data-testid='upload-attachment-btn']");
+
+                // Verify attachment appears
+                await _page!.WaitForSelectorAsync("[data-testid='attachment-item']",
+                    new PageWaitForSelectorOptions { Timeout = TestConfigurations.Timeouts.Default });
+
+                // Delete attachment
+                await _page!.ClickAsync("[data-testid='delete-attachment-btn']");
+                await _page!.ClickAsync("[data-testid='confirm-delete-attachment-btn']");
+
+                // Verify attachment is deleted
+                var attachmentExists = await _page!.QuerySelectorAsync("[data-testid='attachment-item']") is not null;
+                attachmentExists.Should().BeFalse();
+            }
+            finally
+            {
+                // Clean up temporary file
+                if (System.IO.File.Exists(tempFilePath))
+                {
+                    System.IO.File.Delete(tempFilePath);
+                }
+            }
+        }
+
+        [Fact]
+        public async Task UserCannotUploadInvalidFileType()
+        {
+            // Arrange
+            var projectName = TestDataHelper.Projects.GenerateUniqueProjectName();
+            var projectDescription = TestDataHelper.Projects.GenerateUniqueProjectDescription();
+            var ticketTitle = TestDataHelper.Tickets.GenerateUniqueTicketTitle();
+            var ticketDescription = TestDataHelper.Tickets.GenerateUniqueTicketDescription();
+            var invalidFileName = "test.exe";
+
+            // Act & Assert - Setup
+            await _authHelper.LoginAsUserAsync();
+            
+            // Create project and ticket
+            await _projectsPage.NavigateToProjectsAsync();
+            await _projectsPage.CreateProjectAsync(projectName, projectDescription);
+            await _projectsPage.VerifyProjectExistsAsync(projectName);
+            TestDataHelper.Cleanup.TrackProject(projectName);
+
+            await _ticketsPage.NavigateToTicketsAsync();
+            await _ticketsPage.CreateTicketAsync(ticketTitle, ticketDescription, "Medium", "Major", projectName);
+            await _ticketsPage.VerifyTicketExistsAsync(ticketTitle);
+            TestDataHelper.Cleanup.TrackTicket(ticketTitle);
+
+            // Go to ticket details and try to upload invalid file
+            await _ticketsPage.GoToTicketDetailsAsync();
+            
+            // Create a temporary invalid file
+            var tempFilePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), invalidFileName);
+            await System.IO.File.WriteAllTextAsync(tempFilePath, "Invalid file content");
+
+            try
+            {
+                // Try to upload invalid file
+                await Page.SetInputFilesAsync("[data-testid='attachment-input']", tempFilePath);
+                await Page.ClickAsync("[data-testid='upload-attachment-btn']");
+
+                // Verify error message appears
+                await Page.WaitForSelectorAsync("[data-testid='attachment-error']", 
+                    new PageWaitForSelectorOptions { Timeout = TestConfigurations.Timeouts.Short });
+                
+                var errorMessage = await Page.QuerySelectorAsync("[data-testid='attachment-error']");
+                errorMessage.Should().NotBeNull();
+            }
+            finally
+            {
+                // Clean up temporary file
+                if (System.IO.File.Exists(tempFilePath))
+                {
+                    System.IO.File.Delete(tempFilePath);
+                }
+            }
+        }
+
+        [Fact]
+        public async Task CommentsHaveTimestampsAndAuthorInfo()
+        {
+            // Arrange
+            var projectName = TestDataHelper.Projects.GenerateUniqueProjectName();
+            var projectDescription = TestDataHelper.Projects.GenerateUniqueProjectDescription();
+            var ticketTitle = TestDataHelper.Tickets.GenerateUniqueTicketTitle();
+            var ticketDescription = TestDataHelper.Tickets.GenerateUniqueTicketDescription();
+            var commentText = TestDataHelper.Comments.GenerateUniqueCommentText();
+
+            // Act & Assert - Setup
+            await _authHelper.LoginAsUserAsync();
+            
+            // Create project and ticket
+            await _projectsPage.NavigateToProjectsAsync();
+            await _projectsPage.CreateProjectAsync(projectName, projectDescription);
+            await _projectsPage.VerifyProjectExistsAsync(projectName);
+            TestDataHelper.Cleanup.TrackProject(projectName);
+
+            await _ticketsPage.NavigateToTicketsAsync();
+            await _ticketsPage.CreateTicketAsync(ticketTitle, ticketDescription, "Medium", "Major", projectName);
+            await _ticketsPage.VerifyTicketExistsAsync(ticketTitle);
+            TestDataHelper.Cleanup.TrackTicket(ticketTitle);
+
+            // Add comment
+            await _ticketsPage.GoToTicketDetailsAsync();
+            await _ticketsPage.AddCommentAsync(commentText);
+            await _ticketsPage.VerifyCommentExistsAsync(commentText);
+
+            // Verify comment metadata
+            var authorElement = await Page.QuerySelectorAsync("[data-testid='comment-author']");
+            authorElement.Should().NotBeNull();
+
+            var timestampElement = await Page.QuerySelectorAsync("[data-testid='comment-timestamp']");
+            timestampElement.Should().NotBeNull();
+
+            var authorText = await authorElement.TextContentAsync();
+            authorText.Should().NotBeNullOrEmpty();
+
+            var timestampText = await timestampElement.TextContentAsync();
+            timestampText.Should().NotBeNullOrEmpty();
+        }
+    }
+}

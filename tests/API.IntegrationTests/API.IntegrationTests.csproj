@@ -25,12 +25,27 @@
 
   <ItemGroup>
     <Using Include="Xunit" />
+    <Using Include="Microsoft.AspNetCore.Hosting" />
+    <Using Include="Microsoft.AspNetCore.Identity" />
+    <Using Include="Microsoft.AspNetCore.Mvc.Testing" />
+    <Using Include="Microsoft.Extensions.DependencyInjection" />
+    <Using Include="Microsoft.Extensions.Logging" />
+    <Using Include="Microsoft.Extensions.Options" />
+    <Using Include="Microsoft.Extensions.Configuration" />
+    <Using Include="Microsoft.EntityFrameworkCore" />
+    <Using Include="System.Text.Encodings.Web" />
+    <Using Include="Bogus" />
+    <Using Include="FluentAssertions" />
+    <Using Include="Application" />
+    <Using Include="Domain" />
+    <Using Include="Persistence" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\API\API.csproj" />
     <ProjectReference Include="..\..\Application\Application.csproj" />
     <ProjectReference Include="..\..\Persistence\Persistence.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

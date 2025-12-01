@@ -2,11 +2,10 @@
 
 A React + TypeScript frontend application for bug tracking and project management.
 
-## Testing
+## Running Tests
 
 This project uses Vitest and React Testing Library for testing the client-side application.
 
-### Running Tests
 
 ```bash
 # Run all tests
@@ -34,7 +33,7 @@ Coverage reports are generated in the `coverage/` directory when running `npm ru
 
 ### Note
 
-This README covers only the client-side testing. For server-side testing documentation, please refer to the root-level README or the API directory documentation.
+For server-side testing documentation, please refer to [`../API/README.md`](../API/README.md#running-tests).
 
 ## Development
 

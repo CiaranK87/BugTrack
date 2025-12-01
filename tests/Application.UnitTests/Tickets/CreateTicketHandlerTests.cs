@@ -1,3 +1,10 @@
+using Microsoft.EntityFrameworkCore;
+using Moq;
+using Application.Tickets;
+using Application.Interfaces;
+using Domain;
+using Persistence;
+
 namespace Application.UnitTests.Tickets
 {
     public class CreateTicketHandlerTests : IDisposable
@@ -273,7 +280,6 @@ namespace Application.UnitTests.Tickets
             using var badContext = new DataContext(options);
             var badHandler = new Create.Handler(badContext);
 
-            // Create a user first
             var user = new AppUser
             {
                 Id = "user123",
@@ -308,7 +314,6 @@ namespace Application.UnitTests.Tickets
             result.IsSuccess.Should().BeTrue(); // In-memory DB doesn't enforce FK constraints
             
             // Verify that the ticket was actually created despite non-existent project
-            // This is a limitation of in-memory databases - they don't enforce foreign key constraints
             var createdTicket = await badContext.Tickets.FindAsync(ticket.Id);
             createdTicket.Should().NotBeNull();
             createdTicket.ProjectId.Should().Be(command.Ticket.ProjectId);

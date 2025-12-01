@@ -1,3 +1,10 @@
+using Microsoft.EntityFrameworkCore;
+using Moq;
+using Application.Projects;
+using Application.Interfaces;
+using Domain;
+using Persistence;
+
 namespace Application.UnitTests.Projects
 {
     public class CreateProjectHandlerTests : IDisposable

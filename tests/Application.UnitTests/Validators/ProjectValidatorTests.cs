@@ -1,8 +1,9 @@
+using Application.Projects;
+using Domain;
+using FluentAssertions;
+
 namespace Application.UnitTests.Validators
 {
-    /// <summary>
-    /// Tests for project validation business rules critical for bug tracking project management
-    /// </summary>
     public class ProjectValidatorTests
     {
         private readonly ProjectValidator _validator;
@@ -15,7 +16,6 @@ namespace Application.UnitTests.Validators
         [Fact]
         public void Validate_CompleteValidProject_ShouldPassBusinessValidation()
         {
-            // Arrange
             var project = new Project
             {
                 ProjectTitle = "Customer Portal Enhancement Phase 2",
@@ -23,20 +23,17 @@ namespace Application.UnitTests.Validators
                 StartDate = DateTime.UtcNow.AddDays(14)
             };
 
-            // Act
-            var result = _validator.TestValidate(project);
+            var result = _validator.Validate(project);
 
-            // Assert - Business critical validation
-            result.ShouldNotHaveAnyValidationErrors();
+            result.IsValid.Should().BeTrue();
         }
 
         [Theory]
-        [InlineData("", "Description here", "2023-01-01")] // Empty title
-        [InlineData("   ", "Description here", "2023-01-01")] // Whitespace title
-        [InlineData(null, "Description here", "2023-01-01")] // Null title
+        [InlineData("", "Description here", "2023-01-01")]
+        [InlineData("   ", "Description here", "2023-01-01")]
+        [InlineData(null, "Description here", "2023-01-01")]
         public void Validate_InvalidProjectTitle_ShouldFailBusinessValidation(string projectTitle, string description, string startDateString)
         {
-            // Arrange
             var project = new Project
             {
                 ProjectTitle = projectTitle,
@@ -44,20 +41,18 @@ namespace Application.UnitTests.Validators
                 StartDate = DateTime.Parse(startDateString)
             };
 
-            // Act
-            var result = _validator.TestValidate(project);
+            var result = _validator.Validate(project);
 
-            // Assert - Project title is critical for project identification and search
-            result.ShouldHaveValidationErrorFor(p => p.ProjectTitle);
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().Contain(e => e.PropertyName == "ProjectTitle");
         }
 
         [Theory]
-        [InlineData("Project Title", "", "2023-01-01")] // Empty description
-        [InlineData("Project Title", "   ", "2023-01-01")] // Whitespace description
-        [InlineData("Project Title", null, "2023-01-01")] // Null description
+        [InlineData("Project Title", "", "2023-01-01")]
+        [InlineData("Project Title", "   ", "2023-01-01")]
+        [InlineData("Project Title", null, "2023-01-01")]
         public void Validate_InvalidDescription_ShouldFailBusinessValidation(string projectTitle, string description, string startDateString)
         {
-            // Arrange
             var project = new Project
             {
                 ProjectTitle = projectTitle,
@@ -65,35 +60,31 @@ namespace Application.UnitTests.Validators
                 StartDate = DateTime.Parse(startDateString)
             };
 
-            // Act
-            var result = _validator.TestValidate(project);
+            var result = _validator.Validate(project);
 
-            // Assert - Description is critical for project scope and stakeholder alignment
-            result.ShouldHaveValidationErrorFor(p => p.Description);
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().Contain(e => e.PropertyName == "Description");
         }
 
         [Fact]
         public void Validate_DefaultStartDate_ShouldFailBusinessValidation()
         {
-            // Arrange
             var project = new Project
             {
                 ProjectTitle = "Test Project",
                 Description = "Test Description",
-                StartDate = default(DateTime) // Invalid default date
+                StartDate = default(DateTime)
             };
 
-            // Act
-            var result = _validator.TestValidate(project);
+            var result = _validator.Validate(project);
 
-            // Assert - Start date is critical for project timeline and resource planning
-            result.ShouldHaveValidationErrorFor(p => p.StartDate);
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().Contain(e => e.PropertyName == "StartDate");
         }
 
         [Fact]
         public void Validate_RealWorldProjectScenarios_ShouldPassValidation()
         {
-            // Arrange
             var realWorldProjects = new[]
             {
                 new
@@ -122,7 +113,6 @@ namespace Application.UnitTests.Validators
                 }
             };
 
-            // Act & Assert
             foreach (var projectData in realWorldProjects)
             {
                 var project = new Project
@@ -132,8 +122,8 @@ namespace Application.UnitTests.Validators
                     StartDate = projectData.StartDate
                 };
 
-                var result = _validator.TestValidate(project);
-                result.ShouldNotHaveAnyValidationErrors();
+                var result = _validator.Validate(project);
+                result.IsValid.Should().BeTrue();
             }
         }
 
@@ -144,7 +134,6 @@ namespace Application.UnitTests.Validators
         [InlineData("Project", "This is a very long project description that provides detailed information about the project goals, objectives, scope, timeline, and other important details that stakeholders need to understand", "2023-01-01")] // Long description
         public void Validate_VariousContentLengths_ShouldPassValidation(string projectTitle, string description, string startDateString)
         {
-            // Arrange
             var project = new Project
             {
                 ProjectTitle = projectTitle,
@@ -152,22 +141,18 @@ namespace Application.UnitTests.Validators
                 StartDate = DateTime.Parse(startDateString)
             };
 
-            // Act
-            var result = _validator.TestValidate(project);
+            var result = _validator.Validate(project);
 
             // Assert
-            result.ShouldNotHaveValidationErrorFor(p => p.ProjectTitle);
-            result.ShouldNotHaveValidationErrorFor(p => p.Description);
-            result.ShouldNotHaveValidationErrorFor(p => p.StartDate);
+            result.IsValid.Should().BeTrue();
         }
 
         [Theory]
-        [InlineData("2023-01-01")] // Past date
-        [InlineData("2024-12-31")] // Future date
-        [InlineData("2025-06-15")] // Mid-year date
+        [InlineData("2023-01-01")]
+        [InlineData("2024-12-31")]
+        [InlineData("2025-06-15")]
         public void Validate_TimelineValidation_ShouldPassValidation(string startDateString)
         {
-            // Arrange
             var project = new Project
             {
                 ProjectTitle = "Test Project",
@@ -175,37 +160,33 @@ namespace Application.UnitTests.Validators
                 StartDate = DateTime.Parse(startDateString)
             };
 
-            // Act
-            var result = _validator.TestValidate(project);
+            var result = _validator.Validate(project);
 
             // Assert
-            result.ShouldNotHaveValidationErrorFor(p => p.StartDate);
+            result.IsValid.Should().BeTrue();
         }
 
         [Fact]
         public void Validate_CriticalBusinessRules_ShouldEnforceDataIntegrity()
         {
-            // Arrange
             var project = new Project
             {
-                ProjectTitle = "", // Invalid: empty
-                Description = "", // Invalid: empty
-                StartDate = default(DateTime) // Invalid: default
+                ProjectTitle = "",
+                Description = "",
+                StartDate = default(DateTime)
             };
 
-            // Act
-            var result = _validator.TestValidate(project);
+            var result = _validator.Validate(project);
 
-            // Assert - All critical fields should fail validation
-            result.ShouldHaveValidationErrorFor(p => p.ProjectTitle);
-            result.ShouldHaveValidationErrorFor(p => p.Description);
-            result.ShouldHaveValidationErrorFor(p => p.StartDate);
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().Contain(e => e.PropertyName == "ProjectTitle");
+            result.Errors.Should().Contain(e => e.PropertyName == "Description");
+            result.Errors.Should().Contain(e => e.PropertyName == "StartDate");
         }
 
         [Fact]
         public void Validate_ProjectPlanningScenarios_ShouldSupportRealBusinessNeeds()
         {
-            // Arrange
             var businessProjects = new[]
             {
                 new
@@ -231,7 +212,6 @@ namespace Application.UnitTests.Validators
                 }
             };
 
-            // Act & Assert
             foreach (var projectData in businessProjects)
             {
                 var project = new Project
@@ -241,15 +221,14 @@ namespace Application.UnitTests.Validators
                     StartDate = projectData.StartDate
                 };
 
-                var result = _validator.TestValidate(project);
-                result.ShouldNotHaveAnyValidationErrors();
+                var result = _validator.Validate(project);
+                result.IsValid.Should().BeTrue();
             }
         }
 
         [Fact]
         public void Validate_ProjectTimelineValidation_ShouldSupportPlanning()
         {
-            // Arrange
             var today = DateTime.UtcNow;
             var timelineScenarios = new[]
             {
@@ -259,7 +238,6 @@ namespace Application.UnitTests.Validators
                 new { Title = "Next Quarter", StartDateString = "2023-04-01", Context = "Quarterly planning" }
             };
 
-            // Act & Assert
             foreach (var scenario in timelineScenarios)
             {
                 var project = new Project
@@ -269,8 +247,8 @@ namespace Application.UnitTests.Validators
                     StartDate = DateTime.Parse(scenario.StartDateString)
                 };
 
-                var result = _validator.TestValidate(project);
-                result.ShouldNotHaveAnyValidationErrors();
+                var result = _validator.Validate(project);
+                result.IsValid.Should().BeTrue();
             }
         }
     }

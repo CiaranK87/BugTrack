@@ -1,3 +1,8 @@
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+
 namespace API.IntegrationTests
 {
     public class TestAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>

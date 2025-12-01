@@ -38,3 +38,9 @@ cd Bugtrack/client-app
 - npm install               - Install client-side dependencies
 - npm run dev               - Start the development server\
 Visit http://localhost:3000 in your browser to see your React app.
+
+## Testing
+
+For detailed testing documentation, see:
+- **Backend Testing**: [`API/README.md`](API/README.md#running-tests)
+- **Frontend Testing**: [`client-app/README.md`](client-app/README.md#running-tests)

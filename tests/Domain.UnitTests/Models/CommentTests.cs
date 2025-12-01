@@ -3,9 +3,6 @@ using FluentAssertions;
 
 namespace Domain.UnitTests.Models
 {
-    /// <summary>
-    /// Comment business logic tests for bug tracking collaboration
-    /// </summary>
     public class CommentTests
     {
         [Fact]
@@ -13,11 +10,10 @@ namespace Domain.UnitTests.Models
         {
             var comment = new Comment();
             
-            // Business defaults
-            comment.Replies.Should().NotBeNull(); // reply collection must be initialized
-            comment.Replies.Should().BeEmpty(); // new comments have no replies
-            comment.Attachments.Should().NotBeNull(); // attachment collection must be initialized
-            comment.Attachments.Should().BeEmpty(); // new comments have no attachments
+            comment.Replies.Should().NotBeNull();
+            comment.Replies.Should().BeEmpty();
+            comment.Attachments.Should().NotBeNull();
+            comment.Attachments.Should().BeEmpty();
         }
 
         [Fact]
@@ -56,7 +52,6 @@ namespace Domain.UnitTests.Models
             parentComment.Replies.Add(developerReply);
             developerReply.Replies.Add(followUp);
             
-            // Team collaboration
             parentComment.Replies.Should().HaveCount(1);
             parentComment.Replies.First().Should().Be(developerReply);
             developerReply.Replies.Should().HaveCount(1);
@@ -93,7 +88,6 @@ namespace Domain.UnitTests.Models
             comment.Attachments.Add(screenshot);
             comment.Attachments.Add(logFile);
             
-            // Bug documentation
             comment.Attachments.Should().HaveCount(2);
             comment.Attachments.Should().Contain(screenshot);
             comment.Attachments.Should().Contain(logFile);
@@ -110,9 +104,8 @@ namespace Domain.UnitTests.Models
             
             comment.Content = content;
             
-            // Real bug tracking scenarios
             comment.Content.Should().Be(content);
-            comment.Content.Should().Contain(category); // Category should be identifiable
+            comment.Content.Should().Contain(category);
         }
 
         [Fact]
@@ -132,7 +125,6 @@ namespace Domain.UnitTests.Models
             comment.UpdatedAt = DateTime.UtcNow;
             var afterUpdate = DateTime.UtcNow;
             
-            // Audit and communication history
             comment.Content.Should().Be("Updated bug report with more details and reproduction steps");
             comment.UpdatedAt.Should().NotBeNull();
             comment.UpdatedAt.Value.Should().BeOnOrAfter(beforeUpdate);
@@ -149,11 +141,10 @@ namespace Domain.UnitTests.Models
             comment.TicketId = ticketId;
             comment.AuthorId = authorId;
             
-            // Traceability
             comment.TicketId.Should().Be(ticketId);
-            comment.TicketId.Should().NotBe(Guid.Empty); // Must be associated with a ticket
+            comment.TicketId.Should().NotBe(Guid.Empty);
             comment.AuthorId.Should().Be(authorId);
-            comment.AuthorId.Should().NotBeNullOrEmpty(); // Must have an author
+            comment.AuthorId.Should().NotBeNullOrEmpty();
         }
 
         [Fact]
@@ -192,7 +183,6 @@ namespace Domain.UnitTests.Models
             userComment.Replies.Add(devComment);
             devComment.Replies.Add(opsComment);
             
-            // Cross-team coordination
             userComment.AuthorId.Should().Be("user");
             devComment.AuthorId.Should().Be("developer");
             opsComment.AuthorId.Should().Be("developer");

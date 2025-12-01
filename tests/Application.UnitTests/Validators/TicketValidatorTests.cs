@@ -1,8 +1,9 @@
+using Application.Tickets;
+using Domain;
+using FluentAssertions;
+
 namespace Application.UnitTests.Validators
 {
-    /// <summary>
-    /// Tests for ticket validation business rules critical for bug tracking data integrity
-    /// </summary>
     public class TicketValidatorTests
     {
         private readonly TicketValidator _validator;
@@ -15,7 +16,6 @@ namespace Application.UnitTests.Validators
         [Fact]
         public void Validate_CompleteValidTicket_ShouldPassBusinessValidation()
         {
-            // Arrange
             var ticket = new Ticket
             {
                 Title = "Critical authentication failure on mobile app",
@@ -28,20 +28,17 @@ namespace Application.UnitTests.Validators
                 StartDate = DateTime.UtcNow
             };
 
-            // Act
-            var result = _validator.TestValidate(ticket);
+            var result = _validator.Validate(ticket);
 
-            // Assert - Business critical validation
-            result.ShouldNotHaveAnyValidationErrors();
+            result.IsValid.Should().BeTrue();
         }
 
         [Theory]
-        [InlineData("", "Description here", "submitter", "assigned", "High", "Critical", "Open")] // Empty title
-        [InlineData("   ", "Description here", "submitter", "assigned", "High", "Critical", "Open")] // Whitespace title
-        [InlineData(null, "Description here", "submitter", "assigned", "High", "Critical", "Open")] // Null title
+        [InlineData("", "Description here", "submitter", "assigned", "High", "Critical", "Open")]
+        [InlineData("   ", "Description here", "submitter", "assigned", "High", "Critical", "Open")]
+        [InlineData(null, "Description here", "submitter", "assigned", "High", "Critical", "Open")]
         public void Validate_InvalidTitle_ShouldFailBusinessValidation(string title, string description, string submitter, string assigned, string priority, string severity, string status)
         {
-            // Arrange
             var ticket = new Ticket
             {
                 Title = title,
@@ -54,20 +51,18 @@ namespace Application.UnitTests.Validators
                 StartDate = DateTime.UtcNow
             };
 
-            // Act
-            var result = _validator.TestValidate(ticket);
+            var result = _validator.Validate(ticket);
 
-            // Assert - Title is critical for bug identification and search
-            result.ShouldHaveValidationErrorFor(t => t.Title);
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().Contain(e => e.PropertyName == "Title");
         }
 
         [Theory]
-        [InlineData("Bug title", "", "submitter", "assigned", "High", "Critical", "Open")] // Empty description
-        [InlineData("Bug title", "   ", "submitter", "assigned", "High", "Critical", "Open")] // Whitespace description
-        [InlineData("Bug title", null, "submitter", "assigned", "High", "Critical", "Open")] // Null description
+        [InlineData("Bug title", "", "submitter", "assigned", "High", "Critical", "Open")]
+        [InlineData("Bug title", "   ", "submitter", "assigned", "High", "Critical", "Open")]
+        [InlineData("Bug title", null, "submitter", "assigned", "High", "Critical", "Open")]
         public void Validate_InvalidDescription_ShouldFailBusinessValidation(string title, string description, string submitter, string assigned, string priority, string severity, string status)
         {
-            // Arrange
             var ticket = new Ticket
             {
                 Title = title,
@@ -80,20 +75,18 @@ namespace Application.UnitTests.Validators
                 StartDate = DateTime.UtcNow
             };
 
-            // Act
-            var result = _validator.TestValidate(ticket);
+            var result = _validator.Validate(ticket);
 
-            // Assert - Description is critical for understanding and reproducing bugs
-            result.ShouldHaveValidationErrorFor(t => t.Description);
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().Contain(e => e.PropertyName == "Description");
         }
 
         [Theory]
-        [InlineData("Bug title", "Description", "", "assigned", "High", "Critical", "Open")] // Empty submitter
-        [InlineData("Bug title", "Description", "   ", "assigned", "High", "Critical", "Open")] // Whitespace submitter
-        [InlineData("Bug title", "Description", null, "assigned", "High", "Critical", "Open")] // Null submitter
+        [InlineData("Bug title", "Description", "", "assigned", "High", "Critical", "Open")]
+        [InlineData("Bug title", "Description", "   ", "assigned", "High", "Critical", "Open")]
+        [InlineData("Bug title", "Description", null, "assigned", "High", "Critical", "Open")]
         public void Validate_InvalidSubmitter_ShouldFailBusinessValidation(string title, string description, string submitter, string assigned, string priority, string severity, string status)
         {
-            // Arrange
             var ticket = new Ticket
             {
                 Title = title,
@@ -106,20 +99,18 @@ namespace Application.UnitTests.Validators
                 StartDate = DateTime.UtcNow
             };
 
-            // Act
-            var result = _validator.TestValidate(ticket);
+            var result = _validator.Validate(ticket);
 
-            // Assert - Submitter is critical for audit trail and communication
-            result.ShouldHaveValidationErrorFor(t => t.Submitter);
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().Contain(e => e.PropertyName == "Submitter");
         }
 
         [Theory]
-        [InlineData("Bug title", "Description", "submitter", "", "High", "Critical", "Open")] // Empty assigned
-        [InlineData("Bug title", "Description", "submitter", "   ", "High", "Critical", "Open")] // Whitespace assigned
-        [InlineData("Bug title", "Description", "submitter", null, "High", "Critical", "Open")] // Null assigned
+        [InlineData("Bug title", "Description", "submitter", "", "High", "Critical", "Open")]
+        [InlineData("Bug title", "Description", "submitter", "   ", "High", "Critical", "Open")]
+        [InlineData("Bug title", "Description", "submitter", null, "High", "Critical", "Open")]
         public void Validate_InvalidAssigned_ShouldFailBusinessValidation(string title, string description, string submitter, string assigned, string priority, string severity, string status)
         {
-            // Arrange
             var ticket = new Ticket
             {
                 Title = title,
@@ -132,20 +123,18 @@ namespace Application.UnitTests.Validators
                 StartDate = DateTime.UtcNow
             };
 
-            // Act
-            var result = _validator.TestValidate(ticket);
+            var result = _validator.Validate(ticket);
 
-            // Assert - Assigned user is critical for task ownership and tracking
-            result.ShouldHaveValidationErrorFor(t => t.Assigned);
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().Contain(e => e.PropertyName == "Assigned");
         }
 
         [Theory]
-        [InlineData("Bug title", "Description", "submitter", "assigned", "", "Critical", "Open")] // Empty priority
-        [InlineData("Bug title", "Description", "submitter", "assigned", "   ", "Critical", "Open")] // Whitespace priority
-        [InlineData("Bug title", "Description", "submitter", "assigned", null, "Critical", "Open")] // Null priority
+        [InlineData("Bug title", "Description", "submitter", "assigned", "", "Critical", "Open")]
+        [InlineData("Bug title", "Description", "submitter", "assigned", "   ", "Critical", "Open")]
+        [InlineData("Bug title", "Description", "submitter", "assigned", null, "Critical", "Open")]
         public void Validate_InvalidPriority_ShouldFailBusinessValidation(string title, string description, string submitter, string assigned, string priority, string severity, string status)
         {
-            // Arrange
             var ticket = new Ticket
             {
                 Title = title,
@@ -158,20 +147,18 @@ namespace Application.UnitTests.Validators
                 StartDate = DateTime.UtcNow
             };
 
-            // Act
-            var result = _validator.TestValidate(ticket);
+            var result = _validator.Validate(ticket);
 
-            // Assert - Priority is critical for resource allocation and triage
-            result.ShouldHaveValidationErrorFor(t => t.Priority);
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().Contain(e => e.PropertyName == "Priority");
         }
 
         [Theory]
-        [InlineData("Bug title", "Description", "submitter", "assigned", "High", "", "Open")] // Empty severity
-        [InlineData("Bug title", "Description", "submitter", "assigned", "High", "   ", "Open")] // Whitespace severity
-        [InlineData("Bug title", "Description", "submitter", "assigned", "High", null, "Open")] // Null severity
+        [InlineData("Bug title", "Description", "submitter", "assigned", "High", "", "Open")]
+        [InlineData("Bug title", "Description", "submitter", "assigned", "High", "   ", "Open")]
+        [InlineData("Bug title", "Description", "submitter", "assigned", "High", null, "Open")]
         public void Validate_InvalidSeverity_ShouldFailBusinessValidation(string title, string description, string submitter, string assigned, string priority, string severity, string status)
         {
-            // Arrange
             var ticket = new Ticket
             {
                 Title = title,
@@ -184,20 +171,18 @@ namespace Application.UnitTests.Validators
                 StartDate = DateTime.UtcNow
             };
 
-            // Act
-            var result = _validator.TestValidate(ticket);
+            var result = _validator.Validate(ticket);
 
-            // Assert - Severity is critical for impact assessment and release planning
-            result.ShouldHaveValidationErrorFor(t => t.Severity);
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().Contain(e => e.PropertyName == "Severity");
         }
 
         [Theory]
-        [InlineData("Bug title", "Description", "submitter", "assigned", "High", "Critical", "")] // Empty status
-        [InlineData("Bug title", "Description", "submitter", "assigned", "High", "Critical", "   ")] // Whitespace status
-        [InlineData("Bug title", "Description", "submitter", "assigned", "High", "Critical", null)] // Null status
+        [InlineData("Bug title", "Description", "submitter", "assigned", "High", "Critical", "")]
+        [InlineData("Bug title", "Description", "submitter", "assigned", "High", "Critical", "   ")]
+        [InlineData("Bug title", "Description", "submitter", "assigned", "High", "Critical", null)]
         public void Validate_InvalidStatus_ShouldFailBusinessValidation(string title, string description, string submitter, string assigned, string priority, string severity, string status)
         {
-            // Arrange
             var ticket = new Ticket
             {
                 Title = title,
@@ -210,17 +195,15 @@ namespace Application.UnitTests.Validators
                 StartDate = DateTime.UtcNow
             };
 
-            // Act
-            var result = _validator.TestValidate(ticket);
+            var result = _validator.Validate(ticket);
 
-            // Assert - Status is critical for workflow management and reporting
-            result.ShouldHaveValidationErrorFor(t => t.Status);
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().Contain(e => e.PropertyName == "Status");
         }
 
         [Fact]
         public void Validate_DefaultStartDate_ShouldFailBusinessValidation()
         {
-            // Arrange
             var ticket = new Ticket
             {
                 Title = "Bug title",
@@ -230,20 +213,18 @@ namespace Application.UnitTests.Validators
                 Priority = "High",
                 Severity = "Critical",
                 Status = "Open",
-                StartDate = default(DateTime) // Invalid default date
+                StartDate = default(DateTime)
             };
 
-            // Act
-            var result = _validator.TestValidate(ticket);
+            var result = _validator.Validate(ticket);
 
-            // Assert - Start date is critical for timeline and SLA tracking
-            result.ShouldHaveValidationErrorFor(t => t.StartDate);
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().Contain(e => e.PropertyName == "StartDate");
         }
 
         [Fact]
         public void Validate_RealWorldBugScenarios_ShouldPassValidation()
         {
-            // Arrange
             var realWorldTickets = new[]
             {
                 new
@@ -251,9 +232,9 @@ namespace Application.UnitTests.Validators
                     Title = "Database connection timeout during peak hours",
                     Description = "Database connections are timing out between 2-4 PM when user traffic is highest. Affects production environment only.",
                     Submitter = "dba@company.com",
-                    Assigned = "backend.dev@company.com",
+                    Assigned = "developer@company.com",
                     Priority = "High",
-                    Severity = "Major",
+                    Severity = "Medium",
                     Status = "In Progress"
                 },
                 new
@@ -271,14 +252,13 @@ namespace Application.UnitTests.Validators
                     Title = "CSV export missing data columns",
                     Description = "When exporting reports to CSV, the 'customer_email' and 'phone_number' columns are missing from the output.",
                     Submitter = "support@company.com",
-                    Assigned = "frontend.dev@company.com",
+                    Assigned = "developer@company.com",
                     Priority = "Medium",
-                    Severity = "Minor",
-                    Status = "Resolved"
+                    Severity = "Low",
+                    Status = "Closed"
                 }
             };
 
-            // Act & Assert
             foreach (var ticketData in realWorldTickets)
             {
                 var ticket = new Ticket
@@ -293,39 +273,37 @@ namespace Application.UnitTests.Validators
                     StartDate = DateTime.UtcNow
                 };
 
-                var result = _validator.TestValidate(ticket);
-                result.ShouldNotHaveAnyValidationErrors();
+                var result = _validator.Validate(ticket);
+                result.IsValid.Should().BeTrue();
             }
         }
 
         [Fact]
         public void Validate_CriticalBusinessRules_ShouldEnforceDataIntegrity()
         {
-            // Arrange
             var ticket = new Ticket
             {
-                Title = "", // Invalid: empty
-                Description = "", // Invalid: empty
-                Submitter = "", // Invalid: empty
-                Assigned = "", // Invalid: empty
-                Priority = "", // Invalid: empty
-                Severity = "", // Invalid: empty
-                Status = "", // Invalid: empty
-                StartDate = default(DateTime) // Invalid: default
+                Title = "",
+                Description = "",
+                Submitter = "",
+                Assigned = "",
+                Priority = "",
+                Severity = "",
+                Status = "",
+                StartDate = default(DateTime)
             };
 
-            // Act
-            var result = _validator.TestValidate(ticket);
+            var result = _validator.Validate(ticket);
 
-            // Assert - All critical fields should fail validation
-            result.ShouldHaveValidationErrorFor(t => t.Title);
-            result.ShouldHaveValidationErrorFor(t => t.Description);
-            result.ShouldHaveValidationErrorFor(t => t.Submitter);
-            result.ShouldHaveValidationErrorFor(t => t.Assigned);
-            result.ShouldHaveValidationErrorFor(t => t.Priority);
-            result.ShouldHaveValidationErrorFor(t => t.Severity);
-            result.ShouldHaveValidationErrorFor(t => t.Status);
-            result.ShouldHaveValidationErrorFor(t => t.StartDate);
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().Contain(e => e.PropertyName == "Title");
+            result.Errors.Should().Contain(e => e.PropertyName == "Description");
+            result.Errors.Should().Contain(e => e.PropertyName == "Submitter");
+            result.Errors.Should().Contain(e => e.PropertyName == "Assigned");
+            result.Errors.Should().Contain(e => e.PropertyName == "Priority");
+            result.Errors.Should().Contain(e => e.PropertyName == "Severity");
+            result.Errors.Should().Contain(e => e.PropertyName == "Status");
+            result.Errors.Should().Contain(e => e.PropertyName == "StartDate");
         }
     }
 }

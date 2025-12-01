@@ -3,9 +3,6 @@ using FluentAssertions;
 
 namespace Domain.UnitTests.Models
 {
-    /// <summary>
-    /// Ticket business logic tests for bug tracking domain rules
-    /// </summary>
     public class TicketTests
     {
         [Fact]
@@ -13,11 +10,10 @@ namespace Domain.UnitTests.Models
         {
             var ticket = new Ticket();
             
-            // Business defaults
-            ticket.IsDeleted.Should().BeFalse(); // tickets should start as active
-            ticket.Comments.Should().NotBeNull(); // comments collection must be initialized
-            ticket.Comments.Should().BeEmpty(); // new tickets have no comments
-            ticket.CreatedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(1)); // audit trail
+            ticket.IsDeleted.Should().BeFalse();
+            ticket.Comments.Should().NotBeNull();
+            ticket.Comments.Should().BeEmpty();
+            ticket.CreatedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(1));
         }
 
         [Fact]
@@ -40,20 +36,19 @@ namespace Domain.UnitTests.Models
             
             ticket.Status = "In Progress";
             ticket.Updated = DateTime.UtcNow;
-            ticket.Status = "Resolved";
+            ticket.Status = "Closed";
             ticket.ClosedDate = DateTime.UtcNow;
             
-            // Business validations
-            ticket.Status.Should().Be("Resolved"); // Final state validation
-            ticket.ClosedDate.Should().NotBeNull(); // Closure must be recorded
-            ticket.Priority.Should().Be("High"); // Priority preserved throughout lifecycle
-            ticket.Severity.Should().Be("Critical"); // Severity preserved throughout lifecycle
+            ticket.Status.Should().Be("Closed");
+            ticket.ClosedDate.Should().NotBeNull();
+            ticket.Priority.Should().Be("High");
+            ticket.Severity.Should().Be("Critical");
         }
 
         [Theory]
-        [InlineData("Low", "Minor", "Open")]
+        [InlineData("Low", "Low", "Open")]
         [InlineData("High", "Critical", "Open")]
-        [InlineData("Medium", "Major", "In Progress")]
+        [InlineData("Medium", "Medium", "In Progress")]
         public void Ticket_BusinessCombinations_ShouldReflectRealBugScenarios(string priority, string severity, string status)
         {
             var ticket = new Ticket();
@@ -62,7 +57,6 @@ namespace Domain.UnitTests.Models
             ticket.Severity = severity;
             ticket.Status = status;
             
-            // Real bug tracking scenarios
             ticket.Priority.Should().Be(priority);
             ticket.Severity.Should().Be(severity);
             ticket.Status.Should().Be(status);
@@ -79,7 +73,6 @@ namespace Domain.UnitTests.Models
             ticket.DeletedDate = DateTime.UtcNow;
             var afterDeletion = DateTime.UtcNow;
             
-            // Audit and compliance
             ticket.IsDeleted.Should().BeTrue();
             ticket.DeletedDate.Should().NotBeNull();
             ticket.DeletedDate.Value.Should().BeOnOrAfter(beforeDeletion);
@@ -97,10 +90,9 @@ namespace Domain.UnitTests.Models
             ticket.Submitter = submitter;
             ticket.Assigned = developer;
             
-            // Team coordination
             ticket.Submitter.Should().Be(submitter);
             ticket.Assigned.Should().Be(developer);
-            ticket.Submitter.Should().NotBe(ticket.Assigned); // Different roles
+            ticket.Submitter.Should().NotBe(ticket.Assigned);
         }
 
         [Fact]
@@ -111,9 +103,8 @@ namespace Domain.UnitTests.Models
             
             ticket.ProjectId = projectId;
             
-            // Project organization
             ticket.ProjectId.Should().Be(projectId);
-            ticket.ProjectId.Should().NotBe(Guid.Empty); // Must be associated with a project
+            ticket.ProjectId.Should().NotBe(Guid.Empty);
         }
     }
 }

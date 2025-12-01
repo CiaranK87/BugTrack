@@ -1,0 +1,240 @@
+using Microsoft.Playwright;
+using FluentAssertions;
+using Xunit;
+using EndToEnd.Tests.Pages;
+using EndToEnd.Tests.Helpers;
+
+namespace EndToEnd.Tests
+{
+    public class AuthenticationE2ETests : IAsyncLifetime, IClassFixture<PlaywrightFixture>
+    {
+        private readonly PlaywrightFixture _playwrightFixture;
+        private LoginPage? _loginPage;
+        private AuthHelper? _authHelper;
+
+        private IPage? _page;
+
+        public AuthenticationE2ETests(PlaywrightFixture playwrightFixture)
+        {
+            _playwrightFixture = playwrightFixture;
+        }
+
+        public async Task InitializeAsync()
+        {
+            var browser = _playwrightFixture.Browser;
+            _page = await browser.NewPageAsync();
+            await _page.GotoAsync(TestConfigurations.Urls.BaseUrl);
+            
+            // Initialize page objects after page is created
+            _loginPage = new LoginPage(_page);
+            _authHelper = new AuthHelper(_page);
+        }
+
+        public async Task DisposeAsync()
+        {
+            if (_page != null)
+            {
+                await _page.CloseAsync();
+            }
+        }
+
+        [Fact]
+        public async Task UserCanRegisterWithValidCredentials()
+        {
+            // Arrange
+            var uniqueEmail = TestDataHelper.Users.GenerateUniqueEmail();
+            var uniqueUsername = TestDataHelper.Users.GenerateUniqueUsername();
+
+            // Act
+            await _loginPage.ClickLoginButton();
+            await _loginPage.ClickRegisterLink();
+            
+            // Fill registration form
+            await _page!.FillAsync("[data-testid='register-email']", uniqueEmail);
+            await _page!.FillAsync("[data-testid='register-username']", uniqueUsername);
+            await _page!.FillAsync("[data-testid='register-display-name']", TestDataHelper.Users.TestDisplayName);
+            await _page!.FillAsync("[data-testid='register-password']", TestDataHelper.Users.TestPassword);
+            await _page!.FillAsync("[data-testid='register-confirm-password']", TestDataHelper.Users.TestPassword);
+            await _page!.ClickAsync("[data-testid='register-submit']");
+
+            // Assert
+            await _page!.WaitForSelectorAsync("[data-testid='user-dashboard']",
+                new PageWaitForSelectorOptions { Timeout = TestConfigurations.Timeouts.Default });
+            
+            var userMenu = await _page!.QuerySelectorAsync("[data-testid='user-menu']");
+            userMenu.Should().NotBeNull();
+
+            // Verify user is logged in
+            var isLoggedIn = await _authHelper.IsLoggedInAsync();
+            isLoggedIn.Should().BeTrue();
+
+            // Track for cleanup
+            TestDataHelper.Cleanup.TrackUser(uniqueEmail);
+        }
+
+        [Fact]
+        public async Task UserCannotRegisterWithInvalidEmail()
+        {
+            // Arrange
+            var invalidEmail = "invalid-email";
+            var uniqueUsername = TestDataHelper.Users.GenerateUniqueUsername();
+
+            // Act
+            await _loginPage.ClickLoginButton();
+            await _loginPage.ClickRegisterLink();
+            
+            await _page!.FillAsync("[data-testid='register-email']", invalidEmail);
+            await _page!.FillAsync("[data-testid='register-username']", uniqueUsername);
+            await _page!.FillAsync("[data-testid='register-display-name']", TestDataHelper.Users.TestDisplayName);
+            await _page!.FillAsync("[data-testid='register-password']", TestDataHelper.Users.TestPassword);
+            await _page!.FillAsync("[data-testid='register-confirm-password']", TestDataHelper.Users.TestPassword);
+            await _page!.ClickAsync("[data-testid='register-submit']");
+
+            // Assert
+            await _page!.WaitForSelectorAsync("[data-testid='email-error']",
+                new PageWaitForSelectorOptions { Timeout = TestConfigurations.Timeouts.Short });
+            
+            var emailError = await _page!.QuerySelectorAsync("[data-testid='email-error']");
+            emailError.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task UserCannotRegisterWithMismatchedPasswords()
+        {
+            // Arrange
+            var uniqueEmail = TestDataHelper.Users.GenerateUniqueEmail();
+            var uniqueUsername = TestDataHelper.Users.GenerateUniqueUsername();
+
+            // Act
+            await _loginPage.ClickLoginButton();
+            await _loginPage.ClickRegisterLink();
+            
+            await _page!.FillAsync("[data-testid='register-email']", uniqueEmail);
+            await _page!.FillAsync("[data-testid='register-username']", uniqueUsername);
+            await _page!.FillAsync("[data-testid='register-display-name']", TestDataHelper.Users.TestDisplayName);
+            await _page!.FillAsync("[data-testid='register-password']", TestDataHelper.Users.TestPassword);
+            await _page!.FillAsync("[data-testid='register-confirm-password']", "DifferentPassword123!");
+            await _page!.ClickAsync("[data-testid='register-submit']");
+
+            // Assert
+            await _page!.WaitForSelectorAsync("[data-testid='password-mismatch-error']",
+                new PageWaitForSelectorOptions { Timeout = TestConfigurations.Timeouts.Short });
+            
+            var passwordError = await _page!.QuerySelectorAsync("[data-testid='password-mismatch-error']");
+            passwordError.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task UserCanLoginWithValidCredentials()
+        {
+            // Act
+            await _authHelper.LoginAsUserAsync();
+
+            // Assert
+            var isLoggedIn = await _authHelper.IsLoggedInAsync();
+            isLoggedIn.Should().BeTrue();
+        }
+
+        [Fact]
+        public async Task UserCannotLoginWithInvalidCredentials()
+        {
+            // Act
+            await _loginPage.ClickLoginButton();
+            await _page!.FillAsync("[data-testid='email-input']", TestConfigurations.TestUsers.UserEmail);
+            await _page!.FillAsync("[data-testid='password-input']", "InvalidPassword123!");
+            await _page!.ClickAsync("[data-testid='submit-login']");
+
+            // Assert
+            await _loginPage.VerifyLoginFailed();
+        }
+
+        [Fact]
+        public async Task UserCanLogoutSuccessfully()
+        {
+            // Arrange
+            await _authHelper.LoginAsUserAsync();
+            var isLoggedInBefore = await _authHelper.IsLoggedInAsync();
+            isLoggedInBefore.Should().BeTrue();
+
+            // Act
+            await _authHelper.LogoutAsync();
+
+            // Assert
+            await _page!.WaitForSelectorAsync("[data-testid='login-btn']");
+            var loginButton = await _page!.QuerySelectorAsync("[data-testid='login-btn']");
+            loginButton.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task AdminCanAccessAdminFeatures()
+        {
+            // Act
+            await _authHelper.LoginAsAdminAsync();
+            await _page!.GotoAsync($"{TestConfigurations.Urls.BaseUrl}/admin");
+
+            // Assert
+            await _page!.WaitForSelectorAsync("[data-testid='admin-dashboard']",
+                new PageWaitForSelectorOptions { Timeout = TestConfigurations.Timeouts.Default });
+            
+            var adminDashboard = await _page!.QuerySelectorAsync("[data-testid='admin-dashboard']");
+            adminDashboard.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task RegularUserCannotAccessAdminFeatures()
+        {
+            // Act
+            await _authHelper.LoginAsUserAsync();
+            await _page!.GotoAsync($"{TestConfigurations.Urls.BaseUrl}/admin");
+
+            // Assert
+            await _authHelper.VerifyAccessDeniedAsync();
+        }
+
+        [Fact]
+        public async Task UserCanResetPassword()
+        {
+            // Act
+            await _loginPage.ClickLoginButton();
+            await _page!.ClickAsync("[data-testid='forgot-password-link']");
+            
+            await _page!.FillAsync("[data-testid='reset-email']", TestConfigurations.TestUsers.UserEmail);
+            await _page!.ClickAsync("[data-testid='reset-password-submit']");
+
+            // Assert
+            await _page!.WaitForSelectorAsync("[data-testid='reset-success-message']",
+                new PageWaitForSelectorOptions { Timeout = TestConfigurations.Timeouts.Default });
+            
+            var successMessage = await _page!.QuerySelectorAsync("[data-testid='reset-success-message']");
+            successMessage.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task UserCanUpdateProfile()
+        {
+            // Arrange
+            await _authHelper.LoginAsUserAsync();
+            var newDisplayName = $"Updated Name {Guid.NewGuid():N}";
+
+            // Act
+            await _page!.ClickAsync("[data-testid='user-menu']");
+            await _page!.ClickAsync("[data-testid='profile-link']");
+            
+            await _page!.FillAsync("[data-testid='display-name-input']", newDisplayName);
+            await _page!.ClickAsync("[data-testid='update-profile-btn']");
+
+            // Assert
+            await _page!.WaitForSelectorAsync("[data-testid='profile-success-message']",
+                new PageWaitForSelectorOptions { Timeout = TestConfigurations.Timeouts.Default });
+            
+            var successMessage = await _page!.QuerySelectorAsync("[data-testid='profile-success-message']");
+            successMessage.Should().NotBeNull();
+
+            // Verify the display name was updated
+            await _page!.ClickAsync("[data-testid='user-menu']");
+            var displayNameElement = await _page!.QuerySelectorAsync("[data-testid='user-display-name']");
+            var displayName = await displayNameElement.TextContentAsync();
+            displayName.Should().Contain(newDisplayName);
+        }
+    }
+}

@@ -1,6 +1,21 @@
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using System.Security.Claims;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using API;
+using Application.Interfaces;
+using Infrastructure.Security;
+
 namespace API.IntegrationTests
 {
-    public class TestProgram : WebApplicationFactory<Program>
+    public class TestProgram : WebApplicationFactory<API.Controllers.TicketsController>
     {
         public static Guid Project1Id { get; private set; } = Guid.Parse("87654321-4321-4321-4321-210987654321");
         public static Guid Project2Id { get; private set; } = Guid.Parse("98765432-1234-1234-1234-123456789012");
@@ -66,10 +81,8 @@ namespace API.IntegrationTests
                 services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Application.Tickets.List.Handler).Assembly));
                 services.AddAutoMapper(typeof(Application.Core.MappingProfiles).Assembly);
 
-                // Create the service provider
                 var sp = services.BuildServiceProvider();
 
-                // Create a scope to get the services
                 using var scope = sp.CreateScope();
                 var scopedServices = scope.ServiceProvider;
                 var db = scopedServices.GetRequiredService<DataContext>();
@@ -77,10 +90,7 @@ namespace API.IntegrationTests
 
                 try
                 {
-                    // Ensure the database is created
                     db.Database.EnsureCreated();
-
-                    // Seed test data
                     SeedTestData(db, scopedServices);
                 }
                 catch (Exception ex)
@@ -158,7 +168,7 @@ namespace API.IntegrationTests
                 Submitter = adminUser.UserName,
                 Assigned = testUser.UserName,
                 Priority = "Medium",
-                Severity = "Minor",
+                Severity = "Low",
                 Status = "Open",
                 StartDate = DateTime.UtcNow,
                 EndDate = DateTime.UtcNow.AddDays(7),
@@ -177,7 +187,7 @@ namespace API.IntegrationTests
                 Submitter = testUser.UserName,
                 Assigned = testUser.UserName,
                 Priority = "High",
-                Severity = "Major",
+                Severity = "Medium",
                 Status = "In Progress",
                 StartDate = DateTime.UtcNow,
                 EndDate = DateTime.UtcNow.AddDays(7),

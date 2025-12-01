@@ -3,9 +3,6 @@ using FluentAssertions;
 
 namespace Domain.UnitTests.Models
 {
-    /// <summary>
-    /// Project business logic tests for bug tracking project management
-    /// </summary>
     public class ProjectTests
     {
         [Fact]
@@ -13,12 +10,11 @@ namespace Domain.UnitTests.Models
         {
             var project = new Project();
             
-            // Business defaults
-            project.IsCancelled.Should().BeFalse(); // projects start as active
-            project.IsDeleted.Should().BeFalse(); // projects start as active
-            project.DeletedDate.Should().BeNull(); // no deletion timestamp initially
-            project.Participants.Should().NotBeNull(); // participants collection must be initialized
-            project.Participants.Should().BeEmpty(); // new projects have no participants initially
+            project.IsCancelled.Should().BeFalse();
+            project.IsDeleted.Should().BeFalse();
+            project.DeletedDate.Should().BeNull();
+            project.Participants.Should().NotBeNull();
+            project.Participants.Should().BeEmpty();
         }
 
         [Fact]
@@ -34,11 +30,9 @@ namespace Domain.UnitTests.Models
             project.Description = "Complete redesign of the e-commerce platform with modern UI and improved performance";
             project.StartDate = DateTime.UtcNow;
             
-            project.StartDate = DateTime.UtcNow.AddDays(7); // Project starts in a week
+            project.StartDate = DateTime.UtcNow.AddDays(7);
             
-            project.IsCancelled = false; // Successfully completed
-            
-            // Business validations
+            project.IsCancelled = false;
             project.ProjectTitle.Should().Be("E-commerce Platform Redesign");
             project.ProjectOwner.Should().Be(ownerId);
             project.Description.Should().Contain("modern UI");
@@ -59,7 +53,6 @@ namespace Domain.UnitTests.Models
             project.Description = description;
             project.StartDate = DateTime.UtcNow;
             
-            // Real software development projects
             project.ProjectTitle.Should().Be(title);
             project.Description.Should().Be(description);
             project.StartDate.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(1));
@@ -115,11 +108,10 @@ namespace Domain.UnitTests.Models
             project.Participants.Add(developer2);
             project.Participants.Add(developer3);
             
-            // Project execution
             project.Participants.Should().HaveCount(4);
-            project.Participants.Count(p => p.IsOwner).Should().Be(1); // Single project owner
-            project.Participants.Count(p => p.Role == "Developer").Should().Be(3); // Three developers
-            project.Participants.All(p => p.ProjectId == project.Id).Should().BeTrue(); // All in same project
+            project.Participants.Count(p => p.IsOwner).Should().Be(1);
+            project.Participants.Count(p => p.Role == "Developer").Should().Be(3);
+            project.Participants.All(p => p.ProjectId == project.Id).Should().BeTrue();
         }
 
         [Fact]
@@ -135,9 +127,7 @@ namespace Domain.UnitTests.Models
             project.Description = "Modernize legacy APIs to RESTful architecture";
             project.StartDate = startDate;
             
-            project.IsCancelled = false; // Active project
-            
-            // Project tracking
+            project.IsCancelled = false;
             project.ProjectTitle.Should().Be("API Modernization");
             project.StartDate.Should().Be(startDate);
             project.IsCancelled.Should().BeFalse();
@@ -161,11 +151,10 @@ namespace Domain.UnitTests.Models
             project.IsCancelled = true;
             var afterCancellation = DateTime.UtcNow;
             
-            // Project governance and audit
             project.IsCancelled.Should().BeTrue();
-            project.IsDeleted.Should().BeFalse(); // Cancelled but not deleted
-            project.DeletedDate.Should().BeNull(); // No deletion timestamp
-            project.StartDate.Should().BeBefore(beforeCancellation); // Project was active before cancellation
+            project.IsDeleted.Should().BeFalse();
+            project.DeletedDate.Should().BeNull();
+            project.StartDate.Should().BeBefore(beforeCancellation);
         }
 
         [Fact]
@@ -186,12 +175,11 @@ namespace Domain.UnitTests.Models
             project.DeletedDate = DateTime.UtcNow;
             var afterDeletion = DateTime.UtcNow;
             
-            // Data retention and compliance
             project.IsDeleted.Should().BeTrue();
             project.DeletedDate.Should().NotBeNull();
             project.DeletedDate.Value.Should().BeOnOrAfter(beforeDeletion);
             project.DeletedDate.Value.Should().BeOnOrBefore(afterDeletion);
-            project.IsCancelled.Should().BeFalse(); // Deleted but not necessarily cancelled
+            project.IsCancelled.Should().BeFalse();
         }
 
         [Fact]
@@ -248,7 +236,6 @@ namespace Domain.UnitTests.Models
         [Fact]
         public void Project_ProjectOwnership_ShouldSupportAccountability()
         {
-            // Arrange
             var project = new Project
             {
                 Id = Guid.NewGuid(),
@@ -268,7 +255,6 @@ namespace Domain.UnitTests.Models
             
             project.Participants.Add(ownerParticipant);
             
-            // Accountability and governance
             project.ProjectOwner.Should().Be("project-manager@company.com");
             project.Participants.Should().HaveCount(1);
             project.Participants.First().IsOwner.Should().BeTrue();

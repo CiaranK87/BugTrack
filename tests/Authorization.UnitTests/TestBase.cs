@@ -1,3 +1,18 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using API.Authorization;
+using Application.Interfaces;
+using Domain;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Moq;
+using Persistence;
+
 namespace Authorization.UnitTests;
 
 public class TestBase : IDisposable
@@ -172,7 +187,7 @@ public class TestBase : IDisposable
                 Assigned = "user5",
                 Status = "Open",
                 Priority = "Medium",
-                Severity = "Minor",
+                Severity = "Low",
                 StartDate = DateTime.UtcNow,
                 EndDate = DateTime.UtcNow.AddDays(1),
                 Updated = DateTime.UtcNow,
@@ -189,7 +204,7 @@ public class TestBase : IDisposable
                 Assigned = "user4",
                 Status = "In Progress",
                 Priority = "High",
-                Severity = "Major", 
+                Severity = "Medium",
                 StartDate = DateTime.UtcNow,
                 EndDate = DateTime.UtcNow.AddDays(1),
                 Updated = DateTime.UtcNow,

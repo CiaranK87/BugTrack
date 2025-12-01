@@ -1,3 +1,17 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using API.Authorization;
+using Application.Interfaces;
+using Domain;
+using FluentAssertions;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.DependencyInjection;
+using Moq;
+using Persistence;
+using Xunit;
+
 namespace Authorization.UnitTests;
 
 public class TicketAuthorizationHandlerTests : TestBase
@@ -49,7 +63,7 @@ public class TicketAuthorizationHandlerTests : TestBase
             Assigned = "user5",
             Status = "Open",
             Priority = "Medium",
-            Severity = "Minor",
+            Severity = "Low",
             CreatedAt = DateTime.UtcNow,
             Updated = DateTime.UtcNow
         };
