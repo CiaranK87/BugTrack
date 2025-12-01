@@ -19,7 +19,6 @@ namespace API.Extensions
             services.AddSwaggerGen();
             services.AddDbContext<DataContext>(opt =>
             {
-                // Try to get connection string from environment variable first, then from configuration
                 var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING")
                     ?? config.GetConnectionString("DefaultConnection");
                 
@@ -27,36 +26,46 @@ namespace API.Extensions
                 opt.UseNpgsql(connectionString);
             });
 
-            services.AddCors(opt => {
+            services.AddCors(opt =>
+            {
                 opt.AddPolicy("CorsPolicy", policy =>
                 {
-                    var isDevelopment = config["ASPNETCORE_ENVIRONMENT"] == "Development";
-                    
-                    string[] allowedOrigins;
-                    
+                    var env = config["ASPNETCORE_ENVIRONMENT"];
+                    var isDevelopment = env == "Development";
+
+                    var rawOrigins = config["ALLOWED_ORIGINS"];
+
+                    var configuredOrigins = rawOrigins?
+                        .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                        ?? Array.Empty<string>();
+
+                    string[] devOrigins = Array.Empty<string>();
+
                     if (isDevelopment)
                     {
-                        var configuredOrigins = config["ALLOWED_ORIGINS"]?.Split(',')
-                            ?? new[] { "https://ckbugtrack-app01.vercel.app" };
-                        
-                        allowedOrigins = configuredOrigins
-                            .Concat(new[] { "http://localhost:3000", "https://localhost:3000" })
-                            .Distinct()
-                            .ToArray();
+                        devOrigins = new[]
+                        {
+                            "http://localhost:3000",
+                            "https://localhost:3000"
+                        };
                     }
-                    else
-                    {
-                        // Production: Only allow configured origins
-                        allowedOrigins = config["ALLOWED_ORIGINS"]?.Split(',')
-                            ?? new[] { "https://ckbugtrack-app01.vercel.app" };
-                    }
-                    
-                    policy.AllowAnyHeader()
-                          .AllowAnyMethod()
-                          .WithOrigins(allowedOrigins)
-                          .AllowCredentials();
+
+                    // Merge + remove duplicates
+                    var finalOrigins = configuredOrigins
+                        .Concat(devOrigins)
+                        .Distinct()
+                        .ToArray();
+
+                    if (!finalOrigins.Any())
+                        throw new Exception("No CORS origins configured! Add ALLOWED_ORIGINS to settings.");
+
+                    policy.WithOrigins(finalOrigins)
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
                 });
             });
+
 
             // Configure SignalR
             services.AddSignalR(options =>
