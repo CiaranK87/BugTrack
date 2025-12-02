@@ -34,7 +34,7 @@ namespace API.Controllers
                     return BadRequest("All fields are required");
                 }
 
-                // Validate email format
+                
                 try
                 {
                     var mailAddress = new MailAddress(request.Email);
@@ -44,7 +44,6 @@ namespace API.Controllers
                     return BadRequest("Invalid email format");
                 }
 
-                // Log the request details
                 _logger.LogInformation($"Access request received from {request.Email} ({request.Name}) with message: {request.Message}");
                 
                 // Send email notification (only if SMTP is configured)
@@ -126,8 +125,7 @@ namespace API.Controllers
                 
                 if (response.IsSuccessStatusCode)
                 {
-                    var responseContent = await response.Content.ReadAsStringAsync();
-                    _logger.LogInformation("Email sent successfully to {AdminEmail} using Resend. Response: {Response}", adminEmail, responseContent);
+                    _logger.LogInformation("Email sent successfully to {AdminEmail} using Resend", adminEmail);
                 }
                 else
                 {
