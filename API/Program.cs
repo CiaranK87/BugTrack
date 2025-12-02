@@ -20,10 +20,7 @@ Log.Logger = new LoggerConfiguration()
 builder.Host.UseSerilog();
 
 // Load environment variables from .env file
-if (builder.Environment.IsDevelopment())
-{
-    DotNetEnv.Env.Load();
-}
+DotNetEnv.Env.Load();
 
 // Add services to the container.
 builder.Services.AddControllers()
