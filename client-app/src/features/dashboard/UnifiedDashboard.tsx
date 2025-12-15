@@ -51,21 +51,21 @@ export default observer(function UnifiedDashboard() {
       const dateB = b.updated ? safeGetDate(b.updated) : (b.startDate ? safeGetDate(b.startDate) : new Date(0));
       return dateB.getTime() - dateA.getTime();
     });
-  
+
   const recentProjects = activeProjects
     .sort((a, b) => {
       const dateA = a.startDate ? safeGetDate(a.startDate) : new Date(0);
       const dateB = b.startDate ? safeGetDate(b.startDate) : new Date(0);
       return dateB.getTime() - dateA.getTime();
     });
-  
+
   const displayedTickets = showAllTickets ? recentTickets : recentTickets.slice(0, 3);
   const displayedProjects = showAllProjects ? recentProjects : recentProjects.slice(0, 3);
 
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case 'Critical': return '#ff6b6b';  
+      case 'Critical': return '#ff6b6b';
       case 'High': return '#ffa94d';
       case 'Medium': return '#ffd43b';
       case 'Low': return '#8ce99a';
@@ -90,7 +90,7 @@ export default observer(function UnifiedDashboard() {
       </div>
 
       {/* Key Statistics */}
-      <Grid columns={4} style={{ marginBottom: '30px' }}>
+      <Grid columns={4} className="key-statistics-grid" style={{ marginBottom: '30px' }}>
         <Grid.Column>
           <Card fluid>
             <Card.Content textAlign="center">
@@ -220,8 +220,8 @@ export default observer(function UnifiedDashboard() {
                       </span>
                     </Card.Meta>
                     <Card.Description>
-                      {project.description.length > 80 
-                        ? `${project.description.substring(0, 80)}...` 
+                      {project.description.length > 80
+                        ? `${project.description.substring(0, 80)}...`
                         : project.description}
                     </Card.Description>
                   </Card.Content>
@@ -303,8 +303,8 @@ export default observer(function UnifiedDashboard() {
                       </span>
                     </Card.Meta>
                     <Card.Description>
-                      {ticket.description.length > 80 
-                        ? `${ticket.description.substring(0, 80)}...` 
+                      {ticket.description.length > 80
+                        ? `${ticket.description.substring(0, 80)}...`
                         : ticket.description}
                     </Card.Description>
                   </Card.Content>

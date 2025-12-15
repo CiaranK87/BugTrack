@@ -1835,4 +1835,61 @@ body.dark-mode .theme-toggle-slider.ui.toggle.checkbox input:checked~label:befor
     opacity: 1;
     visibility: visible;
   }
+
+  /* Mobile Dashboard Statistics Fix */
+  .ui.grid.key-statistics-grid {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    margin-left: -0.5rem !important;
+    margin-right: -0.5rem !important;
+  }
+
+  .ui.grid.key-statistics-grid>.column {
+    width: 50% !important;
+    padding: 0.5rem !important;
+  }
+
+  /* Adjust Statistic Font Sizes for Mobile */
+  .ui.grid.key-statistics-grid .statistic {
+    margin: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+  }
+
+  .ui.grid.key-statistics-grid .statistic>.value {
+    font-size: 1.5rem !important;
+    text-align: center !important;
+  }
+
+  .ui.grid.key-statistics-grid .statistic>.label {
+    font-size: 0.75rem !important;
+    white-space: normal !important;
+    line-height: 1.2 !important;
+    text-transform: uppercase !important;
+    text-align: center !important;
+    margin-top: 5px !important;
+  }
+
+  /* Reduce Card padding to save space */
+  .ui.grid.key-statistics-grid .ui.card {
+    min-height: 100px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 100% !important;
+  }
+
+  .ui.grid.key-statistics-grid .ui.card .content {
+    padding: 0.5em !important;
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 100% !important;
+    flex-grow: 1 !important;
+  }
 }
