@@ -88,23 +88,23 @@ body.dark-mode [style*="color: rgb(0, 128, 128)"] {
 body.dark-mode .ui.segment,
 body.dark-mode .ui.card,
 body.dark-mode .ui.modal,
-body.dark-mode .ui.modal > .header,
-body.dark-mode .ui.modal > .content,
-body.dark-mode .ui.modal > .actions {
+body.dark-mode .ui.modal>.header,
+body.dark-mode .ui.modal>.content,
+body.dark-mode .ui.modal>.actions {
   background-color: var(--dm-bg-secondary) !important;
   color: var(--dm-text-secondary) !important;
   border-color: var(--dm-border) !important;
 }
 
-body.dark-mode .ui.card > .content > .header {
+body.dark-mode .ui.card>.content>.header {
   color: var(--dm-text-primary) !important;
 }
 
-body.dark-mode .ui.card > .content > .meta {
+body.dark-mode .ui.card>.content>.meta {
   color: var(--dm-text-tertiary) !important;
 }
 
-body.dark-mode .ui.card > .content > .description {
+body.dark-mode .ui.card>.content>.description {
   color: #e2e8f0 !important;
 }
 
@@ -134,9 +134,9 @@ body.dark-mode .ui.comment .metadata {
 }
 
 /* Form elements in dark mode */
-body.dark-mode .ui.form .field > label,
-body.dark-mode .ui.form .inline.fields > label,
-body.dark-mode .ui.form .fields > label {
+body.dark-mode .ui.form .field>label,
+body.dark-mode .ui.form .inline.fields>label,
+body.dark-mode .ui.form .fields>label {
   color: var(--dm-text-secondary) !important;
 }
 
@@ -223,17 +223,17 @@ body.dark-mode .ui.selection.dropdown {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;
 }
 
-body.dark-mode .ui.dropdown .menu > .item,
+body.dark-mode .ui.dropdown .menu>.item,
 body.dark-mode .ui.selection.dropdown .text {
   color: var(--dm-text-secondary) !important;
 }
 
-body.dark-mode .ui.dropdown .menu > .item:hover,
+body.dark-mode .ui.dropdown .menu>.item:hover,
 body.dark-mode .ui.dropdown .menu .item:hover {
   background-color: var(--dm-bg-tertiary) !important;
 }
 
-body.dark-mode .ui.dropdown .menu > .selected.item,
+body.dark-mode .ui.dropdown .menu>.selected.item,
 body.dark-mode .ui.dropdown .menu .item.active {
   background-color: var(--dm-bg-secondary) !important;
   color: #63b3ed !important;
@@ -402,26 +402,26 @@ body.dark-mode .ui.checkbox .box {
   color: var(--dm-text-secondary) !important;
 }
 
-body.dark-mode .ui.checkbox input:checked ~ .box:after,
-body.dark-mode .ui.checkbox input:checked ~ label:after {
+body.dark-mode .ui.checkbox input:checked~.box:after,
+body.dark-mode .ui.checkbox input:checked~label:after {
   color: var(--dm-text-secondary) !important;
 }
 
-body.dark-mode .ui.checkbox input:checked ~ .box:before,
-body.dark-mode .ui.checkbox input:checked ~ label:before {
+body.dark-mode .ui.checkbox input:checked~.box:before,
+body.dark-mode .ui.checkbox input:checked~label:before {
   background-color: var(--dm-primary) !important;
   border-color: var(--dm-primary) !important;
 }
 
-body.dark-mode .ui.checkbox input:not(:checked) ~ .box:before,
-body.dark-mode .ui.checkbox input:not(:checked) ~ label:before {
+body.dark-mode .ui.checkbox input:not(:checked)~.box:before,
+body.dark-mode .ui.checkbox input:not(:checked)~label:before {
   background-color: var(--dm-bg-tertiary) !important;
   border-color: var(--dm-border-hover) !important;
 }
 
 /* Icon styling in dark mode */
 body.dark-mode .ui.icon.button,
-body.dark-mode .ui.button > .icon {
+body.dark-mode .ui.button>.icon {
   color: var(--dm-text-secondary) !important;
 }
 
@@ -552,7 +552,7 @@ body.dark-mode .masthead {
 }
 
 /* Hide dropdown arrow for iconless dropdown */
-.iconless-dropdown > .dropdown.icon {
+.iconless-dropdown>.dropdown.icon {
   display: none !important;
 }
 
@@ -1267,7 +1267,7 @@ body.dark-mode button[style*="color:#888'"]:hover {
   border: 1px solid #e8e8e8;
   border-radius: 8px;
   padding: 16px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   transition: all 0.2s ease;
   min-height: 120px;
 }
@@ -1342,7 +1342,7 @@ body.dark-mode button[style*="color:#888'"]:hover {
   border-radius: 8px;
   padding: 12px;
   margin-bottom: 8px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .reply-author {
@@ -1490,11 +1490,11 @@ body.dark-mode .ui.card .extra span[style*="color:#666"] {
   border-radius: 50%;
 }
 
-.theme-toggle-slider input:checked + .slider {
+.theme-toggle-slider input:checked+.slider {
   background-color: var(--dm-primary);
 }
 
-.theme-toggle-slider input:checked + .slider:before {
+.theme-toggle-slider input:checked+.slider:before {
   transform: translateX(20px);
 }
 
@@ -1503,7 +1503,7 @@ body.dark-mode .theme-toggle-slider .slider {
   background-color: #555;
 }
 
-body.dark-mode .theme-toggle-slider input:checked + .slider {
+body.dark-mode .theme-toggle-slider input:checked+.slider {
   background-color: var(--dm-primary);
 }
 
@@ -1536,11 +1536,11 @@ body.dark-mode .theme-toggle-slider input:checked + .slider {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
 }
 
-.theme-toggle-slider.ui.toggle.checkbox input:checked ~ label:before {
+.theme-toggle-slider.ui.toggle.checkbox input:checked~label:before {
   background-color: var(--dm-primary) !important;
 }
 
-.theme-toggle-slider.ui.toggle.checkbox input:checked ~ label:after {
+.theme-toggle-slider.ui.toggle.checkbox input:checked~label:after {
   transform: translateX(1.5em) !important;
 }
 
@@ -1549,11 +1549,290 @@ body.dark-mode .theme-toggle-slider.ui.toggle.checkbox label:before {
   background-color: #555 !important;
 }
 
-body.dark-mode .theme-toggle-slider.ui.toggle.checkbox input:checked ~ label:before {
+body.dark-mode .theme-toggle-slider.ui.toggle.checkbox input:checked~label:before {
   background-color: var(--dm-primary) !important;
 }
 
 /* Ensure smooth animation for the toggle handle */
-.theme-toggle-slider.ui.toggle.checkbox input:not(:checked) ~ label:after {
+.theme-toggle-slider.ui.toggle.checkbox input:not(:checked)~label:after {
   transform: translateX(0) !important;
+}
+
+/* Mobile Navbar & Drawer Styles */
+
+/* Default - Desktop */
+.mobile-hamburger {
+  display: none !important;
+}
+
+.mobile-drawer {
+  display: none;
+}
+
+.drawer-overlay {
+  display: none;
+}
+
+/* Mobile Modifications */
+@media (max-width: 767px) {
+
+  /* Navbar Container Layout */
+  .ui.menu.navbar-menu .ui.container {
+    display: grid !important;
+    grid-template-columns: 50px 1fr 50px !important;
+    align-items: center !important;
+    width: 100% !important;
+    padding: 0 10px !important;
+  }
+
+  /* Ensure Navbar Height & Full Width */
+  .ui.menu.navbar-menu {
+    min-height: 60px !important;
+    width: 100vw !important;
+    left: 0 !important;
+    right: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Show Hamburger */
+  /* Show Hamburger */
+  .mobile-hamburger {
+    display: flex !important;
+    justify-content: flex-start !important;
+    align-items: center;
+    padding: 10px !important;
+    margin: 0 !important;
+  }
+
+  /* Hide Desktop Items */
+  .desktop-nav-item {
+    display: none !important;
+  }
+
+  /* Center Logo and Fix Background */
+  /* Center Logo and Fix Background */
+  .brand-logo,
+  .brand-logo:active,
+  .brand-logo.active,
+  .brand-logo:hover,
+  .brand-logo:focus,
+  .ui.menu .brand-logo.active,
+  .ui.menu .item.brand-logo.active,
+  a.item.brand-logo.active {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    font-weight: bold;
+  }
+
+  /* FORCE REMOVE ALL GREY BACKGROUNDS ON MOBILE NAVBAR ITEMS */
+  /* FORCE REMOVE ALL GREY BACKGROUNDS ON MOBILE NAVBAR ITEMS */
+  /* Target specific Semantic UI Inverted Menu selectors to override defaults */
+  .ui.inverted.menu.navbar-menu .item,
+  .ui.inverted.menu.navbar-menu .item:hover,
+  .ui.inverted.menu.navbar-menu .item:active,
+  .ui.inverted.menu.navbar-menu .item.active,
+  .ui.inverted.menu.navbar-menu .active.item,
+  .ui.inverted.menu.navbar-menu a.item:hover,
+  .ui.inverted.menu.navbar-menu a.item:active,
+  .ui.inverted.menu.navbar-menu a.item.active,
+  .ui.inverted.menu.navbar-menu a.active.item,
+  .ui.inverted.menu.navbar-menu .item:before,
+  .ui.inverted.menu.navbar-menu .item:after {
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+
+  /* Specific override for the dashboard/brand logo item which might be getting 'header' styles */
+  .ui.inverted.menu.navbar-menu .item.header.active,
+  .ui.inverted.menu.navbar-menu .item.brand-logo.active {
+    background: transparent !important;
+  }
+
+  /* User Menu */
+  .user-menu-item,
+  .user-menu-item:hover,
+  .user-menu-item:active,
+  .user-menu-item.active,
+  .user-menu-item .ui.dropdown,
+  .user-menu-item .ui.dropdown:hover,
+  .user-menu-item .ui.dropdown:active,
+  .user-menu-item .ui.dropdown.active {
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    padding: 10px !important;
+    margin: 0 !important;
+    background: transparent !important;
+  }
+
+  /* Fix Issue 2: Hide user name on mobile to prevent overflow */
+  .user-menu-item .ui.dropdown>.text {
+    display: none !important;
+  }
+
+  /* Fix Issue 3: Force Dropdown Icon & Positioning - Remove GREY BACKGROUND from ICON */
+  .user-menu-item .ui.dropdown>.dropdown.icon,
+  .user-menu-item .ui.dropdown>.dropdown.icon:hover,
+  .user-menu-item .ui.dropdown>.dropdown.icon:active,
+  .user-menu-item .ui.dropdown.active>.dropdown.icon {
+    display: inline-block !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+
+
+
+
+  /* Fix Issue 3: Dropdown positioning & Background Handling */
+  .user-menu-item .ui.dropdown .menu {
+    left: auto !important;
+    right: 0 !important;
+    margin-top: 5px !important;
+  }
+
+
+
+  /* Drawer Styles */
+  .mobile-drawer {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: -260px;
+    width: 260px;
+    height: 100vh;
+    z-index: 2000;
+    transition: left 0.3s ease;
+    padding-top: 0;
+  }
+
+  /* Light Mode Drawer Background */
+  .mobile-drawer {
+    background-color: #ffffff;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Dark Mode Drawer Background */
+  body.dark-mode .mobile-drawer {
+    background-color: var(--dm-bg-secondary);
+    border-right: 1px solid var(--dm-border);
+  }
+
+  .mobile-drawer.open {
+    left: 0;
+  }
+
+  /* Drawer Header */
+  .drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    height: 60px;
+    /* Match navbar height */
+    background: linear-gradient(135deg, rgb(20, 20, 20) 23%, rgb(7, 183, 243) 100%);
+    color: white;
+  }
+
+  body.dark-mode .drawer-header {
+    background: linear-gradient(135deg, rgb(10, 10, 10) 23%, rgb(5, 130, 170) 100%);
+  }
+
+  .drawer-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+
+  /* Drawer Content */
+  .drawer-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 0;
+  }
+
+  .drawer-item {
+    display: flex !important;
+    align-items: center;
+    padding: 12px 20px;
+    color: #333;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    text-decoration: none;
+  }
+
+  .drawer-item i.icon {
+    margin-right: 15px;
+    width: 20px;
+    text-align: center;
+  }
+
+  .drawer-item:hover {
+    background-color: #f0f0f0;
+    color: #000;
+  }
+
+  .drawer-item.active {
+    background-color: transparent;
+    color: #1890ff;
+    border-right: 3px solid #1890ff;
+  }
+
+  /* Dark Mode Items */
+  body.dark-mode .drawer-item {
+    color: var(--dm-text-secondary);
+  }
+
+  body.dark-mode .drawer-item:hover {
+    background-color: var(--dm-bg-tertiary);
+    color: #fff;
+  }
+
+  body.dark-mode .drawer-item.active {
+    background-color: transparent;
+    color: #63b3ed;
+    border-right-color: #63b3ed;
+  }
+
+  .drawer-section {
+    margin-bottom: 10px;
+  }
+
+  .drawer-divider {
+    padding: 8px 20px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: #888;
+    font-weight: bold;
+    letter-spacing: 1px;
+  }
+
+  /* Overlay */
+  .drawer-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1500;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s;
+  }
+
+  .drawer-overlay.open {
+    opacity: 1;
+    visibility: visible;
+  }
 }
