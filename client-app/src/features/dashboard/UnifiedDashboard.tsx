@@ -134,7 +134,7 @@ export default observer(function UnifiedDashboard() {
       </Grid>
 
       {/* Charts */}
-      <Grid columns={2} style={{ marginBottom: '30px' }}>
+      <Grid columns={2} className="charts-grid" style={{ marginBottom: '30px' }}>
         <Grid.Column>
           <Segment>
             <Header as="h3">Tickets by Status</Header>
@@ -180,7 +180,7 @@ export default observer(function UnifiedDashboard() {
       </Grid>
 
       {/* Recent Items */}
-      <Grid columns={2}>
+      <Grid columns={2} className="recent-items-grid">
         <Grid.Column>
           <Segment>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
