@@ -2110,4 +2110,24 @@ body.dark-mode .theme-toggle-slider.ui.toggle.checkbox input:checked~label:befor
     width: 100% !important;
     justify-content: center !important;
   }
+
+  /* Force CARD View on Mobile Ticket Dashboard - Hide EVERYTHING else */
+  /* Using high specificity to override .ticket-dashboard-inner .ui.buttons */
+  .ticket-dashboard-inner .ui.buttons.view-toggle-buttons {
+    display: none !important;
+  }
+
+  .view-container-kanban,
+  .view-container-list {
+    display: none !important;
+  }
+
+  .view-container-cards {
+    display: block !important;
+  }
+
+  /* Stack Ticket Cards Vertically on Mobile */
+  .ticket-card-grid {
+    grid-template-columns: 1fr !important;
+  }
 }

@@ -358,33 +358,33 @@ export default observer(function EnhancedTicketDashboard() {
       </div>
 
       <div style={{ marginTop: '40px' }}>
-        {viewMode === 'kanban' && (
+        <div className="view-container-kanban" style={{ display: viewMode === 'kanban' ? 'block' : 'none' }}>
           <KanbanBoard
             columns={getKanbanColumns()}
             onDragEnd={handleDragEnd}
             renderItem={(ticket) => renderTicketCard(ticket)}
             loading={loading}
           />
-        )}
+        </div>
 
-        {viewMode === 'cards' && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
+        <div className="view-container-cards" style={{ display: viewMode === 'cards' ? 'block' : 'none' }}>
+          <div className="ticket-card-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
             {filteredTickets.map((ticket) => (
               <div key={ticket.id} style={{ height: '320px' }}>
                 {renderTicketCard(ticket)}
               </div>
             ))}
           </div>
-        )}
+        </div>
 
-        {viewMode === 'list' && (
+        <div className="view-container-list" style={{ display: viewMode === 'list' ? 'block' : 'none' }}>
           <Segment>
             <Header sub color="teal">
               Active Tickets ({filteredTickets.length})
             </Header>
             {filteredTickets.map((ticket) => renderTicketListItem(ticket))}
           </Segment>
-        )}
+        </div>
       </div>
 
       <Confirm
