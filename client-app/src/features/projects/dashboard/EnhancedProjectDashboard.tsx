@@ -227,7 +227,7 @@ export default observer(function EnhancedProjectDashboard() {
   ];
 
   return (
-    <div style={{ padding: '20px' }}>
+    <div className="enhanced-project-dashboard" style={{ padding: '20px' }}>
       <div style={{ marginBottom: '20px' }}>
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
           <Header as="h2" color="teal">Project Dashboard</Header>

@@ -290,7 +290,7 @@ export default observer(function EnhancedTicketDashboard() {
   const filteredTickets = getFilteredAndSortedTickets();
 
   return (
-    <div style={{ padding: '20px' }}>
+    <div className="enhanced-ticket-dashboard" style={{ padding: '20px' }}>
       <div style={{ textAlign: 'center', marginBottom: '40px' }}>
         <Header as="h2" color="teal">Ticket Dashboard</Header>
       </div>

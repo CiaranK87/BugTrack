@@ -2020,16 +2020,16 @@ body.dark-mode .theme-toggle-slider.ui.toggle.checkbox input:checked~label:befor
 
   /* Force List View on Mobile - Hide EVERYTHING else */
   /* Using high specificity to override .project-dashboard-left .ui.buttons */
-  .project-dashboard-left .ui.buttons.view-toggle-buttons {
+  .enhanced-project-dashboard .project-dashboard-left .ui.buttons.view-toggle-buttons {
     display: none !important;
   }
 
-  .view-container-cards,
-  .view-container-table {
+  .enhanced-project-dashboard .view-container-cards,
+  .enhanced-project-dashboard .view-container-table {
     display: none !important;
   }
 
-  .view-container-list {
+  .enhanced-project-dashboard .view-container-list {
     display: block !important;
   }
 
@@ -2113,21 +2113,21 @@ body.dark-mode .theme-toggle-slider.ui.toggle.checkbox input:checked~label:befor
 
   /* Force CARD View on Mobile Ticket Dashboard - Hide EVERYTHING else */
   /* Using high specificity to override .ticket-dashboard-inner .ui.buttons */
-  .ticket-dashboard-inner .ui.buttons.view-toggle-buttons {
+  .enhanced-ticket-dashboard .ticket-dashboard-inner .ui.buttons.view-toggle-buttons {
     display: none !important;
   }
 
-  .view-container-kanban,
-  .view-container-list {
+  .enhanced-ticket-dashboard .view-container-kanban,
+  .enhanced-ticket-dashboard .view-container-list {
     display: none !important;
   }
 
-  .view-container-cards {
+  .enhanced-ticket-dashboard .view-container-cards {
     display: block !important;
   }
 
   /* Stack Ticket Cards Vertically on Mobile */
-  .ticket-card-grid {
+  .enhanced-ticket-dashboard .ticket-card-grid {
     grid-template-columns: 1fr !important;
   }
 }
