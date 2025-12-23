@@ -241,7 +241,7 @@ export default observer(function EnhancedProjectDashboard() {
               onChange={(e) => setSearchTerm(e.target.value)}
               style={{ width: '250px' }}
             />
-            <ButtonGroup>
+            <ButtonGroup className="view-toggle-buttons">
               <Button
                 icon="th"
                 active={viewMode === 'cards'}
@@ -333,26 +333,26 @@ export default observer(function EnhancedProjectDashboard() {
         </Grid>
       </div>
 
-      {viewMode === 'cards' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '20px' }}>
+      <div className="view-container-cards" style={{ display: viewMode === 'cards' ? 'block' : 'none' }}>
+        <div className="project-card-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '20px' }}>
           {filteredProjects.map((project) => (
             <div key={project.id} style={{ height: '280px' }}>
               {renderProjectCard(project)}
             </div>
           ))}
         </div>
-      )}
+      </div>
 
-      {viewMode === 'list' && (
+      <div className="view-container-list" style={{ display: viewMode === 'list' ? 'block' : 'none' }}>
         <Segment>
           <Header sub color="teal">
             Projects ({filteredProjects.length})
           </Header>
           {filteredProjects.map((project) => renderProjectListItem(project))}
         </Segment>
-      )}
+      </div>
 
-      {viewMode === 'table' && (
+      <div className="view-container-table" style={{ display: viewMode === 'table' ? 'block' : 'none' }}>
         <Segment>
           <Header sub color="teal">
             Projects ({filteredProjects.length})
@@ -374,7 +374,7 @@ export default observer(function EnhancedProjectDashboard() {
             </tbody>
           </table>
         </Segment>
-      )}
+      </div>
     </div>
   );
 });

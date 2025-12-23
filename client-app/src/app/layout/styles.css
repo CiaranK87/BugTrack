@@ -1980,10 +1980,22 @@ body.dark-mode .theme-toggle-slider.ui.toggle.checkbox input:checked~label:befor
     min-width: 0 !important;
   }
 
-  /* Sort dropdown button trigger full width */
+  /* Force same height for Status dropdown and Sort button */
+  .project-dashboard-dropdowns .ui.selection.dropdown,
+  .project-dashboard-dropdowns .iconless-dropdown .ui.button {
+    height: 38px !important;
+    /* Standard Semantic UI input height */
+    min-height: 38px !important;
+    display: flex !important;
+    align-items: center !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Sort dropdown button trigger full width and centered */
   .project-dashboard-dropdowns .iconless-dropdown .ui.button {
     width: 100% !important;
-    display: flex !important;
     justify-content: center !important;
   }
 
@@ -2004,5 +2016,20 @@ body.dark-mode .theme-toggle-slider.ui.toggle.checkbox input:checked~label:befor
   .ui.grid.project-dashboard-statistics>.column {
     width: 50% !important;
     padding: 0.5rem !important;
+  }
+
+  /* Force List View on Mobile - Hide EVERYTHING else */
+  /* Using high specificity to override .project-dashboard-left .ui.buttons */
+  .project-dashboard-left .ui.buttons.view-toggle-buttons {
+    display: none !important;
+  }
+
+  .view-container-cards,
+  .view-container-table {
+    display: none !important;
+  }
+
+  .view-container-list {
+    display: block !important;
   }
 }
