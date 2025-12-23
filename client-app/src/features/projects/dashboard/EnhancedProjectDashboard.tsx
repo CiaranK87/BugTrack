@@ -299,7 +299,7 @@ export default observer(function EnhancedProjectDashboard() {
 
       {/* Summary Statistics */}
       <div style={{ marginTop: '40px' }}>
-        <Grid columns={4} style={{ marginBottom: '40px' }}>
+        <Grid columns={4} className="project-dashboard-statistics" style={{ marginBottom: '40px' }}>
           <Grid.Column>
             <Segment textAlign="center">
               <Header as="h3" color="teal">{filteredProjects.length}</Header>

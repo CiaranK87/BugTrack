@@ -1992,4 +1992,17 @@ body.dark-mode .theme-toggle-slider.ui.toggle.checkbox input:checked~label:befor
     width: 100% !important;
     margin-top: 5px !important;
   }
+
+  /* Project Dashboard Statistics 2-column grid on mobile */
+  .ui.grid.project-dashboard-statistics {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    margin-left: -0.5rem !important;
+    margin-right: -0.5rem !important;
+  }
+
+  .ui.grid.project-dashboard-statistics>.column {
+    width: 50% !important;
+    padding: 0.5rem !important;
+  }
 }
