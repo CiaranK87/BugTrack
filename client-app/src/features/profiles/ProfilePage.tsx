@@ -44,13 +44,13 @@ export default observer(function ProfilePage() {
   const { profile } = userStore;
 
   return (
-    <Container style={{ marginTop: '7em', maxWidth: '1200px' }}>
+    <Container className="profile-page" style={{ marginTop: '7em', maxWidth: '1200px' }}>
       {/* Header */}
       <Segment className="profile-header-segment">
         <Grid>
           <Grid.Row>
             <Grid.Column width={10}>
-              <Header as="h2" style={{ margin: 0 }}>
+              <Header as="h2" style={{ margin: 0, paddingTop: '10px' }}>
                 <Icon name="user" style={{ marginRight: '10px' }} />
                 {profile.displayName}'s Profile
               </Header>
@@ -70,14 +70,14 @@ export default observer(function ProfilePage() {
       </Segment>
 
       {/* Profile Information and Quick Actions Side by Side */}
-      <Grid columns={2} style={{ marginBottom: '20px' }}>
+      <Grid columns={2} className="profile-info-grid" style={{ marginBottom: '20px' }}>
         <Grid.Column width={10}>
           <Segment style={{ height: '100%' }}>
             <Header as="h3" dividing>
               <Icon name="user circle" />
               Profile Information
             </Header>
-            <Grid>
+            <Grid className="profile-details-grid">
               <Grid.Row>
                 <Grid.Column width={8}>
                   <p><strong>Username:</strong> {profile.username}</p>
@@ -153,37 +153,37 @@ export default observer(function ProfilePage() {
         <Card.Group itemsPerRow={3} stackable>
           {projectStore.userProjects.map(project => {
             return (
-            <Card key={project.id} as="a" href={`/projects/${project.id}`} style={{ height: '200px' }}>
-              <Card.Content>
-                <Card.Header>
-                  {project.projectTitle}
-                </Card.Header>
-                <Card.Meta>
-                  <span style={{ fontSize: '0.9em', color: '#666' }}>
-                    Created {format(new Date(project.startDate!), 'MMM dd, yyyy')}
-                  </span>
-                </Card.Meta>
-                <Card.Description>
-                  {project.description.length > 100
-                    ? `${project.description.substring(0, 100)}...`
-                    : project.description}
-                </Card.Description>
-              </Card.Content>
-              <Card.Content extra>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <Icon name='tasks' color="blue" />
-                    <span style={{ marginLeft: '5px' }}>{project.ticketCount || 0}</span>
-                    <span style={{ marginLeft: '5px', fontSize: '0.8em', color: '#666' }}>tickets</span>
+              <Card key={project.id} as="a" href={`/projects/${project.id}`} style={{ height: '200px' }}>
+                <Card.Content>
+                  <Card.Header>
+                    {project.projectTitle}
+                  </Card.Header>
+                  <Card.Meta>
+                    <span style={{ fontSize: '0.9em', color: '#666' }}>
+                      Created {format(new Date(project.startDate!), 'MMM dd, yyyy')}
+                    </span>
+                  </Card.Meta>
+                  <Card.Description>
+                    {project.description.length > 100
+                      ? `${project.description.substring(0, 100)}...`
+                      : project.description}
+                  </Card.Description>
+                </Card.Content>
+                <Card.Content extra>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                      <Icon name='tasks' color="blue" />
+                      <span style={{ marginLeft: '5px' }}>{project.ticketCount || 0}</span>
+                      <span style={{ marginLeft: '5px', fontSize: '0.8em', color: '#666' }}>tickets</span>
+                    </div>
+                    <div>
+                      {project.isOwner && (
+                        <Icon name='star' color='yellow' />
+                      )}
+                    </div>
                   </div>
-                  <div>
-                    {project.isOwner && (
-                      <Icon name='star' color='yellow' />
-                    )}
-                  </div>
-                </div>
-              </Card.Content>
-            </Card>
+                </Card.Content>
+              </Card>
             );
           })}
         </Card.Group>
