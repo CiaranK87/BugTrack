@@ -20,12 +20,12 @@ export default observer(function EnhancedProjectDashboard() {
   const { projectStore, userStore } = useStore();
   const { loadProjects, projectsByStartDate } = projectStore;
   const { canCreateProjects } = userStore;
-  
+
   const getInitialViewMode = (): ViewMode => {
     const saved = localStorage.getItem('projectDashboardViewMode');
     return saved ? saved as ViewMode : 'list';
   };
-  
+
   const [viewMode, setViewMode] = useState<ViewMode>(getInitialViewMode);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('date-desc');
@@ -35,7 +35,7 @@ export default observer(function EnhancedProjectDashboard() {
   useEffect(() => {
     loadProjects();
   }, [loadProjects]);
-  
+
   useEffect(() => {
     localStorage.setItem('projectDashboardViewMode', viewMode);
   }, [viewMode]);
@@ -232,64 +232,64 @@ export default observer(function EnhancedProjectDashboard() {
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
           <Header as="h2" color="teal">Project Dashboard</Header>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '5px', flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap' }}>
-          <Input
-            icon="search"
-            placeholder="Search projects..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ width: '250px' }}
-          />
-          <ButtonGroup>
-            <Button
-              icon="th"
-              active={viewMode === 'cards'}
-              onClick={() => setViewMode('cards')}
-              title="Card View"
+        <div className="project-dashboard-controls" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '5px', flexWrap: 'wrap' }}>
+          <div className="project-dashboard-left" style={{ display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap' }}>
+            <Input
+              icon="search"
+              placeholder="Search projects..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{ width: '250px' }}
             />
-            <Button
-              icon="list ul"
-              active={viewMode === 'list'}
-              onClick={() => setViewMode('list')}
-              title="List View"
-            />
-            <Button
-              icon="table"
-              active={viewMode === 'table'}
-              onClick={() => setViewMode('table')}
-              title="Table View"
-            />
-          </ButtonGroup>
-          <div style={{ marginLeft: '20px', display: 'flex', gap: '0px', alignItems: 'center' }}>
-            <Dropdown
-              open={sortDropdownOpen}
-              onClick={() => setSortDropdownOpen(!sortDropdownOpen)}
-              onBlur={() => setSortDropdownOpen(false)}
-              options={sortOptions}
-              value={sortBy}
-              onChange={(_, data) => setSortBy(data.value as string)}
-              style={{ minWidth: '150px' }}
-              className="iconless-dropdown"
-              trigger={
-                <Button
-                  active={true}
-                  title="Sort Options"
-                  icon="sort amount down"
-                />
-              }
-            />
-            <Dropdown
-              placeholder="Status Filter"
-              multiple
-              selection
-              clearable
-              options={statusOptions}
-              value={filterStatus}
-              onChange={(_, data) => setFilterStatus(data.value as string[])}
-              style={{ minWidth: '200px' }}
-            />
-          </div>
+            <ButtonGroup>
+              <Button
+                icon="th"
+                active={viewMode === 'cards'}
+                onClick={() => setViewMode('cards')}
+                title="Card View"
+              />
+              <Button
+                icon="list ul"
+                active={viewMode === 'list'}
+                onClick={() => setViewMode('list')}
+                title="List View"
+              />
+              <Button
+                icon="table"
+                active={viewMode === 'table'}
+                onClick={() => setViewMode('table')}
+                title="Table View"
+              />
+            </ButtonGroup>
+            <div className="project-dashboard-dropdowns" style={{ marginLeft: '20px', display: 'flex', gap: '0px', alignItems: 'center' }}>
+              <Dropdown
+                open={sortDropdownOpen}
+                onClick={() => setSortDropdownOpen(!sortDropdownOpen)}
+                onBlur={() => setSortDropdownOpen(false)}
+                options={sortOptions}
+                value={sortBy}
+                onChange={(_, data) => setSortBy(data.value as string)}
+                style={{ minWidth: '150px' }}
+                className="iconless-dropdown"
+                trigger={
+                  <Button
+                    active={true}
+                    title="Sort Options"
+                    icon="sort amount down"
+                  />
+                }
+              />
+              <Dropdown
+                placeholder="Status Filter"
+                multiple
+                selection
+                clearable
+                options={statusOptions}
+                value={filterStatus}
+                onChange={(_, data) => setFilterStatus(data.value as string[])}
+                style={{ minWidth: '200px' }}
+              />
+            </div>
           </div>
           {canCreateProjects && (
             <Button as="a" href="/createProject" color="teal" content="Create Project" icon="plus" />
@@ -299,38 +299,38 @@ export default observer(function EnhancedProjectDashboard() {
 
       {/* Summary Statistics */}
       <div style={{ marginTop: '40px' }}>
-      <Grid columns={4} style={{ marginBottom: '40px' }}>
-        <Grid.Column>
-          <Segment textAlign="center">
-            <Header as="h3" color="teal">{filteredProjects.length}</Header>
-            <p>Total Projects</p>
-          </Segment>
-        </Grid.Column>
-        <Grid.Column>
-          <Segment textAlign="center">
-            <Header as="h3" color="green">
-              {filteredProjects.filter(p => !p.isCancelled).length}
-            </Header>
-            <p>Active Projects</p>
-          </Segment>
-        </Grid.Column>
-        <Grid.Column>
-          <Segment textAlign="center">
-            <Header as="h3" color="orange">
-              {filteredProjects.filter(p => p.isOwner).length}
-            </Header>
-            <p>Owned Projects</p>
-          </Segment>
-        </Grid.Column>
-        <Grid.Column>
-          <Segment textAlign="center">
-            <Header as="h3" color="blue">
-              {filteredProjects.reduce((sum, p) => sum + (p.ticketCount || 0), 0)}
-            </Header>
-            <p>Total Tickets</p>
-          </Segment>
-        </Grid.Column>
-      </Grid>
+        <Grid columns={4} style={{ marginBottom: '40px' }}>
+          <Grid.Column>
+            <Segment textAlign="center">
+              <Header as="h3" color="teal">{filteredProjects.length}</Header>
+              <p>Total Projects</p>
+            </Segment>
+          </Grid.Column>
+          <Grid.Column>
+            <Segment textAlign="center">
+              <Header as="h3" color="green">
+                {filteredProjects.filter(p => !p.isCancelled).length}
+              </Header>
+              <p>Active Projects</p>
+            </Segment>
+          </Grid.Column>
+          <Grid.Column>
+            <Segment textAlign="center">
+              <Header as="h3" color="orange">
+                {filteredProjects.filter(p => p.isOwner).length}
+              </Header>
+              <p>Owned Projects</p>
+            </Segment>
+          </Grid.Column>
+          <Grid.Column>
+            <Segment textAlign="center">
+              <Header as="h3" color="blue">
+                {filteredProjects.reduce((sum, p) => sum + (p.ticketCount || 0), 0)}
+              </Header>
+              <p>Total Tickets</p>
+            </Segment>
+          </Grid.Column>
+        </Grid>
       </div>
 
       {viewMode === 'cards' && (

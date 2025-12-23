@@ -1919,3 +1919,77 @@ body.dark-mode .theme-toggle-slider.ui.toggle.checkbox input:checked~label:befor
     margin-bottom: 20px !important;
   }
 }
+
+/* Project Dashboard Mobile Optimization */
+@media (max-width: 767px) {
+  .project-dashboard-controls {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 15px !important;
+  }
+
+  /* Container for Search, Views, and Dropdowns */
+  .project-dashboard-left {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    width: 100% !important;
+    gap: 10px !important;
+  }
+
+  /* Row 1: Search - Approx half width */
+  .project-dashboard-left .ui.input {
+    flex: 1 1 auto !important;
+    width: auto !important;
+    min-width: 45% !important;
+  }
+
+  .project-dashboard-left .ui.input input {
+    width: 100% !important;
+  }
+
+  /* Row 1: Views - Approx half width */
+  .project-dashboard-left .ui.buttons {
+    flex: 1 1 auto !important;
+    display: flex !important;
+    width: auto !important;
+    min-width: 45% !important;
+  }
+
+  .project-dashboard-left .ui.buttons .button {
+    flex: 1 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* Row 2: Dropdowns container - Full width */
+  .project-dashboard-dropdowns {
+    width: 100% !important;
+    margin-left: 0 !important;
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 10px !important;
+    margin-top: 5px !important;
+  }
+
+  /* Row 2: Individual dropdowns - Equal width */
+  .project-dashboard-dropdowns .ui.dropdown {
+    flex: 1 !important;
+    width: auto !important;
+    min-width: 0 !important;
+  }
+
+  /* Sort dropdown button trigger full width */
+  .project-dashboard-dropdowns .iconless-dropdown .ui.button {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+  }
+
+  /* Row 3: Create Project button - Full width (Separate from left container) */
+  .project-dashboard-controls>.ui.button {
+    width: 100% !important;
+    margin-top: 5px !important;
+  }
+}
