@@ -23,12 +23,12 @@ const sortOptions = [
 export default observer(function EnhancedTicketDashboard() {
   const { ticketStore } = useStore();
   const { loadTickets, ticketsByStartDate, updateTicket, deleteTicket, loading } = ticketStore;
-  
+
   const getInitialViewMode = (): ViewMode => {
     const saved = localStorage.getItem('ticketDashboardViewMode');
     return saved ? saved as ViewMode : 'list';
   };
-  
+
   const [viewMode, setViewMode] = useState<ViewMode>(getInitialViewMode);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('date-desc');
@@ -40,7 +40,7 @@ export default observer(function EnhancedTicketDashboard() {
   useEffect(() => {
     loadTickets();
   }, [loadTickets]);
-  
+
   useEffect(() => {
     localStorage.setItem('ticketDashboardViewMode', viewMode);
   }, [viewMode]);
@@ -111,8 +111,8 @@ export default observer(function EnhancedTicketDashboard() {
           </div>
           <Label size="tiny" color={
             ticket.status === "Open" ? "green" :
-            ticket.status === "In Progress" ? "blue" :
-            ticket.status === "Closed" ? "grey" : "grey"
+              ticket.status === "In Progress" ? "blue" :
+                ticket.status === "Closed" ? "grey" : "grey"
           }>
             {ticket.status}
           </Label>
@@ -207,8 +207,8 @@ export default observer(function EnhancedTicketDashboard() {
       <div style={{ marginTop: '10px' }}>
         <Label size="small" color={
           ticket.status === "Open" ? "green" :
-          ticket.status === "In Progress" ? "blue" :
-          ticket.status === "Closed" ? "grey" : "grey"
+            ticket.status === "In Progress" ? "blue" :
+              ticket.status === "Closed" ? "grey" : "grey"
         }>
           {ticket.status}
         </Label>
@@ -234,7 +234,7 @@ export default observer(function EnhancedTicketDashboard() {
     // Helper function to safely handle dates
     const safeGetDate = (dateValue: string | Date | null | undefined): Date => {
       if (!dateValue) return new Date(0);
-      
+
       try {
         if (dateValue instanceof Date) {
           if (isNaN(dateValue.getTime())) {
@@ -243,7 +243,7 @@ export default observer(function EnhancedTicketDashboard() {
           }
           return dateValue;
         }
-        
+
         const date = new Date(dateValue);
         if (isNaN(date.getTime())) {
           logger.warn('Invalid date string', dateValue);
@@ -294,8 +294,8 @@ export default observer(function EnhancedTicketDashboard() {
       <div style={{ textAlign: 'center', marginBottom: '40px' }}>
         <Header as="h2" color="teal">Ticket Dashboard</Header>
       </div>
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '20px' }}>
-        <div style={{ display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap' }}>
+      <div className="ticket-dashboard-controls" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '20px' }}>
+        <div className="ticket-dashboard-inner" style={{ display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap', width: '100%', justifyContent: 'center' }}>
           <Input
             icon="search"
             placeholder="Search tickets..."
@@ -303,7 +303,7 @@ export default observer(function EnhancedTicketDashboard() {
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{ width: '250px' }}
           />
-          <ButtonGroup>
+          <ButtonGroup className="view-toggle-buttons">
             <Button
               icon="th"
               active={viewMode === 'cards'}
@@ -323,7 +323,7 @@ export default observer(function EnhancedTicketDashboard() {
               title="Kanban Board"
             />
           </ButtonGroup>
-          <div style={{ marginLeft: '20px', display: 'flex', gap: '0px', alignItems: 'center' }}>
+          <div className="ticket-dashboard-dropdowns" style={{ marginLeft: '20px', display: 'flex', gap: '0px', alignItems: 'center' }}>
             <Dropdown
               open={sortDropdownOpen}
               onClick={() => setSortDropdownOpen(!sortDropdownOpen)}
@@ -358,35 +358,35 @@ export default observer(function EnhancedTicketDashboard() {
       </div>
 
       <div style={{ marginTop: '40px' }}>
-      {viewMode === 'kanban' && (
-        <KanbanBoard
-          columns={getKanbanColumns()}
-          onDragEnd={handleDragEnd}
-          renderItem={(ticket) => renderTicketCard(ticket)}
-          loading={loading}
-        />
-      )}
+        {viewMode === 'kanban' && (
+          <KanbanBoard
+            columns={getKanbanColumns()}
+            onDragEnd={handleDragEnd}
+            renderItem={(ticket) => renderTicketCard(ticket)}
+            loading={loading}
+          />
+        )}
 
-      {viewMode === 'cards' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
-          {filteredTickets.map((ticket) => (
-            <div key={ticket.id} style={{ height: '320px' }}>
-              {renderTicketCard(ticket)}
-            </div>
-          ))}
-        </div>
-      )}
+        {viewMode === 'cards' && (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
+            {filteredTickets.map((ticket) => (
+              <div key={ticket.id} style={{ height: '320px' }}>
+                {renderTicketCard(ticket)}
+              </div>
+            ))}
+          </div>
+        )}
 
-      {viewMode === 'list' && (
-        <Segment>
-          <Header sub color="teal">
-            Active Tickets ({filteredTickets.length})
-          </Header>
-          {filteredTickets.map((ticket) => renderTicketListItem(ticket))}
-        </Segment>
-      )}
+        {viewMode === 'list' && (
+          <Segment>
+            <Header sub color="teal">
+              Active Tickets ({filteredTickets.length})
+            </Header>
+            {filteredTickets.map((ticket) => renderTicketListItem(ticket))}
+          </Segment>
+        )}
       </div>
-      
+
       <Confirm
         open={confirmOpen}
         content="Are you sure you want to delete this ticket? This will move it to the deleted tickets list."

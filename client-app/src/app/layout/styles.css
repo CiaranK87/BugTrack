@@ -2032,4 +2032,82 @@ body.dark-mode .theme-toggle-slider.ui.toggle.checkbox input:checked~label:befor
   .view-container-list {
     display: block !important;
   }
+
+  /* Ticket Dashboard Mobile Optimization */
+  .ticket-dashboard-controls {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 15px !important;
+  }
+
+  /* Inner container for Search, Views, Dropdowns */
+  .ticket-dashboard-inner {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    width: 100% !important;
+    gap: 10px !important;
+    justify-content: space-between !important;
+  }
+
+  /* Row 1: Search - Approx half width */
+  .ticket-dashboard-inner .ui.input {
+    flex: 1 1 auto !important;
+    width: auto !important;
+    min-width: 45% !important;
+  }
+
+  .ticket-dashboard-inner .ui.input input {
+    width: 100% !important;
+  }
+
+  /* Row 1: Views - Approx half width */
+  .ticket-dashboard-inner .ui.buttons {
+    flex: 1 1 auto !important;
+    display: flex !important;
+    width: auto !important;
+    min-width: 45% !important;
+  }
+
+  .ticket-dashboard-inner .ui.buttons .button {
+    flex: 1 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* Row 2: Dropdowns container - Full width */
+  .ticket-dashboard-dropdowns {
+    width: 100% !important;
+    margin-left: 0 !important;
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 10px !important;
+    margin-top: 5px !important;
+  }
+
+  /* Row 2: Individual dropdowns - Equal width */
+  .ticket-dashboard-dropdowns .ui.dropdown {
+    flex: 1 !important;
+    width: auto !important;
+    min-width: 0 !important;
+  }
+
+  /* Force same height for Status dropdown and Sort button in tickets */
+  .ticket-dashboard-dropdowns .ui.selection.dropdown,
+  .ticket-dashboard-dropdowns .iconless-dropdown .ui.button {
+    height: 38px !important;
+    min-height: 38px !important;
+    display: flex !important;
+    align-items: center !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Sort dropdown button trigger full width and centered */
+  .ticket-dashboard-dropdowns .iconless-dropdown .ui.button {
+    width: 100% !important;
+    justify-content: center !important;
+  }
 }
