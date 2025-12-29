@@ -76,7 +76,7 @@ export default observer(function DeletedTicketsManagement() {
   };
 
   const deletedTicketsList = deletedTickets;
-  
+
   // Filter deleted tickets based on search term
   const filteredDeletedTickets = deletedTicketsList.filter(ticket =>
     ticket.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -94,18 +94,19 @@ export default observer(function DeletedTicketsManagement() {
       {loadingInitial ? (
         <LoadingComponent content="Loading deleted tickets..." />
       ) : (
-        <Segment>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+        <Segment className="admin-deleted-tickets-management">
+          <div className="admin-deleted-tickets-controls" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
             <Header as="h2" icon="trash" content="Deleted Tickets" subheader="Manage deleted tickets" />
             <Input
               icon="search"
               placeholder="Search deleted tickets..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              className="admin-deleted-tickets-search"
               style={{ width: '250px' }}
             />
           </div>
-          
+
           {filteredDeletedTickets.length === 0 ? (
             <Segment placeholder>
               <Header icon>
@@ -114,77 +115,136 @@ export default observer(function DeletedTicketsManagement() {
               <p>No deleted tickets found</p>
             </Segment>
           ) : (
-            <Table celled>
-              <Table.Header>
-                <Table.Row>
-                  <Table.HeaderCell>Title</Table.HeaderCell>
-                  <Table.HeaderCell>Submitter</Table.HeaderCell>
-                  <Table.HeaderCell>Project</Table.HeaderCell>
-                  <Table.HeaderCell>Priority</Table.HeaderCell>
-                  <Table.HeaderCell>Severity</Table.HeaderCell>
-                  <Table.HeaderCell>Deleted Date</Table.HeaderCell>
-                  <Table.HeaderCell>Actions</Table.HeaderCell>
-                </Table.Row>
-              </Table.Header>
-              <Table.Body>
-                {filteredDeletedTickets.map((ticket) => (
-                  <Table.Row key={ticket.id}>
-                    <Table.Cell>
-                      <Header as="h4">
-                        {ticket.title}
-                      </Header>
-                    </Table.Cell>
-                    <Table.Cell>{ticket.submitter || "Unknown"}</Table.Cell>
-                    <Table.Cell>
-                      {ticket.project ? (
-                        <Link to={`/projects/${ticket.projectId}`}>
-                          {ticket.project.projectTitle}
-                        </Link>
-                      ) : (
-                        "Unknown"
-                      )}
-                    </Table.Cell>
-                    <Table.Cell>
-                      <Label color={getPriorityColor(ticket.priority)} size="small">
-                        {ticket.priority}
-                      </Label>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <Label color={getSeverityColor(ticket.severity)} size="small">
-                        {ticket.severity}
-                      </Label>
-                    </Table.Cell>
-                    <Table.Cell>
-                      {ticket.deletedDate ? formatDate(ticket.deletedDate, 'MMM dd, yyyy') : "N/A"}
-                    </Table.Cell>
-                    <Table.Cell>
-                      <Button.Group>
-                        <Button
-                          icon="eye"
-                          color="blue"
-                          onClick={() => handleViewDetails(ticket)}
-                          title="View Details"
-                        />
-                        <Button
-                          icon="undo"
-                          color="green"
-                          onClick={() => handleRestore(ticket.id)}
-                          title="Restore Ticket"
-                        />
-                        <Button
-                          icon="trash"
-                          color="red"
-                          onClick={() => handleDelete(ticket.id)}
-                          title="Permanently Delete"
-                        />
-                      </Button.Group>
-                    </Table.Cell>
+            <>
+              <Table celled className="deleted-tickets-table-desktop">
+                <Table.Header>
+                  <Table.Row>
+                    <Table.HeaderCell>Title</Table.HeaderCell>
+                    <Table.HeaderCell>Submitter</Table.HeaderCell>
+                    <Table.HeaderCell>Project</Table.HeaderCell>
+                    <Table.HeaderCell>Priority</Table.HeaderCell>
+                    <Table.HeaderCell>Severity</Table.HeaderCell>
+                    <Table.HeaderCell>Deleted Date</Table.HeaderCell>
+                    <Table.HeaderCell>Actions</Table.HeaderCell>
                   </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                  {filteredDeletedTickets.map((ticket) => (
+                    <Table.Row key={ticket.id}>
+                      <Table.Cell>
+                        <Header as="h4">
+                          {ticket.title}
+                        </Header>
+                      </Table.Cell>
+                      <Table.Cell>{ticket.submitter || "Unknown"}</Table.Cell>
+                      <Table.Cell>
+                        {ticket.project ? (
+                          <Link to={`/projects/${ticket.projectId}`}>
+                            {ticket.project.projectTitle}
+                          </Link>
+                        ) : (
+                          "Unknown"
+                        )}
+                      </Table.Cell>
+                      <Table.Cell>
+                        <Label color={getPriorityColor(ticket.priority)} size="small">
+                          {ticket.priority}
+                        </Label>
+                      </Table.Cell>
+                      <Table.Cell>
+                        <Label color={getSeverityColor(ticket.severity)} size="small">
+                          {ticket.severity}
+                        </Label>
+                      </Table.Cell>
+                      <Table.Cell>
+                        {ticket.deletedDate ? formatDate(ticket.deletedDate, 'MMM dd, yyyy') : "N/A"}
+                      </Table.Cell>
+                      <Table.Cell>
+                        <Button.Group>
+                          <Button
+                            icon="eye"
+                            color="blue"
+                            onClick={() => handleViewDetails(ticket)}
+                            title="View Details"
+                          />
+                          <Button
+                            icon="undo"
+                            color="green"
+                            onClick={() => handleRestore(ticket.id)}
+                            title="Restore Ticket"
+                          />
+                          <Button
+                            icon="trash"
+                            color="red"
+                            onClick={() => handleDelete(ticket.id)}
+                            title="Permanently Delete"
+                          />
+                        </Button.Group>
+                      </Table.Cell>
+                    </Table.Row>
+                  ))}
+                </Table.Body>
+              </Table>
+
+              {/* Mobile Card View */}
+              <div className="deleted-ticket-cards-mobile">
+                {filteredDeletedTickets.map((ticket) => (
+                  <div key={ticket.id} className="ticket-mobile-card deleted-ticket-card">
+                    <div className="ticket-card-header">
+                      <Header as="h4">
+                        <Icon name="trash" />
+                        <Header.Content>
+                          {ticket.title}
+                          <Header.Subheader>{ticket.project?.projectTitle || "Unknown Project"}</Header.Subheader>
+                        </Header.Content>
+                      </Header>
+                      <Label color="red" size="small">Deleted</Label>
+                    </div>
+
+                    <div className="ticket-card-content">
+                      <div className="ticket-detail-item">
+                        <span className="detail-label">Deleted On:</span>
+                        <span className="detail-value">{ticket.deletedDate ? formatDate(ticket.deletedDate, 'MMM dd, yyyy') : "N/A"}</span>
+                      </div>
+                      <div className="ticket-detail-item">
+                        <span className="detail-label">Priority / Severity:</span>
+                        <div className="detail-value">
+                          <Label color={getPriorityColor(ticket.priority)} size="mini" style={{ marginRight: '5px' }}>{ticket.priority}</Label>
+                          <Label color={getSeverityColor(ticket.severity)} size="mini">{ticket.severity}</Label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="ticket-card-actions">
+                      <Button
+                        icon="eye"
+                        color="blue"
+                        content="Details"
+                        onClick={() => handleViewDetails(ticket)}
+                        size="small"
+                      />
+                      <Button
+                        icon="undo"
+                        color="green"
+                        content="Restore"
+                        onClick={() => handleRestore(ticket.id)}
+                        size="small"
+                      />
+                      <Button
+                        icon="trash"
+                        color="red"
+                        content="Delete"
+                        onClick={() => handleDelete(ticket.id)}
+                        size="small"
+                        className="delete-btn"
+                      />
+                    </div>
+                  </div>
                 ))}
-              </Table.Body>
-            </Table>
+              </div>
+            </>
           )}
-          
+
           <Confirm
             open={confirmOpen}
             content="Are you sure you want to permanently delete this ticket? This action cannot be undone."
@@ -196,6 +256,8 @@ export default observer(function DeletedTicketsManagement() {
             open={detailsModalOpen}
             onClose={() => setDetailsModalOpen(false)}
             size="small"
+            className="admin-details-modal"
+            closeIcon
           >
             <Modal.Header>Ticket Details</Modal.Header>
             <Modal.Content>
@@ -205,12 +267,12 @@ export default observer(function DeletedTicketsManagement() {
                   <p><strong>Description:</strong> {selectedTicket.description}</p>
                   <p><strong>Submitter:</strong> {selectedTicket.submitter}</p>
                   <p><strong>Assigned:</strong> {selectedTicket.assigned || "Unassigned"}</p>
-                  <p><strong>Priority:</strong> 
+                  <p><strong>Priority:</strong>
                     <Label color={getPriorityColor(selectedTicket.priority)} size="small" style={{ marginLeft: '5px' }}>
                       {selectedTicket.priority}
                     </Label>
                   </p>
-                  <p><strong>Severity:</strong> 
+                  <p><strong>Severity:</strong>
                     <Label color={getSeverityColor(selectedTicket.severity)} size="small" style={{ marginLeft: '5px' }}>
                       {selectedTicket.severity}
                     </Label>
@@ -219,7 +281,7 @@ export default observer(function DeletedTicketsManagement() {
                   <p><strong>Created:</strong> {selectedTicket.createdAt ? formatDate(selectedTicket.createdAt, 'MMM dd, yyyy') : "N/A"}</p>
                   <p><strong>Deleted:</strong> {selectedTicket.deletedDate ? formatDate(selectedTicket.deletedDate, 'MMM dd, yyyy') : "N/A"}</p>
                   {selectedTicket.project && (
-                    <p><strong>Project:</strong> 
+                    <p><strong>Project:</strong>
                       <Link to={`/projects/${selectedTicket.projectId}`} style={{ marginLeft: '5px' }}>
                         {selectedTicket.project.projectTitle}
                       </Link>

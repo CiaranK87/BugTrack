@@ -4,15 +4,15 @@ import { Header, Segment, Table, Dropdown, Label, Icon, Button, Confirm, Tab, In
 import { useStore } from "../../app/stores/store";
 import { toast } from "react-toastify";
 import LoadingComponent from "../../app/layout/LoadingComponent";
-import AdminRegisterForm from "./AdminRegisterForm";
-import EditUserForm from "./EditUserForm";
 import DeletedProjectsManagement from "./DeletedProjectsManagement";
 import DeletedTicketsManagement from "./DeletedTicketsManagement";
 import TicketManagement from "./TicketManagement";
 import ProjectManagement from "./ProjectManagement";
+import { Link, useNavigate } from "react-router-dom";
 
 export default observer(function UserManagement() {
-  const { userStore, modalStore } = useStore();
+  const { userStore } = useStore();
+  const navigate = useNavigate();
   const { users, loadingUserList: loading, updateUserRole, updatingUserRole, deleteUser, user: currentUser } = userStore;
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleteUserId, setDeleteUserId] = useState("");
@@ -24,7 +24,7 @@ export default observer(function UserManagement() {
   }, [userStore]);
 
   const handleEdit = (userId: string) => {
-    modalStore.openModal(<EditUserForm userId={userId} onSuccess={() => userStore.loadUsers()} />);
+    navigate(`/admin/users/edit/${userId}`);
   };
 
   const handleDelete = (userId: string) => {
@@ -88,28 +88,31 @@ export default observer(function UserManagement() {
     {
       menuItem: 'User Management',
       render: () => (
-        <Segment attached="bottom">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+        <Segment attached="bottom" className="admin-user-management">
+          <div className="admin-user-controls" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
             <Header as="h2" icon="users" content="User Management" subheader="Manage global user roles" />
-            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <div className="admin-user-actions" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
               <Input
                 icon="search"
                 placeholder="Search users..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                className="admin-user-search"
                 style={{ width: '250px' }}
               />
               <Button
                 positive
-                content="Add New User"
+                content="Add New"
                 icon="user plus"
-                onClick={() => modalStore.openModal(<AdminRegisterForm />)}
+                as={Link}
+                to="/admin/users/create"
                 size="small"
+                className="admin-add-user-btn"
               />
             </div>
           </div>
-          
-          <Table celled>
+
+          <Table celled className="user-table-desktop">
             <Table.Header>
               <Table.Row>
                 <Table.HeaderCell>Username</Table.HeaderCell>
@@ -182,6 +185,86 @@ export default observer(function UserManagement() {
               ))}
             </Table.Body>
           </Table>
+
+          {/* Mobile Card View */}
+          <div className="user-cards-mobile">
+            {filteredUsers.map((user) => (
+              <div key={user.id} className="user-mobile-card">
+                <div className="user-card-header">
+                  <Header as="h4">
+                    <Icon name="user" />
+                    <Header.Content>
+                      {user.username}
+                      <Header.Subheader>{user.displayName}</Header.Subheader>
+                    </Header.Content>
+                  </Header>
+                  <Label color={getRoleColor(user.globalRole)} size="small" className="user-role-label">
+                    {user.globalRole}
+                  </Label>
+                </div>
+
+                <div className="user-card-content">
+                  <div className="user-detail-item">
+                    <span className="detail-label">Email:</span>
+                    <span className="detail-value">{user.email}</span>
+                  </div>
+                  <div className="user-detail-item">
+                    <span className="detail-label">Title:</span>
+                    <span className="detail-value">{user.jobTitle || "N/A"}</span>
+                  </div>
+                </div>
+
+                <div className="user-card-actions">
+                  <Button
+                    icon="edit"
+                    color="blue"
+                    content="Edit"
+                    onClick={() => handleEdit(user.id)}
+                    disabled={user.globalRole === "Admin" && user.username !== currentUser?.username}
+                    size="small"
+                  />
+                  <Button
+                    icon="trash"
+                    color="red"
+                    content="Delete"
+                    onClick={() => handleDelete(user.id)}
+                    disabled={user.globalRole === "Admin" || user.username === currentUser?.username}
+                    size="small"
+                  />
+                  <Dropdown
+                    text="Role"
+                    icon="user"
+                    floating
+                    labeled
+                    button
+                    className="icon mobile-role-dropdown"
+                    loading={updatingUserRole}
+                    disabled={updatingUserRole || (user.globalRole === "Admin" && user.username !== currentUser?.username)}
+                    size="small"
+                  >
+                    <Dropdown.Menu>
+                      {roleOptions.map((option) => (
+                        <Dropdown.Item
+                          key={option.key}
+                          active={user.globalRole === option.value}
+                          onClick={() => handleRoleChange(user.id, option.value)}
+                          disabled={user.globalRole === option.value || (user.globalRole === "Admin" && user.username !== currentUser?.username)}
+                        >
+                          {option.text}
+                        </Dropdown.Item>
+                      ))}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </div>
+              </div>
+            ))}
+            {filteredUsers.length === 0 && (
+              <Segment textAlign="center" basic>
+                <Icon name="search" size="large" />
+                <p>No users found matching your search.</p>
+              </Segment>
+            )}
+          </div>
         </Segment>
       )
     },
@@ -214,8 +297,9 @@ export default observer(function UserManagement() {
             panes={panes}
             activeIndex={activeTab}
             onTabChange={(_, data) => setActiveTab(data.activeIndex as number)}
+            className="admin-management-tabs"
           />
-          
+
           <Confirm
             open={confirmOpen}
             content="Are you sure you want to delete this user? This action cannot be undone."

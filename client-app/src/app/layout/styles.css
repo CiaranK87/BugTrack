@@ -2184,4 +2184,558 @@ body.dark-mode .theme-toggle-slider.ui.toggle.checkbox input:checked~label:befor
     margin: 0 !important;
     padding: 0 !important;
   }
+
+  /* Admin User Management Mobile Optimization */
+  .admin-user-management .user-table-desktop {
+    display: none !important;
+  }
+
+  .admin-user-management .user-cards-mobile {
+    display: block !important;
+  }
+
+  /* Stack header controls on mobile */
+  .admin-user-management .admin-user-controls {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 15px !important;
+  }
+
+  .admin-user-management .admin-user-actions {
+    width: 100% !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  .admin-user-management .admin-user-search {
+    width: 100% !important;
+  }
+
+  .admin-user-management .admin-add-user-btn {
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  /* Mobile Card Styling */
+  .user-mobile-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #eee;
+  }
+
+  body.dark-mode .user-mobile-card {
+    background: #2d3748;
+    border-color: #4a5568;
+  }
+
+  .user-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+  }
+
+  body.dark-mode .user-card-header {
+    border-bottom-color: #4a5568;
+  }
+
+  .user-card-content {
+    margin-bottom: 15px;
+  }
+
+  .user-detail-item {
+    display: flex;
+    margin-bottom: 8px;
+    font-size: 0.95em;
+  }
+
+  .detail-label {
+    font-weight: bold;
+    width: 80px;
+    flex-shrink: 0;
+    color: #666;
+  }
+
+  body.dark-mode .detail-label {
+    color: #cbd5e0;
+  }
+
+  .detail-value {
+    color: #333;
+    word-break: break-all;
+  }
+
+  body.dark-mode .detail-value {
+    color: #e2e8f0;
+  }
+
+  .user-card-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .user-card-actions .button,
+  .user-card-actions .dropdown.button {
+    margin: 0 !important;
+    width: 100% !important;
+    min-height: 44px !important;
+    /* Touch target */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* Make dropdown take full width in its grid cell */
+  .user-card-actions .mobile-role-dropdown {
+    grid-column: span 2;
+  }
+
+  /* Admin User Forms Mobile Optimization (Registration & Edit) */
+  .admin-user-form {
+    padding: 1em !important;
+    margin: 0 !important;
+  }
+
+  .admin-user-form .ui.form .field {
+    margin-bottom: 15px !important;
+  }
+
+  .admin-user-form .ui.form .field label {
+    display: block !important;
+    margin-bottom: 6px !important;
+    font-size: 1em !important;
+    color: #4DB6AC !important;
+    font-weight: bold !important;
+  }
+
+  .admin-user-form .ui.form input,
+  .admin-user-form .ui.form textarea,
+  .admin-user-form .ui.selection.dropdown {
+    width: 100% !important;
+    min-height: 44px !important;
+    padding: 12px !important;
+    font-size: 16px !important;
+  }
+
+  /* Ensure all buttons in the footer are optimized equally */
+  .admin-user-form .button {
+    min-height: 44px !important;
+    font-size: 1.1em !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* Admin Project Management Mobile Optimization */
+  .admin-project-management .project-table-desktop {
+    display: none !important;
+  }
+
+  .admin-project-management .project-cards-mobile {
+    display: block !important;
+  }
+
+  /* Stack header controls on mobile */
+  .admin-project-management .admin-project-controls {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 15px !important;
+  }
+
+  .admin-project-management .admin-project-search {
+    width: 100% !important;
+  }
+
+  /* Mobile Project Card Styling - Replicating User Card style */
+  .project-mobile-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #eee;
+  }
+
+  body.dark-mode .project-mobile-card {
+    background: #2d3748;
+    border-color: #4a5568;
+  }
+
+  .project-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+  }
+
+  body.dark-mode .project-card-header {
+    border-bottom-color: #4a5568;
+  }
+
+  .project-card-content {
+    margin-bottom: 15px;
+  }
+
+  .project-detail-item {
+    margin-bottom: 8px !important;
+  }
+
+  .description-truncate {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .project-card-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .project-card-actions .button {
+    margin: 0 !important;
+    width: 100% !important;
+    min-height: 44px !important;
+    /* Touch target */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* Full Page button spans both columns */
+  .project-card-actions .full-page-btn {
+    grid-column: span 2;
+  }
+
+  /* Admin Ticket Management Mobile Optimization */
+  .admin-ticket-management .ticket-table-desktop {
+    display: none !important;
+  }
+
+  .admin-ticket-management .ticket-cards-mobile {
+    display: block !important;
+  }
+
+  /* Stack header controls on mobile */
+  .admin-ticket-management .admin-ticket-controls {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 15px !important;
+  }
+
+  .admin-ticket-management .admin-ticket-search {
+    width: 100% !important;
+  }
+
+  /* Mobile Ticket Card Styling - Replicating User/Project Card style */
+  .ticket-mobile-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #eee;
+  }
+
+  body.dark-mode .ticket-mobile-card {
+    background: #2d3748;
+    border-color: #4a5568;
+  }
+
+  .ticket-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+  }
+
+  body.dark-mode .ticket-card-header {
+    border-bottom-color: #4a5568;
+  }
+
+  .ticket-card-content {
+    margin-bottom: 15px;
+  }
+
+  .ticket-mobile-card .detail-label,
+  .project-mobile-card .detail-label,
+  .user-mobile-card .detail-label {
+    flex: 0 0 auto !important;
+    font-weight: bold;
+    color: #4DB6AC;
+    margin-right: 8px !important;
+    font-size: 0.8em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .ticket-mobile-card .detail-value,
+  .project-mobile-card .detail-value,
+  .user-mobile-card .detail-value {
+    flex: 1 1 auto !important;
+    color: #333;
+    word-break: break-word;
+    font-size: 1.05em;
+    line-height: 1.2 !important;
+  }
+
+  /* Special handling for truncated descriptions to keep label inline */
+  .description-truncate {
+    display: -webkit-inline-box !important;
+    /* Keep it inline with the label */
+    vertical-align: top !important;
+  }
+
+  /* Spacing between rows of details */
+  .ticket-detail-item,
+  .project-detail-item,
+  .user-detail-item {
+    display: flex !important;
+    align-items: baseline !important;
+    margin-bottom: 8px !important;
+  }
+
+  body.dark-mode .ticket-mobile-card .detail-value,
+  body.dark-mode .project-mobile-card .detail-value,
+  body.dark-mode .user-mobile-card .detail-value {
+    color: #e2e8f0 !important;
+  }
+
+  .ticket-card-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .ticket-card-actions .button {
+    margin: 0 !important;
+    width: 100% !important;
+    min-height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .ticket-card-actions .full-page-btn {
+    grid-column: span 2;
+  }
+
+  /* Admin Deleted Projects Management Mobile Optimization */
+  .admin-deleted-projects-management .deleted-projects-table-desktop {
+    display: none !important;
+  }
+
+  .admin-deleted-projects-management .deleted-project-cards-mobile {
+    display: block !important;
+  }
+
+  .admin-deleted-projects-management .admin-deleted-projects-controls {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 15px !important;
+  }
+
+  .admin-deleted-projects-management .admin-deleted-projects-search {
+    width: 100% !important;
+  }
+
+  /* Admin Deleted Tickets Management Mobile Optimization */
+  .admin-deleted-tickets-management .deleted-tickets-table-desktop {
+    display: none !important;
+  }
+
+  .admin-deleted-tickets-management .deleted-ticket-cards-mobile {
+    display: block !important;
+  }
+
+  .admin-deleted-tickets-management .admin-deleted-tickets-controls {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 15px !important;
+  }
+
+  .admin-deleted-tickets-management .admin-deleted-tickets-search {
+    width: 100% !important;
+  }
+
+  /* Aggressive Mobile Modal Fix - No Overflow */
+  .ui.modal.admin-details-modal {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    margin: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    border-radius: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    position: fixed !important;
+    z-index: 1001 !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+    background: #fff !important;
+  }
+
+  .ui.modal.admin-details-modal * {
+    box-sizing: border-box !important;
+  }
+
+  .ui.modal.admin-details-modal>.header,
+  .ui.modal.admin-details-modal>.content,
+  .ui.modal.admin-details-modal>.actions {
+    width: 100% !important;
+    max-width: 100vw !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .ui.modal.admin-details-modal>.header {
+    flex: 0 0 auto !important;
+    padding: 1.25rem 1rem !important;
+    background: #fff !important;
+    border-bottom: 1px solid #eee !important;
+    font-size: 1.2rem !important;
+    color: #4DB6AC !important;
+  }
+
+  .ui.modal.admin-details-modal>.content {
+    flex: 1 1 auto !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 1.25rem 1rem !important;
+    background: #fff !important;
+  }
+
+  .ui.modal.admin-details-modal>.actions {
+    flex: 0 0 auto !important;
+    padding: 1rem !important;
+    background: #fff !important;
+    border-top: 1px solid #eee !important;
+    display: flex !important;
+    flex-direction: column-reverse !important;
+    gap: 12px !important;
+  }
+
+  .ui.modal.admin-details-modal>.actions .button {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    min-height: 48px !important;
+    font-size: 1.1rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 6px !important;
+  }
+
+  /* Close icon optimization for mobile */
+  .ui.modal.admin-details-modal>.close {
+    top: 0.75rem !important;
+    right: 0.75rem !important;
+    color: #333 !important;
+    font-size: 1.5rem !important;
+    z-index: 1002 !important;
+    padding: 10px !important;
+  }
+
+  /* Modern Horizontal Scroll Ribbon for Admin Tabs */
+  .admin-management-tabs .ui.tabular.menu {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    /* Hide scrollbar Firefox */
+    border: none !important;
+    border-bottom: 2px solid #eee !important;
+    background: #fff !important;
+    padding: 12px 5px !important;
+    margin-bottom: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  body.dark-mode .admin-management-tabs .ui.tabular.menu {
+    background: #1a202c !important;
+    border-bottom-color: #2d3748 !important;
+  }
+
+  .admin-management-tabs .ui.tabular.menu::-webkit-scrollbar {
+    display: none !important;
+    /* Hide scrollbar Chrome/Safari */
+  }
+
+  .admin-management-tabs .ui.tabular.menu .item {
+    flex: 0 0 auto !important;
+    /* Prevent items from shrinking */
+    margin: 0 6px !important;
+    padding: 10px 18px !important;
+    border-radius: 25px !important;
+    /* Pill/Chip shape */
+    border: 1px solid #e0e0e0 !important;
+    background: #f8f9fa !important;
+    color: #666 !important;
+    font-size: 0.9em !important;
+    font-weight: 600 !important;
+    white-space: nowrap !important;
+    transition: all 0.2s ease !important;
+    justify-content: center !important;
+    min-height: auto !important;
+  }
+
+  body.dark-mode .admin-management-tabs .ui.tabular.menu .item {
+    background: #2d3748 !important;
+    border-color: #4a5568 !important;
+    color: #a0aec0 !important;
+  }
+
+  .admin-management-tabs .ui.tabular.menu .item.active {
+    background: #4DB6AC !important;
+    /* Brand teal */
+    color: white !important;
+    border-color: #4DB6AC !important;
+    box-shadow: 0 3px 8px rgba(77, 182, 172, 0.4) !important;
+  }
+
+  body.dark-mode .admin-management-tabs .ui.tabular.menu .item.active {
+    background: #4DB6AC !important;
+    color: white !important;
+    border-color: #4DB6AC !important;
+  }
+
+  /* Remove attached segment styling for a cleaner float on mobile */
+  .admin-management-tabs .ui.attached.segment {
+    border: none !important;
+    padding: 15px 10px !important;
+    background: transparent !important;
+  }
+
+  body.dark-mode .admin-management-tabs .ui.attached.segment {
+    background: transparent !important;
+  }
+}
+
+
+/* Default state for mobile components (hidden on desktop) */
+.user-cards-mobile,
+.project-cards-mobile,
+.ticket-cards-mobile,
+.deleted-project-cards-mobile,
+.deleted-ticket-cards-mobile {
+  display: none;
 }

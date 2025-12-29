@@ -1,4 +1,4 @@
-import { ErrorMessage, Formik } from "formik";
+import { ErrorMessage, Formik, Form } from "formik";
 import MyTextInput from "../../app/common/form/MyTextInput";
 import { Button, Header, Segment, Dropdown } from "semantic-ui-react";
 import { Form as SemanticForm } from "semantic-ui-react";
@@ -7,9 +7,11 @@ import { observer } from "mobx-react-lite";
 import { useState } from "react";
 import * as Yup from "yup";
 import ValidationError from "../errors/ValidationError";
+import { Link, useNavigate } from "react-router-dom";
 
 export default observer(function AdminRegisterForm() {
-  const { userStore, modalStore } = useStore();
+  const { userStore } = useStore();
+  const navigate = useNavigate();
   const [selectedRole, setSelectedRole] = useState("User");
 
   const roleOptions = [
@@ -20,8 +22,9 @@ export default observer(function AdminRegisterForm() {
   ];
 
   return (
-    <Segment clearing>
+    <Segment clearing className="admin-user-form">
       <Header content="Add New User" sub color="teal" />
+      <div style={{ marginBottom: '20px' }}></div>
       <Formik
         initialValues={{ displayName: "", username: "", email: "", password: "", jobTitle: "", error: null }}
         onSubmit={(values, { setErrors }) => {
@@ -35,7 +38,7 @@ export default observer(function AdminRegisterForm() {
           };
           return userStore.adminRegister(formData)
             .then(() => {
-              modalStore.closeModal();
+              navigate("/admin/users");
             })
             .catch((error) => setErrors({ error }));
         }}
@@ -48,14 +51,14 @@ export default observer(function AdminRegisterForm() {
         })}
       >
         {({ handleSubmit, isSubmitting, errors, isValid, dirty }) => (
-          <SemanticForm className="ui form error" onSubmit={handleSubmit} autoComplete="off">
-            <MyTextInput name="displayName" placeholder="Display Name" />
-            <MyTextInput name="username" placeholder="Username" />
-            <MyTextInput name="email" placeholder="Email" />
-            <MyTextInput name="password" placeholder="Password" type="password" />
-            <MyTextInput name="jobTitle" placeholder="Job Title" />
+          <Form className="ui form error" onSubmit={handleSubmit} autoComplete="off">
+            <MyTextInput label="Display Name" name="displayName" placeholder="Display Name" />
+            <MyTextInput label="Username" name="username" placeholder="Username" />
+            <MyTextInput label="Email Address" name="email" placeholder="Email" />
+            <MyTextInput label="Password" name="password" placeholder="Password" type="password" />
+            <MyTextInput label="Job Title" name="jobTitle" placeholder="Job Title" />
             <SemanticForm.Field>
-              <label>Initial Role</label>
+              <label style={{ color: '#4DB6AC', fontSize: '0.9em', fontWeight: 'bold' }}>Initial Role</label>
               <Dropdown
                 placeholder="Select a role"
                 fluid
@@ -69,15 +72,24 @@ export default observer(function AdminRegisterForm() {
               name="error"
               render={() => <ValidationError errors={errors.error as unknown as string[]} />}
             />
-            <Button
-              disabled={!isValid || !dirty || isSubmitting}
-              loading={isSubmitting}
-              positive
-              content="Create User"
-              type="submit"
-              fluid
-            />
-          </SemanticForm>
+            <div style={{ marginTop: '20px', overflow: 'hidden' }}>
+              <Button
+                disabled={isSubmitting || !dirty || !isValid}
+                loading={isSubmitting}
+                floated="right"
+                positive
+                type="submit"
+                content="Create User"
+              />
+              <Button
+                as={Link}
+                to="/admin/users"
+                floated="right"
+                type="button"
+                content="Cancel"
+              />
+            </div>
+          </Form>
         )}
       </Formik>
     </Segment>

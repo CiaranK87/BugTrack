@@ -18,6 +18,8 @@ import Dashboard from "../../features/dashboard/Dashboard";
 import UnifiedDashboard from "../../features/dashboard/UnifiedDashboard";
 import ProjectAddParticipant from "../../features/projects/details/ProjectAddParticipant";
 import UserManagement from "../../features/admin/UserManagement";
+import AdminRegisterForm from "../../features/admin/AdminRegisterForm";
+import EditUserForm from "../../features/admin/EditUserForm";
 import DeletedProjectsManagement from "../../features/admin/DeletedProjectsManagement";
 import DeletedTicketsManagement from "../../features/admin/DeletedTicketsManagement";
 import TicketManagement from "../../features/admin/TicketManagement";
@@ -34,11 +36,14 @@ export const routes: RouteObject[] = [
       { path: "tickets", element: <EnhancedTicketDashboard /> },
       { path: "tickets/legacy", element: <TicketDashboard /> },
       { path: "admin/users", element: <UserManagement /> },
+      { path: "admin/users/create", element: <AdminRegisterForm /> },
+      { path: "admin/users/edit/:id", element: <EditUserForm /> },
+      { path: "admin/users/edit/:userId", element: <EditUserForm /> },
       { path: "admin/deleted-projects", element: <DeletedProjectsManagement /> },
       { path: "admin/deleted-tickets", element: <DeletedTicketsManagement /> },
       { path: "admin/tickets", element: <TicketManagement /> },
 
-      
+
       { path: "projects/:projectId/tickets/create", element: <TicketForm key="createTicket" /> },
       { path: "projects/:projectId/tickets/:id", element: <TicketForm key="manageTicket" /> },
       { path: "projects/:id", element: <ProjectDetails /> },

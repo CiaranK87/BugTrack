@@ -32,38 +32,38 @@ export default observer(function ProjectForm() {
   });
 
   function handleFormSubmit(project: ProjectFormValues) {
-  if (project.startDate) {
-    const d = project.startDate as Date;
-    const utcNoon = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), 12, 0, 0));
-    project.startDate = utcNoon;
+    if (project.startDate) {
+      const d = project.startDate as Date;
+      const utcNoon = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), 12, 0, 0));
+      project.startDate = utcNoon;
+    }
+    if (!project.id) {
+      const newProject = {
+        ...project,
+        id: uuid(),
+      };
+      createProject(newProject)
+        .then(() => {
+          navigate(`/projects/${newProject.id}`);
+        })
+        .catch(error => {
+          logger.error("Failed to create project", error);
+        });
+    } else {
+      updateProject(project)
+        .then(() => {
+          navigate(`/projects/${project.id}`);
+        })
+        .catch(error => {
+          logger.error("Failed to update project", error);
+        });
+    }
   }
-  if (!project.id) {
-    const newProject = {
-      ...project,
-      id: uuid(),
-    };
-    createProject(newProject)
-      .then(() => {
-        navigate(`/projects/${newProject.id}`);
-      })
-      .catch(error => {
-        logger.error("Failed to create project", error);
-      });
-  } else {
-    updateProject(project)
-      .then(() => {
-        navigate(`/projects/${project.id}`);
-      })
-      .catch(error => {
-        logger.error("Failed to update project", error);
-      });
-  }
-}
 
   if (loadingInitial) return <LoadingComponent content="Loading Project..." />;
 
   return (
-    <Segment clearing>
+    <Segment clearing className="admin-user-form">
       <Header content="Project Details" sub color="teal" />
       <div style={{ marginBottom: '20px' }}></div>
       <Formik
@@ -75,7 +75,7 @@ export default observer(function ProjectForm() {
         {({ handleSubmit, isValid, isSubmitting, dirty }) => (
           <Form className="ui form" onSubmit={handleSubmit} autoComplete="off">
             <MyTextInput name="projectTitle" placeholder="project Title" label="Project Title" />
-            
+
             <MyTextArea rows={2} placeholder="Project Description" name="description" label="Project Description" />
             <MyDateInput
               placeholderText="Project start date"

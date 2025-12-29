@@ -43,36 +43,36 @@ export default observer(function TicketForm() {
   const [projectUsersAsOptions, setProjectUsersAsOptions] = useState<{ text: string; value: string }[]>([]);
   const [loadingUserRole, setLoadingUserRole] = useState(true);
 
-useEffect(() => {
-  if (id) {
-    loadTicket(id).then((ticket) => {
-      if (ticket) {
-        setTicket({
-          ...ticket,
-          id: ticket.id,
-        });
-      }
-    });
-  }
-}, [id, loadTicket]);
+  useEffect(() => {
+    if (id) {
+      loadTicket(id).then((ticket) => {
+        if (ticket) {
+          setTicket({
+            ...ticket,
+            id: ticket.id,
+          });
+        }
+      });
+    }
+  }, [id, loadTicket]);
 
-useEffect(() => {
-if (projectId) {
-  setLoadingUserRole(true);
-  
-  loadUserRoleForProject(projectId).then(() => {
-    setLoadingUserRole(false);
-    loadProject(projectId).then(() => {
-      const project = projectRegistry.get(projectId);
-      const options = project?.participants?.map(p => ({
-        text: p.displayName,
-        value: p.username
-      })) || [];
-      setProjectUsersAsOptions(options);
-    });
-  });
-}
-}, [projectId, loadProject, projectRegistry, loadUserRoleForProject]);
+  useEffect(() => {
+    if (projectId) {
+      setLoadingUserRole(true);
+
+      loadUserRoleForProject(projectId).then(() => {
+        setLoadingUserRole(false);
+        loadProject(projectId).then(() => {
+          const project = projectRegistry.get(projectId);
+          const options = project?.participants?.map(p => ({
+            text: p.displayName,
+            value: p.username
+          })) || [];
+          setProjectUsersAsOptions(options);
+        });
+      });
+    }
+  }, [projectId, loadProject, projectRegistry, loadUserRoleForProject]);
 
   const validationSchema = Yup.object({
     title: Yup.string().required("The ticket title is required"),
@@ -85,45 +85,45 @@ if (projectId) {
     endDate: Yup.string().required("End date is required"),
   });
 
-function handleFormSubmit(ticket: Ticket) {
-  if (!ticket.id) {
-    const newTicket = {
-      ...ticket,
-      id: uuid(),
-      submitter: user!.username,
-      projectId: projectId!,
-      status: "Open",
-      createdAt: new Date()
-    };
-    createTicket(newTicket).then(() => {
-      projectStore.loadProjects();
-      navigate(`/projects/${projectId}`);
-    });
-      
-  } else {
-    if (!ticket.id || typeof ticket.id !== 'string') {
-      logger.error('Invalid ticket id', ticket.id);
-      return;
-    }
-    
-    updateTicket(ticket).then(() => {
-      ticketStore.loadTicketsByProject(projectId!);
-      projectStore.loadProjects();
-      navigate(`/projects/${projectId}`);
-    });
-  }
-}
+  function handleFormSubmit(ticket: Ticket) {
+    if (!ticket.id) {
+      const newTicket = {
+        ...ticket,
+        id: uuid(),
+        submitter: user!.username,
+        projectId: projectId!,
+        status: "Open",
+        createdAt: new Date()
+      };
+      createTicket(newTicket).then(() => {
+        projectStore.loadProjects();
+        navigate(`/projects/${projectId}`);
+      });
 
-function handleCancel() {
-  navigate(`/projects/${projectId}`);
-}
+    } else {
+      if (!ticket.id || typeof ticket.id !== 'string') {
+        logger.error('Invalid ticket id', ticket.id);
+        return;
+      }
+
+      updateTicket(ticket).then(() => {
+        ticketStore.loadTicketsByProject(projectId!);
+        projectStore.loadProjects();
+        navigate(`/projects/${projectId}`);
+      });
+    }
+  }
+
+  function handleCancel() {
+    navigate(`/projects/${projectId}`);
+  }
 
   const userRole = projectRoles[projectId || ""];
   const isSubmitter = ticket.submitter === user?.username;
   const canEditTicket = isAdmin || userRole === "Owner" || userRole === "ProjectManager" || userRole === "Developer" || isSubmitter;
 
   if (loadingInitial || loadingUserRole) return <LoadingComponent content="Loading ticket..." />;
-  
+
   if (!canEditTicket) {
     return (
       <Segment>
@@ -135,7 +135,7 @@ function handleCancel() {
   }
 
   return (
-    <Segment clearing>
+    <Segment clearing className="admin-user-form">
       <Header content="Ticket Details" sub color="teal" />
       <div style={{ marginBottom: '20px' }}></div>
       <Formik
@@ -158,7 +158,7 @@ function handleCancel() {
             <MySelectInput options={severityOptions} placeholder="Severity" name="severity" label="Severity" />
             <MyDateInput placeholderText="Start Date" name="startDate" dateFormat="MMMM d, yyyy" label="Start Date" />
             <MyDateInput placeholderText="End Date" name="endDate" dateFormat="MMMM d, yyyy" label="End Date" />
-            
+
             <Button
               disabled={isSubmitting || !dirty || !isValid}
               loading={loading}
