@@ -43,15 +43,15 @@ export default function TestErrors() {
     <>
       <Header as="h1" content="Test Error component" />
       <Segment>
-        <Button.Group widths="10">
-          <Button onClick={handleNotFound} content="Not Found" basic primary />
-          <Button onClick={handleBadRequest} content="Bad Request" basic primary />
-          <Button onClick={handleProjectValidationError} content="Project Validation Error" basic primary />
-          <Button onClick={handleTicketValidationError} content="Ticket Validation Error" basic primary />
-          <Button onClick={handleServerError} content="Server Error" basic primary />
-          <Button onClick={handleUnauthorized} content="Unauthorized" basic primary />
-          <Button onClick={handleBadProjectGuid} content="Bad Project Guid" basic primary />
-          <Button onClick={handleBadTicketGuid} content="Bad Ticket Guid" basic primary />
+        <Button.Group widths="10" className="test-error-group">
+          <Button onClick={handleNotFound} content="Not Found" color="blue" />
+          <Button onClick={handleBadRequest} content="Bad Request" color="orange" />
+          <Button onClick={handleProjectValidationError} content="Project Validation" color="teal" />
+          <Button onClick={handleTicketValidationError} content="Ticket Validation" color="purple" />
+          <Button onClick={handleServerError} content="Server Error" color="red" />
+          <Button onClick={handleUnauthorized} content="Unauthorized" color="yellow" />
+          <Button onClick={handleBadProjectGuid} content="Bad Project Guid" color="brown" />
+          <Button onClick={handleBadTicketGuid} content="Bad Ticket Guid" color="grey" />
         </Button.Group>
       </Segment>
       {errors && <ValidationError errors={errors} />}

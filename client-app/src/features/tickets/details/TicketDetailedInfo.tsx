@@ -38,7 +38,7 @@ const getStatusColor = (status: string) => {
 
 export default observer(function TicketDetailedInfo({ ticket }: Props) {
   return (
-    <Segment.Group>
+    <Segment.Group className="ticket-detailed-info-container">
       <Segment attached="top">
         <Header as="h3" dividing>
           <Icon name="info circle" color="teal" />
@@ -50,7 +50,7 @@ export default observer(function TicketDetailedInfo({ ticket }: Props) {
           </Grid.Column>
         </Grid>
       </Segment>
-      
+
       <Segment attached>
         <Grid>
           <Grid.Column width={8}>
@@ -75,7 +75,7 @@ export default observer(function TicketDetailedInfo({ ticket }: Props) {
           </Grid.Column>
         </Grid>
       </Segment>
-      
+
       <Segment attached>
         <Grid>
           <Grid.Column width={8}>
@@ -101,7 +101,7 @@ export default observer(function TicketDetailedInfo({ ticket }: Props) {
           </Grid.Column>
         </Grid>
       </Segment>
-      
+
       <Segment attached="bottom">
         <Grid>
           <Grid.Column width={8}>

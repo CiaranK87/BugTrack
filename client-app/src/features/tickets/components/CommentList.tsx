@@ -28,7 +28,7 @@ const CommentList: React.FC<Props> = observer(({ ticketId }) => {
     };
 
     window.addEventListener('closeReplyForm', handleCloseReplyForm as EventListener);
-    
+
     return () => {
       window.removeEventListener('closeReplyForm', handleCloseReplyForm as EventListener);
     };
@@ -66,31 +66,26 @@ const CommentList: React.FC<Props> = observer(({ ticketId }) => {
   };
 
   return (
-    <div style={{ marginTop: '20px' }}>
+    <div className="comment-list-container">
       {commentStore.comments.length === 0 ? (
         <div className="no-comments-placeholder">
           <Icon name='comment outline' size='large' style={{ marginBottom: '10px', display: 'block' }} />
           No comments yet. Be the first to share your thoughts.
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div className="comment-list-wrapper">
           {sortedComments.filter(comment => !comment.parentCommentId).map((comment) => (
-            <div key={comment.id} className="comment-container">
-              <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+            <div key={comment.id} className="comment-item">
+              <div className="comment-main-wrapper">
                 <Image
                   src='/assets/user.png'
                   avatar
                   size='mini'
-                  style={{ marginRight: '12px' }}
+                  className="comment-avatar-img"
                 />
-                <div style={{ flex: 1 }}>
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginBottom: '8px'
-                  }}>
-                    <div>
+                <div className="comment-body">
+                  <div className="comment-header-row">
+                    <div className="comment-author-info">
                       <span className="comment-author">
                         {comment.authorDisplayName}
                       </span>
@@ -99,31 +94,24 @@ const CommentList: React.FC<Props> = observer(({ ticketId }) => {
                       </span>
                     </div>
                     <div className="comment-metadata">
-                      <i className="clock icon" style={{
-                        margin: 0,
-                        padding: 0,
-                        fontSize: '0.9em',
-                        lineHeight: '1em',
-                        display: 'inline-block',
-                        verticalAlign: 'middle'
-                      }}></i>
-                      <span style={{ lineHeight: '1em', display: 'inline-block' }}>
+                      <i className="clock icon"></i>
+                      <span>
                         {format(new Date(comment.createdAt), 'PPp')}
                       </span>
                     </div>
                   </div>
-                  
+
                   <div className="comment-content">
                     {typeof comment.content === 'string' ? comment.content : JSON.stringify(comment.content)}
                   </div>
-                  
+
                   {comment.attachments && comment.attachments.length > 0 && (
                     <div className="comment-attachments">
                       <div className="attachment-header">
                         <Icon name='paperclip' style={{ marginRight: '6px' }} />
                         Attachments
                       </div>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                      <div className="attachments-grid">
                         {comment.attachments.map((attachment) => (
                           <FileAttachment
                             key={attachment.id}
@@ -138,42 +126,33 @@ const CommentList: React.FC<Props> = observer(({ ticketId }) => {
                       </div>
                     </div>
                   )}
-                  
+
                   {comment.updatedAt && (
                     <div className="comment-edited">
-                      <Icon name='edit' style={{
-                        marginRight: '4px',
-                        fontSize: '0.9em',
-                        verticalAlign: 'middle'
-                      }} />
+                      <Icon name='edit' />
                       Edited {format(new Date(comment.updatedAt), 'PPp')}
                     </div>
                   )}
                 </div>
               </div>
-              
+
               {/* Display replies */}
               {comment.replies && comment.replies.length > 0 && (
-                <div className="comment-replies">
+                <div className="comment-thread-replies">
                   {[...comment.replies].sort((a, b) =>
                     new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
                   ).map((reply) => (
-                    <div key={reply.id} className="comment-reply">
-                      <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+                    <div key={reply.id} className="reply-item">
+                      <div className="reply-main-wrapper">
                         <Image
                           src='/assets/user.png'
                           avatar
                           size='mini'
-                          style={{ marginRight: '10px' }}
+                          className="reply-avatar-img"
                         />
-                        <div style={{ flex: 1 }}>
-                          <div style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            marginBottom: '6px'
-                          }}>
-                            <div>
+                        <div className="reply-body">
+                          <div className="reply-header-row">
+                            <div className="reply-author-info">
                               <span className="reply-author">
                                 {reply.authorDisplayName}
                               </span>
@@ -182,42 +161,27 @@ const CommentList: React.FC<Props> = observer(({ ticketId }) => {
                               </span>
                             </div>
                             <div className="reply-metadata">
-                              <i className="clock icon" style={{
-                                margin: 0,
-                                padding: 0,
-                                fontSize: '0.9em',
-                                lineHeight: '1em',
-                                display: 'inline-block',
-                                verticalAlign: 'middle'
-                              }}></i>
-                              <span style={{ lineHeight: '1em', display: 'inline-block' }}>
+                              <i className="clock icon"></i>
+                              <span>
                                 {format(new Date(reply.createdAt), 'PPp')}
                               </span>
                             </div>
                           </div>
-                          
+
                           <div className="reply-content">
                             {typeof reply.content === 'string' ? reply.content : JSON.stringify(reply.content)}
                           </div>
-                          
+
                           {reply.updatedAt && (
                             <div className="reply-edited">
-                              <Icon name='edit' style={{
-                                marginRight: '3px',
-                                fontSize: '0.9em',
-                                verticalAlign: 'middle'
-                              }} />
+                              <Icon name='edit' />
                               Edited {format(new Date(reply.updatedAt), 'PPp')}
                             </div>
                           )}
-                          
+
                           {/* Delete button for replies */}
                           {canDeleteComment(reply) && (
-                            <div style={{
-                              display: 'flex',
-                              justifyContent: 'flex-end',
-                              marginTop: '6px'
-                            }}>
+                            <div className="reply-actions-row">
                               <Button
                                 icon='trash alternate'
                                 basic
@@ -243,25 +207,20 @@ const CommentList: React.FC<Props> = observer(({ ticketId }) => {
                   ))}
                 </div>
               )}
-              
+
               {/* Reply button and delete button */}
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginTop: '8px'
-              }}>
+              <div className="comment-footer-actions">
                 <Button
                   size='mini'
                   basic
                   content='Reply'
                   icon='reply'
                   onClick={() => handleReply(comment.id)}
-                  style={{ fontSize: '0.8em' }}
+                  className="reply-btn-action"
                 />
-                
+
                 {canDeleteComment(comment) && (
-                  <div>
+                  <div className="comment-delete-action">
                     <Button
                       icon='trash alternate'
                       basic
@@ -282,10 +241,10 @@ const CommentList: React.FC<Props> = observer(({ ticketId }) => {
                   </div>
                 )}
               </div>
-              
+
               {/* Reply form */}
               {replyingTo === comment.id && (
-                <div style={{ marginTop: '12px', marginLeft: '20px' }}>
+                <div className="comment-reply-form">
                   <CommentForm ticketId={ticketId} parentCommentId={comment.id} isReply={true} />
                 </div>
               )}

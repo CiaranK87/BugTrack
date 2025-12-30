@@ -13,34 +13,34 @@ export default observer(function ProjectDetails() {
   const { selectedProject, loadProject, loadingInitial } = projectStore;
   const { id } = useParams<{ id: string }>();
 
-useEffect(() => {
-  if (id) {
-    loadProject(id);
-  }
-}, [id, loadProject]);
+  useEffect(() => {
+    if (id) {
+      loadProject(id);
+    }
+  }, [id, loadProject]);
 
   if (loadingInitial || !selectedProject) return <LoadingComponent />;
 
   return (
-    <Grid stretched>
-  <Grid.Column width={16}>
-    <ProjectDetailedHeader project={selectedProject} />
-  </Grid.Column>
-  <Grid.Column width={16}>
-    <Segment>
-      <ProjectParticipants projectId={selectedProject!.id} />
-    </Segment>
-  </Grid.Column>
-  {/* <Grid.Column width={8}>
+    <Grid stretched className="project-details-container">
+      <Grid.Column width={16}>
+        <ProjectDetailedHeader project={selectedProject} />
+      </Grid.Column>
+      <Grid.Column width={16}>
+        <Segment>
+          <ProjectParticipants projectId={selectedProject!.id} />
+        </Segment>
+      </Grid.Column>
+      {/* <Grid.Column width={8}>
     <Segment style={{ height: '100%' }}>
       <ProjectDetailedInfo project={selectedProject} />
     </Segment>
   </Grid.Column> */}
-  <Grid.Column width={16}>
-    <Segment style={{ height: '100%' }}>
-      <ProjectDetailedTicketInfo projectId={selectedProject.id} />
-    </Segment>
-  </Grid.Column>
-</Grid>
+      <Grid.Column width={16}>
+        <Segment style={{ height: '100%' }}>
+          <ProjectDetailedTicketInfo projectId={selectedProject.id} />
+        </Segment>
+      </Grid.Column>
+    </Grid>
   );
 });

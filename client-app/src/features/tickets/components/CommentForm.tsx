@@ -42,7 +42,7 @@ export default observer(function CommentForm({ ticketId, parentCommentId, isRepl
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
-      
+
       if (isReply && parentCommentId) {
         window.dispatchEvent(new CustomEvent('closeReplyForm', { detail: { commentId: parentCommentId } }));
       }
@@ -70,13 +70,8 @@ export default observer(function CommentForm({ ticketId, parentCommentId, isRepl
             <ErrorMessage
               name='content'
             />
-            
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              margin: '10px 0'
-            }}>
+
+            <div className="comment-form-footer">
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <input
                   type='file'

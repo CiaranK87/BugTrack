@@ -27,33 +27,25 @@ export default observer(function TicketDetails() {
   if (loadingInitial || !ticket) return <LoadingComponent />;
 
   return (
-    <div style={{ padding: '20px' }}>
-      <Grid stackable>
-        <Grid.Row>
-          <Grid.Column width={16}>
-            <TicketDetailedHeader ticket={ticket} />
-          </Grid.Column>
-        </Grid.Row>
-        
-        <Grid.Row>
-          <Grid.Column width={16}>
-            <TicketDetailedInfo ticket={ticket} />
-          </Grid.Column>
-        </Grid.Row>
-        
-        <Grid.Row>
-          <Grid.Column width={16}>
-            <Segment>
-              <Header as="h3" dividing>
-                <Header.Content>
-                  Discussion & Comments
-                </Header.Content>
-              </Header>
-              <TicketComments ticketId={ticket.id} />
-            </Segment>
-          </Grid.Column>
-        </Grid.Row>
-      </Grid>
-    </div>
+    <Grid stretched className="ticket-details-container">
+      <Grid.Column width={16}>
+        <TicketDetailedHeader ticket={ticket} />
+      </Grid.Column>
+
+      <Grid.Column width={16}>
+        <TicketDetailedInfo ticket={ticket} />
+      </Grid.Column>
+
+      <Grid.Column width={16}>
+        <Segment>
+          <Header as="h3" dividing>
+            <Header.Content>
+              Discussion & Comments
+            </Header.Content>
+          </Header>
+          <TicketComments ticketId={ticket.id} />
+        </Segment>
+      </Grid.Column>
+    </Grid>
   );
 });

@@ -112,16 +112,213 @@ body.dark-mode .ui.card>.content>.description {
 body.dark-mode .ui.comments,
 body.dark-mode .ui.comments *,
 body.dark-mode .ui.comment,
-body.dark-mode .ui.comment *,
-body.dark-mode div[class*="comment"],
-body.dark-mode div[class*="Comment"] {
+body.dark-mode .ui.comment * {
   background-color: #1a202c !important;
   color: var(--dm-text-secondary) !important;
+}
+
+/* Ticket Comment List Layouts */
+.comment-list-container {
+  margin-top: 20px;
+}
+
+.comment-list-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.comment-item {
+  background-color: #f1f3f5;
+  padding: 18px;
+  border-radius: 10px;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+body.dark-mode .comment-item {
+  background-color: #1e2533;
+  border-color: #2d3748;
+}
+
+.reply-item {
+  background-color: rgba(0, 0, 0, 0.03);
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+body.dark-mode .reply-item {
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+.comment-main-wrapper,
+.reply-main-wrapper {
+  display: flex;
+  align-items: flex-start;
+}
+
+.comment-body,
+.reply-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.comment-avatar-img {
+  margin-right: 12px !important;
+}
+
+.reply-avatar-img {
+  margin-right: 10px !important;
+}
+
+.comment-header-row,
+.reply-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.comment-author-info,
+.reply-author-info {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.comment-author,
+.reply-author {
+  font-weight: 700;
+  color: #333;
+  font-size: 1.05em;
+}
+
+body.dark-mode .comment-author,
+body.dark-mode .reply-author {
+  color: #fff;
+}
+
+.comment-username,
+.reply-username {
+  color: #adb5bd;
+  font-size: 0.9em;
+}
+
+.comment-metadata,
+.reply-metadata {
+  color: #868e96;
+  font-size: 0.85em;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  line-height: 1;
+}
+
+body.dark-mode .comment-metadata,
+body.dark-mode .reply-metadata {
+  color: #a0aec0;
+}
+
+.comment-metadata i,
+.reply-metadata i {
+  margin: 0 !important;
+  font-size: 1.1em !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.comment-metadata span,
+.reply-metadata span {
+  display: flex;
+  align-items: center;
+}
+
+.comment-footer-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.reply-actions-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 6px;
+}
+
+.comment-thread-replies {
+  margin-left: 40px;
+  margin-top: 15px;
+  border-left: 2px solid #eee;
+  padding-left: 15px;
+}
+
+body.dark-mode .comment-thread-replies {
+  border-left-color: #4a5568;
+}
+
+.reply-item {
+  margin-bottom: 0;
+}
+
+.comment-reply-form {
+  margin-top: 12px;
+  margin-left: 20px;
+}
+
+/* Mobile Responsive Adjustments */
+@media (max-width: 767px) {
+  .comment-thread-replies {
+    margin-left: 10px !important;
+    padding-left: 10px !important;
+  }
+
+  .comment-reply-form {
+    margin-left: 5px !important;
+  }
+
+  .comment-header-row,
+  .reply-header-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 4px !important;
+  }
+
+  .comment-metadata,
+  .reply-metadata {
+    font-size: 0.8em !important;
+  }
+
+  .comment-avatar-img,
+  .reply-avatar-img {
+    width: 28px !important;
+    height: 28px !important;
+    margin-right: 8px !important;
+  }
+
+  .comment-author-info,
+  .reply-author-info {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0 !important;
+    margin-bottom: 4px !important;
+  }
 }
 
 body.dark-mode .ui.comments .comment,
 body.dark-mode .ui.comment {
   border-color: var(--dm-border) !important;
+}
+
+.comment-form-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px 0;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 body.dark-mode .ui.comments .comment .text,
@@ -1595,7 +1792,6 @@ body.dark-mode .theme-toggle-slider.ui.toggle.checkbox input:checked~label:befor
   }
 
   /* Show Hamburger */
-  /* Show Hamburger */
   .mobile-hamburger {
     display: flex !important;
     justify-content: flex-start !important;
@@ -1609,7 +1805,6 @@ body.dark-mode .theme-toggle-slider.ui.toggle.checkbox input:checked~label:befor
     display: none !important;
   }
 
-  /* Center Logo and Fix Background */
   /* Center Logo and Fix Background */
   .brand-logo,
   .brand-logo:active,
@@ -1630,8 +1825,7 @@ body.dark-mode .theme-toggle-slider.ui.toggle.checkbox input:checked~label:befor
     font-weight: bold;
   }
 
-  /* FORCE REMOVE ALL GREY BACKGROUNDS ON MOBILE NAVBAR ITEMS */
-  /* FORCE REMOVE ALL GREY BACKGROUNDS ON MOBILE NAVBAR ITEMS */
+  /* Navbar Mobile Overrides */
   /* Target specific Semantic UI Inverted Menu selectors to override defaults */
   .ui.inverted.menu.navbar-menu .item,
   .ui.inverted.menu.navbar-menu .item:hover,
@@ -1676,14 +1870,25 @@ body.dark-mode .theme-toggle-slider.ui.toggle.checkbox input:checked~label:befor
     display: none !important;
   }
 
-  /* Fix Issue 3: Force Dropdown Icon & Positioning - Remove GREY BACKGROUND from ICON */
+  /* Dropdown Icon Positioning and Visibility */
   .user-menu-item .ui.dropdown>.dropdown.icon,
   .user-menu-item .ui.dropdown>.dropdown.icon:hover,
   .user-menu-item .ui.dropdown>.dropdown.icon:active,
-  .user-menu-item .ui.dropdown.active>.dropdown.icon {
+  .user-menu-item .ui.dropdown.active>.dropdown.icon,
+  .user-menu-item .ui.dropdown.visible>.dropdown.icon {
     display: inline-block !important;
     margin-left: 0 !important;
     margin-right: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    outline: none !important;
+  }
+
+  /* Specific fix for the 'box' effect on active/clicked dropdowns in inverted menus */
+  .ui.inverted.menu.navbar-menu .user-menu-item .ui.dropdown.active,
+  .ui.inverted.menu.navbar-menu .user-menu-item .ui.dropdown.visible {
     background: transparent !important;
     background-color: transparent !important;
     box-shadow: none !important;
@@ -1693,7 +1898,7 @@ body.dark-mode .theme-toggle-slider.ui.toggle.checkbox input:checked~label:befor
 
 
 
-  /* Fix Issue 3: Dropdown positioning & Background Handling */
+  /* Dropdown Menu Positioning */
   .user-menu-item .ui.dropdown .menu {
     left: auto !important;
     right: 0 !important;
@@ -2736,6 +2941,108 @@ body.dark-mode .theme-toggle-slider.ui.toggle.checkbox input:checked~label:befor
 .project-cards-mobile,
 .ticket-cards-mobile,
 .deleted-project-cards-mobile,
-.deleted-ticket-cards-mobile {
+.deleted-ticket-cards-mobile,
+.participant-cards-mobile,
+.project-ticket-cards-mobile {
   display: none;
+}
+
+
+/* Visibility Utilities */
+.mobile-only {
+  display: none !important;
+}
+
+@media (max-width: 767px) {
+  .mobile-only {
+    display: block !important;
+  }
+
+  .tablet-desktop-only {
+    display: none !important;
+  }
+}
+
+@media (max-width: 767px) {
+
+  /* Project & Ticket Layouts */
+  .project-details-container,
+  .ticket-details-container {
+    padding: 0 5px !important;
+  }
+
+  /* Admin Test Error Page */
+  .test-error-group {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+
+  .test-error-group .ui.button {
+    width: 100% !important;
+    margin-bottom: 8px !important;
+    border-radius: 4px !important;
+    color: white !important;
+  }
+
+  .project-participants-container .participant-table-desktop,
+  .project-ticket-info-container .project-ticket-table-desktop {
+    display: none !important;
+  }
+
+  .project-participants-container .participant-cards-mobile,
+  .project-ticket-info-container .project-ticket-cards-mobile {
+    display: block !important;
+  }
+
+  .participants-header {
+    margin-bottom: 25px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  .participants-header .button {
+    float: none !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+
+  /* Card Styles */
+  .participant-mobile-card,
+  .project-ticket-mobile-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #eee;
+  }
+
+  body.dark-mode .participant-mobile-card,
+  body.dark-mode .project-ticket-mobile-card {
+    background: #2d3748;
+    border-color: #4a5568;
+  }
+
+  .participant-card-header,
+  .ticket-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+  }
+
+  body.dark-mode .participant-card-header,
+  body.dark-mode .ticket-card-header {
+    border-bottom-color: #4a5568;
+  }
+
+  /* Ticket Info Stacking */
+  .ticket-detailed-info-container .ui.grid>.column {
+    width: 100% !important;
+    margin-bottom: 10px !important;
+  }
 }
