@@ -1342,4 +1342,57 @@ BEGIN
 END $EF$;
 COMMIT;
 
+START TRANSACTION;
+
+DO $EF$
+BEGIN
+    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20260102163528_AddNotificationsTable') THEN
+    CREATE TABLE "Notifications" (
+        "Id" TEXT NOT NULL,
+        "RecipientId" TEXT NOT NULL,
+        "Type" integer NOT NULL,
+        "Message" TEXT NOT NULL,
+        "IsRead" boolean NOT NULL,
+        "CreatedAt" timestamp with time zone NOT NULL,
+        "ReadAt" timestamp with time zone NULL,
+        "CommentId" TEXT NULL,
+        "TicketId" TEXT NULL,
+        CONSTRAINT "PK_Notifications" PRIMARY KEY ("Id"),
+        CONSTRAINT "FK_Notifications_AspNetUsers_RecipientId" FOREIGN KEY ("RecipientId") REFERENCES "AspNetUsers" ("Id") ON DELETE CASCADE,
+        CONSTRAINT "FK_Notifications_Comments_CommentId" FOREIGN KEY ("CommentId") REFERENCES "Comments" ("Id") ON DELETE SET NULL,
+        CONSTRAINT "FK_Notifications_Tickets_TicketId" FOREIGN KEY ("TicketId") REFERENCES "Tickets" ("Id") ON DELETE SET NULL
+    );
+    END IF;
+END $EF$;
+
+DO $EF$
+BEGIN
+    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20260102163528_AddNotificationsTable') THEN
+    CREATE INDEX "IX_Notifications_CommentId" ON "Notifications" ("CommentId");
+    END IF;
+END $EF$;
+
+DO $EF$
+BEGIN
+    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20260102163528_AddNotificationsTable') THEN
+    CREATE INDEX "IX_Notifications_RecipientId" ON "Notifications" ("RecipientId");
+    END IF;
+END $EF$;
+
+DO $EF$
+BEGIN
+    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20260102163528_AddNotificationsTable') THEN
+    CREATE INDEX "IX_Notifications_TicketId" ON "Notifications" ("TicketId");
+    END IF;
+END $EF$;
+
+DO $EF$
+BEGIN
+    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20260102163528_AddNotificationsTable') THEN
+    INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+    VALUES ('20260102163528_AddNotificationsTable', '8.0.0');
+    END IF;
+END $EF$;
+COMMIT;
+
 

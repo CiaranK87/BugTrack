@@ -118,7 +118,6 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateTicket([FromBody] TicketDto ticketDto)
         {
-            // Check authorization using the ProjectId from the ticket
             var authorized = await _authorizationService.AuthorizeAsync(User, ticketDto.ProjectId, "ProjectContributor");
 
             if (!authorized.Succeeded)
@@ -237,7 +236,6 @@ namespace API.Controllers
                 return BadRequest("Ticket must be soft deleted first");
             }
 
-            // Hard delete the ticket
             _context.Tickets.Remove(ticket);
             var result = await _context.SaveChangesAsync() > 0;
             
@@ -264,7 +262,6 @@ namespace API.Controllers
                 return BadRequest("Ticket is not deleted");
             }
 
-            // Restore the ticket
             ticket.IsDeleted = false;
             ticket.DeletedDate = null;
             

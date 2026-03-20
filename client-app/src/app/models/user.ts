@@ -18,6 +18,7 @@ export interface UserSearchDto {
   id: string;
   name: string;
   username: string;
+  isParticipant: boolean;
 }
 
 export interface UserDto {

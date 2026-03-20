@@ -170,7 +170,7 @@ public class ProjectRoleHandlerTests : TestBase
     }
 
     [Fact]
-    public async Task ProjectManagerUser_ShouldAccessOwnerRequirement()
+    public async Task ProjectManagerUser_ShouldNotAccessOwnerRequirementWhenNotParticipant()
     {
         // Arrange
         var project = _context.Projects.First();
@@ -182,11 +182,11 @@ public class ProjectRoleHandlerTests : TestBase
         var result = await authService.AuthorizeAsync(user, project, requirement);
 
         // Assert
-        result.Succeeded.Should().BeTrue();
+        result.Succeeded.Should().BeFalse();
     }
 
     [Fact]
-    public async Task ContributorRole_ShouldNotBeTreatedAsUser()
+    public async Task ContributorRole_ShouldBeTreatedAsUser()
     {
         // Arrange
         var project = _context.Projects.First();
@@ -208,7 +208,7 @@ public class ProjectRoleHandlerTests : TestBase
         var result = await authService.AuthorizeAsync(user, project, requirement);
 
         // Assert
-        result.Succeeded.Should().BeFalse();
+        result.Succeeded.Should().BeTrue();
     }
 
 }

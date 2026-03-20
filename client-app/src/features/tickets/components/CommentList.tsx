@@ -55,6 +55,9 @@ const CommentList: React.FC<Props> = observer(({ ticketId }) => {
   };
 
   const handleReply = (commentId: string) => {
+    if (replyingTo !== commentId) {
+      window.dispatchEvent(new CustomEvent('openReplyForm'));
+    }
     setReplyingTo(replyingTo === commentId ? null : commentId);
   };
 
@@ -75,7 +78,7 @@ const CommentList: React.FC<Props> = observer(({ ticketId }) => {
       ) : (
         <div className="comment-list-wrapper">
           {sortedComments.filter(comment => !comment.parentCommentId).map((comment) => (
-            <div key={comment.id} className="comment-item">
+            <div key={comment.id} id={`comment-${comment.id}`} className={`comment-item ${comment.isDeleted ? 'deleted-comment' : ''}`}>
               <div className="comment-main-wrapper">
                 <Image
                   src='/assets/user.png'
@@ -84,26 +87,51 @@ const CommentList: React.FC<Props> = observer(({ ticketId }) => {
                   className="comment-avatar-img"
                 />
                 <div className="comment-body">
-                  <div className="comment-header-row">
-                    <div className="comment-author-info">
-                      <span className="comment-author">
-                        {comment.authorDisplayName}
-                      </span>
-                      <span className="comment-username">
-                        @{comment.authorUsername}
-                      </span>
-                    </div>
-                    <div className="comment-metadata">
-                      <i className="clock icon"></i>
-                      <span>
-                        {format(new Date(comment.createdAt), 'PPp')}
-                      </span>
-                    </div>
-                  </div>
+                  {comment.isDeleted ? (
+                    <>
+                      <div className="comment-header-row">
+                        <div className="comment-author-info">
+                          <span className="comment-author deleted-author">
+                            [Deleted]
+                          </span>
+                        </div>
+                        <div className="comment-metadata">
+                          <i className="clock icon"></i>
+                          <span>
+                            {comment.deletedAt
+                              ? `Deleted ${format(new Date(comment.deletedAt), 'PPp')}`
+                              : 'Deleted'}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="comment-content deleted-content">
+                        <em>[Comment removed]</em>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="comment-header-row">
+                        <div className="comment-author-info">
+                          <span className="comment-author">
+                            {comment.authorDisplayName}
+                          </span>
+                          <span className="comment-username">
+                            @{comment.authorUsername}
+                          </span>
+                        </div>
+                        <div className="comment-metadata">
+                          <i className="clock icon"></i>
+                          <span>
+                            {format(new Date(comment.createdAt), 'PPp')}
+                          </span>
+                        </div>
+                      </div>
 
-                  <div className="comment-content">
-                    {typeof comment.content === 'string' ? comment.content : JSON.stringify(comment.content)}
-                  </div>
+                      <div className="comment-content">
+                        {typeof comment.content === 'string' ? comment.content : JSON.stringify(comment.content)}
+                      </div>
+                    </>
+                  )}
 
                   {comment.attachments && comment.attachments.length > 0 && (
                     <div className="comment-attachments">
@@ -136,13 +164,12 @@ const CommentList: React.FC<Props> = observer(({ ticketId }) => {
                 </div>
               </div>
 
-              {/* Display replies */}
               {comment.replies && comment.replies.length > 0 && (
                 <div className="comment-thread-replies">
                   {[...comment.replies].sort((a, b) =>
                     new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
                   ).map((reply) => (
-                    <div key={reply.id} className="reply-item">
+                    <div key={reply.id} id={`comment-${reply.id}`} className={`reply-item ${reply.isDeleted ? 'deleted-comment' : ''}`}>
                       <div className="reply-main-wrapper">
                         <Image
                           src='/assets/user.png'
@@ -151,55 +178,79 @@ const CommentList: React.FC<Props> = observer(({ ticketId }) => {
                           className="reply-avatar-img"
                         />
                         <div className="reply-body">
-                          <div className="reply-header-row">
-                            <div className="reply-author-info">
-                              <span className="reply-author">
-                                {reply.authorDisplayName}
-                              </span>
-                              <span className="reply-username">
-                                @{reply.authorUsername}
-                              </span>
-                            </div>
-                            <div className="reply-metadata">
-                              <i className="clock icon"></i>
-                              <span>
-                                {format(new Date(reply.createdAt), 'PPp')}
-                              </span>
-                            </div>
-                          </div>
+                          {reply.isDeleted ? (
+                            <>
+                              <div className="reply-header-row">
+                                <div className="reply-author-info">
+                                  <span className="reply-author deleted-author">
+                                    [Deleted]
+                                  </span>
+                                </div>
+                                <div className="reply-metadata">
+                                  <i className="clock icon"></i>
+                                  <span>
+                                    {reply.deletedAt
+                                      ? `Deleted ${format(new Date(reply.deletedAt), 'PPp')}`
+                                      : 'Deleted'}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="reply-content deleted-content">
+                                <em>[Comment removed]</em>
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <div className="reply-header-row">
+                                <div className="reply-author-info">
+                                  <span className="reply-author">
+                                    {reply.authorDisplayName}
+                                  </span>
+                                  <span className="reply-username">
+                                    @{reply.authorUsername}
+                                  </span>
+                                </div>
+                                <div className="reply-metadata">
+                                  <i className="clock icon"></i>
+                                  <span>
+                                    {format(new Date(reply.createdAt), 'PPp')}
+                                  </span>
+                                </div>
+                              </div>
 
-                          <div className="reply-content">
-                            {typeof reply.content === 'string' ? reply.content : JSON.stringify(reply.content)}
-                          </div>
+                              <div className="reply-content">
+                                {typeof reply.content === 'string' ? reply.content : JSON.stringify(reply.content)}
+                              </div>
 
-                          {reply.updatedAt && (
-                            <div className="reply-edited">
-                              <Icon name='edit' />
-                              Edited {format(new Date(reply.updatedAt), 'PPp')}
-                            </div>
-                          )}
+                              {reply.updatedAt && (
+                                <div className="reply-edited">
+                                  <Icon name='edit' />
+                                  Edited {format(new Date(reply.updatedAt), 'PPp')}
+                                </div>
+                              )}
 
-                          {/* Delete button for replies */}
-                          {canDeleteComment(reply) && (
-                            <div className="reply-actions-row">
-                              <Button
-                                icon='trash alternate'
-                                basic
-                                size='mini'
-                                title='Delete reply'
-                                className="delete-button"
-                                onClick={() => showDeleteConfirm(reply.id)}
-                              />
-                              <Confirm
-                                open={deleteConfirmOpen === reply.id}
-                                content='Are you sure you want to delete this reply?'
-                                onCancel={cancelDelete}
-                                onConfirm={() => handleDeleteComment(reply.id)}
-                                cancelButton='Cancel'
-                                confirmButton='Delete'
-                                size='mini'
-                              />
-                            </div>
+                              {canDeleteComment(reply) && (
+                                <div className="reply-actions-row">
+                                  <Button
+                                    icon='trash alternate'
+                                    basic
+                                    size='mini'
+                                    title='Delete reply'
+                                    className="delete-button"
+                                    onClick={() => showDeleteConfirm(reply.id)}
+                                  />
+                                  <Confirm
+                                    open={deleteConfirmOpen === reply.id}
+                                    content='Are you sure you want to delete this reply?'
+                                    onCancel={cancelDelete}
+                                    onConfirm={() => handleDeleteComment(reply.id)}
+                                    cancelButton='Cancel'
+                                    confirmButton='Delete'
+                                    size='mini'
+                                  />
+                                </div>
+                              )}
+                            </>
                           )}
                         </div>
                       </div>
@@ -208,41 +259,41 @@ const CommentList: React.FC<Props> = observer(({ ticketId }) => {
                 </div>
               )}
 
-              {/* Reply button and delete button */}
-              <div className="comment-footer-actions">
-                <Button
-                  size='mini'
-                  basic
-                  content='Reply'
-                  icon='reply'
-                  onClick={() => handleReply(comment.id)}
-                  className="reply-btn-action"
-                />
+              {!comment.isDeleted && (
+                <div className="comment-footer-actions">
+                  <Button
+                    size='mini'
+                    basic
+                    content='Reply'
+                    icon='reply'
+                    onClick={() => handleReply(comment.id)}
+                    className="reply-btn-action"
+                  />
 
-                {canDeleteComment(comment) && (
-                  <div className="comment-delete-action">
-                    <Button
-                      icon='trash alternate'
-                      basic
-                      size='mini'
-                      title='Delete comment'
-                      className="delete-button"
-                      onClick={() => showDeleteConfirm(comment.id)}
-                    />
-                    <Confirm
-                      open={deleteConfirmOpen === comment.id}
-                      content='Are you sure you want to delete this comment?'
-                      onCancel={cancelDelete}
-                      onConfirm={() => handleDeleteComment(comment.id)}
-                      cancelButton='Cancel'
-                      confirmButton='Delete'
-                      size='mini'
-                    />
-                  </div>
-                )}
-              </div>
+                  {canDeleteComment(comment) && (
+                    <div className="comment-delete-action">
+                      <Button
+                        icon='trash alternate'
+                        basic
+                        size='mini'
+                        title='Delete comment'
+                        className="delete-button"
+                        onClick={() => showDeleteConfirm(comment.id)}
+                      />
+                      <Confirm
+                        open={deleteConfirmOpen === comment.id}
+                        content='Are you sure you want to delete this comment?'
+                        onCancel={cancelDelete}
+                        onConfirm={() => handleDeleteComment(comment.id)}
+                        cancelButton='Cancel'
+                        confirmButton='Delete'
+                        size='mini'
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
 
-              {/* Reply form */}
               {replyingTo === comment.id && (
                 <div className="comment-reply-form">
                   <CommentForm ticketId={ticketId} parentCommentId={comment.id} isReply={true} />

@@ -3,9 +3,10 @@ import { AddParticipantDto, Project, ProjectFormValues, ProjectParticipantDto, U
 import { toast } from "react-toastify";
 import { router } from "../router/Routes";
 import { store } from "../stores/store";
-import { User, UserFormValues, UserSearchDto, UserDto } from "../models/user";
+import { User, UserFormValues, UserDto, UserSearchDto } from "../models/user";
 import { Ticket } from "../models/ticket";
 import { Profile } from "../models/profile";
+import { Notification } from "../models/notification";
 
 const sleep = (delay: number) => {
   return new Promise((resolve) => {
@@ -165,11 +166,20 @@ const Profiles = {
 };
 
 const Users = {
-  search: (query: string) => requests.get<UserSearchDto[]>(`/users/search?query=${query}`),
+  search: (query: string, projectId?: string) => requests.get<UserSearchDto[]>(`/users/search?query=${query}${projectId ? `&projectId=${projectId}` : ''}`),
   list: () => requests.get<UserDto[]>("/users/list"),
   updateRole: (userId: string, role: string) => requests.put<UserDto>(`/users/${userId}/role`, { role }),
   update: (userId: string, user: Partial<UserDto>) => requests.put<UserDto>(`/users/${userId}`, user),
   delete: (userId: string) => requests.del<void>(`/users/${userId}`),
+};
+
+const Notifications = {
+  list: () => requests.get<Notification[]>("/notifications"),
+  getUnreadCount: () => requests.get<number>("/notifications/unread-count"),
+  markAsRead: (id: string) => requests.put<void>(`/notifications/${id}/read`, {}),
+  markAllAsRead: () => requests.put<void>("/notifications/read-all", {}),
+  delete: (id: string) => requests.del<void>(`/notifications/${id}`),
+  clearAll: () => requests.del<{ deletedCount: number }>("/notifications/clear-all"),
 };
 
 const agent = {
@@ -178,6 +188,7 @@ const agent = {
   Tickets,
   Profiles,
   Users,
+  Notifications,
 };
 
 export default agent;

@@ -13,7 +13,6 @@ namespace API.Middleware
 
         public Task Invoke(HttpContext context)
         {
-            // Add security headers
             context.Response.Headers["X-Content-Type-Options"] = "nosniff";
             context.Response.Headers["X-Frame-Options"] = "DENY";
             context.Response.Headers["X-XSS-Protection"] = "1; mode=block";
@@ -27,7 +26,7 @@ namespace API.Middleware
                 "connect-src 'self'; " +
                 "frame-ancestors 'none';";
 
-            // In production, add HSTS
+
             if (context.Request.IsHttps)
             {
                 context.Response.Headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains; preload";

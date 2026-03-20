@@ -48,7 +48,7 @@ builder.Services.AddRateLimiter(options =>
             factory: partition => new FixedWindowRateLimiterOptions
             {
                 AutoReplenishment = true,
-                PermitLimit = 100,
+                PermitLimit = 500,
                 QueueLimit = 0,
                 Window = TimeSpan.FromMinutes(1)
             }));
@@ -127,6 +127,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapHub<TicketCommentHub>("/hubs/comments");
+app.MapHub<NotificationHub>("/hubs/notifications");
 
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;

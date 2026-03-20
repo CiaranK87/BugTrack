@@ -30,11 +30,6 @@ namespace API.Authorization
                 return;
             }
             
-            if (requirement.AllowedRoles.Contains("Owner") && globalRoleClaim == "ProjectManager")
-            {
-                context.Succeed(requirement);
-                return;
-            }
 
             string projectIdString = null;
 
@@ -94,7 +89,8 @@ namespace API.Authorization
                 { "Owner", 4 },
                 { "ProjectManager", 3 },
                 { "Developer", 2 },
-                { "User", 1 }
+                { "User", 1 },
+                { "Contributor", 1 }
             };
 
             if (!roleHierarchy.TryGetValue(userRole, out var userRoleLevel))

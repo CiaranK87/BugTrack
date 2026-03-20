@@ -56,7 +56,7 @@ namespace API.Controllers
                 {
                     _logger.LogWarning(emailEx, $"Failed to send email for access request from {request.Email} ({request.Name})");
                     
-                    // Log to file as backup
+                    
                     await LogRequestToFile(request);
                     
                     _logger.LogInformation($"Access request received from {request.Email} ({request.Name}) - Email failed but request logged to file");
@@ -79,7 +79,7 @@ namespace API.Controllers
                           throw new InvalidOperationException("CONTACT_FROM_EMAIL environment variable is not configured");
             var resendApiKey = _config.GetEnvironmentVariable("RESEND_API_KEY");
 
-            // Skip email sending if Resend API key is not configured
+
             if (string.IsNullOrEmpty(resendApiKey))
             {
                 _logger.LogWarning("Resend API key not configured. Skipping email send.");

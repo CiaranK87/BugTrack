@@ -7,6 +7,8 @@ using Domain;
 using Persistence;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using FluentAssertions;
 
 namespace Application.UnitTests.Comments
 {
@@ -14,7 +16,9 @@ namespace Application.UnitTests.Comments
     {
         private readonly DataContext _context;
         private readonly Mock<IUserAccessor> _mockUserAccessor;
-        private readonly Mock<IConfiguration> _mockConfiguration;
+        private readonly Mock<INotificationService> _mockNotificationService;
+        private readonly Mock<INotificationPushService> _mockNotificationPushService;
+        private readonly Mock<ILogger<Create.Handler>> _mockLogger;
         private readonly Create.Handler _handler;
 
         public CreateCommentHandlerTests()
@@ -25,8 +29,17 @@ namespace Application.UnitTests.Comments
 
             _context = new DataContext(options);
             _mockUserAccessor = new Mock<IUserAccessor>();
-            _mockConfiguration = new Mock<IConfiguration>();
-            _handler = new Create.Handler(_context, _mockUserAccessor.Object, _mockConfiguration.Object);
+            _mockNotificationService = new Mock<INotificationService>();
+            _mockNotificationPushService = new Mock<INotificationPushService>();
+            _mockLogger = new Mock<ILogger<Create.Handler>>();
+            
+            _handler = new Create.Handler(
+                _context, 
+                _mockUserAccessor.Object, 
+                _mockNotificationService.Object,
+                _mockNotificationPushService.Object,
+                _mockLogger.Object
+            );
         }
 
         [Fact]
@@ -215,6 +228,74 @@ namespace Application.UnitTests.Comments
         }
 
         [Fact]
+        public async Task Handle_CommentWithMentions_ShouldCreateNotifications()
+        {
+            var author = new AppUser
+            {
+                Id = "author123",
+                UserName = "author_user",
+                DisplayName = "Author User"
+            };
+            var mentionedUser = new AppUser
+            {
+                Id = "mentioned456",
+                UserName = "mentioned_user",
+                DisplayName = "Mentioned User"
+            };
+            var ticket = new Ticket
+            {
+                Id = Guid.NewGuid(),
+                Title = "Test Ticket",
+                Description = "Test Description"
+            };
+            
+            _context.Users.AddRange(author, mentionedUser);
+            _context.Tickets.Add(ticket);
+            await _context.SaveChangesAsync();
+
+            _mockUserAccessor.Setup(x => x.GetUserId()).Returns(author.Id);
+
+            var notificationGuid = Guid.NewGuid();
+            _mockNotificationService.Setup(x => x.CreateMentionNotificationAsync(
+                mentionedUser.Id, It.IsAny<Guid>(), ticket.Id, author.DisplayName))
+                .ReturnsAsync(new Domain.Notification { 
+                    Id = notificationGuid,
+                    RecipientId = mentionedUser.Id,
+                    Type = Domain.NotificationType.Mention,
+                    Message = "Author User mentioned you",
+                    TicketId = ticket.Id,
+                    IsRead = false
+                });
+
+            var command = new Create.Command
+            {
+                Content = "Hey @mentioned_user, what do you think?",
+                TicketId = ticket.Id
+            };
+
+            // Act
+            var result = await _handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            result.IsSuccess.Should().BeTrue();
+            
+            _mockNotificationService.Verify(
+                x => x.CreateMentionNotificationAsync(mentionedUser.Id, result.Value.Id, ticket.Id, author.DisplayName),
+                Times.Once
+            );
+
+            _mockNotificationPushService.Verify(
+                x => x.PushNotificationAsync(mentionedUser.Id, It.Is<Application.DTOs.NotificationDto>(n => n.RecipientId == mentionedUser.Id)),
+                Times.Once
+            );
+            
+            _mockNotificationPushService.Verify(
+                x => x.PushUnreadCountUpdateAsync(mentionedUser.Id, It.IsAny<int>()),
+                Times.Once
+            );
+        }
+
+        [Fact]
         public async Task Handle_DatabaseFailure_ShouldReturnFailureResult()
         {
             var options = new DbContextOptionsBuilder<DataContext>()
@@ -222,7 +303,13 @@ namespace Application.UnitTests.Comments
                 .Options;
 
             using var badContext = new DataContext(options);
-            var badHandler = new Create.Handler(badContext, _mockUserAccessor.Object, _mockConfiguration.Object);
+            var badHandler = new Create.Handler(
+                badContext, 
+                _mockUserAccessor.Object, 
+                _mockNotificationService.Object,
+                _mockNotificationPushService.Object,
+                _mockLogger.Object
+            );
 
             _mockUserAccessor.Setup(x => x.GetUserId()).Returns("user123");
 

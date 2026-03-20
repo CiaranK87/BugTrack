@@ -16,30 +16,6 @@ public class UsersController : ControllerBase
         _context = context;
     }
 
-    [Authorize]
-    [HttpGet("search")]
-    public async Task<ActionResult<List<UserSearchDto>>> SearchUsers([FromQuery] string query)
-    {
-        if (string.IsNullOrWhiteSpace(query))
-            return BadRequest("Query is required");
-
-        var users = await _context.Users
-            .Where(u =>
-                (u.DisplayName != null && u.DisplayName.ToLower().Contains(query.ToLower())) ||
-                u.UserName.ToLower().Contains(query.ToLower())
-            )
-            .Select(u => new UserSearchDto
-            {
-                Id = u.Id,
-                Name = u.DisplayName ?? u.UserName,
-                Username = u.UserName
-            })
-            .Take(20)
-            .ToListAsync();
-
-        return Ok(users);
-    }
-
     [Authorize(Policy = "CanManageGlobalRoles")]
     [HttpGet("list")]
     public async Task<ActionResult<List<UserDto>>> GetUsers()
@@ -59,6 +35,44 @@ public class UsersController : ControllerBase
             .ToListAsync();
 
         return Ok(users);
+    }
+
+    [Authorize]
+    [HttpGet("search")]
+    public async Task<ActionResult<List<UserSearchDto>>> SearchUsers([FromQuery] string query, [FromQuery] Guid? projectId)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+            return BadRequest("Query is required");
+
+        var users = await _context.Users
+            .Where(u => !u.IsDeleted)
+            .Where(u =>
+                (u.DisplayName != null && u.DisplayName.ToLower().Contains(query.ToLower())) ||
+                u.UserName.ToLower().Contains(query.ToLower())
+            )
+            .Take(20)
+            .ToListAsync();
+
+        var userIds = users.Select(u => u.Id).ToList();
+        var participantUserIds = new HashSet<string>();
+
+        if (projectId.HasValue)
+        {
+            participantUserIds = (await _context.ProjectParticipants
+                .Where(pp => pp.ProjectId == projectId.Value && userIds.Contains(pp.AppUserId))
+                .Select(pp => pp.AppUserId)
+                .ToListAsync()).ToHashSet();
+        }
+
+        var results = users.Select(u => new UserSearchDto
+        {
+            Id = u.Id,
+            Name = u.DisplayName ?? u.UserName,
+            Username = u.UserName,
+            IsParticipant = !projectId.HasValue || u.GlobalRole == "Admin" || participantUserIds.Contains(u.Id)
+        }).ToList();
+
+        return Ok(results);
     }
 
     [Authorize(Policy = "CanManageGlobalRoles")]

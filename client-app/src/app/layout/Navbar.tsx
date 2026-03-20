@@ -3,6 +3,7 @@ import { Link, NavLink } from "react-router-dom";
 import { useState } from "react";
 import { useStore } from "../stores/store";
 import { observer } from "mobx-react-lite";
+import NotificationsDropdown from "../common/notifications/NotificationsDropdown";
 
 export default observer(function Navbar() {
   const {
@@ -15,13 +16,20 @@ export default observer(function Navbar() {
   return (
     <Menu inverted fixed="top" className="navbar-menu">
       <Container className="navbar-container">
-        {/* Mobile Hamburger */}
-        <Menu.Item
-          className="mobile-hamburger"
-          onClick={() => setMobileMenuOpen(true)}
-        >
-          <Icon name="sidebar" size="large" style={{ margin: 0 }} />
-        </Menu.Item>
+        <div className="navbar-left-controls">
+          {/* Mobile Hamburger */}
+          <Menu.Item
+            className="mobile-hamburger"
+            onClick={() => setMobileMenuOpen(true)}
+          >
+            <Icon name="sidebar" size="large" style={{ margin: 0 }} />
+          </Menu.Item>
+          
+          {/* Notification Bell - Mobile only (positioned next to burger) */}
+          <div className="mobile-only">
+            <NotificationsDropdown />
+          </div>
+        </div>
 
         <Menu.Item as={NavLink} to="/dashboard" header className="brand-logo">
           <img src="/assets/bug-logo.png" alt="logo" style={{ marginRight: "10px" }} />
@@ -36,6 +44,12 @@ export default observer(function Navbar() {
         {isAdmin && (
           <Menu.Item as={NavLink} to="/errors" name="Errors" className="desktop-nav-item" />
         )}
+        
+        {/* Notification Bell - Desktop only (positioned after nav links) */}
+        <div className="tablet-desktop-only" style={{ display: 'flex', alignItems: 'center', marginLeft: '10px' }}>
+          <NotificationsDropdown />
+        </div>
+        
         <Menu.Item position="right" className="user-menu-item">
           <Image avatar spaced="right" src={"/assets/user.png"} />
           <Dropdown pointing="top right" text={`${user?.displayName} (${user?.globalRole})`}>

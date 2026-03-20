@@ -49,7 +49,24 @@ namespace API.Extensions
                         ClockSkew = TimeSpan.Zero
                     };
                     
-                    // Production-specific settings
+                    // Configure JWT authentication for SignalR
+                    opt.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            var accessToken = context.Request.Query["access_token"];
+                            
+                            var path = context.HttpContext.Request.Path;
+                            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+                            {
+                                // Read the token out of the query string
+                                context.Token = accessToken;
+                            }
+                            
+                            return Task.CompletedTask;
+                        }
+                    };
+                    
                     if (!isDevelopment)
                     {
                         opt.RequireHttpsMetadata = true;

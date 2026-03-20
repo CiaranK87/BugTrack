@@ -42,19 +42,13 @@ namespace API.Controllers
         [HttpGet("{projectId}")]
         public async Task<IActionResult> GetProject(Guid projectId)
         {
-            var globalRoleClaim = User.FindFirst("globalrole")?.Value;
-            var isGlobalAdmin = globalRoleClaim == "Admin";
-            
-            if (!isGlobalAdmin)
-            {
-                var authorized = await _authorizationService.AuthorizeAsync(
-                    User, projectId, "ProjectAnyRole");
+            var authorized = await _authorizationService.AuthorizeAsync(
+                User, projectId, "ProjectAnyRole");
 
-                if (!authorized.Succeeded)
-                    return Forbid();
-            }
+            if (!authorized.Succeeded)
+                return Forbid();
 
-            return HandleResult(await Mediator.Send(new Details.Query { Id = projectId, IsAdmin = isGlobalAdmin }));
+            return HandleResult(await Mediator.Send(new Details.Query { Id = projectId }));
         }
 
 
@@ -112,7 +106,6 @@ namespace API.Controllers
                 return BadRequest("Project must be soft deleted first");
             }
 
-            // Hard delete the project
             _context.Projects.Remove(project);
             var result = await _context.SaveChangesAsync() > 0;
             
@@ -144,7 +137,6 @@ namespace API.Controllers
                 return BadRequest("Project is not deleted");
             }
 
-            // Restore the project
             project.IsDeleted = false;
             project.DeletedDate = null;
             
@@ -187,7 +179,7 @@ namespace API.Controllers
         }
 
 
-        // Add participant to project ************************************************************************************
+
 
         [Authorize]
         [HttpPost("{projectId}/participants")]
@@ -261,17 +253,11 @@ namespace API.Controllers
         [HttpPut("{projectId}/transfer-ownership")]
         public async Task<IActionResult> TransferOwnership(Guid projectId, [FromBody] TransferOwnershipDto transferDto)
         {
-            var globalRoleClaim = User.FindFirst("globalrole")?.Value;
-            var isGlobalAdmin = globalRoleClaim == "Admin";
-            
-            if (!isGlobalAdmin)
-            {
-                var authorized = await _authorizationService.AuthorizeAsync(
-                    User, projectId, "ProjectOwner");
+            var authorized = await _authorizationService.AuthorizeAsync(
+                User, projectId, "ProjectOwner");
 
-                if (!authorized.Succeeded)
-                    return Forbid("Only project owners or admins can transfer ownership");
-            }
+            if (!authorized.Succeeded)
+                return Forbid("Only project owners or admins can transfer ownership");
 
             var currentOwner = await _context.ProjectParticipants
                 .FirstOrDefaultAsync(pp => pp.ProjectId == projectId && pp.IsOwner);

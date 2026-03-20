@@ -38,6 +38,10 @@ export default class UserStore {
   store.projectStore.clear();
   store.ticketStore.clear();
   
+  // Connect to notification hub after login
+  store.notificationStore.connect();
+  store.notificationStore.loadNotifications();
+  
   router.navigate("/dashboard");
   store.modalStore.closeModal();
 };
@@ -87,6 +91,9 @@ export default class UserStore {
       store.ticketStore.clear();
     });
     
+    // Disconnect from notification hub on logout
+    store.notificationStore.disconnect();
+    
     router.navigate("/");
   };
 
@@ -98,6 +105,9 @@ export default class UserStore {
         this.userRegistry.set(user.username, user);
         
       });
+      // Connect to notification hub when user is loaded (on app start/refresh)
+      store.notificationStore.connect();
+      store.notificationStore.loadNotifications();
     } catch (error: any) {
       logger.error("Failed to get current user", error);
       if (error?.response?.status === 401) {

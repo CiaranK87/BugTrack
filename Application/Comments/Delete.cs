@@ -42,12 +42,32 @@ namespace Application.Comments
                 if (comment == null || comment.AuthorId != userId)
                     return Result<Unit>.Failure("Comment not found or access denied");
 
-                if (comment.Attachments.Any())
+                // Check if comment has replies
+                var hasReplies = comment.Replies != null && comment.Replies.Any();
+
+                if (hasReplies)
                 {
-                    _context.CommentAttachments.RemoveRange(comment.Attachments);
+                    // Soft delete: mark as deleted but keep in database for context
+                    comment.IsDeleted = true;
+                    comment.DeletedAt = DateTime.UtcNow;
+                    comment.Content = "[Deleted]";
+                    
+                    // Remove attachments when soft deleting
+                    if (comment.Attachments.Any())
+                    {
+                        _context.CommentAttachments.RemoveRange(comment.Attachments);
+                    }
+                }
+                else
+                {
+                    // Hard delete: remove completely if no replies
+                    if (comment.Attachments.Any())
+                    {
+                        _context.CommentAttachments.RemoveRange(comment.Attachments);
+                    }
+                    _context.Comments.Remove(comment);
                 }
 
-                _context.Comments.Remove(comment);
                 await _context.SaveChangesAsync(cancellationToken);
 
                 return Result<Unit>.Success(Unit.Value);

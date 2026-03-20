@@ -8,6 +8,8 @@ namespace Domain
         public string Content { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
+        public DateTime? DeletedAt { get; set; }
+        public bool IsDeleted { get; set; }
         public Guid TicketId { get; set; }
         public Ticket Ticket { get; set; }
         public string AuthorId { get; set; }

@@ -3,6 +3,8 @@ export interface Comment {
   content: string;
   createdAt: Date;
   updatedAt?: Date;
+  deletedAt?: Date;
+  isDeleted: boolean;
   ticketId: string;
   authorId: string;
   authorUsername: string;

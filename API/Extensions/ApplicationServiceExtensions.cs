@@ -1,6 +1,8 @@
 using Application.Core;
 using Application.Interfaces;
 using Application.Projects;
+using Application.Services;
+using API.Services;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Infrastructure.Security;
@@ -79,9 +81,11 @@ namespace API.Extensions
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(List.Handler).Assembly));
             services.AddAutoMapper(typeof(MappingProfiles).Assembly);
             services.AddFluentValidationAutoValidation();
-            services.AddValidatorsFromAssemblyContaining<Create>(); 
+            services.AddValidatorsFromAssemblyContaining<Create>();
             services.AddHttpContextAccessor();
             services.AddScoped<IUserAccessor, UserAccessor>();
+            services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<INotificationPushService, NotificationPushService>();
 
             return services;
         }

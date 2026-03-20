@@ -1776,10 +1776,16 @@ body.dark-mode .theme-toggle-slider.ui.toggle.checkbox input:checked~label:befor
   /* Navbar Container Layout */
   .ui.menu.navbar-menu .ui.container {
     display: grid !important;
-    grid-template-columns: 50px 1fr 50px !important;
+    grid-template-columns: minmax(80px, auto) 1fr minmax(50px, auto) !important;
     align-items: center !important;
     width: 100% !important;
     padding: 0 10px !important;
+  }
+
+  .navbar-left-controls {
+    display: flex !important;
+    align-items: center !important;
+    gap: 5px;
   }
 
   /* Ensure Navbar Height & Full Width */
@@ -3045,4 +3051,57 @@ body.dark-mode .theme-toggle-slider.ui.toggle.checkbox input:checked~label:befor
     width: 100% !important;
     margin-bottom: 10px !important;
   }
+}
+
+/* Enhanced Comment Highlight Animation */
+@keyframes commentHighlightFade {
+  0% {
+    background-color: rgba(24, 144, 255, 0.3);
+    border-color: #1890ff !important;
+    box-shadow: 0 0 15px rgba(24, 144, 255, 0.4);
+  }
+
+  30% {
+    background-color: rgba(24, 144, 255, 0.3);
+    border-color: #1890ff !important;
+    box-shadow: 0 0 15px rgba(24, 144, 255, 0.4);
+  }
+
+  100% {
+    background-color: transparent;
+    border-color: transparent !important;
+    box-shadow: none;
+  }
+}
+
+@keyframes commentHighlightFadeDark {
+  0% {
+    background-color: rgba(99, 179, 237, 0.2);
+    border-color: #63b3ed !important;
+    box-shadow: 0 0 20px rgba(99, 179, 237, 0.3);
+  }
+
+  30% {
+    background-color: rgba(99, 179, 237, 0.2);
+    border-color: #63b3ed !important;
+    box-shadow: 0 0 20px rgba(99, 179, 237, 0.3);
+  }
+
+  100% {
+    background-color: transparent;
+    border-color: transparent !important;
+    box-shadow: none;
+  }
+}
+
+.comment-highlight {
+  animation: commentHighlightFade 3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  border: 2px solid transparent !important;
+  border-radius: 8px;
+  position: relative;
+  z-index: 10;
+}
+
+body.dark-mode .comment-highlight {
+  animation: commentHighlightFadeDark 3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }

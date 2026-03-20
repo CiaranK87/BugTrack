@@ -12,5 +12,6 @@ namespace Domain
         public DateTime? DeletedAt { get; set; }
         public DateTime JoinDate { get; set; } = DateTime.UtcNow;
         public ICollection<ProjectParticipant> ProjectParticipants { get; set; }
+        public ICollection<Notification> Notifications { get; set; }
     }
 }

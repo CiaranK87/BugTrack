@@ -11,7 +11,6 @@ namespace Application.Projects
         public class Query : IRequest<Result<ProjectDto>>
         {
             public Guid Id { get; set; }
-            public bool IsAdmin { get; set; }
         }
 
         public class Handler : IRequestHandler<Query, Result<ProjectDto>>
@@ -27,18 +26,12 @@ namespace Application.Projects
 
                 public async Task<Result<ProjectDto>> Handle(Query request, CancellationToken cancellationToken)
                 {
-                    var projectQuery = _context.Projects
+                    var project = await _context.Projects
                         .Include(p => p.Tickets)
                         .Include(p => p.Participants)
                             .ThenInclude(pp => pp.AppUser)
-                        .Where(x => x.Id == request.Id);
-                    
-                    if (!request.IsAdmin)
-                    {
-                        projectQuery = projectQuery.Where(x => !x.IsDeleted);
-                    }
-
-                    var project = await projectQuery.FirstOrDefaultAsync();
+                        .Where(x => !x.IsDeleted)
+                        .FirstOrDefaultAsync(x => x.Id == request.Id);
 
                     if (project == null) return null;
 

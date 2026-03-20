@@ -5,6 +5,7 @@ import UserStore from "./userStore";
 import ModalStore from "./modalStore";
 import TicketStore from "./ticketStore";
 import CommentStore from "./commentStore";
+import NotificationStore from "./notificationStore";
 
 interface Store {
   projectStore: ProjectStore;
@@ -13,6 +14,7 @@ interface Store {
   modalStore: ModalStore;
   ticketStore: TicketStore;
   commentStore: CommentStore;
+  notificationStore: NotificationStore;
 }
 
 export const store: Store = {
@@ -22,6 +24,7 @@ export const store: Store = {
   modalStore: new ModalStore(),
   ticketStore: new TicketStore(),
   commentStore: new CommentStore(),
+  notificationStore: new NotificationStore(),
 };
 
 export const StoreContext = createContext(store);

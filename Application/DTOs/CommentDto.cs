@@ -8,6 +8,8 @@ namespace Application.DTOs
         public string Content { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
+        public DateTime? DeletedAt { get; set; }
+        public bool IsDeleted { get; set; }
         public Guid TicketId { get; set; }
         public string AuthorId { get; set; }
         public string AuthorUsername { get; set; }

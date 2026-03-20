@@ -6,6 +6,8 @@ interface Props {
   name: string;
   rows?: number;
   label?: string;
+  inputRef?: React.RefObject<HTMLTextAreaElement>;
+  onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
 export default function MyTextArea(props: Props) {
@@ -23,6 +25,13 @@ export default function MyTextArea(props: Props) {
         {...field}
         placeholder={props.placeholder}
         rows={props.rows}
+        ref={props.inputRef}
+        onChange={(e) => {
+          field.onChange(e);
+          if (props.onChange) {
+            props.onChange(e);
+          }
+        }}
       />
       {meta.touched && meta.error ? (
         <Label basic color="red">

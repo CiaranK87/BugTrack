@@ -1,12 +1,14 @@
 using Application.Core;
 using Application.DTOs;
+using Application.Helpers;
 using Application.Interfaces;
+using Application.Services;
 using Domain;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Persistence;
 
 namespace Application.Comments
@@ -34,13 +36,17 @@ namespace Application.Comments
         {
             private readonly DataContext _context;
             private readonly IUserAccessor _userAccessor;
-            private readonly IConfiguration _config;
+            private readonly INotificationService _notificationService;
+            private readonly INotificationPushService _notificationPushService;
+            private readonly ILogger<Handler> _logger;
 
-            public Handler(DataContext context, IUserAccessor userAccessor, IConfiguration config)
+            public Handler(DataContext context, IUserAccessor userAccessor, INotificationService notificationService, INotificationPushService notificationPushService, ILogger<Handler> logger)
             {
                 _context = context;
                 _userAccessor = userAccessor;
-                _config = config;
+                _notificationService = notificationService;
+                _notificationPushService = notificationPushService;
+                _logger = logger;
             }
 
             public async Task<Result<CommentDto>> Handle(Command request, CancellationToken cancellationToken)
@@ -72,9 +78,11 @@ namespace Application.Comments
                 }
 
                 var success = await _context.SaveChangesAsync() > 0;
-                 
+                  
                 if (!success)
                     return Result<CommentDto>.Failure("Failed to create comment");
+
+                await ProcessMentionsAsync(comment, userId);
                 
                 await _context.Entry(comment)
                     .Collection(c => c.Attachments)
@@ -87,6 +95,67 @@ namespace Application.Comments
                     .LoadAsync();
                 
                 return Result<CommentDto>.Success(MapToCommentDto(comment));
+            }
+
+            private async Task ProcessMentionsAsync(Comment comment, string authorId)
+            {
+                var mentions = MentionHelper.ExtractMentions(comment.Content);
+                
+                if (mentions.Count == 0)
+                {
+                    return;
+                }
+
+                var author = await _context.Users.FindAsync(authorId);
+                var authorDisplayName = author?.DisplayName ?? author?.UserName ?? "Someone";
+
+                var ticket = await _context.Tickets.FindAsync(comment.TicketId);
+
+                var lowerMentions = mentions.Select(m => m.ToLower()).ToList();
+
+                var mentionedUsers = await _context.Users
+                    .Where(u => u.Id != authorId)
+                    .Where(u => lowerMentions.Contains(u.UserName.ToLower()))
+                    .Where(u => u.GlobalRole == "Admin" || _context.ProjectParticipants.Any(pp => pp.AppUserId == u.Id && pp.ProjectId == ticket.ProjectId))
+                    .ToListAsync();
+
+                foreach (var user in mentionedUsers)
+                {
+                    try
+                    {
+                        var notification = await _notificationService.CreateMentionNotificationAsync(
+                            user.Id,
+                            comment.Id,
+                            comment.TicketId,
+                            authorDisplayName
+                        );
+
+                        var notificationDto = new NotificationDto
+                        {
+                            Id = notification.Id,
+                            RecipientId = notification.RecipientId,
+                            Type = notification.Type,
+                            Message = notification.Message,
+                            IsRead = notification.IsRead,
+                            CreatedAt = notification.CreatedAt,
+                            ReadAt = notification.ReadAt,
+                            CommentId = notification.CommentId,
+                            TicketId = notification.TicketId,
+                            TicketTitle = ticket?.Title,
+                            AuthorDisplayName = authorDisplayName,
+                            AuthorUsername = author?.UserName
+                        };
+
+                        await _notificationPushService.PushNotificationAsync(user.Id, notificationDto);
+                        
+                        var unreadCount = await _notificationService.GetUnreadCountAsync(user.Id);
+                        await _notificationPushService.PushUnreadCountUpdateAsync(user.Id, unreadCount);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Error processing mention notification for user {UserId}", user.Id);
+                    }
+                }
             }
 
             private async Task<CommentAttachment> CreateAttachmentFromFile(IFormFile file, Guid commentId, string userId)
