@@ -5,7 +5,9 @@ export default class CommonStore {
   error: ServerError | null = null;
   token: string | null = localStorage.getItem("jwt");
   appLoaded = false;
-  darkMode: boolean = localStorage.getItem("darkMode") === "true";
+  darkMode: boolean = localStorage.getItem("darkMode") 
+    ? localStorage.getItem("darkMode") === "true" 
+    : window.matchMedia('(prefers-color-scheme: dark)').matches;
 
   constructor() {
     makeAutoObservable(this);

@@ -113,10 +113,14 @@ namespace Application.Comments
 
                 var lowerMentions = mentions.Select(m => m.ToLower()).ToList();
 
+                // Broaden check to include project owners, ticket-linked users, and explicit participants
                 var mentionedUsers = await _context.Users
-                    .Where(u => u.Id != authorId)
+                    .Where(u => u.Id != authorId && !u.IsDeleted)
                     .Where(u => lowerMentions.Contains(u.UserName.ToLower()))
-                    .Where(u => u.GlobalRole == "Admin" || _context.ProjectParticipants.Any(pp => pp.AppUserId == u.Id && pp.ProjectId == ticket.ProjectId))
+                    .Where(u => u.GlobalRole == "Admin" || 
+                               _context.ProjectParticipants.Any(pp => pp.AppUserId == u.Id && pp.ProjectId == ticket.ProjectId) ||
+                               _context.Projects.Any(p => p.Id == ticket.ProjectId && p.ProjectOwner == u.UserName) ||
+                               _context.Tickets.Any(t => t.ProjectId == ticket.ProjectId && (t.Assigned == u.UserName || t.Submitter == u.UserName)))
                     .ToListAsync();
 
                 foreach (var user in mentionedUsers)

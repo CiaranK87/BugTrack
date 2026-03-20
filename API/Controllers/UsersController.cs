@@ -69,9 +69,12 @@ public class UsersController : ControllerBase
             Id = u.Id,
             Name = u.DisplayName ?? u.UserName,
             Username = u.UserName,
-            IsParticipant = !projectId.HasValue || u.GlobalRole == "Admin" || participantUserIds.Contains(u.Id)
+            IsParticipant = !projectId.HasValue || 
+                            u.GlobalRole == "Admin" || 
+                            participantUserIds.Contains(u.Id) ||
+                            _context.Projects.Any(p => p.Id == projectId.Value && p.ProjectOwner == u.UserName) ||
+                            _context.Tickets.Any(t => t.ProjectId == projectId.Value && (t.Assigned == u.UserName || t.Submitter == u.UserName))
         }).ToList();
-
         return Ok(results);
     }
 
