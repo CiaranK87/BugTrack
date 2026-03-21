@@ -116,7 +116,7 @@ namespace Application.Comments
                 // Broaden check to include project owners, ticket-linked users, and explicit participants
                 var mentionedUsers = await _context.Users
                     .Where(u => u.Id != authorId && !u.IsDeleted)
-                    .Where(u => lowerMentions.Contains(u.UserName.ToLower()))
+                    .Where(u => lowerMentions.Contains(u.UserName.Replace(" ", "").ToLower()))
                     .Where(u => u.GlobalRole == "Admin" || 
                                _context.ProjectParticipants.Any(pp => pp.AppUserId == u.Id && pp.ProjectId == ticket.ProjectId) ||
                                _context.Projects.Any(p => p.Id == ticket.ProjectId && p.ProjectOwner == u.UserName) ||

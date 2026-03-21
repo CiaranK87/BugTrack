@@ -240,7 +240,8 @@ namespace Application.UnitTests.Comments
             {
                 Id = "mentioned456",
                 UserName = "mentioned_user",
-                DisplayName = "Mentioned User"
+                DisplayName = "Mentioned User",
+                GlobalRole = "Admin"
             };
             var ticket = new Ticket
             {
@@ -291,6 +292,100 @@ namespace Application.UnitTests.Comments
             
             _mockNotificationPushService.Verify(
                 x => x.PushUnreadCountUpdateAsync(mentionedUser.Id, It.IsAny<int>()),
+                Times.Once
+            );
+        }
+
+        [Fact]
+        public async Task Handle_CommentWithSpaceLessMention_ShouldResolveToMultiWordUsername()
+        {
+            var author = new AppUser
+            {
+                Id = "author123",
+                UserName = "author_user",
+                DisplayName = "Author User"
+            };
+            var mentionedUser = new AppUser
+            {
+                Id = "mentioned456",
+                UserName = "Mike O Brien",
+                DisplayName = "Mike O Brien",
+                GlobalRole = "Admin"
+            };
+            var ticket = new Ticket
+            {
+                Id = Guid.NewGuid(),
+                Title = "Test Ticket",
+                ProjectId = Guid.NewGuid()
+            };
+            
+            _context.Users.AddRange(author, mentionedUser);
+            _context.Tickets.Add(ticket);
+            await _context.SaveChangesAsync();
+
+            _mockUserAccessor.Setup(x => x.GetUserId()).Returns(author.Id);
+
+            var command = new Create.Command
+            {
+                Content = "Hey @MikeOBrien, welcome!",
+                TicketId = ticket.Id
+            };
+
+            // Act
+            var result = await _handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            result.IsSuccess.Should().BeTrue();
+            
+            _mockNotificationService.Verify(
+                x => x.CreateMentionNotificationAsync(mentionedUser.Id, result.Value.Id, ticket.Id, author.DisplayName),
+                Times.Once
+            );
+        }
+
+        [Fact]
+        public async Task Handle_CommentWithApostropheMention_ShouldResolveCorrectly()
+        {
+            var author = new AppUser
+            {
+                Id = "author123",
+                UserName = "author_user",
+                DisplayName = "Author User"
+            };
+            var mentionedUser = new AppUser
+            {
+                Id = "mentioned456",
+                UserName = "Denis O'Brien",
+                DisplayName = "Denis O'Brien",
+                GlobalRole = "Admin"
+            };
+            var ticket = new Ticket
+            {
+                Id = Guid.NewGuid(),
+                Title = "Test Ticket",
+                ProjectId = Guid.NewGuid()
+            };
+            
+            _context.Users.AddRange(author, mentionedUser);
+            _context.Tickets.Add(ticket);
+            await _context.SaveChangesAsync();
+
+            _mockUserAccessor.Setup(x => x.GetUserId()).Returns(author.Id);
+
+            var command = new Create.Command
+            {
+                Content = "Hey @DenisO'Brien, how are you?",
+                TicketId = ticket.Id
+            };
+
+            // Act
+            var result = await _handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            result.IsSuccess.Should().BeTrue();
+            
+            _mockNotificationService.Verify(
+                x => x.CreateMentionNotificationAsync(mentionedUser.Id, result.Value.Id, ticket.Id, author.DisplayName),
                 Times.Once
             );
         }

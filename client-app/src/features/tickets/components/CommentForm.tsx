@@ -19,8 +19,8 @@ export default observer(function CommentForm({ ticketId, parentCommentId, isRepl
   const { createComment, loading } = commentStore;
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
-  
+
+
   const [showMentions, setShowMentions] = useState(false);
   const [mentionQuery, setMentionQuery] = useState('');
   const [mentionPosition, setMentionPosition] = useState({ top: 0, left: 0 });
@@ -48,27 +48,27 @@ export default observer(function CommentForm({ ticketId, parentCommentId, isRepl
   const handleTextareaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = event.target.value;
     const cursorPos = event.target.selectionStart;
-    
+
     setCursorPosition(cursorPos);
-    
+
     const textBeforeCursor = value.substring(0, cursorPos);
     const lastAtIndex = textBeforeCursor.lastIndexOf('@');
-    
+
     if (lastAtIndex !== -1) {
       const textAfterAt = textBeforeCursor.substring(lastAtIndex + 1);
-      const hasSpaceAfterAt = textAfterAt.includes(' ');
-      
-      if (!hasSpaceAfterAt && textAfterAt.length >= 0) {
+      const isStillMentioning = /^[a-zA-Z0-9\-._@+' ]*$/.test(textAfterAt);
+
+      if (isStillMentioning && textAfterAt.length >= 0) {
         setMentionQuery(textAfterAt);
         setAtSymbolPosition(lastAtIndex);
-        
+
         if (textareaRef.current) {
           const lines = textBeforeCursor.split('\n');
           const lineHeight = 20;
           const charWidth = 8;
           const top = (lines.length - 1) * lineHeight + 40;
           const left = (lines[lines.length - 1].length * charWidth) + 20;
-          
+
           setMentionPosition({ top, left });
           setShowMentions(true);
           isMentioningRef.current = true;
@@ -88,15 +88,16 @@ export default observer(function CommentForm({ ticketId, parentCommentId, isRepl
       const textarea = textareaRef.current;
       const textBeforeAt = textarea.value.substring(0, atSymbolPosition);
       const textAfterCursor = textarea.value.substring(cursorPosition);
-      
-      const newText = textBeforeAt + '@' + username + ' ' + textAfterCursor;
-      
+
+      const usernameForMention = username.replace(/\s/g, '');
+      const newText = textBeforeAt + '@' + usernameForMention + ' ' + textAfterCursor;
+
       setFieldValueRef.current('content', newText);
-      
+
       const newCursorPos = atSymbolPosition + username.length + 2;
       textarea.focus();
       textarea.setSelectionRange(newCursorPos, newCursorPos);
-      
+
       setShowMentions(false);
       setMentionQuery('');
       isMentioningRef.current = false;
@@ -135,7 +136,7 @@ export default observer(function CommentForm({ ticketId, parentCommentId, isRepl
           if (setFieldValue && setFieldValueRef.current !== setFieldValue) {
             setFieldValueRef.current = setFieldValue;
           }
-          
+
           useEffect(() => {
             const handleOpenReply = () => {
               if (!isReply) {
@@ -145,7 +146,7 @@ export default observer(function CommentForm({ ticketId, parentCommentId, isRepl
             window.addEventListener('openReplyForm', handleOpenReply);
             return () => window.removeEventListener('openReplyForm', handleOpenReply);
           }, [setTouched]);
-          
+
           return (
             <Form className='ui form'>
               <div style={{ position: 'relative' }}>

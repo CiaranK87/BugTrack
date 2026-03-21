@@ -4,9 +4,9 @@ namespace Application.Helpers
 {
     public static class MentionHelper
     {
-        // Match @username where username can contain letters, digits, -, ., _, @, +
-        // The username must be immediately after @ and ends at whitespace or end of string
-        private static readonly Regex MentionRegex = new Regex(@"@([a-zA-Z0-9\-._@+]+)", RegexOptions.Compiled);
+        // Match @username where username can contain letters, digits, -, ., _, @, +, '
+        // Must be preceded by start of string or whitespace to avoid matching emails.
+        private static readonly Regex MentionRegex = new Regex(@"(?<=^|\s)@([a-zA-Z0-9\-._@+']+)", RegexOptions.Compiled);
 
         public static List<string> ExtractMentions(string content)
         {
