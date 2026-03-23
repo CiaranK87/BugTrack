@@ -1,0 +1,76 @@
+/* Role button styling - consolidated rules */
+body.dark-mode .ui.button[title*="Role"],
+body.dark-mode .ui.button[aria-label*="Role"],
+body.dark-mode .ui.table .ui.button[title*="Role"],
+body.dark-mode .ui.button.dropdown.labeled.icon.button,
+body.dark-mode .ui.labeled.icon.buttons .button,
+body.dark-mode .ui.table .ui.button.dropdown.labeled.icon.button,
+body.dark-mode .ui.table .ui.labeled.icon.buttons .button,
+body.dark-mode .ui.button:not(.positive):not(.primary):not(.negative):has(i.icon.key),
+body.dark-mode .ui.button:not(.positive):not(.primary):not(.negative):has(i.icon.id.card),
+body.dark-mode div.ui.table div.ui.button:not(.positive):not(.primary):not(.negative):has(i.icon.key),
+body.dark-mode div.ui.table div.ui.button:not(.positive):not(.primary):not(.negative):has(i.icon.id.card),
+body.dark-mode div.ui.segment div.ui.button:not(.positive):not(.primary):not(.negative):has(i.icon.key),
+body.dark-mode div.ui.segment div.ui.button:not(.positive):not(.primary):not(.negative):has(i.icon.id.card),
+body.dark-mode button.ui.button[aria-label*="role"],
+body.dark-mode button.ui.button[title*="role"] {
+  background-color: var(--dm-primary) !important;
+  color: #ffffff !important;
+  border-color: var(--dm-primary) !important;
+}
+
+body.dark-mode .ui.button[title*="Role"]:hover,
+body.dark-mode .ui.button[aria-label*="Role"]:hover,
+body.dark-mode .ui.table .ui.button[title*="Role"]:hover,
+body.dark-mode .ui.button.dropdown.labeled.icon.button:hover,
+body.dark-mode .ui.labeled.icon.buttons .button:hover,
+body.dark-mode .ui.table .ui.button.dropdown.labeled.icon.button:hover,
+body.dark-mode .ui.table .ui.labeled.icon.buttons .button:hover {
+  background-color: var(--dm-primary-hover) !important;
+  color: #ffffff !important;
+  border-color: var(--dm-primary-hover) !important;
+}
+
+body.dark-mode .ui.button[title*="Role"] .icon,
+body.dark-mode .ui.button[aria-label*="Role"] .icon,
+body.dark-mode .ui.table .ui.button[title*="Role"] .icon,
+body.dark-mode .ui.button.dropdown.labeled.icon.button .icon,
+body.dark-mode .ui.labeled.icon.buttons .button .icon,
+body.dark-mode .ui.table .ui.button.dropdown.labeled.icon.button .icon,
+body.dark-mode .ui.table .ui.labeled.icon.buttons .button .icon,
+body.dark-mode div.ui.table div.ui.button:not(.positive):not(.primary):not(.negative):has(i.icon.key) i.icon,
+body.dark-mode div.ui.table div.ui.button:not(.positive):not(.primary):not(.negative):has(i.icon.id.card) i.icon,
+body.dark-mode div.ui.segment div.ui.button:not(.positive):not(.primary):not(.negative):has(i.icon.key) i.icon,
+body.dark-mode div.ui.segment div.ui.button:not(.positive):not(.primary):not(.negative):has(i.icon.id.card) i.icon,
+body.dark-mode button.ui.button[aria-label*="role"] i.icon,
+body.dark-mode button.ui.button[title*="role"] i.icon {
+  color: #ffffff !important;
+}
+
+body.dark-mode .ui.button.dropdown.labeled.icon.button .text,
+body.dark-mode .ui.labeled.icon.buttons .button .text {
+  color: #ffffff !important;
+}
+
+/* Disabled role buttons */
+body.dark-mode .ui.button.dropdown.labeled.icon.button:disabled,
+body.dark-mode .ui.labeled.icon.buttons .button:disabled,
+body.dark-mode .ui.table .ui.button.dropdown.labeled.icon.button:disabled,
+body.dark-mode .ui.table .ui.labeled.icon.buttons .button:disabled {
+  background-color: var(--dm-bg-tertiary) !important;
+  color: var(--dm-border-hover) !important;
+  border-color: var(--dm-bg-tertiary) !important;
+  opacity: 0.6 !important;
+}
+
+body.dark-mode .ui.button.dropdown.labeled.icon.button:disabled .text,
+body.dark-mode .ui.labeled.icon.buttons .button:disabled .text,
+body.dark-mode .ui.table .ui.button.dropdown.labeled.icon.button:disabled .text,
+body.dark-mode .ui.table .ui.labeled.icon.buttons .button:disabled .text,
+body.dark-mode .ui.button.dropdown.labeled.icon.button:disabled .icon,
+body.dark-mode .ui.labeled.icon.buttons .button:disabled .icon,
+body.dark-mode .ui.table .ui.button.dropdown.labeled.icon.button:disabled .icon,
+body.dark-mode .ui.table .ui.labeled.icon.buttons .button:disabled .icon {
+  color: var(--dm-border-hover) !important;
+}
+

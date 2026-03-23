@@ -1,0 +1,138 @@
+
+/* Recharts components */
+body.dark-mode .recharts-wrapper,
+body.dark-mode .recharts-surface,
+body.dark-mode .recharts-responsive-container {
+  background-color: transparent !important;
+}
+
+body.dark-mode .recharts-tooltip-wrapper {
+  background-color: var(--dm-bg-secondary) !important;
+  border: 1px solid var(--dm-border) !important;
+  border-radius: 4px !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;
+}
+
+body.dark-mode .recharts-default-tooltip {
+  background-color: var(--dm-bg-secondary) !important;
+  border: none !important;
+  border-radius: 4px !important;
+  padding: 10px !important;
+  color: var(--dm-text-secondary) !important;
+}
+
+body.dark-mode .recharts-tooltip-label {
+  color: #ffffff !important;
+  font-weight: bold !important;
+  margin-bottom: 5px !important;
+}
+
+body.dark-mode .recharts-tooltip-item {
+  color: var(--dm-text-secondary) !important;
+}
+
+body.dark-mode .recharts-tooltip-item-name {
+  color: var(--dm-text-tertiary) !important;
+}
+
+body.dark-mode .recharts-tooltip-item-value {
+  color: #ffffff !important;
+  font-weight: bold !important;
+}
+
+body.dark-mode .recharts-cartesian-axis-tick-value {
+  fill: var(--dm-text-secondary) !important;
+}
+
+body.dark-mode .recharts-cartesian-axis-line,
+body.dark-mode .recharts-cartesian-axis-tick-line,
+body.dark-mode .recharts-cartesian-grid {
+  stroke: var(--dm-border) !important;
+}
+
+body.dark-mode .recharts-cartesian-grid {
+  stroke-dasharray: 3 3 !important;
+}
+
+body.dark-mode .recharts-legend-wrapper,
+body.dark-mode .recharts-legend-item-text {
+  color: var(--dm-text-secondary) !important;
+}
+
+body.dark-mode .recharts-pie-sector:hover,
+body.dark-mode .recharts-bar-rectangle:hover {
+  filter: brightness(1.2) !important;
+  cursor: pointer !important;
+}
+
+body.dark-mode .ui.segment:has(.recharts-wrapper) {
+  background-color: var(--dm-bg-secondary) !important;
+  border-color: var(--dm-border) !important;
+}
+
+body.dark-mode .ui.segment:has(.recharts-wrapper) h3.ui.header {
+  color: #ffffff !important;
+}
+
+body.dark-mode .recharts-tooltip-cursor {
+  stroke: #63b3ed !important;
+}
+
+body.dark-mode .recharts-brush {
+  fill: var(--dm-bg-tertiary) !important;
+  stroke: var(--dm-border-hover) !important;
+}
+
+body.dark-mode .recharts-brush-text {
+  fill: var(--dm-text-secondary) !important;
+}
+
+body.dark-mode .recharts-brush-traveller {
+  fill: var(--dm-primary) !important;
+  stroke: var(--dm-primary-hover) !important;
+}
+
+body.dark-mode .recharts-reference-line {
+  stroke: var(--dm-border-hover) !important;
+}
+
+body.dark-mode .recharts-reference-line-label {
+  fill: var(--dm-text-secondary) !important;
+}
+
+body.dark-mode .recharts-scatter {
+  fill: var(--dm-primary) !important;
+}
+
+body.dark-mode .recharts-scatter:hover {
+  fill: #63b3ed !important;
+  cursor: pointer !important;
+}
+
+body.dark-mode .recharts-area {
+  fill-opacity: 0.3 !important;
+}
+
+body.dark-mode .recharts-area:hover {
+  fill-opacity: 0.5 !important;
+}
+
+body.dark-mode .recharts-line {
+  stroke: var(--dm-primary) !important;
+}
+
+body.dark-mode .recharts-line:hover {
+  stroke: #63b3ed !important;
+}
+
+body.dark-mode .recharts-dot {
+  fill: var(--dm-primary) !important;
+  stroke: var(--dm-primary-hover) !important;
+}
+
+body.dark-mode .recharts-dot:hover {
+  fill: #63b3ed !important;
+  stroke: #2c5aa0 !important;
+  r: 6 !important;
+}
+

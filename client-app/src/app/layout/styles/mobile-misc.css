@@ -1,0 +1,155 @@
+@media (max-width: 767px) {
+  /* Visibility Utilities */
+  .mobile-only {
+    display: block !important;
+  }
+
+  .tablet-desktop-only {
+    display: none !important;
+  }
+
+  /* Project & Ticket Layouts Mobile */
+  .project-details-container,
+  .ticket-details-container {
+    padding: 0 5px !important;
+  }
+
+  /* Admin Test Error Page Mobile */
+  .test-error-group {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+
+  .test-error-group .ui.button {
+    width: 100% !important;
+    margin-bottom: 8px !important;
+    border-radius: 4px !important;
+    color: white !important;
+  }
+
+  .project-participants-container .participant-table-desktop,
+  .project-ticket-info-container .project-ticket-table-desktop {
+    display: none !important;
+  }
+
+  .project-participants-container .participant-cards-mobile,
+  .project-ticket-info-container .project-ticket-cards-mobile {
+    display: block !important;
+  }
+
+  .participants-header {
+    margin-bottom: 25px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  .participants-header .button {
+    float: none !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+
+  /* Card Styles Mobile */
+  .participant-mobile-card,
+  .project-ticket-mobile-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #eee;
+  }
+
+  body.dark-mode .participant-mobile-card,
+  body.dark-mode .project-ticket-mobile-card {
+    background: #2d3748;
+    border-color: #4a5568;
+  }
+
+  .participant-card-header,
+  .ticket-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+  }
+
+  body.dark-mode .participant-card-header,
+  body.dark-mode .ticket-card-header {
+    border-bottom-color: #4a5568;
+  }
+
+  /* Ticket Detailed Info Container Stacking */
+  .ticket-detailed-info-container .ui.grid>.column {
+    width: 100% !important;
+    margin-bottom: 10px !important;
+  }
+}
+
+/* Enhanced Comment Highlight Animation - OUTSIDE media query */
+@keyframes commentHighlightFade {
+  0% {
+    background-color: rgba(24, 144, 255, 0.3);
+    border-color: #1890ff !important;
+    box-shadow: 0 0 15px rgba(24, 144, 255, 0.4);
+  }
+  30% {
+    background-color: rgba(24, 144, 255, 0.3);
+    border-color: #1890ff !important;
+    box-shadow: 0 0 15px rgba(24, 144, 255, 0.4);
+  }
+  100% {
+    background-color: transparent;
+    border-color: transparent !important;
+    box-shadow: none;
+  }
+}
+
+@keyframes commentHighlightFadeDark {
+  0% {
+    background-color: rgba(99, 179, 237, 0.2);
+    border-color: #63b3ed !important;
+    box-shadow: 0 0 20px rgba(99, 179, 237, 0.3);
+  }
+  30% {
+    background-color: rgba(99, 179, 237, 0.2);
+    border-color: #63b3ed !important;
+    box-shadow: 0 0 20px rgba(99, 179, 237, 0.3);
+  }
+  100% {
+    background-color: transparent;
+    border-color: transparent !important;
+    box-shadow: none;
+  }
+}
+
+.comment-highlight {
+  animation: commentHighlightFade 3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  border: 2px solid transparent !important;
+  border-radius: 8px;
+  position: relative;
+  z-index: 10;
+}
+
+body.dark-mode .comment-highlight {
+  animation: commentHighlightFadeDark 3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Visibility Utilities - Default Desktop State */
+.mobile-only {
+  display: none !important;
+}
+
+.user-cards-mobile,
+.project-cards-mobile,
+.ticket-cards-mobile,
+.deleted-project-cards-mobile,
+.deleted-ticket-cards-mobile,
+.participant-cards-mobile,
+.project-ticket-cards-mobile {
+  display: none;
+}

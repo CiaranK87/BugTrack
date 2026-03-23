@@ -1,0 +1,730 @@
+/* Form elements in dark mode */
+body.dark-mode .ui.form .field>label,
+body.dark-mode .ui.form .inline.fields>label,
+body.dark-mode .ui.form .fields>label {
+  color: var(--dm-text-secondary) !important;
+}
+
+body.dark-mode .ui.input input,
+body.dark-mode .ui.form input,
+body.dark-mode .ui.form textarea,
+body.dark-mode .ui.form select {
+  background-color: var(--dm-bg-tertiary) !important;
+  border-color: var(--dm-border-hover) !important;
+  color: var(--dm-text-secondary) !important;
+}
+
+body.dark-mode .ui.input input:focus,
+body.dark-mode .ui.form input:focus,
+body.dark-mode .ui.form textarea:focus,
+body.dark-mode .ui.form select:focus {
+  border-color: #63b3ed !important;
+  background-color: var(--dm-bg-tertiary) !important;
+  color: var(--dm-text-secondary) !important;
+}
+
+/* Buttons in dark mode */
+body.dark-mode .ui.button {
+  background-color: var(--dm-bg-tertiary) !important;
+  color: var(--dm-text-secondary) !important;
+}
+
+body.dark-mode .ui.button:hover {
+  background-color: var(--dm-border-hover) !important;
+}
+
+body.dark-mode .ui.button.primary {
+  background-color: var(--dm-primary) !important;
+}
+
+body.dark-mode .ui.button.primary:hover {
+  background-color: var(--dm-primary-hover) !important;
+}
+
+/* Button color variants */
+body.dark-mode .ui.button.red,
+body.dark-mode .ui.button.negative {
+  background-color: var(--dm-danger) !important;
+  color: #f8d7da !important;
+}
+
+body.dark-mode .ui.button.red:hover,
+body.dark-mode .ui.button.negative:hover {
+  background-color: var(--dm-danger-hover) !important;
+}
+
+body.dark-mode .ui.button.green,
+body.dark-mode .ui.button.positive {
+  background-color: var(--dm-success) !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .ui.button.green:hover,
+body.dark-mode .ui.button.positive:hover {
+  background-color: var(--dm-success-hover) !important;
+}
+
+body.dark-mode .ui.button.teal,
+body.dark-mode .ui.button.turquoise {
+  background-color: var(--dm-teal) !important;
+  color: #b3f5e0 !important;
+}
+
+body.dark-mode .ui.button.teal:hover,
+body.dark-mode .ui.button.turquoise:hover {
+  background-color: #234e52 !important;
+}
+
+body.dark-mode .ui.header.teal,
+body.dark-mode .ui.header.turquoise {
+  color: #b3f5e0 !important;
+}
+
+/* Dropdown in dark mode */
+body.dark-mode .ui.dropdown .menu,
+body.dark-mode .ui.selection.dropdown {
+  background-color: var(--dm-bg-tertiary) !important;
+  border-color: var(--dm-border-hover) !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;
+}
+
+body.dark-mode .ui.dropdown .menu>.item,
+body.dark-mode .ui.selection.dropdown .text {
+  color: var(--dm-text-secondary) !important;
+}
+
+body.dark-mode .ui.dropdown .menu>.item:hover,
+body.dark-mode .ui.dropdown .menu .item:hover {
+  background-color: var(--dm-bg-tertiary) !important;
+}
+
+body.dark-mode .ui.dropdown .menu>.selected.item,
+body.dark-mode .ui.dropdown .menu .item.active {
+  background-color: var(--dm-bg-secondary) !important;
+  color: #63b3ed !important;
+}
+
+body.dark-mode .ui.selection.dropdown .default.text,
+body.dark-mode .ui.selection.dropdown .placeholder {
+  color: #ffffff !important;
+}
+
+/* Menu in dark mode */
+body.dark-mode .ui.menu:not(.inverted) {
+  background-color: var(--dm-bg-secondary) !important;
+  border-color: var(--dm-border) !important;
+}
+
+body.dark-mode .ui.menu:not(.inverted) .item,
+body.dark-mode .ui.menu a.item,
+body.dark-mode .ui.inverted.menu a.item {
+  color: var(--dm-text-secondary) !important;
+}
+
+body.dark-mode .ui.menu:not(.inverted) .item:hover,
+body.dark-mode .ui.menu a.item:hover,
+body.dark-mode .ui.inverted.menu a.item:hover {
+  background-color: var(--dm-bg-tertiary) !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .ui.menu:not(.inverted) .active.item,
+body.dark-mode .ui.inverted.menu .active.item {
+  background-color: var(--dm-bg-secondary) !important;
+  color: #63b3ed !important;
+}
+
+/* Inverted menu styles - original gradient for light mode */
+.ui.inverted.top.fixed.menu {
+  background-image: linear-gradient(135deg, rgb(20, 20, 20) 23%, rgb(7, 183, 243) 100%) !important;
+}
+
+/* Inverted menu dark mode adjustments */
+body.dark-mode .ui.inverted.top.fixed.menu {
+  background-image: linear-gradient(135deg, rgb(10, 10, 10) 23%, rgb(5, 130, 170) 100%) !important;
+}
+
+body.dark-mode .ui.inverted.menu .item {
+  color: var(--dm-text-secondary) !important;
+}
+
+body.dark-mode .ui.inverted.menu .item:hover {
+  background-color: var(--dm-bg-secondary) !important;
+}
+
+body.dark-mode .ui.inverted.menu .item:before {
+  background-color: transparent !important;
+}
+
+/* Labels in dark mode */
+body.dark-mode .ui.label {
+  background-color: var(--dm-bg-tertiary) !important;
+  color: #f7fafc !important;
+}
+
+/* Label color variants */
+body.dark-mode .ui.label.red,
+body.dark-mode .ui.label.negative {
+  background-color: var(--dm-danger-hover) !important;
+  color: #fed7d7 !important;
+}
+
+body.dark-mode .ui.label.green,
+body.dark-mode .ui.label.positive {
+  background-color: #276749 !important;
+  color: #c6f6d5 !important;
+}
+
+body.dark-mode .ui.label.blue,
+body.dark-mode .ui.label.info {
+  background-color: var(--dm-info) !important;
+  color: #bee3f8 !important;
+}
+
+body.dark-mode .ui.label.yellow,
+body.dark-mode .ui.label.warning {
+  background-color: var(--dm-warning) !important;
+  color: #fef3c7 !important;
+}
+
+body.dark-mode .ui.label.purple,
+body.dark-mode .ui.label.violet {
+  background-color: #553c9a !important;
+  color: #e9d8fd !important;
+}
+
+body.dark-mode .ui.label.orange,
+body.dark-mode .ui.label.important {
+  background-color: #c05621 !important;
+  color: #fed7aa !important;
+}
+
+body.dark-mode .ui.label.teal {
+  background-color: #234e52 !important;
+  color: #81e6d9 !important;
+}
+
+body.dark-mode .ui.label.grey,
+body.dark-mode .ui.label.gray {
+  background-color: var(--dm-bg-tertiary) !important;
+  color: #e2e8f0 !important;
+}
+
+/* Table in dark mode */
+body.dark-mode .ui.table {
+  background-color: var(--dm-bg-secondary) !important;
+  color: var(--dm-text-secondary) !important;
+}
+
+body.dark-mode .ui.table thead th,
+body.dark-mode .ui.table td,
+body.dark-mode .ui.table th {
+  background-color: var(--dm-bg-secondary) !important;
+  color: var(--dm-text-secondary) !important;
+  border-color: var(--dm-border) !important;
+}
+
+body.dark-mode .ui.table thead th {
+  background-color: var(--dm-bg-tertiary) !important;
+}
+
+body.dark-mode .ui.table tbody tr {
+  border-color: var(--dm-border) !important;
+}
+
+body.dark-mode .ui.table tbody tr:hover,
+body.dark-mode .ui.table tr:hover td,
+body.dark-mode .ui.table tr:hover th {
+  background-color: var(--dm-bg-tertiary) !important;
+}
+
+/* Progress bar in dark mode */
+body.dark-mode .ui.progress .bar {
+  background-color: var(--dm-primary) !important;
+}
+
+body.dark-mode .ui.progress .bar .progress {
+  color: #ffffff !important;
+}
+
+body.dark-mode .ui.progress .label {
+  color: var(--dm-text-secondary) !important;
+}
+
+/* Accordion in dark mode */
+body.dark-mode .ui.accordion .title,
+body.dark-mode .ui.accordion .content {
+  color: var(--dm-text-secondary) !important;
+}
+
+body.dark-mode .ui.accordion .active.title {
+  background-color: var(--dm-bg-tertiary) !important;
+}
+
+/* Checkbox in dark mode */
+body.dark-mode .ui.checkbox label,
+body.dark-mode .ui.checkbox .box {
+  color: var(--dm-text-secondary) !important;
+}
+
+body.dark-mode .ui.checkbox input:checked~.box:after,
+body.dark-mode .ui.checkbox input:checked~label:after {
+  color: var(--dm-text-secondary) !important;
+}
+
+body.dark-mode .ui.checkbox input:checked~.box:before,
+body.dark-mode .ui.checkbox input:checked~label:before {
+  background-color: var(--dm-primary) !important;
+  border-color: var(--dm-primary) !important;
+}
+
+body.dark-mode .ui.checkbox input:not(:checked)~.box:before,
+body.dark-mode .ui.checkbox input:not(:checked)~label:before {
+  background-color: var(--dm-bg-tertiary) !important;
+  border-color: var(--dm-border-hover) !important;
+}
+
+/* Icon styling in dark mode */
+body.dark-mode .ui.icon.button,
+body.dark-mode .ui.button>.icon {
+  color: var(--dm-text-secondary) !important;
+}
+
+/* Divider in dark mode */
+body.dark-mode .ui.divider {
+  border-color: var(--dm-border) !important;
+}
+
+/* Calendar styles */
+.react-calendar {
+  width: 100%;
+  border: none;
+  box-shadow: 0 1px 2px 0 rgba(34, 36, 38, 0.15);
+}
+
+body.dark-mode .react-calendar {
+  background-color: var(--dm-bg-secondary) !important;
+  color: var(--dm-text-secondary) !important;
+  border-color: var(--dm-border) !important;
+}
+
+body.dark-mode .react-calendar__tile {
+  background-color: transparent !important;
+  color: var(--dm-text-secondary) !important;
+}
+
+body.dark-mode .react-calendar__tile:enabled:hover,
+body.dark-mode .react-calendar__tile:enabled:focus {
+  background-color: var(--dm-bg-tertiary) !important;
+}
+
+body.dark-mode .react-calendar__tile--now {
+  background-color: var(--dm-bg-tertiary) !important;
+}
+
+body.dark-mode .react-calendar__tile--active {
+  background-color: var(--dm-primary) !important;
+  color: white !important;
+}
+
+body.dark-mode .react-calendar__month-view__days__day--weekend {
+  color: #fc8181 !important;
+}
+
+.react-datepicker-wrapper {
+  width: 100%;
+}
+
+body.dark-mode .react-datepicker {
+  background-color: var(--dm-bg-secondary) !important;
+  border-color: var(--dm-border) !important;
+}
+
+body.dark-mode .react-datepicker__header {
+  background-color: var(--dm-bg-tertiary) !important;
+  border-color: var(--dm-border-hover) !important;
+}
+
+body.dark-mode .react-datepicker__day {
+  color: var(--dm-text-secondary) !important;
+}
+
+body.dark-mode .react-datepicker__day:hover {
+  background-color: var(--dm-bg-tertiary) !important;
+}
+
+body.dark-mode .react-datepicker__day--selected {
+  background-color: var(--dm-primary) !important;
+  color: white !important;
+}
+
+body.dark-mode .react-datepicker__input-container input,
+body.dark-mode .ui.calendar .ui.input input {
+  background-color: var(--dm-bg-tertiary) !important;
+  border-color: var(--dm-border-hover) !important;
+  color: var(--dm-text-secondary) !important;
+}
+
+body.dark-mode .react-datepicker__input-container input:focus,
+body.dark-mode .ui.calendar .ui.input input:focus {
+  border-color: #63b3ed !important;
+  box-shadow: 0 0 0 0.2rem rgba(99, 179, 237, 0.25) !important;
+}
+
+body.dark-mode .react-datepicker__navigation {
+  color: var(--dm-text-secondary) !important;
+}
+
+body.dark-mode .react-datepicker__navigation:hover {
+  color: #ffffff !important;
+}
+
+body.dark-mode .react-datepicker__current-month,
+body.dark-mode .react-datepicker__day-name {
+  color: var(--dm-text-secondary) !important;
+}
+
+body.dark-mode .react-datepicker__day--disabled,
+body.dark-mode .react-datepicker__day--outside-month {
+  color: var(--dm-border-hover) !important;
+}
+
+/* Masthead styles */
+.masthead {
+  display: flex;
+  align-items: center;
+  background-image: linear-gradient(135deg, rgb(20, 20, 20) 10%, rgb(7, 183, 243) 100%) !important;
+  height: 100vh;
+}
+
+body.dark-mode .masthead {
+  background-image: linear-gradient(135deg, rgb(10, 10, 10) 10%, rgb(5, 130, 170) 100%) !important;
+}
+
+.masthead .ui.menu .ui.button,
+.ui.menu a.ui.inverted.button {
+  margin-left: 0.5em;
+}
+
+.masthead h1.ui.header {
+  font-size: 4em;
+  font-weight: normal;
+}
+
+.masthead h2 {
+  font-size: 1.7em;
+  font-weight: normal;
+}
+
+/* Hide dropdown arrow for iconless dropdown */
+.iconless-dropdown>.dropdown.icon {
+  display: none !important;
+}
+
+/* Toast notifications */
+body.dark-mode .Toastify__toast {
+  background-color: var(--dm-bg-secondary) !important;
+  color: var(--dm-text-secondary) !important;
+}
+
+body.dark-mode .Toastify__toast--info {
+  background-color: var(--dm-primary) !important;
+}
+
+body.dark-mode .Toastify__toast--success {
+  background-color: var(--dm-success) !important;
+}
+
+body.dark-mode .Toastify__toast--warning {
+  background-color: var(--dm-warning-hover) !important;
+}
+
+body.dark-mode .Toastify__toast--error {
+  background-color: #e53e3e !important;
+}
+
+/* Inverted segments with specific colors */
+body.dark-mode .ui.segment.inverted {
+  background-color: var(--dm-bg-secondary) !important;
+  color: var(--dm-text-secondary) !important;
+  border-color: var(--dm-border) !important;
+}
+
+body.dark-mode .ui.segment.inverted.teal {
+  background-color: var(--dm-teal) !important;
+  color: #b3f5e0 !important;
+  border-color: #234e52 !important;
+}
+
+body.dark-mode .ui.segment.inverted.blue {
+  background-color: var(--dm-info) !important;
+  color: #bee3f8 !important;
+  border-color: #2b6cb0 !important;
+}
+
+body.dark-mode .ui.segment.inverted.red {
+  background-color: var(--dm-danger) !important;
+  color: #fed7d7 !important;
+  border-color: var(--dm-danger-hover) !important;
+}
+
+body.dark-mode .ui.segment.inverted.green {
+  background-color: var(--dm-success) !important;
+  color: #c6f6d5 !important;
+  border-color: var(--dm-success-hover) !important;
+}
+
+body.dark-mode .ui.segment.inverted.yellow {
+  background-color: var(--dm-warning) !important;
+  color: #fef3c7 !important;
+  border-color: var(--dm-warning-hover) !important;
+}
+
+/* Dropdown pointing arrows and dividers */
+body.dark-mode .ui.dropdown.pointing .menu:after {
+  background-color: var(--dm-bg-tertiary) !important;
+  box-shadow: -1px -1px 0 0 var(--dm-border-hover) !important;
+}
+
+body.dark-mode .ui.dropdown .menu .divider {
+  border-color: var(--dm-border) !important;
+}
+
+/* Form messages */
+body.dark-mode .ui.form .field .prompt,
+body.dark-mode .ui.form .field .description {
+  color: var(--dm-text-tertiary) !important;
+}
+
+body.dark-mode .ui.form .error.message {
+  background-color: var(--dm-danger) !important;
+  color: #fed7d7 !important;
+  border-color: var(--dm-danger-hover) !important;
+}
+
+body.dark-mode .ui.form .success.message {
+  background-color: var(--dm-success) !important;
+  color: #c6f6d5 !important;
+  border-color: var(--dm-success-hover) !important;
+}
+
+body.dark-mode .ui.form .info.message {
+  background-color: var(--dm-info) !important;
+  color: #bee3f8 !important;
+  border-color: var(--dm-primary) !important;
+}
+
+body.dark-mode .ui.form .warning.message {
+  background-color: var(--dm-warning) !important;
+  color: #fef3c7 !important;
+  border-color: var(--dm-warning-hover) !important;
+}
+
+/* List components */
+body.dark-mode .ui.list .item {
+  color: var(--dm-text-secondary) !important;
+}
+
+body.dark-mode .ui.list .item .description {
+  color: var(--dm-text-tertiary) !important;
+}
+
+body.dark-mode .ui.list .item .header {
+  color: #ffffff !important;
+}
+
+/* Breadcrumb components */
+body.dark-mode .ui.breadcrumb,
+body.dark-mode .ui.breadcrumb .section {
+  color: var(--dm-text-secondary) !important;
+}
+
+body.dark-mode .ui.breadcrumb .divider {
+  color: var(--dm-border-hover) !important;
+}
+
+body.dark-mode .ui.breadcrumb .active.section {
+  color: #ffffff !important;
+}
+
+body.dark-mode .ui.breadcrumb .section:hover {
+  color: #ffffff !important;
+}
+
+/* Pagination */
+body.dark-mode .ui.pagination.menu .item {
+  background-color: var(--dm-bg-tertiary) !important;
+  color: var(--dm-text-secondary) !important;
+  border-color: var(--dm-border-hover) !important;
+}
+
+body.dark-mode .ui.pagination.menu .item:hover {
+  background-color: var(--dm-border-hover) !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .ui.pagination.menu .item.active {
+  background-color: var(--dm-primary) !important;
+  color: #ffffff !important;
+}
+
+/* Search components */
+body.dark-mode .ui.search {
+  color: var(--dm-text-secondary) !important;
+}
+
+body.dark-mode .ui.search .prompt {
+  background-color: var(--dm-bg-tertiary) !important;
+  border-color: var(--dm-border-hover) !important;
+  color: var(--dm-text-secondary) !important;
+}
+
+body.dark-mode .ui.search .prompt:focus {
+  border-color: #63b3ed !important;
+}
+
+body.dark-mode .ui.search .results {
+  background-color: var(--dm-bg-tertiary) !important;
+  border-color: var(--dm-border-hover) !important;
+}
+
+body.dark-mode .ui.search .results .result {
+  border-color: var(--dm-border-hover) !important;
+}
+
+body.dark-mode .ui.search .results .result:hover {
+  background-color: var(--dm-border-hover) !important;
+}
+
+body.dark-mode .ui.search .results .result .title {
+  color: var(--dm-text-secondary) !important;
+}
+
+body.dark-mode .ui.search .results .result .description {
+  color: var(--dm-text-tertiary) !important;
+}
+
+/* Statistic components */
+body.dark-mode .ui.statistic .value,
+body.dark-mode .ui.statistics .statistic .value {
+  color: #ffffff !important;
+}
+
+body.dark-mode .ui.statistic .label,
+body.dark-mode .ui.statistics .statistic .label {
+  color: var(--dm-text-secondary) !important;
+}
+
+/* Rating components */
+body.dark-mode .ui.rating .icon {
+  color: var(--dm-border-hover) !important;
+}
+
+body.dark-mode .ui.rating .active.icon,
+body.dark-mode .ui.rating .selected.icon {
+  color: #f6e05e !important;
+}
+
+/* Placeholder components */
+body.dark-mode .ui.placeholder {
+  background-color: var(--dm-bg-tertiary) !important;
+}
+
+body.dark-mode .ui.placeholder .image.header:after,
+body.dark-mode .ui.placeholder .line:after,
+body.dark-mode .ui.placeholder .line:before {
+  background-color: var(--dm-border-hover) !important;
+}
+
+/* Loader components */
+body.dark-mode .ui.loader {
+  color: var(--dm-text-secondary) !important;
+}
+
+body.dark-mode .ui.loader:before {
+  border-color: var(--dm-border-hover) !important;
+}
+
+body.dark-mode .ui.loader:after {
+  border-color: var(--dm-primary) transparent transparent !important;
+}
+
+/* Dimmer components */
+body.dark-mode .ui.dimmer {
+  background-color: rgba(0, 0, 0, 0.85) !important;
+}
+
+body.dark-mode .ui.dimmer .content {
+  color: var(--dm-text-secondary) !important;
+}
+
+/* Reveal components */
+body.dark-mode .ui.reveal .visible.content,
+body.dark-mode .ui.reveal .hidden.content {
+  background-color: var(--dm-bg-tertiary) !important;
+  color: var(--dm-text-secondary) !important;
+}
+
+/* Embed components */
+body.dark-mode .ui.embed {
+  background-color: var(--dm-bg-tertiary) !important;
+}
+
+/* Rail and Sticky components */
+body.dark-mode .ui.rail,
+body.dark-mode .ui.sticky {
+  color: var(--dm-text-secondary) !important;
+}
+
+/* Text area focus */
+body.dark-mode .ui.form textarea:focus {
+  border-color: #63b3ed !important;
+  background-color: var(--dm-bg-tertiary) !important;
+  color: var(--dm-text-secondary) !important;
+}
+
+/* Slider components */
+body.dark-mode .ui.slider .inner {
+  background-color: var(--dm-bg-tertiary) !important;
+}
+
+body.dark-mode .ui.slider .inner .track {
+  background-color: var(--dm-border-hover) !important;
+}
+
+body.dark-mode .ui.slider .inner .thumb {
+  background-color: var(--dm-primary) !important;
+}
+
+/* Step components */
+body.dark-mode .ui.steps .step {
+  background-color: var(--dm-bg-tertiary) !important;
+  color: var(--dm-text-secondary) !important;
+  border-color: var(--dm-border-hover) !important;
+}
+
+body.dark-mode .ui.steps .step:hover {
+  background-color: var(--dm-border-hover) !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .ui.steps .step.active {
+  background-color: var(--dm-primary) !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .ui.steps .step .title {
+  color: var(--dm-text-secondary) !important;
+}
+
+body.dark-mode .ui.steps .step .description {
+  color: var(--dm-text-tertiary) !important;
+}
+
+body.dark-mode .ui.steps .step.active .title {
+  color: #ffffff !important;
+}
+
+body.dark-mode .ui.steps .step.active .description {
+  color: var(--dm-text-secondary) !important;
+}

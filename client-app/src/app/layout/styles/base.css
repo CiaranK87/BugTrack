@@ -1,0 +1,85 @@
+/* Text elements in dark mode */
+body.dark-mode,
+body.dark-mode div,
+body.dark-mode span,
+body.dark-mode p,
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6,
+body.dark-mode td,
+body.dark-mode th,
+body.dark-mode li,
+body.dark-mode a {
+  color: var(--dm-text-secondary) !important;
+}
+
+/* Headers in dark mode */
+body.dark-mode .ui.header,
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6,
+body.dark-mode .ui.card .header,
+body.dark-mode .ui.segment .header,
+body.dark-mode .ui.container .header,
+body.dark-mode .ui.segment .ui.header,
+body.dark-mode .ui.card .ui.header,
+body.dark-mode .ui.container .ui.header {
+  color: var(--dm-text-primary) !important;
+}
+
+/* Override any teal color in headers */
+body.dark-mode .ui.header.teal,
+body.dark-mode .ui.header[class*="teal"],
+body.dark-mode h1.teal,
+body.dark-mode h2.teal,
+body.dark-mode h3.teal,
+body.dark-mode h4.teal,
+body.dark-mode h5.teal,
+body.dark-mode [style*="color: teal"],
+body.dark-mode [style*="color:teal"],
+body.dark-mode [style*="color: #008080"],
+body.dark-mode [style*="color:#008080"],
+body.dark-mode [style*="color: rgb(0, 128, 128)"] {
+  color: var(--dm-text-primary) !important;
+}
+
+/* Semantic UI components dark mode */
+body.dark-mode .ui.segment,
+body.dark-mode .ui.card,
+body.dark-mode .ui.modal,
+body.dark-mode .ui.modal>.header,
+body.dark-mode .ui.modal>.content,
+body.dark-mode .ui.modal>.actions {
+  background-color: var(--dm-bg-secondary) !important;
+  color: var(--dm-text-secondary) !important;
+  border-color: var(--dm-border) !important;
+}
+
+body.dark-mode .ui.card>.content>.header {
+  color: var(--dm-text-primary) !important;
+}
+
+body.dark-mode .ui.card>.content>.meta {
+  color: var(--dm-text-tertiary) !important;
+}
+
+body.dark-mode .ui.card>.content>.description {
+  color: #e2e8f0 !important;
+}
+
+/* Comments in dark mode */
+body.dark-mode .ui.comments,
+body.dark-mode .ui.comments *,
+body.dark-mode .ui.comment,
+body.dark-mode .ui.comment * {
+  background-color: #1a202c !important;
+  color: var(--dm-text-secondary) !important;
+}
+
+/* Ticket Comment List Layouts */

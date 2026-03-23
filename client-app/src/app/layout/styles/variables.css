@@ -1,0 +1,35 @@
+/* Light mode styles */
+body {
+  background-color: #f8f9fa !important;
+  color: #212529 !important;
+  transition: all 0.3s ease;
+}
+
+/* Dark mode styles */
+body.dark-mode {
+  background-color: #1a1a1a !important;
+  color: #e9ecef !important;
+}
+
+/* Dark mode color variables */
+:root {
+  --dm-bg-primary: #1a1a1a;
+  --dm-bg-secondary: #2d3748;
+  --dm-bg-tertiary: #4a5568;
+  --dm-border: #4a5568;
+  --dm-border-hover: #718096;
+  --dm-text-primary: #ffffff;
+  --dm-text-secondary: #e9ecef;
+  --dm-text-tertiary: #cbd5e0;
+  --dm-primary: #3182ce;
+  --dm-primary-hover: #2c5282;
+  --dm-success: #38a169;
+  --dm-success-hover: #48bb78;
+  --dm-danger: #742a2a;
+  --dm-danger-hover: #9b2c2c;
+  --dm-warning: #b7791f;
+  --dm-warning-hover: #d69e2e;
+  --dm-info: #2c5282;
+  --dm-teal: #1a4d66;
+}
+

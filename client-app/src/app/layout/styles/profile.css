@@ -1,0 +1,175 @@
+/* Avatar images */
+body.dark-mode .ui.avatar.image,
+body.dark-mode .ui.avatar.image img {
+  background-color: var(--dm-bg-tertiary) !important;
+  border-color: var(--dm-border-hover) !important;
+}
+
+/* Profile page styling - consolidated rules */
+body.dark-mode div[style*="background: '#f8f9fa'"],
+body.dark-mode div[style*="background:#f8f9fa'"],
+body.dark-mode div[style*="background: #f8f9fa"],
+body.dark-mode div[style*="background:#f8f9fa"],
+body.dark-mode div[style*="background: rgb(248, 249, 250)"],
+body.dark-mode div[style*="background:rgb(248, 249, 250)"],
+body.dark-mode div[style*="background-color: '#f8f9fa'"],
+body.dark-mode div[style*="background-color:#f8f9fa'"],
+body.dark-mode div[style*="background-color: #f8f9fa"],
+body.dark-mode div[style*="background-color:#f8f9fa"],
+body.dark-mode div[style*="background-color: rgb(248, 249, 250)"],
+body.dark-mode div[style*="background-color:rgb(248, 249, 250)"],
+body.dark-mode div[style='background: "#f8f9fa"'],
+body.dark-mode div[style='background:"#f8f9fa"'],
+body.dark-mode div[style='background: #f8f9fa'],
+body.dark-mode div[style='background:#f8f9fa'],
+body.dark-mode div[style='background: "rgb(248, 249, 250)"'],
+body.dark-mode div[style='background:"rgb(248, 249, 250)"'],
+body.dark-mode div[style*="background: #f8"],
+body.dark-mode div[style*="background:#f8"],
+body.dark-mode div[style*="background: rgb(248"],
+body.dark-mode div[style*="background:rgb(248"],
+body.dark-mode .ui.segment[style*="background: '#f8f9fa'"],
+body.dark-mode .ui.segment[style*="background:#f8f9fa'"],
+body.dark-mode .ui.segment[style*="background: #f8f9fa"],
+body.dark-mode .ui.segment[style*="background:#f8f9fa"] {
+  background-color: var(--dm-bg-secondary) !important;
+  color: var(--dm-text-secondary) !important;
+  border-color: var(--dm-border) !important;
+}
+
+body.dark-mode .ui.grid .ui.row .ui.column div[style*="background: '#f8f9fa'"],
+body.dark-mode .ui.grid .ui.row .ui.column div[style*="background:#f8f9fa'"],
+body.dark-mode .ui.grid .ui.row .ui.column div[style*="background: #f8f9fa"],
+body.dark-mode .ui.grid .ui.row .ui.column div[style*="background:#f8f9fa"],
+body.dark-mode .ui.grid .ui.row .ui.column div[style*="background: rgb(248, 249, 250)"],
+body.dark-mode .ui.grid .ui.row .ui.column div[style*="background:rgb(248, 249, 250)"] {
+  background-color: var(--dm-bg-secondary) !important;
+  color: var(--dm-text-secondary) !important;
+}
+
+/* Profile page classes */
+.bio-section {
+  min-height: 100px;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 5px;
+}
+
+body.dark-mode .bio-section {
+  background-color: var(--dm-bg-tertiary) !important;
+  color: var(--dm-text-secondary) !important;
+  border: 1px solid var(--dm-border-hover) !important;
+}
+
+.profile-header-segment {
+  background: #f8f9fa;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+body.dark-mode .profile-header-segment {
+  background-color: var(--dm-bg-secondary) !important;
+  color: var(--dm-text-secondary) !important;
+  border-color: var(--dm-border) !important;
+}
+
+/* Comment styling - consolidated rules */
+body.dark-mode div[style*="backgroundColor: '#fff'"],
+body.dark-mode div[style*="backgroundColor:'#fff'"],
+body.dark-mode div[style*="background-color: '#fff'"],
+body.dark-mode div[style*="background-color:'#fff'"],
+body.dark-mode div[style*="backgroundColor: #fff'"],
+body.dark-mode div[style*="background-color: #fff'"],
+body.dark-mode div[style*="backgroundColor:#fff'"],
+body.dark-mode div[style*="background-color:#fff'"],
+body.dark-mode div[style*="backgroundColor: '#fafbfc'"],
+body.dark-mode div[style*="backgroundColor:'#fafbfc'"],
+body.dark-mode div[style*="background-color: '#fafbfc'"],
+body.dark-mode div[style*="background-color:'#fafbfc'"],
+body.dark-mode div[style*="backgroundColor: #fafbfc'"],
+body.dark-mode div[style*="background-color: #fafbfc'"],
+body.dark-mode div[style*="backgroundColor:#fafbfc'"],
+body.dark-mode div[style*="background-color:#fafbfc'"],
+body.dark-mode .ui.comments [style*="background: white"],
+body.dark-mode .ui.comments [style*="background:white"],
+body.dark-mode .ui.comments [style*="background-color: white"],
+body.dark-mode .ui.comments [style*="background-color:white"],
+body.dark-mode .ui.comment [style*="background: white"],
+body.dark-mode .ui.comment [style*="background:white"],
+body.dark-mode .ui.comment [style*="background-color: white"],
+body.dark-mode .ui.comment [style*="background-color:white"] {
+  background-color: var(--dm-bg-secondary) !important;
+  color: var(--dm-text-secondary) !important;
+}
+
+/* Comment text colors */
+body.dark-mode div[style*="color: '#333'"],
+body.dark-mode div[style*="color:'#333'"],
+body.dark-mode div[style*="color: #333'"],
+body.dark-mode div[style*="color:#333'"],
+body.dark-mode div[style*="color: '#444'"],
+body.dark-mode div[style*="color:'#444'"],
+body.dark-mode div[style*="color: #444'"],
+body.dark-mode div[style*="color:#444'"],
+body.dark-mode div[style*="color: '#666'"],
+body.dark-mode div[style*="color:'#666'"],
+body.dark-mode div[style*="color: #666'"],
+body.dark-mode div[style*="color:#666'"] {
+  color: var(--dm-text-secondary) !important;
+}
+
+/* Comment metadata colors */
+body.dark-mode div[style*="color: '#888'"],
+body.dark-mode div[style*="color:'#888'"],
+body.dark-mode div[style*="color: #888'"],
+body.dark-mode div[style*="color:#888'"],
+body.dark-mode div[style*="color: '#aaa'"],
+body.dark-mode div[style*="color:'#aaa'"],
+body.dark-mode div[style*="color: #aaa'"],
+body.dark-mode div[style*="color:#aaa'"] {
+  color: var(--dm-text-tertiary) !important;
+}
+
+/* Comment borders */
+body.dark-mode div[style*="border: '1px solid #e8e8e8'"],
+body.dark-mode div[style*="border:'1px solid #e8e8e8'"],
+body.dark-mode div[style*="border: 1px solid #e8e8e8'"],
+body.dark-mode div[style*="border:1px solid #e8e8e8'"],
+body.dark-mode div[style*="borderLeft: '2px solid #e8e8e8'"],
+body.dark-mode div[style*="borderLeft:'2px solid #e8e8e8'"],
+body.dark-mode div[style*="border-left: '2px solid #e8e8e8'"],
+body.dark-mode div[style*="border-left: 2px solid #e8e8e8'"],
+body.dark-mode div[style*="borderLeft: 2px solid #e8e8e8'"] {
+  border-color: var(--dm-border) !important;
+}
+
+/* No comments placeholder */
+body.dark-mode div[style*="backgroundColor: '#f9f9f9'"],
+body.dark-mode div[style*="backgroundColor:'#f9f9f9'"],
+body.dark-mode div[style*="background-color: '#f9f9f9'"],
+body.dark-mode div[style*="background-color:'#f9f9f9'"],
+body.dark-mode div[style*="backgroundColor: #f9f9f9'"],
+body.dark-mode div[style*="background-color: #f9f9f9'"],
+body.dark-mode div[style*="backgroundColor:#f9f9f9'"],
+body.dark-mode div[style*="background-color:#f9f9f9'"] {
+  background-color: var(--dm-bg-secondary) !important;
+  color: var(--dm-text-tertiary) !important;
+  border-color: var(--dm-border) !important;
+}
+
+/* Button icons in comments */
+body.dark-mode button[style*="color: '#888'"],
+body.dark-mode button[style*="color:'#888'"],
+body.dark-mode button[style*="color: #888'"],
+body.dark-mode button[style*="color:#888'"] {
+  color: var(--dm-text-tertiary) !important;
+}
+
+body.dark-mode button[style*="color: '#888'"]:hover,
+body.dark-mode button[style*="color:'#888'"]:hover,
+body.dark-mode button[style*="color: #888'"]:hover,
+body.dark-mode button[style*="color:#888'"]:hover {
+  color: var(--dm-text-secondary) !important;
+}
+
+/* Comment component classes */

@@ -1,0 +1,208 @@
+/* Project Dashboard Mobile Optimization */
+@media (max-width: 767px) {
+  .project-dashboard-controls {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 15px !important;
+  }
+
+  /* Container for Search, Views, and Dropdowns */
+  .project-dashboard-left {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    width: 100% !important;
+    gap: 10px !important;
+  }
+
+  /* Row 1: Search - Approx half width */
+  .project-dashboard-left .ui.input {
+    flex: 1 1 auto !important;
+    width: auto !important;
+    min-width: 45% !important;
+  }
+
+  .project-dashboard-left .ui.input input {
+    width: 100% !important;
+  }
+
+  /* Row 1: Views - Approx half width */
+  .project-dashboard-left .ui.buttons {
+    flex: 1 1 auto !important;
+    display: flex !important;
+    width: auto !important;
+    min-width: 45% !important;
+  }
+
+  .project-dashboard-left .ui.buttons .button {
+    flex: 1 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* Row 2: Dropdowns container - Full width */
+  .project-dashboard-dropdowns {
+    width: 100% !important;
+    margin-left: 0 !important;
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 10px !important;
+    margin-top: 5px !important;
+  }
+
+  /* Row 2: Individual dropdowns - Equal width */
+  .project-dashboard-dropdowns .ui.dropdown {
+    flex: 1 !important;
+    width: auto !important;
+    min-width: 0 !important;
+  }
+
+  /* Force same height for Status dropdown and Sort button */
+  .project-dashboard-dropdowns .ui.selection.dropdown,
+  .project-dashboard-dropdowns .iconless-dropdown .ui.button {
+    height: 38px !important;
+    min-height: 38px !important;
+    display: flex !important;
+    align-items: center !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Sort dropdown button trigger full width and centered */
+  .project-dashboard-dropdowns .iconless-dropdown .ui.button {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  /* Row 3: Create Project button - Full width (Separate from left container) */
+  .project-dashboard-controls>.ui.button {
+    width: 100% !important;
+    margin-top: 5px !important;
+  }
+
+  /* Project Dashboard Statistics 2-column grid on mobile */
+  .ui.grid.project-dashboard-statistics {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    margin-left: -0.5rem !important;
+    margin-right: -0.5rem !important;
+  }
+
+  .ui.grid.project-dashboard-statistics>.column {
+    width: 50% !important;
+    padding: 0.5rem !important;
+  }
+
+  /* Force List View on Mobile - Hide EVERYTHING else */
+  .enhanced-project-dashboard .project-dashboard-left .ui.buttons.view-toggle-buttons {
+    display: none !important;
+  }
+
+  .enhanced-project-dashboard .view-container-cards,
+  .enhanced-project-dashboard .view-container-table {
+    display: none !important;
+  }
+
+  .enhanced-project-dashboard .view-container-list {
+    display: block !important;
+  }
+
+  /* Ticket Dashboard Mobile Optimization */
+  .ticket-dashboard-controls {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 15px !important;
+  }
+
+  /* Inner container for Search, Views, Dropdowns */
+  .ticket-dashboard-inner {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    width: 100% !important;
+    gap: 10px !important;
+    justify-content: space-between !important;
+  }
+
+  /* Row 1: Search - Approx half width */
+  .ticket-dashboard-inner .ui.input {
+    flex: 1 1 auto !important;
+    width: auto !important;
+    min-width: 45% !important;
+  }
+
+  .ticket-dashboard-inner .ui.input input {
+    width: 100% !important;
+  }
+
+  /* Row 1: Views - Approx half width */
+  .ticket-dashboard-inner .ui.buttons {
+    flex: 1 1 auto !important;
+    display: flex !important;
+    width: auto !important;
+    min-width: 45% !important;
+  }
+
+  .ticket-dashboard-inner .ui.buttons .button {
+    flex: 1 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* Row 2: Dropdowns container - Full width */
+  .ticket-dashboard-dropdowns {
+    width: 100% !important;
+    margin-left: 0 !important;
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 10px !important;
+    margin-top: 5px !important;
+  }
+
+  /* Row 2: Individual dropdowns - Equal width */
+  .ticket-dashboard-dropdowns .ui.dropdown {
+    flex: 1 !important;
+    width: auto !important;
+    min-width: 0 !important;
+  }
+
+  /* Force same height for Status dropdown and Sort button in tickets */
+  .ticket-dashboard-dropdowns .ui.selection.dropdown,
+  .ticket-dashboard-dropdowns .iconless-dropdown .ui.button {
+    height: 38px !important;
+    min-height: 38px !important;
+    display: flex !important;
+    align-items: center !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Sort dropdown button trigger full width and centered */
+  .ticket-dashboard-dropdowns .iconless-dropdown .ui.button {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  /* Force CARD View on Mobile Ticket Dashboard - Hide EVERYTHING else */
+  .enhanced-ticket-dashboard .ticket-dashboard-inner .ui.buttons.view-toggle-buttons {
+    display: none !important;
+  }
+
+  .enhanced-ticket-dashboard .view-container-kanban,
+  .enhanced-ticket-dashboard .view-container-list {
+    display: none !important;
+  }
+
+  .enhanced-ticket-dashboard .view-container-cards {
+    display: block !important;
+  }
+
+  /* Stack Ticket Cards Vertically on Mobile */
+  .enhanced-ticket-dashboard .ticket-card-grid {
+    grid-template-columns: 1fr !important;
+  }
+}

@@ -1,0 +1,197 @@
+.no-comments-placeholder {
+  text-align: center;
+  padding: 40px 20px;
+  color: #888;
+  font-style: italic;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  border: 1px dashed #ddd;
+}
+
+.comment-container {
+  background-color: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  min-height: 120px;
+}
+
+.comment-author {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.comment-username {
+  color: #888;
+  margin-left: 8px;
+  font-size: 0.85rem;
+}
+
+.comment-metadata {
+  font-size: 0.8rem;
+  color: #888;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: bold;
+}
+
+.comment-content {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #444;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin-bottom: 12px;
+  min-height: 40px;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: #fafbfc;
+}
+
+.comment-attachments {
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 12px;
+}
+
+.attachment-header {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+}
+
+.comment-edited {
+  font-size: 0.8rem;
+  color: #aaa;
+  font-style: italic;
+  display: flex;
+  align-items: center;
+}
+
+.comment-replies {
+  margin-top: 12px;
+  margin-left: 20px;
+  padding-left: 16px;
+  border-left: 2px solid #e8e8e8;
+}
+
+.comment-reply {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.reply-author {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.reply-username {
+  color: #888;
+  margin-left: 6px;
+  font-size: 0.8rem;
+}
+
+.reply-metadata {
+  font-size: 0.75rem;
+  color: #888;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.reply-content {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: #444;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin-bottom: 8px;
+  padding: 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  background-color: #fafbfc;
+}
+
+.reply-edited {
+  font-size: 0.75rem;
+  color: #aaa;
+  font-style: italic;
+  display: flex;
+  align-items: center;
+}
+
+.delete-button {
+  background: transparent;
+  color: #888;
+  padding: 4px;
+}
+
+/* Dark mode styles for comment classes */
+body.dark-mode .no-comments-placeholder {
+  background-color: var(--dm-bg-secondary) !important;
+  color: var(--dm-text-tertiary) !important;
+  border-color: var(--dm-border) !important;
+}
+
+body.dark-mode .comment-container,
+body.dark-mode .comment-reply {
+  background-color: var(--dm-bg-secondary) !important;
+  border-color: var(--dm-border) !important;
+  color: var(--dm-text-secondary) !important;
+}
+
+body.dark-mode .comment-author,
+body.dark-mode .reply-author {
+  color: #ffffff !important;
+}
+
+body.dark-mode .comment-username,
+body.dark-mode .reply-username,
+body.dark-mode .comment-metadata,
+body.dark-mode .reply-metadata,
+body.dark-mode .attachment-header,
+body.dark-mode .comment-edited,
+body.dark-mode .reply-edited,
+body.dark-mode .delete-button {
+  color: var(--dm-text-tertiary) !important;
+}
+
+body.dark-mode .comment-content,
+body.dark-mode .reply-content,
+body.dark-mode .comment-attachments {
+  background-color: var(--dm-bg-tertiary) !important;
+  color: var(--dm-text-secondary) !important;
+  border-color: var(--dm-border-hover) !important;
+}
+
+body.dark-mode .comment-replies {
+  border-color: var(--dm-border) !important;
+}
+
+body.dark-mode .delete-button:hover {
+  color: var(--dm-text-secondary) !important;
+}
+
+/* Profile page card meta and description text */
+body.dark-mode .ui.card .meta span[style*="color: '#666'"],
+body.dark-mode .ui.card .meta span[style*="color:#666'"],
+body.dark-mode .ui.card .meta span[style*="color: #666"],
+body.dark-mode .ui.card .meta span[style*="color:#666"],
+body.dark-mode .ui.card .extra span[style*="color: '#666'"],
+body.dark-mode .ui.card .extra span[style*="color:#666'"],
+body.dark-mode .ui.card .extra span[style*="color: #666"],
+body.dark-mode .ui.card .extra span[style*="color:#666"] {
+  color: var(--dm-text-tertiary) !important;
+}
