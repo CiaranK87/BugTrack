@@ -24,6 +24,7 @@ namespace Application.Tickets
             public async Task<Result<List<Ticket>>> Handle(Query request, CancellationToken cancellationToken)
             {
                 var tickets = await _context.Tickets
+                    .Include(t => t.Project)
                     .Where(t => t.ProjectId == request.ProjectId)
                     .ToListAsync(cancellationToken);
                 

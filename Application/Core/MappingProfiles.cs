@@ -23,7 +23,9 @@ namespace Application.Core
                 )
                 .ForMember(
                     dest => dest.Participants,
-                    opt => opt.MapFrom(src => src.Participants.Select(pp => pp.AppUser))
+                    opt => opt.MapFrom(src => src.Participants
+                        .Where(pp => !pp.AppUser.IsDeleted)
+                        .Select(pp => pp.AppUser))
                 );
 
             CreateMap<ProjectDto, Project>()

@@ -36,7 +36,7 @@ export default observer(function UnifiedDashboard() {
     { name: 'Open', value: allTickets.filter(t => t.status === 'Open').length, color: '#21ba45' },
     { name: 'In Progress', value: allTickets.filter(t => t.status === 'In Progress').length, color: '#2185d0' },
     { name: 'Closed', value: allTickets.filter(t => t.status === 'Closed').length, color: '#fbbd08' },
-  ];
+  ].filter(s => s.value > 0);
 
   const ticketSeverityData = [
     { name: 'Critical', value: allTickets.filter(t => t.severity === 'Critical').length },

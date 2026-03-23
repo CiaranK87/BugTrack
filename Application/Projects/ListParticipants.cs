@@ -37,6 +37,7 @@ namespace Application.Projects
                     return Result<List<ProjectParticipantDto>>.Failure("Project not found");
 
                 var participants = project.Participants
+                    .Where(p => !p.AppUser.IsDeleted)
                     .Select(p => new ProjectParticipantDto
                     {
                         UserId = p.AppUserId,

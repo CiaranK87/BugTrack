@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
-import { Button, Header, Table, Label, Loader, Dropdown, Icon } from 'semantic-ui-react';
+import { Button, Header, Table, Label, Loader, Dropdown, Icon, Segment } from 'semantic-ui-react';
 import { useStore } from '../../../app/stores/store';
 import { useNavigate } from 'react-router-dom';
 import { ProjectParticipantDto } from '../../../app/models/project';
@@ -32,7 +32,11 @@ export default observer(function ProjectParticipants({ projectId }: Props) {
     loadProjectParticipants(projectId);
   }, [projectId, loadProjectParticipants]);
 
-  if (loadingParticipants) return <Loader active />;
+  if (loadingParticipants) return (
+    <Segment basic style={{ minHeight: '200px' }}>
+      <Loader active content="Loading participants..." />
+    </Segment>
+  );
 
   const handleEditRole = (participant: ProjectParticipant) => {
     setEditingParticipantId(participant.userId);

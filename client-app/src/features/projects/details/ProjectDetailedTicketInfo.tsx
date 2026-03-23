@@ -1,7 +1,6 @@
-import { Segment, Button, Table, Label, Icon, Header } from "semantic-ui-react";
+import { Segment, Button, Table, Label, Icon, Header, Loader } from "semantic-ui-react";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../../app/stores/store";
-import LoadingComponent from "../../../app/layout/LoadingComponent";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
 
@@ -52,7 +51,11 @@ export default observer(function ProjectDetailedTicketInfo({ projectId }: Props)
     }
   };
 
-  if (loadingInitial) return <LoadingComponent />;
+  if (loadingInitial) return (
+    <Segment basic style={{ minHeight: '200px' }}>
+      <Loader active content="Loading tickets..." />
+    </Segment>
+  );
 
   return (
     <div className="project-ticket-info-container">

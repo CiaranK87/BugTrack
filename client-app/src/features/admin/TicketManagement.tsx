@@ -82,7 +82,7 @@ export default observer(function TicketManagement() {
     (ticket.submitter && ticket.submitter.toLowerCase().includes(searchTerm.toLowerCase())) ||
     (ticket.assigned && ticket.assigned.toLowerCase().includes(searchTerm.toLowerCase())) ||
     (ticket.description && ticket.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    (ticket.project && ticket.project.projectTitle.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (ticket.projectTitle && ticket.projectTitle.toLowerCase().includes(searchTerm.toLowerCase())) ||
     ticket.priority.toLowerCase().includes(searchTerm.toLowerCase()) ||
     ticket.severity.toLowerCase().includes(searchTerm.toLowerCase()) ||
     ticket.status.toLowerCase().includes(searchTerm.toLowerCase())
@@ -138,9 +138,9 @@ export default observer(function TicketManagement() {
                       </Table.Cell>
                       <Table.Cell>{ticket.submitter || "Unknown"}</Table.Cell>
                       <Table.Cell>
-                        {ticket.project ? (
+                        {ticket.projectTitle ? (
                           <Link to={`/projects/${ticket.projectId}`}>
-                            {ticket.project.projectTitle}
+                            {ticket.projectTitle}
                           </Link>
                         ) : (
                           "Unknown"
@@ -194,7 +194,7 @@ export default observer(function TicketManagement() {
                         <Icon name="ticket" />
                         <Header.Content>
                           {ticket.title}
-                          <Header.Subheader>{ticket.project?.projectTitle || "Unknown Project"}</Header.Subheader>
+                          <Header.Subheader>{ticket.projectTitle || "Unknown Project"}</Header.Subheader>
                         </Header.Content>
                       </Header>
                       <Label color={getStatusColor(ticket.status)} size="small" className="ticket-status-label">
@@ -292,10 +292,10 @@ export default observer(function TicketManagement() {
                   {selectedTicket.updated && (
                     <p><strong>Updated:</strong> {formatDate(selectedTicket.updated, 'MMM dd, yyyy')}</p>
                   )}
-                  {selectedTicket.project && (
+                  {selectedTicket.projectTitle && (
                     <p><strong>Project:</strong>
                       <Link to={`/projects/${selectedTicket.projectId}`} style={{ marginLeft: '5px' }}>
-                        {selectedTicket.project.projectTitle}
+                        {selectedTicket.projectTitle}
                       </Link>
                     </p>
                   )}

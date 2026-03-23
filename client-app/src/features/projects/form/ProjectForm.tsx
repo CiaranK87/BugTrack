@@ -12,6 +12,7 @@ import MyTextArea from "../../../app/common/form/MyTextArea";
 import MyDateInput from "../../../app/common/form/MyDateInput";
 import { v4 as uuid } from "uuid";
 import { logger } from "../../../app/utils/logger";
+import { toast } from "react-toastify";
 
 export default observer(function ProjectForm() {
   const navigate = useNavigate();
@@ -44,6 +45,7 @@ export default observer(function ProjectForm() {
       };
       createProject(newProject)
         .then(() => {
+          toast.success("Project created successfully");
           navigate(`/projects/${newProject.id}`);
         })
         .catch(error => {
@@ -52,6 +54,7 @@ export default observer(function ProjectForm() {
     } else {
       updateProject(project)
         .then(() => {
+          toast.success("Project updated successfully");
           navigate(`/projects/${project.id}`);
         })
         .catch(error => {
@@ -74,11 +77,11 @@ export default observer(function ProjectForm() {
       >
         {({ handleSubmit, isValid, isSubmitting, dirty }) => (
           <Form className="ui form" onSubmit={handleSubmit} autoComplete="off">
-            <MyTextInput name="projectTitle" placeholder="project Title" label="Project Title" />
+            <MyTextInput name="projectTitle" placeholder="Project Title" label="Project Title" />
 
             <MyTextArea rows={2} placeholder="Project Description" name="description" label="Project Description" />
             <MyDateInput
-              placeholderText="Project start date"
+              placeholderText="Project Start Date"
               name="startDate"
               dateFormat="MMMM d, yyyy"
               label="Start Date"

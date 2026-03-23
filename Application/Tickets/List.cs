@@ -26,11 +26,14 @@ namespace Application.Tickets
             {
                 if (request.GlobalRole == "Admin")
                 {
-                    return Result<List<Ticket>>.Success(await _context.Tickets.ToListAsync(cancellationToken));
+                    return Result<List<Ticket>>.Success(await _context.Tickets
+                        .Include(x => x.Project)
+                        .ToListAsync(cancellationToken));
                 }
                 else
                 {
                     var tickets = await _context.Tickets
+                        .Include(x => x.Project)
                         .Where(t => t.Project.Participants.Any(p => p.AppUserId == request.UserId))
                         .ToListAsync(cancellationToken);
                     

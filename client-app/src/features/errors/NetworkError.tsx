@@ -6,7 +6,12 @@ export default function NetworkError() {
   const location = useLocation();
 
   const handleRetry = () => {
-    const fromPath = location.state?.from || localStorage.getItem('lastValidPath') || '/dashboard';
+    let fromPath = location.state?.from || localStorage.getItem('lastValidPath') || '/dashboard';
+
+    if (fromPath === '/network-error') {
+      fromPath = '/dashboard';
+    }
+
     navigate(fromPath);
     setTimeout(() => window.location.reload(), 100);
   };

@@ -39,7 +39,9 @@ axios.interceptors.response.use(
   (error: AxiosError) => {
     if (!error.response) {
       const currentPath = window.location.pathname;
-      localStorage.setItem('lastValidPath', currentPath);
+      if (currentPath !== "/network-error") {
+        localStorage.setItem('lastValidPath', currentPath);
+      }
       router.navigate("/network-error", {
         state: { from: currentPath }
       });

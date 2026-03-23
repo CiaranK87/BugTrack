@@ -13,7 +13,7 @@ export default observer(function TicketStatusChart({ data }: Props) {
       <ResponsiveContainer width="100%" height={200}>
         <PieChart>
           <Pie
-            data={data}
+            data={data.filter(d => d.value > 0)}
             cx="50%"
             cy="50%"
             outerRadius={60}
