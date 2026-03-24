@@ -136,3 +136,17 @@ body.dark-mode .recharts-dot:hover {
   r: 6 !important;
 }
 
+/* Responsive Pie Chart: Hide legend on desktop, hide labels on mobile */
+.responsive-pie-chart .recharts-legend-wrapper {
+  display: none !important;
+}
+
+@media (max-width: 767px) {
+  .responsive-pie-chart .recharts-legend-wrapper {
+    display: block !important;
+  }
+  .responsive-pie-chart .recharts-pie-labels, 
+  .responsive-pie-chart .recharts-pie-label-line {
+    display: none !important;
+  }
+}

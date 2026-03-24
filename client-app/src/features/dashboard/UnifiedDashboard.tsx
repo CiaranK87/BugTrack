@@ -4,7 +4,7 @@ import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import LoadingComponent from "../../app/layout/LoadingComponent";
 import { Link } from "react-router-dom";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { safeGetDate, formatDate } from "../../app/services/dateService";
 
 export default observer(function UnifiedDashboard() {
@@ -138,7 +138,7 @@ export default observer(function UnifiedDashboard() {
         <Grid.Column>
           <Segment>
             <Header as="h3">Tickets by Status</Header>
-            <ResponsiveContainer width="100%" height={250}>
+            <ResponsiveContainer width="100%" height={250} className="responsive-pie-chart">
               <PieChart>
                 <Pie
                   data={ticketStatusData}
@@ -149,12 +149,14 @@ export default observer(function UnifiedDashboard() {
                   outerRadius={80}
                   fill="#8884d8"
                   dataKey="value"
+                  isAnimationActive={false}
                 >
                   {ticketStatusData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
                 <Tooltip />
+                <Legend verticalAlign="bottom" height={36} />
               </PieChart>
             </ResponsiveContainer>
           </Segment>
