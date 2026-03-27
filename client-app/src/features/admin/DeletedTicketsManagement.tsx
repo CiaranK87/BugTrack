@@ -109,10 +109,10 @@ export default observer(function DeletedTicketsManagement() {
 
           {filteredDeletedTickets.length === 0 ? (
             <Segment placeholder>
-              <Header icon>
+              <Header icon textAlign="center">
                 <Icon name="trash" />
+                No deleted tickets found
               </Header>
-              <p>No deleted tickets found</p>
             </Segment>
           ) : (
             <>
@@ -138,9 +138,9 @@ export default observer(function DeletedTicketsManagement() {
                       </Table.Cell>
                       <Table.Cell>{ticket.submitter || "Unknown"}</Table.Cell>
                       <Table.Cell>
-                        {ticket.project ? (
+                        {ticket.projectTitle ? (
                           <Link to={`/projects/${ticket.projectId}`}>
-                            {ticket.project.projectTitle}
+                            {ticket.projectTitle}
                           </Link>
                         ) : (
                           "Unknown"
@@ -195,7 +195,7 @@ export default observer(function DeletedTicketsManagement() {
                         <Icon name="trash" />
                         <Header.Content>
                           {ticket.title}
-                          <Header.Subheader>{ticket.project?.projectTitle || "Unknown Project"}</Header.Subheader>
+                          <Header.Subheader>{ticket.projectTitle || "Unknown Project"}</Header.Subheader>
                         </Header.Content>
                       </Header>
                       <Label color="red" size="small">Deleted</Label>
@@ -280,10 +280,10 @@ export default observer(function DeletedTicketsManagement() {
                   <p><strong>Status:</strong> {selectedTicket.status}</p>
                   <p><strong>Created:</strong> {selectedTicket.createdAt ? formatDate(selectedTicket.createdAt, 'MMM dd, yyyy') : "N/A"}</p>
                   <p><strong>Deleted:</strong> {selectedTicket.deletedDate ? formatDate(selectedTicket.deletedDate, 'MMM dd, yyyy') : "N/A"}</p>
-                  {selectedTicket.project && (
+                  {selectedTicket.projectTitle && (
                     <p><strong>Project:</strong>
                       <Link to={`/projects/${selectedTicket.projectId}`} style={{ marginLeft: '5px' }}>
-                        {selectedTicket.project.projectTitle}
+                        {selectedTicket.projectTitle}
                       </Link>
                     </p>
                   )}

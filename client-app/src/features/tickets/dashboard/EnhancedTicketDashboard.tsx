@@ -119,7 +119,7 @@ export default observer(function EnhancedTicketDashboard() {
         </Card.Header>
         <Card.Meta>
           <span style={{ fontSize: '0.85em', color: '#666' }}>
-            #{ticket.id.slice(-6)} • Submitted by {ticket.submitter}
+            #{ticket.id.substring(0, 6)} • Submitted by {ticket.submitter}
           </span>
         </Card.Meta>
         <Card.Description>
@@ -170,7 +170,7 @@ export default observer(function EnhancedTicketDashboard() {
             {ticket.title}
           </Header>
           <p style={{ margin: '5px 0', color: '#666' }}>
-            #{ticket.id.slice(-6)} • Submitted by {ticket.submitter}
+            #{ticket.id.substring(0, 6)} • Submitted by {ticket.submitter}
           </p>
           <p style={{ margin: '5px 0' }}>
             {ticket.description.length > 150

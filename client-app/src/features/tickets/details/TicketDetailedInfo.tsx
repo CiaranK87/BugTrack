@@ -117,7 +117,7 @@ export default observer(function TicketDetailedInfo({ ticket }: Props) {
               <Icon name="hashtag" color="teal" />
               Ticket ID
             </Header>
-            <p style={{ fontFamily: 'monospace', fontSize: '1.1em' }}>#{ticket.id}</p>
+            <p style={{ fontFamily: 'monospace', fontSize: '1.1em' }}>#{ticket.id.substring(0, 6)}</p>
           </Grid.Column>
         </Grid>
       </Segment>

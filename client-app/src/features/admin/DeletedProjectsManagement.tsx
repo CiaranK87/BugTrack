@@ -86,10 +86,10 @@ export default observer(function DeletedProjectsManagement() {
 
           {filteredDeletedProjects.length === 0 ? (
             <Segment placeholder>
-              <Header icon>
+              <Header icon textAlign="center">
                 <Icon name="trash" />
+                No deleted projects found
               </Header>
-              <p>No deleted projects found</p>
             </Segment>
           ) : (
             <>

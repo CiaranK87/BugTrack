@@ -108,10 +108,10 @@ export default observer(function TicketManagement() {
 
           {filteredTickets.length === 0 ? (
             <Segment placeholder>
-              <Header icon>
+              <Header icon textAlign="center">
                 <Icon name="ticket" />
+                No tickets found
               </Header>
-              <p>No tickets found</p>
             </Segment>
           ) : (
             <>

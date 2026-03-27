@@ -56,9 +56,13 @@ export default observer(function CommentForm({ ticketId, parentCommentId, isRepl
 
     if (lastAtIndex !== -1) {
       const textAfterAt = textBeforeCursor.substring(lastAtIndex + 1);
-      const isStillMentioning = /^[a-zA-Z0-9\-._@+' ]*$/.test(textAfterAt);
+      
+      // Only trigger if @ is at start of word and no trailing space
+      const isWordStart = lastAtIndex === 0 || /\s/.test(textBeforeCursor[lastAtIndex - 1]);
+      const hasTrailingSpace = /\s$/.test(textAfterAt);
+      const isTooLong = textAfterAt.length > 20;
 
-      if (isStillMentioning && textAfterAt.length >= 0) {
+      if (isWordStart && !hasTrailingSpace && !isTooLong) {
         setMentionQuery(textAfterAt);
         setAtSymbolPosition(lastAtIndex);
 

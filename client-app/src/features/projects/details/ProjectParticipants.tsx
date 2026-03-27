@@ -109,7 +109,7 @@ export default observer(function ProjectParticipants({ projectId }: Props) {
                 </Table.Cell>
                 <Table.Cell>
                   {editingParticipantId === participant.userId ? (
-                    <>
+                    <div style={{ display: 'inline-flex', alignItems: 'center' }}>
                       <Dropdown
                         selection
                         options={[
@@ -126,28 +126,32 @@ export default observer(function ProjectParticipants({ projectId }: Props) {
                         primary
                         content="Save"
                         onClick={() => handleSaveRole(participant.userId)}
+                        style={{ marginRight: '4px' }}
                       />
                       <Button
                         size="mini"
                         content="Cancel"
                         onClick={() => setEditingParticipantId(null)}
                       />
-                    </>
+                    </div>
                   ) : (
-                    <Button
-                      size="mini"
-                      content="Edit Role"
-                      onClick={() => handleEditRole(participant)}
-                      disabled={!currentUserCanManage && !isAdmin}
-                    />
+                    <>
+                      <Button
+                        size="mini"
+                        content="Edit Role"
+                        onClick={() => handleEditRole(participant)}
+                        disabled={!currentUserCanManage && !isAdmin}
+                        style={{ marginRight: '4px' }}
+                      />
+                      <Button
+                        size="mini"
+                        color="red"
+                        content="Remove"
+                        onClick={() => handleRemoveParticipant(participant.userId, participant.displayName)}
+                        disabled={!currentUserCanManage && !isAdmin}
+                      />
+                    </>
                   )}
-                  <Button
-                    size="mini"
-                    color="red"
-                    content="Remove"
-                    onClick={() => handleRemoveParticipant(participant.userId, participant.displayName)}
-                    disabled={!currentUserCanManage && !isAdmin}
-                  />
                 </Table.Cell>
               </Table.Row>
             ))}

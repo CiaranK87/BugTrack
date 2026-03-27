@@ -41,9 +41,6 @@ export default observer(function Navbar() {
         {isAdmin && (
           <Menu.Item as={NavLink} to="/admin/users" name="Admin" className="desktop-nav-item" />
         )}
-        {isAdmin && (
-          <Menu.Item as={NavLink} to="/errors" name="Errors" className="desktop-nav-item" />
-        )}
         
         {/* Notification Bell - Desktop only (positioned after nav links) */}
         <div className="tablet-desktop-only" style={{ display: 'flex', alignItems: 'center', marginLeft: '10px' }}>
@@ -126,9 +123,6 @@ export default observer(function Navbar() {
               <div className="drawer-divider">Admin</div>
               <NavLink to="/admin/users" onClick={() => setMobileMenuOpen(false)} className="drawer-item">
                 <Icon name="users" /> User Management
-              </NavLink>
-              <NavLink to="/errors" onClick={() => setMobileMenuOpen(false)} className="drawer-item">
-                <Icon name="bug" /> Error Logs
               </NavLink>
             </div>
           )}

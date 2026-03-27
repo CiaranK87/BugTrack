@@ -109,7 +109,7 @@ export default observer(function TicketForm() {
       updateTicket(ticket).then(() => {
         ticketStore.loadTicketsByProject(projectId!);
         projectStore.loadProjects();
-        navigate(`/projects/${projectId}`);
+        navigate(`/tickets/${ticket.id}`);
       });
     }
   }

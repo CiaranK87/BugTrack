@@ -96,10 +96,10 @@ export default observer(function ProjectManagement() {
 
           {filteredProjects.length === 0 ? (
             <Segment placeholder>
-              <Header icon>
+              <Header icon textAlign="center">
                 <Icon name="folder open" />
+                No projects found
               </Header>
-              <p>No projects found</p>
             </Segment>
           ) : (
             <>

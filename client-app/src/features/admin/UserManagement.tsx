@@ -157,12 +157,12 @@ export default observer(function UserManagement() {
                         title="Delete User"
                       />
                       <Dropdown
-                        text="Role"
-                        icon="user"
+                        text="Update Role"
+                        icon="user circle"
                         floating
                         labeled
                         button
-                        className="icon"
+                        className="icon primary basic"
                         loading={updatingUserRole}
                         disabled={updatingUserRole || (user.globalRole === "Admin" && user.username !== currentUser?.username)}
                       >
@@ -259,9 +259,11 @@ export default observer(function UserManagement() {
               </div>
             ))}
             {filteredUsers.length === 0 && (
-              <Segment textAlign="center" basic>
-                <Icon name="search" size="large" />
-                <p>No users found matching your search.</p>
+              <Segment placeholder>
+                <Header icon textAlign="center">
+                  <Icon name="search" />
+                  No users found matching your search.
+                </Header>
               </Segment>
             )}
           </div>
