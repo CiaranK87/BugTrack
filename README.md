@@ -12,8 +12,6 @@
 
 🔗 **[Live Demo](https://ckbugtrack-app01.vercel.app/)**
 
-🐙 **[GitHub Profile](https://github.com/CiaranK87)**
-
 ### 🚀 Quick Demo
 To explore the app without registering, use the following **Admin** credentials:
 - **Email:** `demo@bugtrack.com` **Password:** `Dem0Pa$$`
