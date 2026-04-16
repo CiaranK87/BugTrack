@@ -105,8 +105,8 @@ export default observer(function UnifiedDashboard() {
           <Card fluid>
             <Card.Content textAlign="center">
               <Statistic>
-                <Statistic.Value>{activeTickets.length}</Statistic.Value>
-                <Statistic.Label>Active Tickets</Statistic.Label>
+                <Statistic.Value>{ownedProjects.length}</Statistic.Value>
+                <Statistic.Label>Owned Projects</Statistic.Label>
               </Statistic>
             </Card.Content>
           </Card>
@@ -115,8 +115,8 @@ export default observer(function UnifiedDashboard() {
           <Card fluid>
             <Card.Content textAlign="center">
               <Statistic>
-                <Statistic.Value>{ownedProjects.length}</Statistic.Value>
-                <Statistic.Label>Owned Projects</Statistic.Label>
+                <Statistic.Value>{activeTickets.length}</Statistic.Value>
+                <Statistic.Label>Active Tickets</Statistic.Label>
               </Statistic>
             </Card.Content>
           </Card>

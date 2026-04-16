@@ -119,7 +119,7 @@ export default observer(function EnhancedTicketDashboard() {
         </Card.Header>
         <Card.Meta>
           <span style={{ fontSize: '0.85em', color: '#666' }}>
-            #{ticket.id.substring(0, 6)} • Submitted by {ticket.submitter}
+            #{ticket.id.substring(0, 6)} • {ticket.projectTitle} • Submitted by {ticket.submitter}
           </span>
         </Card.Meta>
         <Card.Description>

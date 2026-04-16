@@ -4,15 +4,19 @@ using Microsoft.EntityFrameworkCore;
 using Persistence;
 using Application.DTOs;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
+using Domain;
 
 [ApiController]
 [Route("api/[controller]")]
 public class UsersController : ControllerBase
 {
     private readonly DataContext _context;
+    private readonly UserManager<AppUser> _userManager;
 
-    public UsersController(DataContext context)
+    public UsersController(DataContext context, UserManager<AppUser> userManager)
     {
+        _userManager = userManager;
         _context = context;
     }
 
@@ -127,10 +131,18 @@ public class UsersController : ControllerBase
         var oldUsername = user.UserName;
 
         user.DisplayName = updateUserDto.DisplayName ?? user.DisplayName;
-        user.Email = updateUserDto.Email ?? user.Email;
-        user.UserName = updateUserDto.Username ?? user.UserName;
         user.JobTitle = updateUserDto.JobTitle;
         user.Bio = updateUserDto.Bio;
+        user.UserName = updateUserDto.Username ?? user.UserName;
+
+        if (updateUserDto.Email != null && updateUserDto.Email != user.Email)
+        {
+            var setEmailResult = await _userManager.SetEmailAsync(user, updateUserDto.Email);
+            if (!setEmailResult.Succeeded)
+            {
+                return BadRequest(setEmailResult.Errors);
+            }
+        }
 
         if (oldUsername != user.UserName)
         {

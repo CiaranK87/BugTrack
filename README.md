@@ -1,46 +1,312 @@
-# BugTrack
+# <img src="docs/bug-logo.png" width="40" alt="BugTrack Logo" valign="middle"> BugTrack — Full-Stack Issue Tracking System
 
-## description
-This project represents my learning journey in full-stack development,\
-combining .NET and React to create a practical and user-friendly application\
-showcasing my abilities in building functional and maintainable software.
+[![.NET 8](https://img.shields.io/badge/.NET-8.0-512bd4?logo=dotnet)](https://dotnet.microsoft.com/download)
+[![React](https://img.shields.io/badge/React-18-61dafb?logo=react)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.2-3178c6?logo=typescript)](https://www.typescriptlang.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169e1?logo=postgresql)](https://www.postgresql.org/)
+[![Tests](https://img.shields.io/badge/Tests-200%2B-brightgreen)](https://github.com/CiaranK87/BugTrack)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Build Status](https://github.com/CiaranK87/BugTrack/actions/workflows/main_bugtrack-api.yml/badge.svg)](https://github.com/CiaranK87/BugTrack/actions)
 
-The server-side is .NET\
-The client-side is React (typescript)
+> A personal project I use as a living codebase — a place to implement things I learn at work that I can't always share publicly, and to experiment with patterns and architecture decisions in a real, running application.
 
+🔗 **[Live Demo](https://ckbugtrack-app01.vercel.app/)**
 
-## Prerequisites
-- [.NET SDK](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) - (version 7)
-- [Node.js](https://nodejs.org/)
-- [npm](https://www.npmjs.com/) (Node Package Manager)
+🐙 **[GitHub Profile](https://github.com/CiaranK87)**
 
-### Sqlite for the database with entity framework core.
-- cd Bugtrack/API
-- dotnet ef database update
+### 🚀 Quick Demo
+To explore the app without registering, use the following **Admin** credentials:
+- **Email:** `demo@bugtrack.com` **Password:** `Dem0Pa$$`
 
+> [!TIP]
+> **See Real-time Updates (SignalR):** Open the app in two browser windows side-by-side. Post a comment on a ticket in one window—you'll see the notification and message appear instantly in the other without a page refresh.
 
-# Getting Started
-### 1. Clone the repository
+---
 
-### 2. set up the back-end
-Navigate to the API project folder
-cd Bugtrack/API  
-- dotnet restore           - restore project dependencies
-- dotnet build             - build the project
-- dotnet run               - run the api server
+## 🎯 About This Project
 
-Visit http://localhost:5000 in your browser to see if the API is running.
+This is my public-facing codebase — somewhere to implement what I pick up on the job and actually see it running in a real app.
 
+It's grown organically as a result: Clean Architecture and CQRS went in when I wanted to understand how they hold up across a full codebase, not just in isolated examples. The custom RBAC came from thinking through how project-level permissions actually differ from global ones. The 200+ test suite is there because I wanted to get comfortable with all four layers — unit, component, integration, and E2E — in a single project.
 
-### 3. set up the client-side
-Navigate to the client-side project folder
-cd Bugtrack/client-app  
-- npm install               - Install client-side dependencies
-- npm run dev               - Start the development server\
-Visit http://localhost:3000 in your browser to see your React app.
+It's not a finished product, but it's always in a working state and I treat it with the same care I would professional code.
 
-## Testing
+---
 
-For detailed testing documentation, see:
-- **Backend Testing**: [`API/README.md`](API/README.md#running-tests)
-- **Frontend Testing**: [`client-app/README.md`](client-app/README.md#running-tests)
+## 📸 Screenshots
+
+<details>
+  <summary>📊 Main Dashboard</summary>
+  <br>
+  <p align="center">
+    <img src="docs/screenshots/main-dashboard.png" alt="Main Dashboard" width="100%">
+  </p>
+</details>
+
+<details>
+  <summary>🛡️ Admin Dashboard</summary>
+  <br>
+  <p align="center">
+    <img src="docs/screenshots/admin-dashboard.png" alt="Admin Dashboard" width="100%">
+  </p>
+</details>
+
+<details>
+  <summary>📁 Project Dashboard</summary>
+  <br>
+  <p align="center">
+    <img src="docs/screenshots/project-dashboard.png" alt="Project Dashboard" width="100%">
+  </p>
+</details>
+
+<details>
+  <summary>🔍 Project Details</summary>
+  <br>
+  <p align="center">
+    <img src="docs/screenshots/project-details.png" alt="Project Details" width="100%">
+  </p>
+</details>
+
+<details>
+  <summary>🗂️ Kanban Board</summary>
+  <br>
+  <p align="center">
+    <img src="docs/screenshots/kanban-board.png" alt="Kanban Board" width="100%">
+  </p>
+</details>
+
+<details>
+  <summary>📋 Ticket List</summary>
+  <br>
+  <p align="center">
+    <img src="docs/screenshots/ticket-list.png" alt="Ticket List" width="100%">
+  </p>
+</details>
+
+<details>
+  <summary>🎫 Ticket Details (InvoiceHub)</summary>
+  <br>
+  <p align="center">
+    <img src="docs/screenshots/ticket-details-invoicehub.png" alt="Ticket Details InvoiceHub" width="100%">
+  </p>
+</details>
+
+<details>
+  <summary>💬 Comments (EduConnect)</summary>
+  <br>
+  <p align="center">
+    <img src="docs/screenshots/comments-educonnect.png" alt="Comments EduConnect" width="100%">
+  </p>
+</details>
+
+<details>
+  <summary>👤 User Profile</summary>
+  <br>
+  <p align="center">
+    <img src="docs/screenshots/user-profile.png" alt="User Profile" width="100%">
+  </p>
+</details>
+
+<details>
+  <summary>📱 Mobile Admin View</summary>
+  <br>
+  <p align="center">
+    <img src="docs/screenshots/mobile-admin-view.png" alt="Mobile Admin View" width="100%">
+  </p>
+</details>
+
+---
+
+## 🏗️ Architecture Overview
+
+The application is structured around the **Onion Model** (Clean Architecture), ensuring that the core business logic remains independent of the UI, database, and external libraries.
+
+```mermaid
+graph TD
+    subgraph UI_Layer [Frontend]
+        UI["React 18 + Vite\nTypeScript / Feature-based"]
+    end
+
+    subgraph API_Layer [API]
+        API[".NET 8 Web API\nJWT Auth · SignalR Hubs\nSecurity Headers · Rate Limiting"]
+    end
+
+    subgraph Core_Layer [Core]
+        APP["Application Layer\nCQRS · MediatR · FluentValidation"]
+        DOMAIN["Domain Layer\nEntities · Relationships"]
+    end
+
+    subgraph Infrastructure_Layer [Infrastructure]
+        PERSIST["Persistence Layer\nEF Core · PostgreSQL"]
+        INFRA["Infrastructure Layer\nSecurity · User Access"]
+    end
+
+    UI -->|HTTP / SignalR| API
+    API --> APP
+    APP --> DOMAIN
+    PERSIST --> DOMAIN
+    INFRA --> APP
+```
+
+### Key Design Decisions
+
+- **CQRS with MediatR**: Commands and queries are fully separated, keeping controllers thin and business logic independently testable. Adding a new feature means adding a handler, not modifying existing ones.
+- **Result Pattern**: Service responses use a typed `Result<T>` instead of exceptions for flow control. This makes error paths explicit, improves performance, and keeps the controller logic predictable.
+- **Custom Authorization Handlers**: Project-level roles (Owner, PM, Developer) extend beyond global permissions. A user can be a Developer on one project and a PM on another — handled via custom `IAuthorizationHandler` implementations.
+- **Exception Middleware**: A single `ExceptionMiddleware` catches unhandled errors and returns consistent `AppException` responses across the API, rather than letting error formats vary by controller.
+- **Security & Rate Limiting**: OWASP-recommended headers applied globally via middleware, alongside a `FixedWindowLimiter` (500 requests/min) at the API level — both small additions that meaningfully harden the surface area without requiring per-endpoint configuration.
+- **SignalR for Real-time**: Live comment threads and notifications give the app a responsive, collaborative feel without the overhead of polling.
+
+---
+
+## 🚀 Features
+
+- **Project Management** — Multi-tier projects with role-based access (Owner, Project Manager, Developer).
+- **Advanced Ticketing** — Full lifecycle management with priority levels, severity tracking, and status workflows.
+- **Interactive Dashboard** — Data visualisation with charts showing ticket distribution and project health metrics.
+- **Real-time Collaboration** — Live comment threads and instant notifications via SignalR.
+- **Notifications System** — Full notification management with read/unread tracking, bulk actions, and real-time delivery.
+- **User Profiles** — Editable user profiles with profile cards and activity views.
+- **Admin Panel** — Centralised user and global role management for system administrators.
+- **Contact / Access Request** — Public access request form with email notifications (Resend API) and file-based fallback logging.
+- **File Attachments** — Upload and manage media files directly within bug reports.
+- **Secure Auth** — JWT-based authentication with refresh token support.
+- **Dark Mode** — Persistent dark theme across the entire UI.
+
+---
+
+## 🛠️ Tech Stack
+
+### Backend (.NET 8)
+- **Framework**: ASP.NET Core 8 (LTS)
+- **Mediator**: MediatR
+- **Mapping**: AutoMapper
+- **Validation**: FluentValidation
+- **Logging**: Serilog (Console + File sinks)
+- **ORM**: Entity Framework Core with PostgreSQL provider
+- **Real-time**: SignalR
+- **Auth**: ASP.NET Core Identity + JWT
+- **API Docs**: Swagger / OpenAPI (Development)
+
+### Frontend (React 18)
+- **Framework**: React 18 with TypeScript
+- **Build Tool**: Vite
+- **State Management**: MobX + mobx-react-lite
+- **UI Library**: Semantic UI React
+- **Forms**: Formik + Yup
+- **Data Visualisation**: Recharts
+- **Drag & Drop**: dnd-kit
+- **Structure**: Feature-based folder architecture for modularity and scalability
+
+### Testing
+- **Unit**: xUnit + Moq (Business rules and CQRS handlers)
+- **Component**: Vitest + React Testing Library
+- **Integration**: InMemory EF Core (API endpoint validation)
+- **E2E**: Playwright (Full browser automation)
+
+### DevOps / CI/CD
+- **Backend Deployment**: GitHub Actions → Azure Web App
+- **Frontend Deployment**: [Vercel](https://ckbugtrack-app01.vercel.app/)
+- **Local Database**: Docker Compose (PostgreSQL)
+
+---
+
+## ⚡ Getting Started
+
+### Prerequisites
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- [Node.js v18+](https://nodejs.org/)
+- [PostgreSQL 16](https://www.postgresql.org/download/) (or use the included Docker Compose)
+- [Docker](https://www.docker.com/) *(optional, for local PostgreSQL)*
+
+### Installation
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/CiaranK87/BugTrack.git
+cd BugTrack
+
+# 2. (Optional) Start PostgreSQL via Docker
+cd API
+docker compose up -d
+cd ..
+
+# 3. Configure environment variables (see Configuration below)
+
+# 4. Start the API
+cd API
+dotnet restore
+dotnet ef database update
+dotnet run
+
+# 5. Start the frontend
+cd ../client-app
+npm install
+npm run dev
+```
+
+### Configuration
+
+Create a `.env` file in the `API/` directory (see `appsettings.example.json` for the full configuration reference):
+
+```env
+# Required
+DB_CONNECTION_STRING=Host=localhost;Database=BugTrack;Username=postgres;Password=your_password
+TOKEN_KEY=your_super_secret_jwt_key_min_64_characters
+
+# Optional — Contact / Access Request feature
+CONTACT_ADMIN_EMAIL=your_admin_email@example.com
+CONTACT_FROM_EMAIL=noreply@yourdomain.com
+RESEND_API_KEY=your_resend_api_key
+```
+
+---
+
+## 🧪 Testing
+
+```bash
+# Run all backend tests from the root directory
+dotnet test
+
+# Run frontend tests
+cd client-app
+npm test
+```
+
+The project maintains **200+ tests** across four layers to ensure stability and correctness:
+
+| Layer | Tool | Coverage |
+|---|---|---|
+| **Unit** | xUnit + Moq | Core business logic and MediatR handlers |
+| **Component** | Vitest + React Testing Library | Frontend component behaviour |
+| **Integration** | InMemory EF Core | API endpoint validation and data flow |
+| **E2E** | Playwright | Critical user journeys and UI interactions |
+
+---
+
+## 🧗 Key Challenges
+
+**Role-Based Access Control** — The most complex part of the backend. Global roles are straightforward, but modelling permissions that vary per project — and then writing tests that actually verify the boundaries hold — required significant iteration on the authorisation handlers. Getting the test coverage right here took longer than building the feature itself.
+
+**Comment System** — What initially looked like a simple feature turned out to be one of the richest areas of the app. Threading, real-time updates, edit/delete permissions, and ownership rules all interact in ways that aren't obvious upfront. The gap between "comments work" and "comments feel right" was larger than expected.
+
+**Mobile Responsiveness** — Issue trackers are almost exclusively used on desktop, so responsive support tends to go unnoticed by the people using the app. It's fully implemented and works well across screen sizes, but it's the kind of work that matters more as a baseline than as a feature — similar to accessibility or graceful error handling. You build it because it should be there, not because users will thank you for it.
+
+---
+
+## ⚖️ Trade-offs & Future Work
+
+### Trade-offs Made
+- **Clean Architecture Boilerplate**: The layered structure adds initial setup complexity, but it pays off in a team setting: changes stay isolated, testing is straightforward, and the codebase is easy to navigate as it grows.
+- **PostgreSQL over SQLite**: Opted for PostgreSQL to support advanced indexing and features that would matter at scale, though it requires more setup than SQLite for local development.
+
+### Planned Improvements
+- [ ] **Multitenancy**: Implementing data isolation to support multi-client project hosting.
+- [ ] **Azure Blob Storage**: Replace local storage for production-grade scalability.
+- [ ] **Full Docker Compose**: Extend the existing database container setup to include the API and frontend for one-command local startup.
+
+---
+
+## 📄 License
+
+Distributed under the [MIT License](LICENSE).

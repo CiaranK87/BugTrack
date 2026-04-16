@@ -1,8 +1,9 @@
 import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
-import { Button, Header, Table, Label, Loader, Dropdown, Icon, Segment } from 'semantic-ui-react';
+import { Button, Header, Table, Label, Loader, Dropdown, Icon, Segment, Confirm } from 'semantic-ui-react';
 import { useStore } from '../../../app/stores/store';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { ProjectParticipantDto } from '../../../app/models/project';
 
 type ProjectParticipant = ProjectParticipantDto;
@@ -18,6 +19,9 @@ export default observer(function ProjectParticipants({ projectId }: Props) {
 
   const [editingParticipantId, setEditingParticipantId] = useState<string | null>(null);
   const [editingRole, setEditingRole] = useState<string>('');
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [removeUserId, setRemoveUserId] = useState<string | null>(null);
+  const [removeDisplayName, setRemoveDisplayName] = useState('');
 
   const {
     loadProjectParticipants,
@@ -50,23 +54,30 @@ export default observer(function ProjectParticipants({ projectId }: Props) {
       await updateParticipantRole(projectId, participantId, { role: editingRole });
       await loadProjectParticipants(projectId);
       setEditingParticipantId(null);
+      toast.success('Role updated successfully');
     } catch (error) {
-      alert('Failed to update role');
+      toast.error('Failed to update role');
     }
   };
 
-  const handleRemoveParticipant = async (participantId: string, displayName: string) => {
-    if (!window.confirm(`Are you sure you want to remove ${displayName} from this project?`)) {
-      return;
-    }
+  const handleRemoveClick = (participantId: string, displayName: string) => {
+    setRemoveUserId(participantId);
+    setRemoveDisplayName(displayName);
+    setConfirmOpen(true);
+  };
 
-    if (!projectId) return;
+  const handleConfirmRemove = async () => {
+    if (!removeUserId || !projectId) return;
 
     try {
-      await removeParticipant(projectId, participantId);
+      await removeParticipant(projectId, removeUserId);
       await loadProjectParticipants(projectId);
+      toast.success('Participant removed');
     } catch (error) {
-      alert('Failed to remove participant');
+      toast.error('Failed to remove participant');
+    } finally {
+      setConfirmOpen(false);
+      setRemoveUserId(null);
     }
   };
 
@@ -147,7 +158,7 @@ export default observer(function ProjectParticipants({ projectId }: Props) {
                         size="mini"
                         color="red"
                         content="Remove"
-                        onClick={() => handleRemoveParticipant(participant.userId, participant.displayName)}
+                        onClick={() => handleRemoveClick(participant.userId, participant.displayName)}
                         disabled={!currentUserCanManage && !isAdmin}
                       />
                     </>
@@ -221,7 +232,7 @@ export default observer(function ProjectParticipants({ projectId }: Props) {
                       size="small"
                       color="red"
                       content="Remove"
-                      onClick={() => handleRemoveParticipant(participant.userId, participant.displayName)}
+                      onClick={() => handleRemoveClick(participant.userId, participant.displayName)}
                       disabled={!currentUserCanManage && !isAdmin}
                       icon="trash"
                     />
@@ -231,6 +242,13 @@ export default observer(function ProjectParticipants({ projectId }: Props) {
             </div>
           ))}
       </div>
+      <Confirm
+        open={confirmOpen}
+        content={`Are you sure you want to remove ${removeDisplayName} from this project?`}
+        onCancel={() => setConfirmOpen(false)}
+        onConfirm={handleConfirmRemove}
+        size="small"
+      />
     </div>
   );
 });

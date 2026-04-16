@@ -84,28 +84,28 @@ export default class ProjectStore {
         this.selectedProject = undefined;
       });
       this.setLoadingInitial(false);
-      
+
       router.navigate('/forbidden');
     }
   };
 
   loadUserProjects = async (username: string) => {
-  this.loadingUserProjects = true;
-  try {
-    const projects = await agent.Projects.getUserProjects(username);
-    runInAction(() => {
-      const user = store.userStore.user;
-      projects.forEach(project => {
-        if (user) {
-          project.isParticipant = project.participants!.some((p) => p.username === user.username);
-          project.isOwner = project.ownerUsername === user.username;
-          project.owner = project.participants?.find((x) => x.username === project.ownerUsername);
-        }
-        project.startDate = new Date(project.startDate!);
+    this.loadingUserProjects = true;
+    try {
+      const projects = await agent.Projects.getUserProjects(username);
+      runInAction(() => {
+        const user = store.userStore.user;
+        projects.forEach(project => {
+          if (user) {
+            project.isParticipant = project.participants!.some((p) => p.username === user.username);
+            project.isOwner = project.ownerUsername === user.username;
+            project.owner = project.participants?.find((x) => x.username === project.ownerUsername);
+          }
+          project.startDate = new Date(project.startDate!);
+        });
+        this.userProjects = projects;
+        this.loadingUserProjects = false;
       });
-      this.userProjects = projects;
-      this.loadingUserProjects = false;
-    });
     } catch (error) {
       logger.error("Failed to load user projects", error);
       runInAction(() => {
@@ -139,13 +139,12 @@ export default class ProjectStore {
       project.owner = project.participants?.find((x) => x.username === project.ownerUsername);
     }
     project.startDate = new Date(project.startDate!);
-    
+
     if (!project.isDeleted) {
       this.projectRegistry.set(project.id, project);
     } else {
       this.deletedProjectRegistry.set(project.id, project);
     }
-    0;
   };
 
   setLoadingInitial = (state: boolean) => {
@@ -275,7 +274,7 @@ export default class ProjectStore {
     this.submittingParticipant = false;
   }
 
-//*************************************************PARTICIPANTS************************************************************** */
+  //*************************************************PARTICIPANTS************************************************************** */
 
   loadProjectParticipants = async (projectId: string) => {
     this.loadingParticipants = true;
@@ -316,7 +315,7 @@ export default class ProjectStore {
       runInAction(() => (this.loading = false));
     }
   };
-  
+
   addProjectParticipant = async (projectId: string, participants: AddParticipantDto) => {
     this.submittingParticipant = true;
     try {
@@ -332,8 +331,8 @@ export default class ProjectStore {
       });
     }
   };
-  
-  
+
+
   updateParticipantRole = async (projectId: string, userId: string, role: UpdateRoleDto) => {
     try {
       await agent.Projects.updateParticipantRole(projectId, userId, role);
@@ -367,9 +366,9 @@ export default class ProjectStore {
 
     const participant = this.currentProjectParticipants.find(p => p.username === user.username);
     if (!participant) return false;
-    
+
     return participant.role === "Owner" ||
-           participant.role === "ProjectManager";
+      participant.role === "ProjectManager";
   }
 
 
