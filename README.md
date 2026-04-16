@@ -39,7 +39,7 @@ It's not a finished product, but it's always in a working state and I treat it w
   <summary>📊 Main Dashboard</summary>
   <br>
   <p align="center">
-    <img src="docs/screenshots/main-dashboard.png" alt="Main Dashboard" width="100%">
+    <img src="docs/screenshots/main-dashboard.PNG" alt="Main Dashboard" width="100%">
   </p>
 </details>
 
@@ -47,7 +47,7 @@ It's not a finished product, but it's always in a working state and I treat it w
   <summary>🛡️ Admin Dashboard</summary>
   <br>
   <p align="center">
-    <img src="docs/screenshots/admin-dashboard.png" alt="Admin Dashboard" width="100%">
+    <img src="docs/screenshots/admin-dashboard.PNG" alt="Admin Dashboard" width="100%">
   </p>
 </details>
 
@@ -55,7 +55,7 @@ It's not a finished product, but it's always in a working state and I treat it w
   <summary>📁 Project Dashboard</summary>
   <br>
   <p align="center">
-    <img src="docs/screenshots/project-dashboard.png" alt="Project Dashboard" width="100%">
+    <img src="docs/screenshots/project-dashboard.PNG" alt="Project Dashboard" width="100%">
   </p>
 </details>
 
@@ -63,7 +63,7 @@ It's not a finished product, but it's always in a working state and I treat it w
   <summary>🔍 Project Details</summary>
   <br>
   <p align="center">
-    <img src="docs/screenshots/project-details.png" alt="Project Details" width="100%">
+    <img src="docs/screenshots/project-details.PNG" alt="Project Details" width="100%">
   </p>
 </details>
 
@@ -71,7 +71,7 @@ It's not a finished product, but it's always in a working state and I treat it w
   <summary>🗂️ Kanban Board</summary>
   <br>
   <p align="center">
-    <img src="docs/screenshots/kanban-board.png" alt="Kanban Board" width="100%">
+    <img src="docs/screenshots/kanban-board.PNG" alt="Kanban Board" width="100%">
   </p>
 </details>
 
@@ -79,7 +79,7 @@ It's not a finished product, but it's always in a working state and I treat it w
   <summary>📋 Ticket List</summary>
   <br>
   <p align="center">
-    <img src="docs/screenshots/ticket-list.png" alt="Ticket List" width="100%">
+    <img src="docs/screenshots/ticket-list.PNG" alt="Ticket List" width="100%">
   </p>
 </details>
 
@@ -87,7 +87,7 @@ It's not a finished product, but it's always in a working state and I treat it w
   <summary>🎫 Ticket Details (InvoiceHub)</summary>
   <br>
   <p align="center">
-    <img src="docs/screenshots/ticket-details-invoicehub.png" alt="Ticket Details InvoiceHub" width="100%">
+    <img src="docs/screenshots/ticket-details-invoicehub.PNG" alt="Ticket Details InvoiceHub" width="100%">
   </p>
 </details>
 
@@ -95,7 +95,7 @@ It's not a finished product, but it's always in a working state and I treat it w
   <summary>💬 Comments (EduConnect)</summary>
   <br>
   <p align="center">
-    <img src="docs/screenshots/comments-educonnect.png" alt="Comments EduConnect" width="100%">
+    <img src="docs/screenshots/comments-educonnect.PNG" alt="Comments EduConnect" width="100%">
   </p>
 </details>
 
@@ -103,7 +103,7 @@ It's not a finished product, but it's always in a working state and I treat it w
   <summary>👤 User Profile</summary>
   <br>
   <p align="center">
-    <img src="docs/screenshots/user-profile.png" alt="User Profile" width="100%">
+    <img src="docs/screenshots/user-profile.PNG" alt="User Profile" width="100%">
   </p>
 </details>
 
@@ -111,7 +111,7 @@ It's not a finished product, but it's always in a working state and I treat it w
   <summary>📱 Mobile Admin View</summary>
   <br>
   <p align="center">
-    <img src="docs/screenshots/mobile-admin-view.png" alt="Mobile Admin View" width="100%">
+    <img src="docs/screenshots/mobile-admin-view.PNG" alt="Mobile Admin View" width="100%">
   </p>
 </details>
 
