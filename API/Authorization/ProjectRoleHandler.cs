@@ -29,7 +29,6 @@ namespace API.Authorization
                 context.Succeed(requirement);
                 return;
             }
-            
 
             string projectIdString = null;
 
@@ -68,44 +67,10 @@ namespace API.Authorization
             
             if (!string.IsNullOrWhiteSpace(participant.Role))
             {
-                if (requirement.AllowedRoles.Contains(participant.Role))
-                {
+                var role = participant.Role == "Contributor" ? "User" : participant.Role;
+                if (requirement.AllowedRoles.Contains(role))
                     context.Succeed(requirement);
-                    return;
-                }
-
-                if (IsRoleInHierarchy(participant.Role, requirement.AllowedRoles))
-                {
-                    context.Succeed(requirement);
-                    return;
-                }
             }
-        }
-
-        private bool IsRoleInHierarchy(string userRole, IEnumerable<string> allowedRoles)
-        {
-            var roleHierarchy = new Dictionary<string, int>
-            {
-                { "Owner", 4 },
-                { "ProjectManager", 3 },
-                { "Developer", 2 },
-                { "User", 1 },
-                { "Contributor", 1 }
-            };
-
-            if (!roleHierarchy.TryGetValue(userRole, out var userRoleLevel))
-                return false;
-
-            foreach (var role in allowedRoles)
-            {
-                if (roleHierarchy.TryGetValue(role, out var allowedRoleLevel) &&
-                    userRoleLevel >= allowedRoleLevel)
-                {
-                    return true;
-                }
-            }
-
-            return false;
         }
 
     }

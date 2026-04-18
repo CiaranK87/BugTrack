@@ -86,13 +86,7 @@ namespace API.Authorization
             string ticketAssigned = null)
         {
             var currentUserId = _userAccessor.GetUserId();
-            var currentUser = await _context.Users
-                .AsNoTracking()
-                .Where(u => u.Id == currentUserId)
-                .Select(u => u.UserName)
-                .FirstOrDefaultAsync();
-            
-            if (string.IsNullOrEmpty(currentUser))
+            if (string.IsNullOrEmpty(currentUserId))
                 return;
 
             var participant = await _context.ProjectParticipants
@@ -137,8 +131,8 @@ namespace API.Authorization
                         role == "Owner" ||
                         role == "ProjectManager" ||
                         role == "Developer" ||
-                        (!string.IsNullOrEmpty(ticketSubmitter) && ticketSubmitter == currentUser) ||
-                        (!string.IsNullOrEmpty(ticketAssigned) && ticketAssigned == currentUser))
+                        (!string.IsNullOrEmpty(ticketSubmitter) && ticketSubmitter == currentUserId) ||
+                        (!string.IsNullOrEmpty(ticketAssigned) && ticketAssigned == currentUserId))
                     {
                         context.Succeed(requirement);
                     }
@@ -155,10 +149,8 @@ namespace API.Authorization
                     break;
 
                 case TicketOperation.Delete:
-                    if (!string.IsNullOrEmpty(ticketSubmitter) && ticketSubmitter == currentUser)
-                    {
-                        context.Succeed(requirement);
-                    }
+                    // Delete is admin-only; the admin bypass at the top of HandleRequirementAsync
+                    // handles this — no project-role path grants delete.
                     break;
             }
         }

@@ -270,9 +270,10 @@ namespace Application.UnitTests.Tickets
         }
 
         [Fact]
-        public async Task Handle_DatabaseFailure_ShouldReturnFailureResult()
+        public async Task Handle_TicketWithNonExistentProjectId_HandlerSucceedsWithoutFkEnforcement()
         {
-            // Arrange
+            // The in-memory database does not enforce FK constraints — FK violation scenarios
+            // require integration tests against a real database.
             var options = new DbContextOptionsBuilder<DataContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .Options;
@@ -289,7 +290,6 @@ namespace Application.UnitTests.Tickets
             badContext.Users.Add(user);
             await badContext.SaveChangesAsync();
 
-            // Create a ticket with a non-existent project to simulate failure
             var ticket = new Ticket
             {
                 Id = Guid.NewGuid(),
@@ -301,19 +301,14 @@ namespace Application.UnitTests.Tickets
                 Severity = "Critical",
                 Status = "Open",
                 StartDate = DateTime.UtcNow,
-                ProjectId = Guid.NewGuid() // Non-existent project
+                ProjectId = Guid.NewGuid() // Non-existent project — FK not enforced in-memory
             };
 
             var command = new Create.Command { Ticket = ticket };
 
-            // Act
             var result = await badHandler.Handle(command, CancellationToken.None);
 
-            // Assert
-            result.Should().NotBeNull();
-            result.IsSuccess.Should().BeTrue(); // In-memory DB doesn't enforce FK constraints
-            
-            // Verify that the ticket was actually created despite non-existent project
+            result.IsSuccess.Should().BeTrue();
             var createdTicket = await badContext.Tickets.FindAsync(ticket.Id);
             createdTicket.Should().NotBeNull();
             createdTicket.ProjectId.Should().Be(command.Ticket.ProjectId);

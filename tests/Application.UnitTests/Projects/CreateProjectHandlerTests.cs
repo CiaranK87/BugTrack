@@ -156,8 +156,9 @@ namespace Application.UnitTests.Projects
         }
 
         [Fact]
-        public async Task Handle_DatabaseFailure_ShouldReturnFailureResult()
+        public async Task Handle_ProjectWithEmptyTitle_HandlerSucceedsWithoutValidation()
         {
+            // Validation is the pipeline's responsibility; the handler itself imposes no constraints.
             var options = new DbContextOptionsBuilder<DataContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .Options;
@@ -179,7 +180,7 @@ namespace Application.UnitTests.Projects
             var project = new Project
             {
                 Id = Guid.NewGuid(),
-                ProjectTitle = "", // Empty but not null - this won't cause EF failure but should be caught by validator
+                ProjectTitle = "",
                 Description = "",
                 StartDate = DateTime.UtcNow
             };
@@ -188,20 +189,9 @@ namespace Application.UnitTests.Projects
 
             var result = await badHandler.Handle(command, CancellationToken.None);
 
-            // Assert - The actual validation happens at the validator level, not here
-            // This test verifies the handler behavior when validation passes but save fails
-            // Since we can't easily simulate a database save failure without more complex setup,
-            // we'll test the happy path and ensure the error handling works correctly
-            result.Should().NotBeNull();
-            
-            // If the project was created successfully, that's expected behavior for this test setup
-            // The actual database failure scenario would require more complex mocking
-            if (result.IsSuccess)
-            {
-                // Verify the project was created correctly
-                var createdProject = await badContext.Projects.FindAsync(project.Id);
-                createdProject.Should().NotBeNull();
-            }
+            result.IsSuccess.Should().BeTrue();
+            var createdProject = await badContext.Projects.FindAsync(project.Id);
+            createdProject.Should().NotBeNull();
         }
 
         [Fact]

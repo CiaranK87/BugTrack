@@ -210,21 +210,19 @@ namespace Application.UnitTests.Comments
 
             var command = new Create.Command
             {
-                Content = "", // Empty content - validator should catch this but handler still processes
+                Content = "",
                 TicketId = ticket.Id
             };
 
             // Act
             var result = await _handler.Handle(command, CancellationToken.None);
 
-            // Assert - Note: In real scenario, validation would prevent this from reaching the handler
-            // This test verifies handler behavior when it does receive the command
-            result.Should().NotBeNull();
-            if (result.IsSuccess)
-            {
-                result.Value.Content.Should().Be("");
-                result.Value.AuthorId.Should().Be(user.Id);
-            }
+            // The handler itself does not validate content — that is enforced by the MediatR
+            // validation pipeline before the handler is reached. Called directly, the handler
+            // accepts empty content and creates the comment.
+            result.IsSuccess.Should().BeTrue();
+            result.Value.Content.Should().Be("");
+            result.Value.AuthorId.Should().Be(user.Id);
         }
 
         [Fact]

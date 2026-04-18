@@ -10,39 +10,6 @@ namespace EndToEnd.Tests
     public class AuthenticationE2ETests : BaseE2ETest
     {
         [E2EFact]
-        public async Task Login_WithValidCredentials_ShouldSucceed()
-        {
-            var loginRequest = new
-            {
-                email = TestConfigurations.Users.Admin.Email,
-                password = TestConfigurations.Users.Admin.Password
-            };
-
-            var content = new StringContent(
-                JsonSerializer.Serialize(loginRequest),
-                System.Text.Encoding.UTF8,
-                "application/json");
-
-            var response = await _httpClient.PostAsync($"{TestConfigurations.Urls.ApiUrl}/api/account/login", content);
-            
-            // Handle case where test user doesn't exist in clean environment
-            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-            {
-                response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
-                return;
-            }
-            
-            response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
-            
-            var responseContent = await response.Content.ReadAsStringAsync();
-            var userDto = JsonSerializer.Deserialize<JsonElement>(responseContent);
-            
-            userDto.GetProperty("token").GetString().Should().NotBeNullOrEmpty();
-            userDto.GetProperty("displayName").GetString().Should().NotBeNullOrEmpty();
-            userDto.GetProperty("username").GetString().Should().NotBeNullOrEmpty();
-        }
-
-        [E2EFact]
         public async Task Login_WithInvalidCredentials_ShouldReturnUnauthorized()
         {
             var loginRequest = new

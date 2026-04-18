@@ -30,8 +30,6 @@ public class ProjectRoleHandlerTests : TestBase
         };
 
         var principal = new System.Security.Claims.ClaimsPrincipal(new System.Security.Claims.ClaimsIdentity(claims, "Test"));
-        
-        // Set up the mock to return the correct user ID for this test
         _mockUserAccessor.Setup(x => x.GetUserId()).Returns(userId);
         
         return principal;
@@ -65,7 +63,7 @@ public class ProjectRoleHandlerTests : TestBase
         var user = CreateUserPrincipal("user3");
 
         // Act
-        var result = await authService.AuthorizeAsync(user, project, requirement);
+        var result = await authService.AuthorizeAsync(user, project.Id, requirement);
 
         // Assert
         result.Succeeded.Should().BeFalse();
@@ -81,7 +79,7 @@ public class ProjectRoleHandlerTests : TestBase
         var user = CreateUserPrincipal("user4");
 
         // Act
-        var result = await authService.AuthorizeAsync(user, project, requirement);
+        var result = await authService.AuthorizeAsync(user, project.Id, requirement);
 
         // Assert
         result.Succeeded.Should().BeFalse();
@@ -97,7 +95,7 @@ public class ProjectRoleHandlerTests : TestBase
         var user = CreateUserPrincipal("user5");
 
         // Act
-        var result = await authService.AuthorizeAsync(user, project, requirement);
+        var result = await authService.AuthorizeAsync(user, project.Id, requirement);
 
         // Assert
         result.Succeeded.Should().BeFalse();
@@ -113,7 +111,7 @@ public class ProjectRoleHandlerTests : TestBase
         var user = CreateUserPrincipal("user999");
 
         // Act
-        var result = await authService.AuthorizeAsync(user, project, requirement);
+        var result = await authService.AuthorizeAsync(user, project.Id, requirement);
 
         // Assert
         result.Succeeded.Should().BeFalse();
@@ -122,7 +120,7 @@ public class ProjectRoleHandlerTests : TestBase
     [Theory]
     [InlineData("user1", "Owner", "Developer", false)]
     [InlineData("user1", "Owner", "User", false)]
-    [InlineData("user3", "ProjectManager", "Owner", true)]
+    [InlineData("user3", "ProjectManager", "Owner", false)]
     [InlineData("user3", "ProjectManager", "Developer", false)]
     [InlineData("user3", "ProjectManager", "User", false)]
     [InlineData("user4", "Developer", "Owner", false)]
@@ -140,7 +138,7 @@ public class ProjectRoleHandlerTests : TestBase
         var user = CreateUserPrincipal(userId);
 
         // Act
-        var result = await authService.AuthorizeAsync(user, project, requirement);
+        var result = await authService.AuthorizeAsync(user, project.Id, requirement);
 
         // Assert
         if (shouldSucceed)
@@ -163,14 +161,14 @@ public class ProjectRoleHandlerTests : TestBase
         var user = CreateUserPrincipal("user2");
 
         // Act
-        var result = await authService.AuthorizeAsync(user, project, requirement);
+        var result = await authService.AuthorizeAsync(user, project.Id, requirement);
 
         // Assert
         result.Succeeded.Should().BeTrue();
     }
 
     [Fact]
-    public async Task ProjectManagerUser_ShouldNotAccessOwnerRequirementWhenNotParticipant()
+    public async Task ProjectManagerParticipant_ShouldFailForOwnerRequirement()
     {
         // Arrange
         var project = _context.Projects.First();
@@ -179,7 +177,7 @@ public class ProjectRoleHandlerTests : TestBase
         var user = CreateUserPrincipal("user3");
 
         // Act
-        var result = await authService.AuthorizeAsync(user, project, requirement);
+        var result = await authService.AuthorizeAsync(user, project.Id, requirement);
 
         // Assert
         result.Succeeded.Should().BeFalse();
@@ -205,7 +203,7 @@ public class ProjectRoleHandlerTests : TestBase
         var user = CreateUserPrincipal("user9");
 
         // Act
-        var result = await authService.AuthorizeAsync(user, project, requirement);
+        var result = await authService.AuthorizeAsync(user, project.Id, requirement);
 
         // Assert
         result.Succeeded.Should().BeTrue();

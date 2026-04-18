@@ -201,6 +201,39 @@ public class TicketAuthorizationHandlerTests : TestBase
     }
 
     [Fact]
+    public async Task UserRoleSubmitter_ShouldBeAbleToEditOwnTicket()
+    {
+        // Arrange — user5 is Role="User" so only the submitter path (not role) grants Edit access
+        var ticket = _context.Tickets.OrderBy(t => t.CreatedAt).Skip(1).First();
+        var requirement = new TicketOperationRequirement(TicketOperation.Edit);
+        var authService = _serviceProvider.GetRequiredService<IAuthorizationService>();
+        var user = CreateUserPrincipal("user5");
+
+        // Act
+        var result = await authService.AuthorizeAsync(user, ticket, requirement);
+
+        // Assert
+        result.Succeeded.Should().BeTrue("a User-role participant should be able to edit a ticket they submitted");
+    }
+
+    [Fact]
+    public async Task UserRoleAssigned_ShouldBeAbleToEditAssignedTicket()
+    {
+        // Arrange — ticket 1 has Assigned = "user5"; user5 has Role = "User" which does not
+        // grant Edit via the role switch. Only the assigned path can grant access here.
+        var ticket = _context.Tickets.OrderBy(t => t.CreatedAt).First();
+        var requirement = new TicketOperationRequirement(TicketOperation.Edit);
+        var authService = _serviceProvider.GetRequiredService<IAuthorizationService>();
+        var user = CreateUserPrincipal("user5");
+
+        // Act
+        var result = await authService.AuthorizeAsync(user, ticket, requirement);
+
+        // Assert
+        result.Succeeded.Should().BeTrue("a User-role participant should be able to edit a ticket assigned to them");
+    }
+
+    [Fact]
     public async Task AdminUser_ShouldBypassTicketAuthorization()
     {
         // Arrange

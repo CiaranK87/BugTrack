@@ -312,7 +312,7 @@ namespace API.IntegrationTests
             finalTicket.Should().NotBeNull();
             finalTicket.Description.Should().Contain("database indexing");
             finalTicket.Priority.Should().Be("High"); // Escalated during process
-            finalTicket.Status.Should().BeOneOf("Closed", "In Progress", "Open");
+            finalTicket.Status.Should().Be("Closed");
         }
 
         [Fact]
