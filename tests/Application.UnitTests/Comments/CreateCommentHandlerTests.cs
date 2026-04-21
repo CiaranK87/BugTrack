@@ -489,6 +489,84 @@ namespace Application.UnitTests.Comments
             createdComment.Attachments.Should().HaveCount(2);
         }
 
+        [Fact]
+        public async Task Handle_GuestUserWithAttachment_ShouldRestrictGuestAttachments()
+        {
+            var user = new AppUser
+            {
+                Id = "guest123",
+                UserName = "guestuser",
+                DisplayName = "Guest User"
+            };
+            var ticket = new Ticket
+            {
+                Id = Guid.NewGuid(),
+                Title = "Test Ticket",
+                Description = "Test Description"
+            };
+            _context.Users.Add(user);
+            _context.Tickets.Add(ticket);
+            await _context.SaveChangesAsync();
+
+            _mockUserAccessor.Setup(x => x.GetUserId()).Returns(user.Id);
+            _mockUserAccessor.Setup(x => x.GetGlobalRole()).Returns("Guest");
+
+            var mockFile = new Mock<IFormFile>();
+            mockFile.Setup(f => f.FileName).Returns("test.txt");
+            mockFile.Setup(f => f.Length).Returns(1024);
+            mockFile.Setup(f => f.ContentType).Returns("text/plain");
+
+            var command = new Create.Command
+            {
+                Content = "This is a comment with attachment",
+                TicketId = ticket.Id,
+                Attachments = new List<IFormFile> { mockFile.Object }
+            };
+
+            // Act
+            var result = await _handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            result.IsSuccess.Should().BeFalse();
+            result.Error.Should().Be("File uploads are not available for Guest users.");
+        }
+
+        [Fact]
+        public async Task Handle_GuestUserWithoutAttachment_ShouldCreateCommentSuccessfully()
+        {
+            var user = new AppUser
+            {
+                Id = "guest123",
+                UserName = "guestuser",
+                DisplayName = "Guest User"
+            };
+            var ticket = new Ticket
+            {
+                Id = Guid.NewGuid(),
+                Title = "Test Ticket",
+                Description = "Test Description"
+            };
+            _context.Users.Add(user);
+            _context.Tickets.Add(ticket);
+            await _context.SaveChangesAsync();
+
+            _mockUserAccessor.Setup(x => x.GetUserId()).Returns(user.Id);
+            _mockUserAccessor.Setup(x => x.GetGlobalRole()).Returns("Guest");
+
+            var command = new Create.Command
+            {
+                Content = "This is a comment without attachment",
+                TicketId = ticket.Id
+            };
+
+            // Act
+            var result = await _handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            result.IsSuccess.Should().BeTrue();
+            result.Value.Content.Should().Be("This is a comment without attachment");
+        }
+
         public void Dispose()
         {
             _context.Database.EnsureDeleted();

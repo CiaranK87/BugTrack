@@ -4,5 +4,6 @@ namespace Application.Interfaces
     {
         string GetUsername();
         string GetUserId();
+        string GetGlobalRole();
     }
 }

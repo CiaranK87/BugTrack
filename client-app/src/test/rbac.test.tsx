@@ -105,6 +105,36 @@ describe('Role-Based Access Control (RBAC)', () => {
     expect(screen.getByText('Project Manager (ProjectManager)')).toBeInTheDocument();
   });
 
+  test('should hide admin and project manager items for guest users', () => {
+    vi.mocked(useStore).mockReturnValue({
+      userStore: {
+        user: {
+          displayName: 'Guest User',
+          username: 'guest',
+          globalRole: 'Guest'
+        },
+        isAdmin: false,
+        isProjectManager: false,
+        isGuest: true,
+        canCreateProjects: false,
+        logout: vi.fn(),
+      },
+      commonStore: {
+        darkMode: false,
+        toggleDarkMode: vi.fn(),
+      },
+    } as any);
+
+    render(
+      <BrowserRouter>
+        <Navbar />
+      </BrowserRouter>
+    );
+
+    expect(screen.queryByText('Admin')).not.toBeInTheDocument();
+    expect(screen.queryByText('Errors')).not.toBeInTheDocument();
+  });
+
   test('should handle logout correctly', async () => {
     const mockLogout = vi.fn();
     

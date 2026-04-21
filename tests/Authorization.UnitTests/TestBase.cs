@@ -44,9 +44,9 @@ public class TestBase : IDisposable
             options.AddPolicy("ProjectUser", policy =>
                 policy.Requirements.Add(new ProjectRoleRequirement("User")));
             options.AddPolicy("ProjectContributor", policy =>
-                policy.Requirements.Add(new ProjectRoleRequirement("Owner", "ProjectManager", "Developer", "User")));
+                policy.Requirements.Add(new ProjectRoleRequirement("Owner", "ProjectManager", "Developer", "User", "Guest")));
             options.AddPolicy("ProjectAnyRole", policy =>
-                policy.Requirements.Add(new ProjectRoleRequirement("Owner", "ProjectManager", "Developer", "User")));
+                policy.Requirements.Add(new ProjectRoleRequirement("Owner", "ProjectManager", "Developer", "User", "Guest")));
         });
         
         services.AddSingleton<IAuthorizationHandler, ProjectRoleHandler>();
@@ -111,6 +111,14 @@ public class TestBase : IDisposable
                 Email = "user@test.com",
                 DisplayName = "Test User",
                 GlobalRole = "User"
+            },
+            new AppUser
+            {
+                Id = "user6",
+                UserName = "guest@test.com",
+                Email = "guest@test.com",
+                DisplayName = "Test Guest",
+                GlobalRole = "Guest"
             }
         };
 
@@ -163,7 +171,14 @@ public class TestBase : IDisposable
             {
                 AppUserId = "user5",
                 ProjectId = projects[0].Id,
-                Role = "User", 
+                Role = "User",
+                IsOwner = false
+            },
+            new ProjectParticipant
+            {
+                AppUserId = "user6",
+                ProjectId = projects[0].Id,
+                Role = "Guest",
                 IsOwner = false
             },
             new ProjectParticipant
@@ -283,6 +298,7 @@ public class TestBase : IDisposable
             "user3" => "ProjectManager",
             "user4" => "User",
             "user5" => "User",
+            "user6" => "Guest",
             _ => "User"
         };
     }

@@ -92,6 +92,7 @@ namespace API.Controllers
             return BadRequest(result.Error);
         }
 
+        [Authorize(Policy = "CanUploadAttachments")]
         [HttpPost("{commentId}/attachments")]
         public async Task<ActionResult<CommentAttachmentDto>> AddAttachment(Guid ticketId, Guid commentId, [FromForm] IFormFile file)
         {

@@ -15,8 +15,9 @@ interface Props {
 }
 
 export default observer(function CommentForm({ ticketId, parentCommentId, isReply = false }: Props) {
-  const { commentStore, ticketStore } = useStore();
+  const { commentStore, ticketStore, userStore } = useStore();
   const { createComment, loading } = commentStore;
+  const { isGuest } = userStore;
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -180,7 +181,7 @@ export default observer(function CommentForm({ ticketId, parentCommentId, isRepl
               />
 
               <div className="comment-form-footer">
-                <div style={{ display: 'flex', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <input
                     type='file'
                     ref={fileInputRef}
@@ -193,9 +194,16 @@ export default observer(function CommentForm({ ticketId, parentCommentId, isRepl
                     content='Attach Files'
                     labelPosition='left'
                     icon='attach'
-                    onClick={() => fileInputRef.current?.click()}
+                    onClick={() => !isGuest && fileInputRef.current?.click()}
                     basic
+                    disabled={isGuest}
+                    title={isGuest ? 'File uploads are not available for guest accounts' : undefined}
                   />
+                  {isGuest && (
+                    <span style={{ fontSize: '0.85em', color: '#999' }}>
+                      Uploads not available for guest accounts
+                    </span>
+                  )}
                 </div>
 
                 <Button

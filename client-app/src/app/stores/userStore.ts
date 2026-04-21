@@ -194,6 +194,10 @@ export default class UserStore {
     return this.user?.globalRole === "ProjectManager";
   }
 
+  get isGuest() {
+    return this.user?.globalRole === "Guest";
+  }
+
   get canCreateProjects() {
     return this.isAdmin || this.isProjectManager;
   }
