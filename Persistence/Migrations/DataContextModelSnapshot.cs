@@ -145,7 +145,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("TicketId");
 
-                    b.ToTable("Comments");
+                    b.ToTable("Comments", (string)null);
                 });
 
             modelBuilder.Entity("Domain.CommentAttachment", b =>
@@ -184,7 +184,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("UploadedById");
 
-                    b.ToTable("CommentAttachments");
+                    b.ToTable("CommentAttachments", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Notification", b =>
@@ -227,7 +227,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("TicketId");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("Notifications", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Project", b =>
@@ -259,7 +259,7 @@ namespace Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Projects");
+                    b.ToTable("Projects", (string)null);
                 });
 
             modelBuilder.Entity("Domain.ProjectParticipant", b =>
@@ -280,7 +280,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("ProjectParticipants");
+                    b.ToTable("ProjectParticipants", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Ticket", b =>
@@ -338,7 +338,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("Tickets");
+                    b.ToTable("Tickets", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

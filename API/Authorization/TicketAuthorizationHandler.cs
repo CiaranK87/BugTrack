@@ -109,7 +109,8 @@ namespace API.Authorization
                         role == "Owner" ||
                         role == "ProjectManager" ||
                         role == "Developer" ||
-                        role == "User")
+                        role == "User" ||
+                        role == "Guest")
                     {
                         context.Succeed(requirement);
                     }
@@ -120,7 +121,8 @@ namespace API.Authorization
                         role == "Owner" ||
                         role == "ProjectManager" ||
                         role == "Developer" ||
-                        role == "User")
+                        role == "User" ||
+                        role == "Guest")
                     {
                         context.Succeed(requirement);
                     }

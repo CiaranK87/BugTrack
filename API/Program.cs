@@ -39,6 +39,9 @@ builder.Services.AddScoped<IAuthorizationHandler, ProjectRoleHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, TicketAuthorizationHandler>();
 builder.Services.AddLogging();
 
+builder.Services.Configure<API.Services.DemoSettings>(builder.Configuration.GetSection("DemoSettings"));
+builder.Services.AddHostedService<API.Services.DemoReseedService>();
+
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
@@ -81,10 +84,13 @@ builder.Services.AddAuthorization(options =>
         policy.Requirements.Add(new ProjectRoleRequirement("User")));
 
     options.AddPolicy("ProjectContributor", policy =>
-        policy.Requirements.Add(new ProjectRoleRequirement("Owner", "ProjectManager", "Developer", "User")));
+        policy.Requirements.Add(new ProjectRoleRequirement("Owner", "ProjectManager", "Developer", "User", "Guest")));
 
     options.AddPolicy("ProjectAnyRole", policy =>
-        policy.Requirements.Add(new ProjectRoleRequirement("Owner", "ProjectManager", "Developer", "User")));
+        policy.Requirements.Add(new ProjectRoleRequirement("Owner", "ProjectManager", "Developer", "User", "Guest")));
+
+    options.AddPolicy("CanUploadAttachments", policy =>
+        policy.RequireClaim("globalrole", "User", "Developer", "ProjectManager", "Admin"));
 
     // Ticket operation policies
     options.AddPolicy("CanReadTicket", policy =>
@@ -161,8 +167,13 @@ try
         await roleManager.CreateAsync(new IdentityRole("Developer"));
     if (!await roleManager.RoleExistsAsync("User"))
         await roleManager.CreateAsync(new IdentityRole("User"));
-    
+    if (!await roleManager.RoleExistsAsync("Guest"))
+        await roleManager.CreateAsync(new IdentityRole("Guest"));
+
     Log.Information("Application roles created/verified successfully");
+
+    var seederLogger = services.GetRequiredService<ILogger<Program>>();
+    await DemoSeeder.SeedDemoUserAsync(userManager, seederLogger);
 }
 catch (Exception ex)
 {

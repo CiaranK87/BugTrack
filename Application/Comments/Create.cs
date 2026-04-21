@@ -67,6 +67,9 @@ namespace Application.Comments
                 
                 if (request.Attachments != null && request.Attachments.Count > 0)
                 {
+                    if (_userAccessor.GetGlobalRole() == "Guest")
+                        return Result<CommentDto>.Failure("File uploads are not available for Guest users.");
+
                     foreach (var file in request.Attachments)
                     {
                         var attachment = await CreateAttachmentFromFile(file, comment.Id, userId);

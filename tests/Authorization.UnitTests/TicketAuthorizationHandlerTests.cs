@@ -41,11 +41,12 @@ public class TicketAuthorizationHandlerTests : TestBase
     {
         return userId switch
         {
-            "user1" => "User",
+            "user1" => "Owner",
             "user2" => "Admin",
-            "user3" => "User",
+            "user3" => "ProjectManager",
             "user4" => "User",
             "user5" => "User",
+            "user6" => "Guest",
             _ => "User"
         };
     }
@@ -93,6 +94,11 @@ public class TicketAuthorizationHandlerTests : TestBase
     [InlineData("user5", TicketOperation.Create, true)]
     [InlineData("user5", TicketOperation.Close, false)]
     [InlineData("user5", TicketOperation.Delete, false)]
+    [InlineData("user6", TicketOperation.Read, true)]
+    [InlineData("user6", TicketOperation.Create, true)]
+    [InlineData("user6", TicketOperation.Edit, false)]
+    [InlineData("user6", TicketOperation.Close, false)]
+    [InlineData("user6", TicketOperation.Delete, false)]
     public async Task TicketOperationAuthorizationTests(string userId, TicketOperation operation, bool shouldSucceed)
     {
         // Arrange

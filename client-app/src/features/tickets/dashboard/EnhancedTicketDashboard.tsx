@@ -170,7 +170,7 @@ export default observer(function EnhancedTicketDashboard() {
             {ticket.title}
           </Header>
           <p style={{ margin: '5px 0', color: '#666' }}>
-            #{ticket.id.substring(0, 6)} • Submitted by {ticket.submitter}
+            #{ticket.id.substring(0, 6)} • {ticket.projectTitle} • Submitted by {ticket.submitter}
           </p>
           <p style={{ margin: '5px 0' }}>
             {ticket.description.length > 150

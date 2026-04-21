@@ -20,7 +20,12 @@ namespace Infrastructure.Security
         
         public string GetUserId()
         {
-        return _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+            return _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+        }
+
+        public string GetGlobalRole()
+        {
+            return _httpContextAccessor.HttpContext?.User?.FindFirstValue("globalrole");
         }
     }
 }
