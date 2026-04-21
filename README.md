@@ -10,11 +10,16 @@
 
 > A personal project I use as a living codebase — a place to implement things I learn at work that I can't always share publicly, and to experiment with patterns and architecture decisions in a real, running application.
 
-🔗 **[Live Demo](https://ckbugtrack-app01.vercel.app/)**
 
 ### 🚀 Quick Demo
-To explore the app without registering, use the following **Admin** credentials:
+
+🔗 **[Live Demo](https://ckbugtrack-app01.vercel.app/)**
+
+To explore the app without registering, use the following **Guest** credentials:
 - **Email:** `demo@bugtrack.com` **Password:** `Dem0Pa$$`
+
+
+> The demo account has Guest-level access — project creation and file uploads are restricted. Use the in-app access request form to request full access.
 
 > [!TIP]
 > **See Real-time Updates (SignalR):** Open the app in two browser windows side-by-side. Post a comment on a ticket in one window—you'll see the notification and message appear instantly in the other without a page refresh.

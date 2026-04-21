@@ -47,7 +47,7 @@ export default observer(function ProfilePage() {
     <Container className="profile-page" style={{ marginTop: '7em', maxWidth: '1200px' }}>
       {/* Header */}
       <Segment className="profile-header-segment">
-        <Grid>
+        <Grid stackable>
           <Grid.Row>
             <Grid.Column width={10}>
               <Header as="h2" style={{ margin: 0, paddingTop: '10px' }}>
@@ -70,14 +70,14 @@ export default observer(function ProfilePage() {
       </Segment>
 
       {/* Profile Information and Quick Actions Side by Side */}
-      <Grid columns={2} className="profile-info-grid" style={{ marginBottom: '20px' }}>
+      <Grid columns={2} stackable className="profile-info-grid" style={{ marginBottom: '20px' }}>
         <Grid.Column width={10}>
           <Segment style={{ height: '100%' }}>
             <Header as="h3" dividing>
               <Icon name="user circle" />
               Profile Information
             </Header>
-            <Grid className="profile-details-grid">
+            <Grid stackable className="profile-details-grid">
               <Grid.Row>
                 <Grid.Column width={8}>
                   <p><strong>Username:</strong> {profile.username}</p>
