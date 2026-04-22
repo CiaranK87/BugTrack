@@ -13,7 +13,7 @@
         { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains; preload" },
         {
           "key": "Content-Security-Policy-Report-Only",
-          "value": "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://bugtrack-api-h9gjcdcyg2bbeuea.westeurope-01.azurewebsites.net wss://bugtrack-api-h9gjcdcyg2bbeuea.westeurope-01.azurewebsites.net; frame-ancestors 'none'; form-action 'self'; base-uri 'self'"
+          "value": "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://bugtrack-api-h9gjcdcyg2bbeuea.westeurope-01.azurewebsites.net wss://bugtrack-api-h9gjcdcyg2bbeuea.westeurope-01.azurewebsites.net; frame-ancestors 'none'; form-action 'self'; base-uri 'self'"
         }
       ]
     }
