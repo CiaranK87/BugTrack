@@ -16,7 +16,8 @@
 🔗 **[Live Demo](https://ckbugtrack-app01.vercel.app/)**
 
 To explore the app without registering, use the following **Guest** credentials:
-- **Email:** `demo@bugtrack.com` **Password:** `Dem0Pa$$`
+- **Email:** `demo@bugtrack.com` 
+- **Password:** `Dem0Pa$$`
 
 
 > The demo account has Guest-level access — project creation and file uploads are restricted. Use the in-app access request form to request full access.
@@ -157,7 +158,7 @@ graph TD
 - **Result Pattern**: Service responses use a typed `Result<T>` instead of exceptions for flow control. This makes error paths explicit, improves performance, and keeps the controller logic predictable.
 - **Custom Authorization Handlers**: Project-level roles (Owner, PM, Developer) extend beyond global permissions. A user can be a Developer on one project and a PM on another — handled via custom `IAuthorizationHandler` implementations.
 - **Exception Middleware**: A single `ExceptionMiddleware` catches unhandled errors and returns consistent `AppException` responses across the API, rather than letting error formats vary by controller.
-- **Security & Rate Limiting**: OWASP-recommended headers applied globally via middleware, alongside a `FixedWindowLimiter` (500 requests/min) at the API level — both small additions that meaningfully harden the surface area without requiring per-endpoint configuration.
+- **Security & Rate Limiting**: OWASP-recommended headers applied globally via middleware, alongside a `FixedWindowLimiter` (500 requests/min) at the API level — both small additions that meaningfully harden the surface area without requiring per-endpoint configuration. A passive OWASP ZAP baseline scan against the deployed frontend and API confirmed the API headers are solid; the main gap was the Vercel frontend, which now carries `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, and a `Content-Security-Policy-Report-Only` tuned to the Vite/React bundle. Scan reports and triage notes are in `docs/security/`.
 - **SignalR for Real-time**: Live comment threads and notifications give the app a responsive, collaborative feel without the overhead of polling.
 
 ---
