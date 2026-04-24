@@ -4,14 +4,13 @@
 [![React](https://img.shields.io/badge/React-18-61dafb?logo=react)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.2-3178c6?logo=typescript)](https://www.typescriptlang.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169e1?logo=postgresql)](https://www.postgresql.org/)
-[![Tests](https://img.shields.io/badge/Tests-200%2B-brightgreen)](https://github.com/CiaranK87/BugTrack)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://github.com/CiaranK87/BugTrack/actions/workflows/main_bugtrack-api.yml/badge.svg)](https://github.com/CiaranK87/BugTrack/actions)
 
-> A personal project I use as a living codebase — a place to implement things I learn at work that I can't always share publicly, and to experiment with patterns and architecture decisions in a real, running application.
+> A full-stack issue tracker I use as a living codebase — somewhere to implement patterns I pick up at work and see how they hold up in a real, running application. Always in a working state; never a finished product.
 
 
-### 🚀 Quick Demo
+## 🚀 Quick Demo
 
 🔗 **[Live Demo](https://ckbugtrack-app01.vercel.app/)**
 
@@ -19,33 +18,25 @@ To explore the app without registering, use the following **Guest** credentials:
 - **Email:** `demo@bugtrack.com` 
 - **Password:** `Dem0Pa$$`
 
+<br>
 
-> The demo account has Guest-level access — project creation and file uploads are restricted. Use the in-app access request form to request full access.
+> The demo account has a global role of **Guest** and participates in three of the seeded projects with a different role on each — **Project Manager**, **Developer**, and **User**. This lets you explore how permissions and available actions shift by role without needing to register. Project creation and file uploads are restricted for the demo account; use the in-app access request form if you need full access.
 
 > [!TIP]
 > **See Real-time Updates (SignalR):** Open the app in two browser windows side-by-side. Post a comment on a ticket in one window—you'll see the notification and message appear instantly in the other without a page refresh.
 
 ---
 
-## 🎯 About This Project
-
-This is my public-facing codebase — somewhere to implement what I pick up on the job and actually see it running in a real app.
-
-It's grown organically as a result: Clean Architecture and CQRS went in when I wanted to understand how they hold up across a full codebase, not just in isolated examples. The custom RBAC came from thinking through how project-level permissions actually differ from global ones. The 200+ test suite is there because I wanted to get comfortable with all four layers — unit, component, integration, and E2E — in a single project.
-
-It's not a finished product, but it's always in a working state and I treat it with the same care I would professional code.
-
----
 
 ## 📸 Screenshots
 
-<details>
-  <summary>📊 Main Dashboard</summary>
-  <br>
-  <p align="center">
+<p align="center">
     <img src="docs/screenshots/main-dashboard.PNG" alt="Main Dashboard" width="100%">
   </p>
-</details>
+
+<details>
+  <summary><b>📸 Take the full tour (9 views)</b></summary>
+  <br>
 
 <details>
   <summary>🛡️ Admin Dashboard</summary>
@@ -119,6 +110,16 @@ It's not a finished product, but it's always in a working state and I treat it w
   </p>
 </details>
 
+</details>
+
+---
+
+## 🎯 About This Project
+
+This codebase has grown organically: Clean Architecture and CQRS went in when I wanted to understand how they hold up across a full codebase, not just in isolated examples. The custom RBAC came from thinking through how project-level permissions actually differ from global ones. The test suite is there because I wanted to get comfortable with all four layers — unit, component, integration, and E2E — in a single project.
+
+It's not a finished product, but it's always in a working state and I treat it with the same care I would professional code.
+
 ---
 
 ## 🏗️ Architecture Overview
@@ -158,8 +159,14 @@ graph TD
 - **Result Pattern**: Service responses use a typed `Result<T>` instead of exceptions for flow control. This makes error paths explicit, improves performance, and keeps the controller logic predictable.
 - **Custom Authorization Handlers**: Project-level roles (Owner, PM, Developer) extend beyond global permissions. A user can be a Developer on one project and a PM on another — handled via custom `IAuthorizationHandler` implementations.
 - **Exception Middleware**: A single `ExceptionMiddleware` catches unhandled errors and returns consistent `AppException` responses across the API, rather than letting error formats vary by controller.
-- **Security & Rate Limiting**: OWASP-recommended headers applied globally via middleware, alongside a `FixedWindowLimiter` (500 requests/min) at the API level — both small additions that meaningfully harden the surface area without requiring per-endpoint configuration. A passive OWASP ZAP baseline scan against the deployed frontend and API confirmed the API headers are solid; the main gap was the Vercel frontend, which now carries `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, and a `Content-Security-Policy-Report-Only` tuned to the Vite/React bundle. Scan reports and triage notes are in `docs/security/`.
+- **Security & Rate Limiting**: OWASP-recommended headers applied globally via middleware, alongside a `FixedWindowLimiter` (500 requests/min) at the API level — both small additions that meaningfully harden the surface area without requiring per-endpoint configuration. A passive OWASP ZAP baseline scan against the deployed frontend and API confirmed the API headers are solid; the main gap was the Vercel frontend, which now carries `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, and a `Content-Security-Policy` tuned to the Vite/React bundle. Scan reports and triage notes are in `docs/security/`.
 - **SignalR for Real-time**: Live comment threads and notifications give the app a responsive, collaborative feel without the overhead of polling.
+
+### Operations
+
+- **Migrations**: `context.Database.MigrateAsync()` runs on startup in `Program.cs`, so schema changes apply automatically on deploy — no manual migration step in the release process.
+- **Structured Logging**: Serilog writes to stdout (Console sink only). In production on Azure Web App, this feeds into Azure's log stream and is accessible via Kudu. No file sink configured, so no ephemeral path concerns on restart.
+- **Deployment**: GitHub Actions triggers on push to `main`, building and deploying to Azure Web App. Continuous deployment rather than tagged releases — a deliberate choice for a solo project where merges to `main` represent intended state.
 
 ---
 
@@ -186,7 +193,7 @@ graph TD
 - **Mediator**: MediatR
 - **Mapping**: AutoMapper
 - **Validation**: FluentValidation
-- **Logging**: Serilog (Console + File sinks)
+- **Logging**: Serilog (Console sink)
 - **ORM**: Entity Framework Core with PostgreSQL provider
 - **Real-time**: SignalR
 - **Auth**: ASP.NET Core Identity + JWT
@@ -277,7 +284,7 @@ cd client-app
 npm test
 ```
 
-The project maintains **200+ tests** across four layers to ensure stability and correctness:
+The project maintains tests across four layers to ensure stability and correctness:
 
 | Layer | Tool | Coverage |
 |---|---|---|
