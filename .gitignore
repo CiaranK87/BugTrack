@@ -12,6 +12,7 @@ appsettings.*.json
 # Development documentation
 *.md
 !README.md
+!SECURITY.md
 
 # User-specific files
 *.rsuser

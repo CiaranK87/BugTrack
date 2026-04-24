@@ -6,6 +6,7 @@
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169e1?logo=postgresql)](https://www.postgresql.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://github.com/CiaranK87/BugTrack/actions/workflows/main_bugtrack-api.yml/badge.svg)](https://github.com/CiaranK87/BugTrack/actions)
+[![CodeQL](https://github.com/CiaranK87/BugTrack/actions/workflows/codeql.yml/badge.svg)](https://github.com/CiaranK87/BugTrack/actions/workflows/codeql.yml)
 
 > A full-stack issue tracker I use as a living codebase — somewhere to implement patterns I pick up at work and see how they hold up in a real, running application. Always in a working state; never a finished product.
 
@@ -167,6 +168,14 @@ graph TD
 - **Migrations**: `context.Database.MigrateAsync()` runs on startup in `Program.cs`, so schema changes apply automatically on deploy — no manual migration step in the release process.
 - **Structured Logging**: Serilog writes to stdout (Console sink only). In production on Azure Web App, this feeds into Azure's log stream and is accessible via Kudu. No file sink configured, so no ephemeral path concerns on restart.
 - **Deployment**: GitHub Actions triggers on push to `main`, building and deploying to Azure Web App. Continuous deployment rather than tagged releases — a deliberate choice for a solo project where merges to `main` represent intended state.
+
+### Security & Supply Chain
+
+- **Dependency Updates**: Dependabot configured for NuGet, npm, and GitHub Actions — weekly PRs for outdated packages.
+- **Static Analysis**: CodeQL runs on every push and pull request, scanning C# and TypeScript for known vulnerability patterns.
+- **Branch Protection**: `main` requires pull requests and passing status checks before merge.
+- **Secret Scanning**: GitHub push protection enabled; no secrets reach the repo.
+- **Runtime Headers**: OWASP-recommended headers applied globally via middleware (see Key Design Decisions for the ZAP scan findings).
 
 ---
 
