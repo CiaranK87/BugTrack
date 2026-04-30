@@ -1,3 +1,8 @@
+/* Visibility Utilities - Default Desktop State */
+.mobile-only {
+  display: none !important;
+}
+
 @media (max-width: 767px) {
   /* Visibility Utilities */
   .mobile-only {
@@ -88,6 +93,11 @@
     width: 100% !important;
     margin-bottom: 10px !important;
   }
+
+  /* Participant role edit spacing */
+  .edit-buttons-row {
+    margin-top: 8px;
+  }
 }
 
 /* Enhanced Comment Highlight Animation - OUTSIDE media query */
@@ -137,11 +147,6 @@
 
 body.dark-mode .comment-highlight {
   animation: commentHighlightFadeDark 3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-/* Visibility Utilities - Default Desktop State */
-.mobile-only {
-  display: none !important;
 }
 
 .user-cards-mobile,

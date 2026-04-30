@@ -20,7 +20,7 @@ export default observer(function ProjectDetailedHeader({ project }: Props) {
         {project.isCancelled && (
           <Label style={{ position: "absolute", zIndex: 1000, left: -14, top: 10 }} ribbon color="red" content="Cancelled" />
         )}
-        <Segment basic>
+        <Segment basic style={project.isCancelled ? { paddingLeft: '6em' } : {}}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <Item.Group>
               <Item>
