@@ -27,7 +27,9 @@ jobs:
         run: dotnet build --configuration Release
 
       - name: Run unit tests
-        run: dotnet test tests/Domain.UnitTests tests/Application.UnitTests --configuration Release --no-build
+        run: |
+          dotnet test tests/Domain.UnitTests --configuration Release --no-build
+          dotnet test tests/Application.UnitTests --configuration Release --no-build
 
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
