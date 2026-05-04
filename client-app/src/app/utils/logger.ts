@@ -58,13 +58,11 @@ class Logger {
     const logEntry = this.formatMessage(levelName, message, data);
 
     if (this.isProduction) {
-      // In production, send to a logging service or server endpoint
-      // For now, we'll just use console.error for errors
+
       if (level === LogLevel.ERROR) {
         console.error(JSON.stringify(logEntry));
       }
     } else {
-      // In development, use console methods with styling
       const style = this.getConsoleStyle(level);
       const prefix = `%c[${logEntry.timestamp}] ${levelName}:`;
       
