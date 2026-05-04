@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 
 namespace API.Hubs
 {
+    [Authorize]
     public class TicketCommentHub : Hub
     {
         public async Task JoinTicketGroup(string ticketId)
