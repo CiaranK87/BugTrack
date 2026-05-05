@@ -1,10 +1,14 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Comments;
+using Application.Core;
 using Application.DTOs;
+using Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using API.Hubs;
@@ -30,9 +34,6 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<List<CommentDto>>> GetComments(Guid ticketId)
         {
-            var authorized = await _authorizationService.AuthorizeAsync(User, ticketId, "CanReadTicket");
-            if (!authorized.Succeeded) return Forbid();
-
             var result = await _mediator.Send(new List { TicketId = ticketId });
             return HandleResult(result);
         }
@@ -40,9 +41,6 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<CommentDto>> GetComment(Guid ticketId, Guid id)
         {
-            var authorized = await _authorizationService.AuthorizeAsync(User, ticketId, "CanReadTicket");
-            if (!authorized.Succeeded) return Forbid();
-
             var comment = await _mediator.Send(new Application.Comments.CommentDetailsQuery { TicketId = ticketId, Id = id });
             return HandleResult(comment);
         }
@@ -103,7 +101,7 @@ namespace API.Controllers
             if (result.IsSuccess)
             {
                 await _hubContext.Clients.Group($"Ticket_{ticketId}").SendAsync("AttachmentAdded", commentId, result.Value);
-                return CreatedAtAction(nameof(GetAttachment), new { ticketId, commentId, attachmentId = result.Value.Id }, result.Value);
+                return CreatedAtAction(nameof(GetAttachment), new { ticketId, commentId, id = result.Value.Id }, result.Value);
             }
             
             return BadRequest(result.Error);
@@ -112,15 +110,12 @@ namespace API.Controllers
         [HttpGet("{commentId}/attachments/{attachmentId}/download")]
         public async Task<IActionResult> GetAttachment(Guid ticketId, Guid commentId, Guid attachmentId)
         {
-            var authorized = await _authorizationService.AuthorizeAsync(User, ticketId, "CanReadTicket");
-            if (!authorized.Succeeded) return Forbid();
-
             var attachmentResult = await _mediator.Send(new Application.Comments.Query { TicketId = ticketId, CommentId = commentId, AttachmentId = attachmentId });
             
             if (attachmentResult.Attachment != null && System.IO.File.Exists(attachmentResult.FilePath))
             {
                 var fileBytes = await System.IO.File.ReadAllBytesAsync(attachmentResult.FilePath);
-                return File(fileBytes, "application/octet-stream", attachmentResult.Attachment.OriginalFileName);
+                return File(fileBytes, attachmentResult.Attachment.ContentType, attachmentResult.Attachment.OriginalFileName);
             }
             
             return NotFound();

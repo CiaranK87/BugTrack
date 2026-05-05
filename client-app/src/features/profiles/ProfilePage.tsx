@@ -82,6 +82,7 @@ export default observer(function ProfilePage() {
                 <Grid.Column width={8}>
                   <p><strong>Username:</strong> {profile.username}</p>
                   <p><strong>Display Name:</strong> {profile.displayName}</p>
+                  <p><strong>Email:</strong> {profile.email || 'Not available'}</p>
                 </Grid.Column>
                 <Grid.Column width={8}>
                   <div>

@@ -38,6 +38,7 @@ namespace Application.Core
                 .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.UserName))
                 .ForMember(dest => dest.DisplayName, opt => opt.MapFrom(src => src.DisplayName))
                 .ForMember(dest => dest.Bio, opt => opt.MapFrom(src => src.Bio))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.JoinDate, opt => opt.MapFrom(src => src.JoinDate))
                 .ForMember(dest => dest.Image, opt => opt.Ignore());
 

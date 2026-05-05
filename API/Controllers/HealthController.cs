@@ -37,7 +37,13 @@ namespace API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Health check failed");
-                return StatusCode(503, new { status = "Unhealthy" });
+                return StatusCode(503, new
+                {
+                    status = "Unhealthy",
+                    timestamp = DateTime.UtcNow,
+                    error = ex.Message,
+                    uptime = GetUptime()
+                });
             }
         }
 
@@ -63,7 +69,17 @@ namespace API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Readiness check failed");
-                return StatusCode(503, new { status = "Not Ready" });
+                return StatusCode(503, new
+                {
+                    status = "Not Ready",
+                    timestamp = DateTime.UtcNow,
+                    error = ex.Message,
+                    checks = new
+                    {
+                        database = "Unhealthy",
+                        api = "Unhealthy"
+                    }
+                });
             }
         }
 

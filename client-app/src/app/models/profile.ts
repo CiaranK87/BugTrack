@@ -4,6 +4,7 @@ export interface IProfile {
   username: string;
   displayName: string;
   bio?: string;
+  email?: string;
   joinDate?: string;
 }
 
@@ -15,5 +16,6 @@ export class Profile implements IProfile {
   username: string;
   displayName: string;
   bio?: string;
+  email?: string;
   joinDate?: string;
 }
