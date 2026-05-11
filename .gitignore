@@ -9,6 +9,9 @@ appsettings.*.json
 !appsettings.Production.json
 .env
 
+# User uploads
+API/uploads/
+
 # Development documentation
 *.md
 !README.md

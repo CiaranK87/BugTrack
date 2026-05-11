@@ -62,4 +62,4 @@ jobs:
           app-name: 'bugtrack-api'
           slot-name: 'Production'
           package: .
-          
+          startup-command: 'dotnet API.dll'
