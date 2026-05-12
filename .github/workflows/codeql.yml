@@ -32,7 +32,18 @@ jobs:
         with:
           languages: ${{ matrix.language }}
 
+      - name: Set up .NET
+        if: matrix.language == 'csharp'
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+
+      - name: Build C#
+        if: matrix.language == 'csharp'
+        run: dotnet build --configuration Release
+
       - name: Autobuild
+        if: matrix.language == 'javascript-typescript'
         uses: github/codeql-action/autobuild@v3
 
       - name: Perform CodeQL Analysis
