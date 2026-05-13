@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Application.DTOs;
 using Application.Interfaces;
 using Application.Projects;
 using Domain;
@@ -54,8 +55,8 @@ namespace API.Controllers
 
         [Authorize(Policy = "CanCreateProjects")]
         [HttpPost]
-        public async Task<IActionResult> CreateProject(Project project) =>
-            HandleResult(await Mediator.Send(new Create.Command { Project = project }));
+        public async Task<IActionResult> CreateProject([FromBody] CreateProjectDto projectDto) =>
+            HandleResult(await Mediator.Send(new Create.Command { ProjectDto = projectDto }));
 
 
         [Authorize]

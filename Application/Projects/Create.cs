@@ -1,11 +1,11 @@
 using Application.Core;
+using Application.DTOs;
 using Application.Interfaces;
 using Domain;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
-using System;
 
 namespace Application.Projects
 {
@@ -13,55 +13,63 @@ namespace Application.Projects
     {
         public class Command : IRequest<Result<Unit>>
         {
-            public Project Project { get; set; }
+            public CreateProjectDto ProjectDto { get; set; }
         }
 
         public class CommandValidator : AbstractValidator<Command>
         {
             public CommandValidator()
             {
-                RuleFor(x => x.Project).SetValidator(new ProjectValidator());
-
+                RuleFor(x => x.ProjectDto.ProjectTitle).NotEmpty();
+                RuleFor(x => x.ProjectDto.Description).NotEmpty();
+                RuleFor(x => x.ProjectDto.StartDate).NotEmpty();
             }
         }
 
         public class Handler : IRequestHandler<Command, Result<Unit>>
         {
-        private readonly DataContext _context;
-        private readonly IUserAccessor _userAccessor;
+            private readonly DataContext _context;
+            private readonly IUserAccessor _userAccessor;
+
             public Handler(DataContext context, IUserAccessor userAccessor)
             {
-            _userAccessor = userAccessor;
-            _context = context;
+                _userAccessor = userAccessor;
+                _context = context;
             }
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
                 var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == _userAccessor.GetUsername());
 
-                if (user != null)
+                var project = new Project
                 {
-                    request.Project.ProjectOwner = string.IsNullOrWhiteSpace(user.DisplayName) ? user.UserName : user.DisplayName;
-                }
-
+                    ProjectTitle = request.ProjectDto.ProjectTitle,
+                    Description = request.ProjectDto.Description,
+                    StartDate = request.ProjectDto.StartDate,
+                    ProjectOwner = user != null && !string.IsNullOrWhiteSpace(user.DisplayName)
+                        ? user.DisplayName
+                        : user?.UserName ?? string.Empty,
+                    IsDeleted = false,
+                    IsCancelled = false,
+                    DeletedDate = null
+                };
 
                 var participant = new ProjectParticipant
                 {
                     AppUser = user,
-                    Project = request.Project,
+                    Project = project,
                     IsOwner = true,
                     Role = "Owner"
                 };
 
-                request.Project.Participants.Add(participant);
+                project.Participants.Add(participant);
 
                 _context.ProjectParticipants.Add(participant);
-
-                _context.Projects.Add(request.Project);
+                _context.Projects.Add(project);
 
                 var result = await _context.SaveChangesAsync() > 0;
 
-                if(!result) return Result<Unit>.Failure("Failed to create project");
+                if (!result) return Result<Unit>.Failure("Failed to create project");
 
                 return Result<Unit>.Success(Unit.Value);
             }
