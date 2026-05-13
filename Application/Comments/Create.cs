@@ -40,6 +40,10 @@ namespace Application.Comments
             private readonly INotificationPushService _notificationPushService;
             private readonly ILogger<Handler> _logger;
 
+            private static readonly HashSet<string> AllowedExtensions = new(StringComparer.OrdinalIgnoreCase)
+                { ".jpg", ".jpeg", ".png", ".gif", ".webp", ".pdf", ".txt", ".doc", ".docx", ".xls", ".xlsx", ".zip" };
+            private const long MaxFileSizeBytes = 10 * 1024 * 1024;
+
             public Handler(DataContext context, IUserAccessor userAccessor, INotificationService notificationService, INotificationPushService notificationPushService, ILogger<Handler> logger)
             {
                 _context = context;
@@ -69,6 +73,15 @@ namespace Application.Comments
                 {
                     if (_userAccessor.GetGlobalRole() == "Guest")
                         return Result<CommentDto>.Failure("File uploads are not available for Guest users.");
+
+                    foreach (var file in request.Attachments)
+                    {
+                        if (file.Length > MaxFileSizeBytes)
+                            return Result<CommentDto>.Failure($"'{file.FileName}' exceeds the 10 MB size limit.");
+                        var ext = Path.GetExtension(file.FileName);
+                        if (string.IsNullOrEmpty(ext) || !AllowedExtensions.Contains(ext))
+                            return Result<CommentDto>.Failure($"File type '{ext}' is not permitted.");
+                    }
 
                     foreach (var file in request.Attachments)
                     {

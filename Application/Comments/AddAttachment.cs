@@ -39,6 +39,10 @@ namespace Application.Comments
             private readonly IUserAccessor _userAccessor;
             private readonly IConfiguration _config;
 
+            private static readonly HashSet<string> AllowedExtensions = new(StringComparer.OrdinalIgnoreCase)
+                { ".jpg", ".jpeg", ".png", ".gif", ".webp", ".pdf", ".txt", ".doc", ".docx", ".xls", ".xlsx", ".zip" };
+            private const long MaxFileSizeBytes = 10 * 1024 * 1024;
+
             public Handler(DataContext context, IUserAccessor userAccessor, IConfiguration config)
             {
                 _context = context;
@@ -49,7 +53,13 @@ namespace Application.Comments
             public async Task<Result<CommentAttachmentDto>> Handle(Command request, CancellationToken cancellationToken)
             {
                 var userId = _userAccessor.GetUserId();
-                
+
+                if (request.File.Length > MaxFileSizeBytes)
+                    return Result<CommentAttachmentDto>.Failure($"'{request.File.FileName}' exceeds the 10 MB size limit.");
+                var ext = Path.GetExtension(request.File.FileName);
+                if (string.IsNullOrEmpty(ext) || !AllowedExtensions.Contains(ext))
+                    return Result<CommentAttachmentDto>.Failure($"File type '{ext}' is not permitted.");
+
                 var attachment = await CreateAttachmentFromFile(request.File, request.CommentId, userId);
                 
                 if (attachment == null)
