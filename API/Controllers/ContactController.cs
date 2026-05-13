@@ -44,22 +44,22 @@ namespace API.Controllers
                     return BadRequest("Invalid email format");
                 }
 
-                _logger.LogInformation($"Access request received from {request.Email} ({request.Name}) with message: {request.Message}");
-                
+                _logger.LogInformation("Access request received from {Email}", request.Email);
+
                 // Send email notification (only if SMTP is configured)
                 try
                 {
                     await SendAccessRequestEmail(request);
-                    _logger.LogInformation($"Access request received from {request.Email} ({request.Name}) - Email sent successfully");
+                    _logger.LogInformation("Access request from {Email} - email sent successfully", request.Email);
                 }
                 catch (Exception emailEx)
                 {
-                    _logger.LogWarning(emailEx, $"Failed to send email for access request from {request.Email} ({request.Name})");
-                    
-                    
+                    _logger.LogWarning(emailEx, "Failed to send email for access request from {Email}", request.Email);
+
+
                     await LogRequestToFile(request);
-                    
-                    _logger.LogInformation($"Access request received from {request.Email} ({request.Name}) - Email failed but request logged to file");
+
+                    _logger.LogInformation("Access request from {Email} - email failed, request logged to file", request.Email);
                 }
 
                 return Ok(new { message = "Access request sent successfully" });
