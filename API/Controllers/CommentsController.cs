@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using API.Authorization;
 using API.Hubs;
 using MediatR;
 
@@ -34,6 +35,9 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<List<CommentDto>>> GetComments(Guid ticketId)
         {
+            var authResult = await _authorizationService.AuthorizeAsync(User, ticketId, new TicketOperationRequirement(TicketOperation.Read));
+            if (!authResult.Succeeded) return Forbid();
+
             var result = await _mediator.Send(new List { TicketId = ticketId });
             return HandleResult(result);
         }
@@ -41,6 +45,9 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<CommentDto>> GetComment(Guid ticketId, Guid id)
         {
+            var authResult = await _authorizationService.AuthorizeAsync(User, ticketId, new TicketOperationRequirement(TicketOperation.Read));
+            if (!authResult.Succeeded) return Forbid();
+
             var comment = await _mediator.Send(new Application.Comments.CommentDetailsQuery { TicketId = ticketId, Id = id });
             return HandleResult(comment);
         }
@@ -110,6 +117,9 @@ namespace API.Controllers
         [HttpGet("{commentId}/attachments/{attachmentId}/download")]
         public async Task<IActionResult> GetAttachment(Guid ticketId, Guid commentId, Guid attachmentId)
         {
+            var authResult = await _authorizationService.AuthorizeAsync(User, ticketId, new TicketOperationRequirement(TicketOperation.Read));
+            if (!authResult.Succeeded) return Forbid();
+
             var attachmentResult = await _mediator.Send(new Application.Comments.Query { TicketId = ticketId, CommentId = commentId, AttachmentId = attachmentId });
             
             if (attachmentResult.Attachment != null && System.IO.File.Exists(attachmentResult.FilePath))

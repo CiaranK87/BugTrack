@@ -34,6 +34,19 @@ namespace API.Authorization
                 return;
             }
 
+            if (context.Resource is Guid ticketId)
+            {
+                var ticketFromDb = await _context.Tickets
+                    .AsNoTracking()
+                    .Where(t => t.Id == ticketId)
+                    .Select(t => new { t.ProjectId, t.Submitter, t.Assigned })
+                    .FirstOrDefaultAsync();
+
+                if (ticketFromDb != null)
+                    await CheckProjectAccessAsync(context, requirement, ticketFromDb.ProjectId, ticketFromDb.Submitter, ticketFromDb.Assigned);
+                return;
+            }
+
             string ticketIdString = null;
             string projectIdString = null;
 
