@@ -101,6 +101,7 @@ namespace API.Authorization
             var currentUserId = _userAccessor.GetUserId();
             if (string.IsNullOrEmpty(currentUserId))
                 return;
+            var currentUsername = _userAccessor.GetUsername();
 
             var participant = await _context.ProjectParticipants
                 .AsNoTracking()
@@ -146,8 +147,8 @@ namespace API.Authorization
                         role == "Owner" ||
                         role == "ProjectManager" ||
                         role == "Developer" ||
-                        (!string.IsNullOrEmpty(ticketSubmitter) && ticketSubmitter == currentUserId) ||
-                        (!string.IsNullOrEmpty(ticketAssigned) && ticketAssigned == currentUserId))
+                        (!string.IsNullOrEmpty(ticketSubmitter) && ticketSubmitter == currentUsername) ||
+                        (!string.IsNullOrEmpty(ticketAssigned) && ticketAssigned == currentUsername))
                     {
                         context.Succeed(requirement);
                     }
