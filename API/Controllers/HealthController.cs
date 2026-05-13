@@ -41,7 +41,7 @@ namespace API.Controllers
                 {
                     status = "Unhealthy",
                     timestamp = DateTime.UtcNow,
-                    error = ex.Message,
+                    error = "Service unavailable",
                     uptime = GetUptime()
                 });
             }
@@ -73,7 +73,7 @@ namespace API.Controllers
                 {
                     status = "Not Ready",
                     timestamp = DateTime.UtcNow,
-                    error = ex.Message,
+                    error = "Service unavailable",
                     checks = new
                     {
                         database = "Unhealthy",
