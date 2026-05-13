@@ -55,6 +55,10 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<CommentDto>> CreateComment(Guid ticketId, [FromForm] CreateCommentDto commentDto)
         {
+            var authResult = await _authorizationService.AuthorizeAsync(
+                User, ticketId, new TicketOperationRequirement(TicketOperation.Read));
+            if (!authResult.Succeeded) return Forbid();
+
             var result = await _mediator.Send(new Create.Command {
                 TicketId = ticketId,
                 Content = commentDto.Content,
@@ -74,6 +78,10 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<CommentDto>> UpdateComment(Guid ticketId, Guid id, UpdateCommentDto commentDto)
         {
+            var authResult = await _authorizationService.AuthorizeAsync(
+                User, ticketId, new TicketOperationRequirement(TicketOperation.Read));
+            if (!authResult.Succeeded) return Forbid();
+
             var result = await _mediator.Send(new Update.Command { TicketId = ticketId, Id = id, Content = commentDto.Content });
             
             if (result.IsSuccess)
@@ -88,6 +96,10 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteComment(Guid ticketId, Guid id)
         {
+            var authResult = await _authorizationService.AuthorizeAsync(
+                User, ticketId, new TicketOperationRequirement(TicketOperation.Read));
+            if (!authResult.Succeeded) return Forbid();
+
             var result = await _mediator.Send(new Delete.Command { TicketId = ticketId, Id = id });
             
             if (result.IsSuccess)
