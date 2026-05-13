@@ -115,7 +115,7 @@ namespace API.Controllers
             if (attachmentResult.Attachment != null && System.IO.File.Exists(attachmentResult.FilePath))
             {
                 var fileBytes = await System.IO.File.ReadAllBytesAsync(attachmentResult.FilePath);
-                return File(fileBytes, attachmentResult.Attachment.ContentType, attachmentResult.Attachment.OriginalFileName);
+                return File(fileBytes, "application/octet-stream", attachmentResult.Attachment.OriginalFileName);
             }
             
             return NotFound();
