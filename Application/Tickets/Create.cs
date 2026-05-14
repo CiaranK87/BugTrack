@@ -1,4 +1,6 @@
 using Application.Core;
+using Application.DTOs;
+using Application.Interfaces;
 using Domain;
 using FluentValidation;
 using MediatR;
@@ -11,47 +13,77 @@ namespace Application.Tickets
     {
         public class Command : IRequest<Result<Unit>>
         {
-            public Ticket Ticket { get; set; }
+            public CreateTicketDto TicketDto { get; set; }
         }
 
         public class CommandValidator : AbstractValidator<Command>
         {
             public CommandValidator()
             {
-                RuleFor(x => x.Ticket).SetValidator(new TicketValidator());
+                RuleFor(x => x.TicketDto.Title).NotEmpty();
+                RuleFor(x => x.TicketDto.Description).NotEmpty();
+                RuleFor(x => x.TicketDto.Assigned).NotEmpty();
+                RuleFor(x => x.TicketDto.Priority).NotEmpty();
+                RuleFor(x => x.TicketDto.Severity).NotEmpty();
+                RuleFor(x => x.TicketDto.StartDate).NotEmpty();
+                RuleFor(x => x.TicketDto.ProjectId).NotEmpty();
             }
         }
 
         public class Handler : IRequestHandler<Command, Result<Unit>>
         {
             private readonly DataContext _context;
+            private readonly IUserAccessor _userAccessor;
 
-            public Handler(DataContext context)
+            public Handler(DataContext context, IUserAccessor userAccessor)
             {
                 _context = context;
+                _userAccessor = userAccessor;
             }
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
-                request.Ticket.CreatedAt = DateTime.UtcNow;
-                request.Ticket.Updated = DateTime.UtcNow;
-                _context.Tickets.Add(request.Ticket);
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(x => x.UserName == _userAccessor.GetUsername(), cancellationToken);
 
-                if (!string.IsNullOrEmpty(request.Ticket.Assigned))
+                if (user == null) return Result<Unit>.Failure("User not found");
+
+                var ticket = new Ticket
+                {
+                    Title = request.TicketDto.Title,
+                    Description = request.TicketDto.Description,
+                    Assigned = request.TicketDto.Assigned,
+                    Priority = request.TicketDto.Priority,
+                    Severity = request.TicketDto.Severity,
+                    StartDate = request.TicketDto.StartDate ?? DateTime.UtcNow,
+                    EndDate = request.TicketDto.EndDate ?? DateTime.UtcNow,
+                    ProjectId = request.TicketDto.ProjectId,
+                    Submitter = user.UserName,
+                    Status = "Open",
+                    IsDeleted = false,
+                    DeletedDate = null,
+                    ClosedDate = null,
+                    CreatedAt = DateTime.UtcNow,
+                    Updated = DateTime.UtcNow
+                };
+
+                _context.Tickets.Add(ticket);
+
+                if (!string.IsNullOrEmpty(ticket.Assigned))
                 {
                     var assignedUser = await _context.Users
-                        .FirstOrDefaultAsync(u => u.UserName == request.Ticket.Assigned, cancellationToken);
-                    
+                        .FirstOrDefaultAsync(u => u.UserName == ticket.Assigned, cancellationToken);
+
                     if (assignedUser != null)
                     {
                         var existingParticipant = await _context.ProjectParticipants
-                            .FirstOrDefaultAsync(pp => pp.ProjectId == request.Ticket.ProjectId && pp.AppUserId == assignedUser.Id, cancellationToken);
-                        
+                            .FirstOrDefaultAsync(pp => pp.ProjectId == ticket.ProjectId && pp.AppUserId == assignedUser.Id, cancellationToken);
+
                         if (existingParticipant == null)
                         {
                             var participant = new ProjectParticipant
                             {
-                                ProjectId = request.Ticket.ProjectId,
+                                ProjectId = ticket.ProjectId,
                                 AppUserId = assignedUser.Id,
                                 IsOwner = false,
                                 Role = "User"
@@ -61,7 +93,7 @@ namespace Application.Tickets
                     }
                 }
 
-                var success = await _context.SaveChangesAsync() > 0;
+                var success = await _context.SaveChangesAsync(cancellationToken) > 0;
                 return success ? Result<Unit>.Success(Unit.Value)
                                : Result<Unit>.Failure("Failed to create ticket");
             }
