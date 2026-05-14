@@ -1,4 +1,5 @@
 using Application.Core;
+using Application.DTOs;
 using Application.Tickets;
 using Application.Interfaces;
 using AutoMapper;
@@ -117,15 +118,14 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateTicket([FromBody] TicketDto ticketDto)
+        public async Task<IActionResult> CreateTicket([FromBody] CreateTicketDto ticketDto)
         {
             var authorized = await _authorizationService.AuthorizeAsync(User, ticketDto.ProjectId, "ProjectContributor");
 
             if (!authorized.Succeeded)
                 return Forbid();
 
-            var ticket = _mapper.Map<Ticket>(ticketDto);
-            return HandleResult(await _mediator.Send(new Create.Command { Ticket = ticket }));
+            return HandleResult(await _mediator.Send(new Create.Command { TicketDto = ticketDto }));
         }
 
         [HttpPut("{id}")]
