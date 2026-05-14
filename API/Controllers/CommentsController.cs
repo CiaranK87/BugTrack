@@ -149,6 +149,9 @@ namespace API.Controllers
         [HttpDelete("{commentId}/attachments/{attachmentId}")]
         public async Task<IActionResult> DeleteAttachment(Guid ticketId, Guid commentId, Guid attachmentId)
         {
+            var authResult = await _authorizationService.AuthorizeAsync(User, ticketId, new TicketOperationRequirement(TicketOperation.Read));
+            if (!authResult.Succeeded) return Forbid();
+
             var result = await _mediator.Send(new DeleteAttachment.Command { TicketId = ticketId, CommentId = commentId, AttachmentId = attachmentId });
             
             if (result.IsSuccess)

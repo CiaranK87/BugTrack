@@ -32,7 +32,10 @@ namespace Application.Comments
         public async Task<(CommentAttachmentDto Attachment, string FilePath)> Handle(Query request, CancellationToken cancellationToken)
         {
             var attachment = await _context.CommentAttachments
-                .Where(ca => ca.CommentId == request.CommentId && ca.Id == request.AttachmentId)
+                .Include(ca => ca.Comment)
+                .Where(ca => ca.Comment.TicketId == request.TicketId
+                          && ca.CommentId == request.CommentId
+                          && ca.Id == request.AttachmentId)
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (attachment == null)
