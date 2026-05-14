@@ -26,7 +26,7 @@ namespace API.Controllers
 
         [Authorize]
         [HttpPut]
-        public async Task<IActionResult> UpdateProfile(ProfileDto profileDto)
+        public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto profileDto)
         {
             return HandleResult(await Mediator.Send(new UpdateProfile.Command { ProfileDto = profileDto }));
         }
