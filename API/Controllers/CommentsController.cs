@@ -115,6 +115,9 @@ namespace API.Controllers
         [HttpPost("{commentId}/attachments")]
         public async Task<ActionResult<CommentAttachmentDto>> AddAttachment(Guid ticketId, Guid commentId, [FromForm] IFormFile file)
         {
+            var authResult = await _authorizationService.AuthorizeAsync(User, ticketId, new TicketOperationRequirement(TicketOperation.Read));
+            if (!authResult.Succeeded) return Forbid();
+
             var result = await _mediator.Send(new AddAttachment.Command { CommentId = commentId, File = file });
             
             if (result.IsSuccess)
