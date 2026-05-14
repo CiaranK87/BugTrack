@@ -11,7 +11,7 @@ namespace Application.Profiles
     {
         public class Command : IRequest<Result<Unit>>
         {
-            public ProfileDto ProfileDto { get; set; }
+            public UpdateProfileDto ProfileDto { get; set; }
         }
 
         public class Handler : IRequestHandler<Command, Result<Unit>>
