@@ -162,18 +162,6 @@ namespace API.Controllers
             return HandleResult(await Mediator.Send(new ToggleCancel.Command { Id = projectId }));
         }
 
-        [Authorize]
-        [HttpPost("{projectId}/participate")]
-        public async Task<IActionResult> AddParticipant(Guid projectId)
-        {
-            var projectResult = await Mediator.Send(new Details.Query { Id = projectId });
-            if (!projectResult.IsSuccess) return HandleResult(projectResult);
-
-            var authorized = await _authorizationService.AuthorizeAsync(User, projectId.ToString(), "ProjectOwnerOrManager");
-            if (!authorized.Succeeded) return Forbid();
-
-            return HandleResult(await Mediator.Send(new UpdateParticipants.Command { Id = projectId }));
-        }
 
         [Authorize]
         [HttpGet("{projectId}/role")]

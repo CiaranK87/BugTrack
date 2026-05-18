@@ -132,7 +132,6 @@ const Projects = {
   adminDelete: (id: string) => requests.del<void>(`/projects/${id}/admin-delete`),
   listDeleted: () => requests.get<Project[]>("/projects/admin/deleted"),
   restore: (id: string) => requests.put<void>(`/projects/${id}/restore`, {}),
-  participate: (id: string) => requests.post<void>(`/projects/${id}/participate`, {}),
   cancelToggle: (id: string) => requests.post<void>(`/projects/${id}/cancel`, {}),
   getUserProjects: (username: string) => requests.get<Project[]>(`/profiles/${username}/projects`),
   getUserRole: (projectId: string) => requests.get<string>(`/projects/${projectId}/role`),

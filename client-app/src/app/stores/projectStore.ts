@@ -296,29 +296,6 @@ export default class ProjectStore {
     }
   };
 
-  updateParticipants = async () => {
-    const user = store.userStore.user;
-    this.loading = true;
-
-    try {
-      await agent.Projects.participate(this.selectedProject!.id);
-      runInAction(() => {
-        if (this.selectedProject?.isParticipant) {
-          this.selectedProject.participants = this.selectedProject.participants?.filter((p) => p.username !== user?.username);
-          this.selectedProject.isParticipant = false;
-        } else {
-          const attendee = new Profile(user!);
-          this.selectedProject?.participants?.push(attendee);
-          this.selectedProject!.isParticipant = true;
-        }
-        this.projectRegistry.set(this.selectedProject!.id, this.selectedProject!);
-      });
-    } catch (error) {
-      logger.error("Failed to update participants", error);
-    } finally {
-      runInAction(() => (this.loading = false));
-    }
-  };
 
   addProjectParticipant = async (projectId: string, participants: AddParticipantDto) => {
     this.submittingParticipant = true;
