@@ -11,7 +11,7 @@ namespace Application.Projects
 {
     public class Create
     {
-        public class Command : IRequest<Result<Unit>>
+        public class Command : IRequest<Result<Guid>>
         {
             public CreateProjectDto ProjectDto { get; set; }
         }
@@ -26,7 +26,7 @@ namespace Application.Projects
             }
         }
 
-        public class Handler : IRequestHandler<Command, Result<Unit>>
+        public class Handler : IRequestHandler<Command, Result<Guid>>
         {
             private readonly DataContext _context;
             private readonly IUserAccessor _userAccessor;
@@ -37,7 +37,7 @@ namespace Application.Projects
                 _context = context;
             }
 
-            public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Result<Guid>> Handle(Command request, CancellationToken cancellationToken)
             {
                 var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == _userAccessor.GetUsername());
 
@@ -69,9 +69,9 @@ namespace Application.Projects
 
                 var result = await _context.SaveChangesAsync() > 0;
 
-                if (!result) return Result<Unit>.Failure("Failed to create project");
+                if (!result) return Result<Guid>.Failure("Failed to create project");
 
-                return Result<Unit>.Success(Unit.Value);
+                return Result<Guid>.Success(project.Id);
             }
         }
     }

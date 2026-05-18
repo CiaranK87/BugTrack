@@ -11,7 +11,7 @@ namespace Application.Tickets
 {
     public class Create
     {
-        public class Command : IRequest<Result<Unit>>
+        public class Command : IRequest<Result<Guid>>
         {
             public CreateTicketDto TicketDto { get; set; }
         }
@@ -30,7 +30,7 @@ namespace Application.Tickets
             }
         }
 
-        public class Handler : IRequestHandler<Command, Result<Unit>>
+        public class Handler : IRequestHandler<Command, Result<Guid>>
         {
             private readonly DataContext _context;
             private readonly IUserAccessor _userAccessor;
@@ -41,12 +41,12 @@ namespace Application.Tickets
                 _userAccessor = userAccessor;
             }
 
-            public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Result<Guid>> Handle(Command request, CancellationToken cancellationToken)
             {
                 var user = await _context.Users
                     .FirstOrDefaultAsync(x => x.UserName == _userAccessor.GetUsername(), cancellationToken);
 
-                if (user == null) return Result<Unit>.Failure("User not found");
+                if (user == null) return Result<Guid>.Failure("User not found");
 
                 var ticket = new Ticket
                 {
@@ -94,8 +94,8 @@ namespace Application.Tickets
                 }
 
                 var success = await _context.SaveChangesAsync(cancellationToken) > 0;
-                return success ? Result<Unit>.Success(Unit.Value)
-                               : Result<Unit>.Failure("Failed to create ticket");
+                return success ? Result<Guid>.Success(ticket.Id)
+                               : Result<Guid>.Failure("Failed to create ticket");
             }
         }
     }

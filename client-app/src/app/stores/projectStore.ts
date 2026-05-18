@@ -1,7 +1,6 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import { AddParticipantDto, Project, ProjectFormValues, ProjectParticipantDto, UpdateRoleDto } from "../models/project";
 import agent from "../api/agent";
-import { v4 as uuid } from "uuid";
 import { store } from "./store";
 import { Profile } from "../models/profile";
 import { router } from "../router/Routes";
@@ -154,10 +153,9 @@ export default class ProjectStore {
   createProject = async (project: ProjectFormValues) => {
     const user = store.userStore.user;
     const participant = new Profile(user!);
-    project.id = uuid();
     try {
-      await agent.Projects.create(project);
-      const newProject = new Project(project);
+      const id = await agent.Projects.create(project);
+      const newProject = new Project({ ...project, id });
       newProject.ownerUsername = user!.username;
       newProject.participants = [participant];
       this.setProject(newProject);

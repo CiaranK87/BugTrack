@@ -1,7 +1,6 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import { Ticket } from "../models/ticket";
 import agent from "../api/agent";
-import { v4 as uuid } from "uuid";
 import { priorityOptions } from "../common/options/priorityOptions";
 import { severityOptions } from "../common/options/severityOptions";
 import { statusOptions } from "../common/options/statusOptions";
@@ -144,18 +143,17 @@ private setTicket = (ticket: Ticket) => {
   
   createTicket = async (ticket: Ticket) => {
     this.loading = true;
-    ticket.id = uuid();
-
     try {
-      await agent.Tickets.create(ticket);
+      const id = await agent.Tickets.create(ticket);
       runInAction(() => {
-        this.ticketRegistry.set(ticket.id, ticket);
-        this.selectedTicket = ticket;
+        const created = { ...ticket, id };
+        this.ticketRegistry.set(id, created);
+        this.selectedTicket = created;
         this.editMode = false;
         this.loading = false;
       });
     } catch (error) {
-      logger.error("Failed to update ticket", error);
+      logger.error("Failed to create ticket", error);
       runInAction(() => {
         this.loading = false;
       });

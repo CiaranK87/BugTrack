@@ -12,7 +12,6 @@ import MyTextArea from "../../../app/common/form/MyTextArea";
 import MySelectInput from "../../../app/common/form/MySelectInput";
 import { priorityOptions } from "../../../app/common/options/priorityOptions";
 import MyDateInput from "../../../app/common/form/MyDateInput";
-import { v4 as uuid } from "uuid";
 import { severityOptions } from "../../../app/common/options/severityOptions";
 import { logger } from "../../../app/utils/logger";
 
@@ -89,7 +88,7 @@ export default observer(function TicketForm() {
     if (!ticket.id) {
       const newTicket = {
         ...ticket,
-        id: uuid(),
+        id: "",
         submitter: user!.username,
         projectId: projectId!,
         status: "Open",

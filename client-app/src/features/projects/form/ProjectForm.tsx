@@ -10,7 +10,6 @@ import * as Yup from "yup";
 import MyTextInput from "../../../app/common/form/MyTextInput";
 import MyTextArea from "../../../app/common/form/MyTextArea";
 import MyDateInput from "../../../app/common/form/MyDateInput";
-import { v4 as uuid } from "uuid";
 import { logger } from "../../../app/utils/logger";
 import { toast } from "react-toastify";
 
@@ -39,14 +38,10 @@ export default observer(function ProjectForm() {
       project.startDate = utcNoon;
     }
     if (!project.id) {
-      const newProject = {
-        ...project,
-        id: uuid(),
-      };
-      createProject(newProject)
+      createProject(project)
         .then(() => {
           toast.success("Project created successfully");
-          navigate(`/projects/${newProject.id}`);
+          navigate(`/projects/${projectStore.selectedProject!.id}`);
         })
         .catch(error => {
           logger.error("Failed to create project", error);
