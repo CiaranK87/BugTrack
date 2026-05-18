@@ -246,15 +246,19 @@ export default class ProjectStore {
   };
 
   cancelProjectToggle = async () => {
+    const originalCancelState = this.selectedProject!.isCancelled;
     this.loading = true;
+    this.selectedProject!.isCancelled = !originalCancelState;
     try {
-      await agent.Projects.participate(this.selectedProject!.id);
+      await agent.Projects.cancelToggle(this.selectedProject!.id);
       runInAction(() => {
-        this.selectedProject!.isCancelled = !this.selectedProject?.isCancelled;
         this.projectRegistry.set(this.selectedProject!.id, this.selectedProject!);
       });
     } catch (error) {
-      logger.error("Failed to toggle project participation", error);
+      runInAction(() => {
+        this.selectedProject!.isCancelled = originalCancelState;
+      });
+      logger.error("Failed to toggle project cancel state", error);
     } finally {
       runInAction(() => (this.loading = false));
     }

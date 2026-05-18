@@ -58,7 +58,7 @@ export default observer(function ProjectDetailedHeader({ project }: Props) {
                       text='Manage Project'
                       disabled={project.isCancelled}
                     />
-                    {(project.isOwner || isAdmin) && (
+                    {project.isOwner && (
                       <Dropdown.Item
                         icon={project.isCancelled ? 'play' : 'stop'}
                         text={project.isCancelled ? 'Reopen Project' : 'Cancel Project'}
@@ -77,7 +77,7 @@ export default observer(function ProjectDetailedHeader({ project }: Props) {
       <Segment clearing attached="bottom" className="tablet-desktop-only">
         {(project.isOwner || currentUserCanManage || isAdmin) && (
           <>
-            {(project.isOwner || isAdmin) && (
+            {project.isOwner && (
               <Button
                 color={project.isCancelled ? "green" : "red"}
                 floated="left"

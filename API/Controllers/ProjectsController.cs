@@ -149,6 +149,20 @@ namespace API.Controllers
         }
 
         [Authorize]
+        [HttpPost("{projectId}/cancel")]
+        public async Task<IActionResult> ToggleCancel(Guid projectId)
+        {
+            var userId = _userAccessor.GetUserId();
+
+            var isOwner = await _context.ProjectParticipants
+                .AnyAsync(pp => pp.ProjectId == projectId && pp.AppUserId == userId && pp.IsOwner);
+
+            if (!isOwner) return Forbid();
+
+            return HandleResult(await Mediator.Send(new ToggleCancel.Command { Id = projectId }));
+        }
+
+        [Authorize]
         [HttpPost("{projectId}/participate")]
         public async Task<IActionResult> AddParticipant(Guid projectId)
         {
