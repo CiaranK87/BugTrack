@@ -1,4 +1,5 @@
 import { makeAutoObservable, runInAction } from "mobx";
+import { AxiosError } from "axios";
 import { Ticket } from "../models/ticket";
 import agent from "../api/agent";
 import { priorityOptions } from "../common/options/priorityOptions";
@@ -15,6 +16,7 @@ export default class TicketStore {
   editMode = false;
   loading = false;
   loadingInitial = false;
+  ticketError: string | null = null;
 
   constructor() {
     makeAutoObservable(this);
@@ -56,20 +58,34 @@ export default class TicketStore {
     if (ticket) {
       this.selectedTicket = ticket;
       return ticket;
-    } else {
-      this.setLoadingInitial(true);
-      try {
-        ticket = await agent.Tickets.details(id);
-        this.setTicket(ticket);
-        runInAction(() => {
-          this.selectedTicket = ticket;
-        });
+    }
+
+    if (this.loadingTicketIds.has(id)) return;
+
+    this.loadingTicketIds.add(id);
+    this.ticketError = null;
+    this.setLoadingInitial(true);
+
+    try {
+      ticket = await agent.Tickets.details(id);
+      this.setTicket(ticket);
+      runInAction(() => {
+        this.selectedTicket = ticket;
+      });
+      return ticket;
+    } catch (error) {
+      logger.error("Failed to load ticket", error);
+      const status = (error as AxiosError).response?.status;
+      runInAction(() => {
+        this.ticketError = status === 403
+          ? "You don't have permission to view this ticket."
+          : "Failed to load ticket.";
+      });
+    } finally {
+      runInAction(() => {
         this.setLoadingInitial(false);
-        return ticket;
-      } catch (error) {
-        logger.error("Failed to load ticket", error);
-        this.setLoadingInitial(false);
-      }
+        this.loadingTicketIds.delete(id);
+      });
     }
   };
   
@@ -132,6 +148,7 @@ private setTicket = (ticket: Ticket) => {
   };
 
   private loadingProjectIds = new Set<string>();
+  private loadingTicketIds = new Set<string>();
   
   getProjectTickets = (projectId: string) => {
     return this.projectTickets.get(projectId) || [];
@@ -280,5 +297,7 @@ private setTicket = (ticket: Ticket) => {
     this.loading = false;
     this.loadingInitial = false;
     this.loadingProjectIds.clear();
+    this.ticketError = null;
+    this.loadingTicketIds.clear();
   }
 }

@@ -1,8 +1,8 @@
-import { Grid, Segment, Header } from "semantic-ui-react";
+import { Grid, Segment, Header, Button, Icon } from "semantic-ui-react";
 import { useStore } from "../../../app/stores/store";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
 import { observer } from "mobx-react-lite";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import TicketDetailedHeader from "./TicketDetailedHeader";
 import TicketDetailedInfo from "./TicketDetailedInfo";
@@ -10,8 +10,9 @@ import TicketComments from "../components/TicketComments";
 
 export default observer(function TicketDetails() {
   const { ticketStore, projectStore } = useStore();
-  const { selectedTicket: ticket, loadTicket, loadingInitial } = ticketStore;
+  const { selectedTicket: ticket, loadTicket, loadingInitial, ticketError } = ticketStore;
   const { id } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (id) {
@@ -24,7 +25,21 @@ export default observer(function TicketDetails() {
     }
   }, [id, loadTicket, projectStore]);
 
-  if (loadingInitial || !ticket) return <LoadingComponent />;
+  if (loadingInitial) return <LoadingComponent />;
+
+  if (ticketError) return (
+    <Segment placeholder>
+      <Header icon>
+        <Icon name='ban' />
+        {ticketError}
+      </Header>
+      <Segment.Inline>
+        <Button onClick={() => navigate(-1)}>Go Back</Button>
+      </Segment.Inline>
+    </Segment>
+  );
+
+  if (!ticket) return <LoadingComponent />;
 
   return (
     <Grid stretched className="ticket-details-container">
