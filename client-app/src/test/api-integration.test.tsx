@@ -98,7 +98,7 @@ describe('API Integration Tests (Mocked)', () => {
       ownerUsername: 'owner'
     };
 
-    vi.mocked(agent.Projects.create).mockResolvedValue(undefined);
+    vi.mocked(agent.Projects.create).mockResolvedValue('new-project-id');
 
     await agent.Projects.create(newProject as any);
 
@@ -133,7 +133,7 @@ describe('API Integration Tests (Mocked)', () => {
       created: new Date()
     };
 
-    vi.mocked(agent.Tickets.create).mockResolvedValue(undefined);
+    vi.mocked(agent.Tickets.create).mockResolvedValue('new-ticket-id');
 
     await agent.Tickets.create(newTicket as any);
 
