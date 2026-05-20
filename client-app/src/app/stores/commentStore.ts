@@ -3,6 +3,7 @@ import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import * as signalR from '@microsoft/signalr';
 import { Comment, CommentAttachment } from '../models/comment';
 import { logger } from '../utils/logger';
+import agent from '../api/agent';
 
 export default class CommentStore {
   comments: Comment[] = [];
@@ -168,25 +169,7 @@ export default class CommentStore {
 
   loadComments = async (ticketId: string) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/tickets/${ticketId}/comments`, {
-        credentials: 'include',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('jwt')}`
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to load comments: ${response.status} ${response.statusText}`);
-      }
-
-      const contentType = response.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/json')) {
-        const text = await response.text();
-        logger.error('Non-JSON response', text);
-        throw new Error('Server returned non-JSON response');
-      }
-
-      const comments = await response.json() as Comment[];
+      const comments = await agent.Comments.list(ticketId);
       runInAction(() => {
         const commentsWithDownloadUrls = comments.map(comment => ({
           ...comment,
@@ -198,7 +181,7 @@ export default class CommentStore {
             new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
           ) : []
         }));
-        
+
         this.comments = commentsWithDownloadUrls.sort((a, b) =>
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
@@ -219,25 +202,11 @@ export default class CommentStore {
         formData.append('parentCommentId', parentCommentId);
       }
 
-      if (attachments && attachments.length > 0) {
-        for (let i = 0; i < attachments.length; i++) {
-          formData.append('attachments', attachments[i]);
-        }
+      for (const file of attachments) {
+        formData.append('attachments', file);
       }
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/tickets/${ticketId}/comments`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('jwt')}`
-        },
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to create comment');
-      }
-
+      await agent.Comments.create(ticketId, formData);
       runInAction(() => {
         this.loading = false;
       });
@@ -252,21 +221,7 @@ export default class CommentStore {
 
   updateComment = async (ticketId: string, commentId: string, content: string) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/tickets/${ticketId}/comments/${commentId}`, {
-        method: 'PUT',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('jwt')}`
-        },
-        body: JSON.stringify({ content }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update comment');
-      }
-
-      const updatedComment = await response.json() as Comment;
+      const updatedComment = await agent.Comments.update(ticketId, commentId, content);
       runInAction(() => {
         const index = this.comments.findIndex(c => c.id === commentId);
         if (index !== -1) {
@@ -281,37 +236,21 @@ export default class CommentStore {
 
   deleteComment = async (ticketId: string, commentId: string) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/tickets/${ticketId}/comments/${commentId}`, {
-        method: 'DELETE',
-        credentials: 'include',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('jwt')}`
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to delete comment');
-      }
-
+      await agent.Comments.delete(ticketId, commentId);
       runInAction(() => {
         const topLevelIndex = this.comments.findIndex(c => c.id === commentId);
         if (topLevelIndex !== -1) {
           this.comments = this.comments.filter(c => c.id !== commentId);
         } else {
-          const updatedComments = this.comments.map(comment => {
+          this.comments = this.comments.map(comment => {
             if (comment.replies) {
               const updatedReplies = comment.replies.filter(reply => reply.id !== commentId);
               if (updatedReplies.length !== comment.replies.length) {
-                return {
-                  ...comment,
-                  replies: updatedReplies
-                };
+                return { ...comment, replies: updatedReplies };
               }
             }
             return comment;
           });
-          
-          this.comments = updatedComments;
         }
       });
     } catch (error) {
@@ -325,20 +264,7 @@ export default class CommentStore {
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/tickets/${ticketId}/comments/${commentId}/attachments`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('jwt')}`
-        },
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to add attachment');
-      }
-
-      const newAttachment = await response.json() as CommentAttachment;
+      const newAttachment = await agent.Comments.addAttachment(ticketId, commentId, formData);
       runInAction(() => {
         const commentIndex = this.comments.findIndex(c => c.id === commentId);
         if (commentIndex !== -1) {
@@ -360,18 +286,7 @@ export default class CommentStore {
 
   deleteAttachment = async (ticketId: string, commentId: string, attachmentId: string) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/tickets/${ticketId}/comments/${commentId}/attachments/${attachmentId}`, {
-        method: 'DELETE',
-        credentials: 'include',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('jwt')}`
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to delete attachment');
-      }
-
+      await agent.Comments.deleteAttachment(ticketId, commentId, attachmentId);
       runInAction(() => {
         const commentIndex = this.comments.findIndex(c => c.id === commentId);
         if (commentIndex !== -1) {
@@ -390,28 +305,13 @@ export default class CommentStore {
 
   downloadAttachment = async (ticketId: string, commentId: string, attachmentId: string, fileName: string) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/tickets/${ticketId}/comments/${commentId}/attachments/${attachmentId}/download`, {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('jwt')}`
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to download attachment: ${response.status} ${response.statusText}`);
-      }
-
-      const blob = await response.blob();
-      
+      const blob = await agent.Comments.downloadBlob(ticketId, commentId, attachmentId);
       const url = window.URL.createObjectURL(blob);
-      
       const link = document.createElement('a');
       link.href = url;
       link.download = fileName;
       document.body.appendChild(link);
       link.click();
-      
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (error) {

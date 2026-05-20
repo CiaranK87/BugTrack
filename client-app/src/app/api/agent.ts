@@ -7,6 +7,7 @@ import { User, UserFormValues, UserDto, UserSearchDto } from "../models/user";
 import { Ticket } from "../models/ticket";
 import { Profile } from "../models/profile";
 import { Notification } from "../models/notification";
+import { Comment, CommentAttachment } from "../models/comment";
 
 const sleep = (delay: number) => {
   return new Promise((resolve) => {
@@ -121,6 +122,8 @@ const requests = {
   post: <T>(url: string, body: object) => axios.post<T>(url, body).then(responseBody),
   put: <T>(url: string, body: object) => axios.put<T>(url, body).then(responseBody),
   del: <T>(url: string) => axios.delete<T>(url).then(responseBody),
+  postForm: <T>(url: string, data: FormData) => axios.post<T>(url, data).then(responseBody),
+  getBlob: (url: string) => axios.get(url, { responseType: 'blob' }).then(r => r.data as Blob),
 };
 
 const Projects = {
@@ -175,6 +178,16 @@ const Users = {
   delete: (userId: string) => requests.del<void>(`/users/${userId}`),
 };
 
+const Comments = {
+  list: (ticketId: string) => requests.get<Comment[]>(`/tickets/${ticketId}/comments`),
+  create: (ticketId: string, data: FormData) => requests.postForm<Comment>(`/tickets/${ticketId}/comments`, data),
+  update: (ticketId: string, id: string, content: string) => requests.put<Comment>(`/tickets/${ticketId}/comments/${id}`, { content }),
+  delete: (ticketId: string, id: string) => requests.del<void>(`/tickets/${ticketId}/comments/${id}`),
+  addAttachment: (ticketId: string, commentId: string, data: FormData) => requests.postForm<CommentAttachment>(`/tickets/${ticketId}/comments/${commentId}/attachments`, data),
+  deleteAttachment: (ticketId: string, commentId: string, attachmentId: string) => requests.del<void>(`/tickets/${ticketId}/comments/${commentId}/attachments/${attachmentId}`),
+  downloadBlob: (ticketId: string, commentId: string, attachmentId: string) => requests.getBlob(`/tickets/${ticketId}/comments/${commentId}/attachments/${attachmentId}/download`),
+};
+
 const Notifications = {
   list: () => requests.get<Notification[]>("/notifications"),
   getUnreadCount: () => requests.get<number>("/notifications/unread-count"),
@@ -188,6 +201,7 @@ const agent = {
   Projects,
   Account,
   Tickets,
+  Comments,
   Profiles,
   Users,
   Notifications,

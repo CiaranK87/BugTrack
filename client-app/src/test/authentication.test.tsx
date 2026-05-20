@@ -147,7 +147,7 @@ describe('Authentication Flow', () => {
       closeForm: vi.fn(),
       addAttachment: vi.fn(),
       deleteAttachment: vi.fn(),
-      getAttachment: vi.fn(),
+      downloadAttachment: vi.fn(),
       clear: vi.fn(),
     },
     ...overrides

@@ -14,13 +14,6 @@ const CommentList: React.FC<Props> = observer(({ ticketId }) => {
   const { commentStore, userStore } = useStore();
 
   useEffect(() => {
-    if (ticketId) {
-      commentStore.setCurrentTicketId(ticketId);
-      commentStore.loadComments(ticketId);
-    }
-  }, [ticketId]);
-
-  useEffect(() => {
     const handleCloseReplyForm = (event: CustomEvent) => {
       if (event.detail.commentId) {
         setReplyingTo(null);

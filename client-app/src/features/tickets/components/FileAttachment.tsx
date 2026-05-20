@@ -1,7 +1,7 @@
 import { Icon, Label, Button, Modal, Image } from 'semantic-ui-react';
 import { useState, useEffect } from 'react';
 import { CommentAttachment } from '../../../app/models/comment';
-import axios from 'axios';
+import agent from '../../../app/api/agent';
 import { logger } from '../../../app/utils/logger';
 
 interface Props {
@@ -22,55 +22,8 @@ export default function FileAttachment({
   showDeleteButton = false
 }: Props) {
   const [viewModalOpen, setViewModalOpen] = useState(false);
-  const handleDownload = async () => {
-    if (onDownload) {
-      onDownload(attachment.id);
-    } else {
-      logger.debug('Download clicked for attachment', attachment);
-      
-      try {
-        let downloadUrl = attachment.downloadUrl;
-        if (!downloadUrl) {
-          downloadUrl = `/tickets/${ticketId}/comments/${commentId}/attachments/${attachment.id}/download`;
-        } else {
-          if (downloadUrl.startsWith('/api/')) {
-            downloadUrl = downloadUrl.substring(4);
-          }
-        }
-        
-        const response = await axios.get(downloadUrl, {
-          responseType: 'blob',
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('jwt')}`
-          }
-        });
-        
-        const blob = new Blob([response.data], { type: attachment.contentType });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = attachment.originalFileName || attachment.fileName;
-        document.body.appendChild(link);
-        link.click();
-        
-        setTimeout(() => {
-          document.body.removeChild(link);
-          URL.revokeObjectURL(url);
-        }, 100);
-        
-      } catch (error) {
-        logger.error('Failed to download file', error);
-        const link = document.createElement('a');
-        let downloadUrl = attachment.downloadUrl || `http://localhost:5000/api/tickets/${ticketId}/comments/${commentId}/attachments/${attachment.id}/download`;
-        link.href = downloadUrl;
-        link.download = attachment.originalFileName || attachment.fileName;
-        document.body.appendChild(link);
-        link.click();
-        setTimeout(() => {
-          document.body.removeChild(link);
-        }, 100);
-      }
-    }
+  const handleDownload = () => {
+    if (onDownload) onDownload(attachment.id);
   };
 
   const handleDelete = () => {
@@ -271,23 +224,7 @@ function AuthenticatedImage({ attachment, ticketId, commentId }: AuthenticatedIm
         setLoading(true);
         setError('');
         
-        let downloadUrl = attachment.downloadUrl;
-        if (!downloadUrl) {
-          downloadUrl = `/tickets/${ticketId}/comments/${commentId}/attachments/${attachment.id}/download`;
-        } else {
-          if (downloadUrl.startsWith('/api/')) {
-            downloadUrl = downloadUrl.substring(4);
-          }
-        }
-        
-        const response = await axios.get(downloadUrl, {
-          responseType: 'blob',
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('jwt')}`
-          }
-        });
-        
-        const blob = new Blob([response.data], { type: attachment.contentType });
+        const blob = await agent.Comments.downloadBlob(ticketId, commentId, attachment.id);
         const url = URL.createObjectURL(blob);
         setImageUrl(url);
         
