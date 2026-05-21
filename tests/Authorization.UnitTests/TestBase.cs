@@ -198,8 +198,8 @@ public class TestBase : IDisposable
                 Title = "Test Ticket 1",
                 Description = "Test ticket description",
                 ProjectId = projects[0].Id,
-                Submitter = "user4",
-                Assigned = "user5",
+                Submitter = "developer@test.com",
+                Assigned = "user@test.com",
                 Status = "Open",
                 Priority = "Medium",
                 Severity = "Low",
@@ -215,8 +215,8 @@ public class TestBase : IDisposable
                 Title = "Test Ticket 2",
                 Description = "Another test ticket",
                 ProjectId = projects[0].Id,
-                Submitter = "user5",
-                Assigned = "user4",
+                Submitter = "user@test.com",
+                Assigned = "developer@test.com",
                 Status = "In Progress",
                 Priority = "High",
                 Severity = "Medium",
@@ -249,9 +249,10 @@ public class TestBase : IDisposable
         };
 
         var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, "Test"));
-        
+
         _mockUserAccessor.Setup(x => x.GetUserId()).Returns(userId);
-        
+        _mockUserAccessor.Setup(x => x.GetUsername()).Returns(userName);
+
         return new AuthorizationHandlerContext(requirements.ToList(), principal, resource);
     }
 
@@ -271,6 +272,7 @@ public class TestBase : IDisposable
         var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, "Test"));
         
         _mockUserAccessor.Setup(x => x.GetUserId()).Returns(userId);
+        _mockUserAccessor.Setup(x => x.GetUsername()).Returns(userName);
 
         if (routeData != null && routeData.Any())
         {

@@ -31,8 +31,8 @@ public class TicketAuthorizationHandlerTests : TestBase
 
         var principal = new System.Security.Claims.ClaimsPrincipal(new System.Security.Claims.ClaimsIdentity(claims, "Test"));
         
-        // Set up the mock to return the correct user ID for this test
         _mockUserAccessor.Setup(x => x.GetUserId()).Returns(userId);
+        _mockUserAccessor.Setup(x => x.GetUsername()).Returns(userName);
         
         return principal;
     }
