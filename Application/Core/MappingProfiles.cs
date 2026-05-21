@@ -15,7 +15,9 @@ namespace Application.Core
                 .ForMember(
                     dest => dest.OwnerUsername,
                     opt => opt.MapFrom(src => src.Participants
-                        .FirstOrDefault(x => x.IsOwner)!.AppUser.UserName)
+                        .Where(x => x.IsOwner)
+                        .Select(x => x.AppUser.UserName)
+                        .FirstOrDefault())
                 )
                 .ForMember(
                     dest => dest.TicketCount,
