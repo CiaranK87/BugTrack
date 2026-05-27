@@ -222,56 +222,13 @@ namespace API.Controllers
 
         [HttpDelete("{id}/admin-delete")]
         [Authorize(Policy = "RequireAdminRole")]
-        public async Task<IActionResult> AdminDeleteTicket(Guid id)
-        {
-            var ticketResult = await _mediator.Send(new Details.Query { Id = id });
-            if (ticketResult.Value == null)
-            {
-                return NotFound();
-            }
-            
-            var ticket = ticketResult.Value;
-            
-            if (!ticket.IsDeleted)
-            {
-                return BadRequest("Ticket must be soft deleted first");
-            }
-
-            _context.Tickets.Remove(ticket);
-            var result = await _context.SaveChangesAsync() > 0;
-            
-            if (!result) return BadRequest("Failed to permanently delete ticket");
-            
-            return NoContent();
-        }
+        public async Task<IActionResult> AdminDeleteTicket(Guid id) =>
+            HandleResult(await _mediator.Send(new AdminDelete.Command { Id = id }));
 
         [HttpPut("{id}/restore")]
         [Authorize(Policy = "RequireAdminRole")]
-        public async Task<IActionResult> RestoreTicket(Guid id)
-        {
-            var ticket = await _context.Tickets
-                .Include(t => t.Project)
-                .FirstOrDefaultAsync(t => t.Id == id);
-                
-            if (ticket == null)
-            {
-                return NotFound();
-            }
-            
-            if (!ticket.IsDeleted)
-            {
-                return BadRequest("Ticket is not deleted");
-            }
-
-            ticket.IsDeleted = false;
-            ticket.DeletedDate = null;
-            
-            var result = await _context.SaveChangesAsync() > 0;
-            
-            if (!result) return BadRequest("Failed to restore ticket");
-            
-            return NoContent();
-        }
+        public async Task<IActionResult> RestoreTicket(Guid id) =>
+            HandleResult(await _mediator.Send(new Restore.Command { Id = id }));
 
         private IActionResult HandleResult<T>(Result<T> result)
         {

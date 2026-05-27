@@ -1,199 +1,41 @@
+using Application.DTOs;
+using Application.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Persistence;
-using Application.DTOs;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Identity;
-using Domain;
 
-[ApiController]
-[Route("api/[controller]")]
-public class UsersController : ControllerBase
+namespace API.Controllers
 {
-    private readonly DataContext _context;
-    private readonly UserManager<AppUser> _userManager;
-
-    public UsersController(DataContext context, UserManager<AppUser> userManager)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class UsersController : BaseApiController
     {
-        _userManager = userManager;
-        _context = context;
-    }
-
-    [Authorize(Policy = "CanManageGlobalRoles")]
-    [HttpGet("list")]
-    public async Task<ActionResult<List<UserDto>>> GetUsers()
-    {
-        var users = await _context.Users
-            .Where(u => !u.IsDeleted)
-            .Select(u => new UserDto
-            {
-                Id = u.Id,
-                Username = u.UserName,
-                DisplayName = u.DisplayName,
-                Email = u.Email,
-                GlobalRole = u.GlobalRole ?? "User",
-                JobTitle = u.JobTitle,
-                Bio = u.Bio
-            })
-            .ToListAsync();
-
-        return Ok(users);
-    }
-
-    [Authorize]
-    [HttpGet("search")]
-    public async Task<ActionResult<List<UserSearchDto>>> SearchUsers([FromQuery] string query, [FromQuery] Guid? projectId)
-    {
-        if (string.IsNullOrWhiteSpace(query))
-            return BadRequest("Query is required");
-
-        var users = await _context.Users
-            .Where(u => !u.IsDeleted)
-            .Where(u =>
-                (u.DisplayName != null && u.DisplayName.ToLower().Contains(query.ToLower())) ||
-                u.UserName.ToLower().Contains(query.ToLower())
-            )
-            .Take(20)
-            .ToListAsync();
-
-        var userIds = users.Select(u => u.Id).ToList();
-        var participantUserIds = new HashSet<string>();
-
-        if (projectId.HasValue)
+        public UsersController(IAuthorizationService authorizationService) : base(authorizationService)
         {
-            participantUserIds = (await _context.ProjectParticipants
-                .Where(pp => pp.ProjectId == projectId.Value && userIds.Contains(pp.AppUserId))
-                .Select(pp => pp.AppUserId)
-                .ToListAsync()).ToHashSet();
         }
 
-        var results = users.Select(u => new UserSearchDto
-        {
-            Id = u.Id,
-            Name = u.DisplayName ?? u.UserName,
-            Username = u.UserName,
-            IsParticipant = !projectId.HasValue || 
-                            u.GlobalRole == "Admin" || 
-                            participantUserIds.Contains(u.Id) ||
-                            _context.Projects.Any(p => p.Id == projectId.Value && p.ProjectOwner == u.UserName) ||
-                            _context.Tickets.Any(t => t.ProjectId == projectId.Value && (t.Assigned == u.UserName || t.Submitter == u.UserName))
-        }).ToList();
-        return Ok(results);
-    }
+        [Authorize(Policy = "CanManageGlobalRoles")]
+        [HttpGet("list")]
+        public async Task<IActionResult> GetUsers() =>
+            HandleResult(await Mediator.Send(new List.Query()));
 
-    [Authorize(Policy = "CanManageGlobalRoles")]
-    [HttpPut("{userId}/role")]
-    public async Task<ActionResult<UserDto>> UpdateUserRole(string userId, [FromBody] UpdateRoleDto updateRoleDto)
-    {
-        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var user = await _context.Users.FindAsync(userId);
-        if (user == null)
-            return NotFound("User not found");
+        [Authorize]
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchUsers([FromQuery] string query, [FromQuery] Guid? projectId) =>
+            HandleResult(await Mediator.Send(new Search.Query { SearchQuery = query, ProjectId = projectId }));
 
-        if (user.GlobalRole == "Admin" && user.Id != currentUserId)
-            return Forbid("Admins cannot modify other admins");
+        [Authorize(Policy = "CanManageGlobalRoles")]
+        [HttpPut("{userId}/role")]
+        public async Task<IActionResult> UpdateUserRole(string userId, [FromBody] UpdateRoleDto updateRoleDto) =>
+            HandleResult(await Mediator.Send(new UpdateRole.Command { UserId = userId, Role = updateRoleDto.Role }));
 
-        var validRoles = new[] { "Admin", "ProjectManager", "Developer", "User" };
-        if (!validRoles.Contains(updateRoleDto.Role))
-            return BadRequest("Invalid role");
+        [Authorize(Policy = "CanManageGlobalRoles")]
+        [HttpPut("{userId}")]
+        public async Task<IActionResult> UpdateUser(string userId, [FromBody] UpdateUserDto updateUserDto) =>
+            HandleResult(await Mediator.Send(new Update.Command { UserId = userId, Dto = updateUserDto }));
 
-        if (user.Id == currentUserId && updateRoleDto.Role != "Admin")
-            return BadRequest("Admins cannot demote themselves");
-
-        user.GlobalRole = updateRoleDto.Role;
-        await _context.SaveChangesAsync();
-
-        return Ok(new UserDto
-        {
-            Id = user.Id,
-            Username = user.UserName,
-            DisplayName = user.DisplayName,
-            Email = user.Email,
-            GlobalRole = user.GlobalRole,
-            JobTitle = user.JobTitle,
-            Bio = user.Bio
-        });
-    }
-
-    [Authorize(Policy = "CanManageGlobalRoles")]
-    [HttpPut("{userId}")]
-    public async Task<ActionResult<UserDto>> UpdateUser(string userId, [FromBody] UpdateUserDto updateUserDto)
-    {
-        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var user = await _context.Users.FindAsync(userId);
-        if (user == null)
-            return NotFound("User not found");
-
-        if (user.GlobalRole == "Admin" && user.Id != currentUserId)
-            return Forbid("Admins cannot modify other admins");
-
-        var oldUsername = user.UserName;
-
-        user.DisplayName = updateUserDto.DisplayName ?? user.DisplayName;
-        user.JobTitle = updateUserDto.JobTitle;
-        user.Bio = updateUserDto.Bio;
-        user.UserName = updateUserDto.Username ?? user.UserName;
-
-        if (updateUserDto.Email != null && updateUserDto.Email != user.Email)
-        {
-            var setEmailResult = await _userManager.SetEmailAsync(user, updateUserDto.Email);
-            if (!setEmailResult.Succeeded)
-            {
-                return BadRequest(setEmailResult.Errors);
-            }
-        }
-
-        if (oldUsername != user.UserName)
-        {
-            var ticketsToUpdate = await _context.Tickets
-                .Where(t => t.Submitter == oldUsername || t.Assigned == oldUsername)
-                .ToListAsync();
-
-            foreach (var ticket in ticketsToUpdate)
-            {
-                if (ticket.Submitter == oldUsername)
-                    ticket.Submitter = user.UserName;
-                
-                if (ticket.Assigned == oldUsername)
-                    ticket.Assigned = user.UserName;
-            }
-        }
-
-        await _context.SaveChangesAsync();
-
-        return Ok(new UserDto
-        {
-            Id = user.Id,
-            Username = user.UserName,
-            DisplayName = user.DisplayName,
-            Email = user.Email,
-            GlobalRole = user.GlobalRole,
-            JobTitle = user.JobTitle,
-            Bio = user.Bio
-        });
-    }
-
-    [Authorize(Policy = "CanManageGlobalRoles")]
-    [HttpDelete("{userId}")]
-    public async Task<ActionResult> SoftDeleteUser(string userId)
-    {
-        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var user = await _context.Users.FindAsync(userId);
-        if (user == null)
-            return NotFound("User not found");
-
-        if (user.GlobalRole == "Admin" && user.Id != currentUserId)
-            return Forbid("Admins cannot delete other admins");
-
-        if (user.Id == currentUserId)
-            return BadRequest("Admins cannot delete themselves");
-
-        user.IsDeleted = true;
-        user.DeletedAt = DateTime.UtcNow;
-
-        await _context.SaveChangesAsync();
-
-        return Ok();
+        [Authorize(Policy = "CanManageGlobalRoles")]
+        [HttpDelete("{userId}")]
+        public async Task<IActionResult> SoftDeleteUser(string userId) =>
+            HandleResult(await Mediator.Send(new SoftDelete.Command { UserId = userId }));
     }
 }
