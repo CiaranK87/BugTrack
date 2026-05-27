@@ -2,7 +2,6 @@ using System.Security.Claims;
 using Application.DTOs;
 using Application.Interfaces;
 using Application.Projects;
-using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -93,27 +92,8 @@ namespace API.Controllers
 
         [Authorize(Policy = "RequireAdminRole")]
         [HttpDelete("{projectId}/admin-delete")]
-        public async Task<IActionResult> AdminDeleteProject(Guid projectId)
-        {
-            var project = await _context.Projects.FindAsync(projectId);
-            
-            if (project == null)
-            {
-                return NotFound();
-            }
-            
-            if (!project.IsDeleted)
-            {
-                return BadRequest("Project must be soft deleted first");
-            }
-
-            _context.Projects.Remove(project);
-            var result = await _context.SaveChangesAsync() > 0;
-            
-            if (!result) return BadRequest("Failed to permanently delete project");
-            
-            return NoContent();
-        }
+        public async Task<IActionResult> AdminDeleteProject(Guid projectId) =>
+            HandleResult(await Mediator.Send(new AdminDelete.Command { Id = projectId }));
 
         [Authorize(Policy = "RequireAdminRole")]
         [HttpGet("admin/deleted")]
@@ -124,29 +104,8 @@ namespace API.Controllers
 
         [Authorize(Policy = "RequireAdminRole")]
         [HttpPut("{projectId}/restore")]
-        public async Task<IActionResult> RestoreProject(Guid projectId)
-        {
-            var project = await _context.Projects.FindAsync(projectId);
-                
-            if (project == null)
-            {
-                return NotFound();
-            }
-            
-            if (!project.IsDeleted)
-            {
-                return BadRequest("Project is not deleted");
-            }
-
-            project.IsDeleted = false;
-            project.DeletedDate = null;
-            
-            var result = await _context.SaveChangesAsync() > 0;
-            
-            if (!result) return BadRequest("Failed to restore project");
-            
-            return NoContent();
-        }
+        public async Task<IActionResult> RestoreProject(Guid projectId) =>
+            HandleResult(await Mediator.Send(new Restore.Command { Id = projectId }));
 
         [Authorize]
         [HttpPost("{projectId}/cancel")]
@@ -165,21 +124,8 @@ namespace API.Controllers
 
         [Authorize]
         [HttpGet("{projectId}/role")]
-        public async Task<ActionResult<string>> GetUserRole(Guid projectId)
-        {
-            var globalRoleClaim = User.FindFirst("globalrole")?.Value;
-            if (globalRoleClaim == "Admin") return "Admin";
-
-            var userId = _userAccessor.GetUserId();
-            var participant = await _context.ProjectParticipants
-                .AsNoTracking()
-                .FirstOrDefaultAsync(pp => pp.ProjectId == projectId && pp.AppUserId == userId);
-
-            if (participant == null) return "User";
-
-            if (participant.IsOwner) return "Owner";
-            return participant.Role ?? "User";
-        }
+        public async Task<IActionResult> GetUserRole(Guid projectId) =>
+            HandleResult(await Mediator.Send(new GetUserRole.Query { ProjectId = projectId }));
 
 
 
@@ -262,33 +208,11 @@ namespace API.Controllers
             if (!authorized.Succeeded)
                 return Forbid("Only project owners or admins can transfer ownership");
 
-            var currentOwner = await _context.ProjectParticipants
-                .FirstOrDefaultAsync(pp => pp.ProjectId == projectId && pp.IsOwner);
-            
-            if (currentOwner == null)
-                return NotFound("Project owner not found");
-
-            var newOwner = await _context.ProjectParticipants
-                .FirstOrDefaultAsync(pp => pp.ProjectId == projectId && pp.AppUserId == transferDto.NewOwnerId);
-            
-            if (newOwner == null)
-                return NotFound("New owner must be a project participant");
-
-
-            currentOwner.IsOwner = false;
-            currentOwner.Role = "ProjectManager";
-            
-            newOwner.IsOwner = true;
-            newOwner.Role = null;
-
-            await _context.SaveChangesAsync();
-
-            return Ok(new { message = "Ownership transferred successfully" });
+            return HandleResult(await Mediator.Send(new TransferOwnership.Command
+            {
+                ProjectId = projectId,
+                NewOwnerId = transferDto.NewOwnerId
+            }));
         }
-    }
-
-    public class TransferOwnershipDto
-    {
-        public string NewOwnerId { get; set; }
     }
 }
