@@ -7,7 +7,7 @@ import { User, UserFormValues, UserDto, UserSearchDto } from "../models/user";
 import { Ticket } from "../models/ticket";
 import { Profile } from "../models/profile";
 import { Notification } from "../models/notification";
-import { Comment, CommentAttachment } from "../models/comment";
+import { Comment } from "../models/comment";
 
 const sleep = (delay: number) => {
   return new Promise((resolve) => {
