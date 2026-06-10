@@ -112,6 +112,11 @@ export default observer(function CommentForm({ ticketId, parentCommentId, isRepl
   const handleFormSubmit = async (values: { content: string }, { resetForm }: { resetForm: () => void }) => {
     try {
       await createComment(ticketId, values.content, selectedFiles, parentCommentId);
+
+      if (isReply && parentCommentId) {
+        window.dispatchEvent(new CustomEvent('closeReplyForm', { detail: { commentId: parentCommentId } }));
+      }
+
       resetForm();
       setSelectedFiles([]);
       setShowMentions(false);
@@ -119,10 +124,6 @@ export default observer(function CommentForm({ ticketId, parentCommentId, isRepl
       isMentioningRef.current = false;
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
-      }
-
-      if (isReply && parentCommentId) {
-        window.dispatchEvent(new CustomEvent('closeReplyForm', { detail: { commentId: parentCommentId } }));
       }
     } catch (error) {
       logger.error('Failed to create comment', error);

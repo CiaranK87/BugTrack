@@ -215,6 +215,28 @@ const CommentList: React.FC<Props> = observer(({ ticketId }) => {
                                 {typeof reply.content === 'string' ? reply.content : JSON.stringify(reply.content)}
                               </div>
 
+                              {reply.attachments && reply.attachments.length > 0 && (
+                                <div className="comment-attachments">
+                                  <div className="attachment-header">
+                                    <Icon name='paperclip' style={{ marginRight: '6px' }} />
+                                    Attachments
+                                  </div>
+                                  <div className="attachments-grid">
+                                    {reply.attachments.map((attachment) => (
+                                      <FileAttachment
+                                        key={attachment.id}
+                                        attachment={attachment}
+                                        ticketId={ticketId}
+                                        commentId={reply.id}
+                                        onDownload={(attachmentId) => commentStore.downloadAttachment(ticketId, reply.id, attachmentId, attachment.originalFileName || attachment.fileName)}
+                                        onDelete={(attachmentId) => commentStore.deleteAttachment(ticketId, reply.id, attachmentId)}
+                                        showDeleteButton={canDeleteComment(reply)}
+                                      />
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+
                               {reply.updatedAt && (
                                 <div className="reply-edited">
                                   <Icon name='edit' />
