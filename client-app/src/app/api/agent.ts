@@ -7,7 +7,7 @@ import { User, UserFormValues, UserDto, UserSearchDto } from "../models/user";
 import { Ticket } from "../models/ticket";
 import { Profile } from "../models/profile";
 import { Notification } from "../models/notification";
-import { Comment, CommentAttachment } from "../models/comment";
+import { Comment } from "../models/comment";
 
 const sleep = (delay: number) => {
   return new Promise((resolve) => {
@@ -183,7 +183,6 @@ const Comments = {
   create: (ticketId: string, data: FormData) => requests.postForm<Comment>(`/tickets/${ticketId}/comments`, data),
   update: (ticketId: string, id: string, content: string) => requests.put<Comment>(`/tickets/${ticketId}/comments/${id}`, { content }),
   delete: (ticketId: string, id: string) => requests.del<void>(`/tickets/${ticketId}/comments/${id}`),
-  addAttachment: (ticketId: string, commentId: string, data: FormData) => requests.postForm<CommentAttachment>(`/tickets/${ticketId}/comments/${commentId}/attachments`, data),
   deleteAttachment: (ticketId: string, commentId: string, attachmentId: string) => requests.del<void>(`/tickets/${ticketId}/comments/${commentId}/attachments/${attachmentId}`),
   downloadBlob: (ticketId: string, commentId: string, attachmentId: string) => requests.getBlob(`/tickets/${ticketId}/comments/${commentId}/attachments/${attachmentId}/download`),
 };

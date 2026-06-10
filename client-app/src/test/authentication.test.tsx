@@ -145,7 +145,6 @@ describe('Authentication Flow', () => {
       cancelSelectedComment: vi.fn(),
       openForm: vi.fn(),
       closeForm: vi.fn(),
-      addAttachment: vi.fn(),
       deleteAttachment: vi.fn(),
       downloadAttachment: vi.fn(),
       clear: vi.fn(),

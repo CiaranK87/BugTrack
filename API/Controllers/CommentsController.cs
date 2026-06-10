@@ -111,25 +111,7 @@ namespace API.Controllers
             return BadRequest(result.Error);
         }
 
-        [Authorize(Policy = "CanUploadAttachments")]
-        [HttpPost("{commentId}/attachments")]
-        public async Task<ActionResult<CommentAttachmentDto>> AddAttachment(Guid ticketId, Guid commentId, [FromForm] IFormFile file)
-        {
-            var authResult = await _authorizationService.AuthorizeAsync(User, ticketId, new TicketOperationRequirement(TicketOperation.Read));
-            if (!authResult.Succeeded) return Forbid();
-
-            var result = await _mediator.Send(new AddAttachment.Command { CommentId = commentId, File = file });
-            
-            if (result.IsSuccess)
-            {
-                await _hubContext.Clients.Group($"Ticket_{ticketId}").SendAsync("AttachmentAdded", commentId, result.Value);
-                return CreatedAtAction(nameof(GetAttachment), new { ticketId, commentId, id = result.Value.Id }, result.Value);
-            }
-            
-            return BadRequest(result.Error);
-        }
-
-        [HttpGet("{commentId}/attachments/{attachmentId}/download")]
+[HttpGet("{commentId}/attachments/{attachmentId}/download")]
         public async Task<IActionResult> GetAttachment(Guid ticketId, Guid commentId, Guid attachmentId)
         {
             var authResult = await _authorizationService.AuthorizeAsync(User, ticketId, new TicketOperationRequirement(TicketOperation.Read));

@@ -259,31 +259,6 @@ export default class CommentStore {
     }
   };
 
-  addAttachment = async (ticketId: string, commentId: string, file: File) => {
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-
-      const newAttachment = await agent.Comments.addAttachment(ticketId, commentId, formData);
-      runInAction(() => {
-        const commentIndex = this.comments.findIndex(c => c.id === commentId);
-        if (commentIndex !== -1) {
-          if (!this.comments[commentIndex].attachments) {
-            this.comments[commentIndex].attachments = [];
-          }
-          const attachmentWithDownloadUrl = {
-            ...newAttachment,
-            downloadUrl: newAttachment.downloadUrl || `/api/tickets/${ticketId}/comments/${commentId}/attachments/${newAttachment.id}/download`
-          };
-          this.comments[commentIndex].attachments.push(attachmentWithDownloadUrl);
-        }
-      });
-    } catch (error) {
-      logger.error('Error adding attachment', error);
-      throw error;
-    }
-  };
-
   deleteAttachment = async (ticketId: string, commentId: string, attachmentId: string) => {
     try {
       await agent.Comments.deleteAttachment(ticketId, commentId, attachmentId);
