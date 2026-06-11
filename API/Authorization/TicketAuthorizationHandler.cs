@@ -165,8 +165,8 @@ namespace API.Authorization
                     break;
 
                 case TicketOperation.Delete:
-                    // Delete is admin-only; the admin bypass at the top of HandleRequirementAsync
-                    // handles this — no project-role path grants delete.
+                    if (!string.IsNullOrEmpty(ticketSubmitter) && ticketSubmitter == currentUsername)
+                        context.Succeed(requirement);
                     break;
             }
         }

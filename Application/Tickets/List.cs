@@ -1,5 +1,7 @@
 using Application.Core;
-using Domain;
+using Application.DTOs;
+using Application.Interfaces;
+using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -8,39 +10,44 @@ namespace Application.Tickets
 {
     public class List
     {
-        public class Query : IRequest<Result<List<Ticket>>>
-        {
-            public string UserId { get; set; }
-            public string GlobalRole { get; set; }
-        }
+        public class Query : IRequest<Result<List<TicketDto>>> {}
 
-        public class Handler : IRequestHandler<Query, Result<List<Ticket>>>
+        public class Handler : IRequestHandler<Query, Result<List<TicketDto>>>
         {
-        private readonly DataContext _context;
-            public Handler(DataContext context)
+            private readonly DataContext _context;
+            private readonly IMapper _mapper;
+            private readonly IUserAccessor _userAccessor;
+
+            public Handler(DataContext context, IMapper mapper, IUserAccessor userAccessor)
             {
-            _context = context;
+                _context = context;
+                _mapper = mapper;
+                _userAccessor = userAccessor;
             }
 
-            public async Task<Result<List<Ticket>>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<List<TicketDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                if (request.GlobalRole == "Admin")
+                var userId = _userAccessor.GetUserId();
+                var globalRole = _userAccessor.GetGlobalRole();
+
+                List<Domain.Ticket> tickets;
+
+                if (globalRole == "Admin")
                 {
-                    return Result<List<Ticket>>.Success(await _context.Tickets
+                    tickets = await _context.Tickets
                         .Include(x => x.Project)
-                        .ToListAsync(cancellationToken));
+                        .ToListAsync(cancellationToken);
                 }
                 else
                 {
-                    var tickets = await _context.Tickets
+                    tickets = await _context.Tickets
                         .Include(x => x.Project)
-                        .Where(t => t.Project.Participants.Any(p => p.AppUserId == request.UserId))
+                        .Where(t => t.Project.Participants.Any(p => p.AppUserId == userId))
                         .ToListAsync(cancellationToken);
-                    
-                    return Result<List<Ticket>>.Success(tickets);
                 }
+
+                return Result<List<TicketDto>>.Success(_mapper.Map<List<TicketDto>>(tickets));
             }
         }
-
     }
 }
