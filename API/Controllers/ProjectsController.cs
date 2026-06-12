@@ -1,28 +1,16 @@
 using System.Security.Claims;
 using Application.DTOs;
-using Application.Interfaces;
 using Application.Projects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Persistence;
 
 namespace API.Controllers
 {
     public class ProjectsController : BaseApiController
     {
-        private readonly DataContext _context;
-        private readonly IUserAccessor _userAccessor;
+        public ProjectsController(IAuthorizationService authorizationService)
+            : base(authorizationService) {}
 
-        public ProjectsController(
-            DataContext context,
-            IUserAccessor userAccessor,
-            IAuthorizationService authorizationService
-        ) : base(authorizationService)
-        {
-            _context = context;
-            _userAccessor = userAccessor;
-        }
 
 
         [Authorize]
@@ -109,17 +97,8 @@ namespace API.Controllers
 
         [Authorize]
         [HttpPost("{projectId}/cancel")]
-        public async Task<IActionResult> ToggleCancel(Guid projectId)
-        {
-            var userId = _userAccessor.GetUserId();
-
-            var isOwner = await _context.ProjectParticipants
-                .AnyAsync(pp => pp.ProjectId == projectId && pp.AppUserId == userId && pp.IsOwner);
-
-            if (!isOwner) return Forbid();
-
-            return HandleResult(await Mediator.Send(new ToggleCancel.Command { Id = projectId }));
-        }
+        public async Task<IActionResult> ToggleCancel(Guid projectId) =>
+            HandleResult(await Mediator.Send(new ToggleCancel.Command { Id = projectId }));
 
 
         [Authorize]
