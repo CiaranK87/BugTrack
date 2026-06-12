@@ -177,21 +177,5 @@ namespace API.Controllers
             return HandleResult(await Mediator.Send(new ListParticipants.Query { ProjectId = projectId }));
         }
 
-        [Authorize]
-        [HttpPut("{projectId}/transfer-ownership")]
-        public async Task<IActionResult> TransferOwnership(Guid projectId, [FromBody] TransferOwnershipDto transferDto)
-        {
-            var authorized = await _authorizationService.AuthorizeAsync(
-                User, projectId, "ProjectOwner");
-
-            if (!authorized.Succeeded)
-                return Forbid("Only project owners or admins can transfer ownership");
-
-            return HandleResult(await Mediator.Send(new TransferOwnership.Command
-            {
-                ProjectId = projectId,
-                NewOwnerId = transferDto.NewOwnerId
-            }));
-        }
     }
 }
