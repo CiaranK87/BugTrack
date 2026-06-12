@@ -38,12 +38,10 @@ namespace Application.Projects
                 if (participant == null)
                     return Result<Unit>.Failure("User is not a participant of this project");
 
-                var ownerCount = project.Participants.Count(p => p.IsOwner);
-                if (participant.IsOwner && request.Role != "Owner" && ownerCount <= 1)
-                    return Result<Unit>.Failure("Cannot remove owner role from the last owner");
+                if (participant.IsOwner)
+                    return Result<Unit>.Failure("Cannot change the role of the project owner");
 
                 participant.Role = request.Role;
-                participant.IsOwner = request.Role == "Owner";
 
                 var result = await _context.SaveChangesAsync(cancellationToken) > 0;
 

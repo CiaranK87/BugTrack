@@ -50,13 +50,10 @@ export default observer(function ProjectParticipants({ projectId }: Props) {
   const handleSaveRole = async (participantId: string) => {
     if (!projectId) return;
 
-    try {
-      await updateParticipantRole(projectId, participantId, { role: editingRole });
-      await loadProjectParticipants(projectId);
+    const success = await updateParticipantRole(projectId, participantId, { role: editingRole });
+    if (success) {
       setEditingParticipantId(null);
       toast.success('Role updated successfully');
-    } catch (error) {
-      toast.error('Failed to update role');
     }
   };
 
