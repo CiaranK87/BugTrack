@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using Application.Projects;
 using Application.Interfaces;
+using Application.DTOs;
 using Domain;
 using Persistence;
 
@@ -38,29 +39,28 @@ namespace Application.UnitTests.Projects
 
             _mockUserAccessor.Setup(x => x.GetUsername()).Returns(user.UserName);
 
-            var project = new Project
+            var command = new Create.Command
             {
-                Id = Guid.NewGuid(),
-                ProjectTitle = "Test Project",
-                Description = "Test Description",
-                StartDate = DateTime.UtcNow
+                ProjectDto = new CreateProjectDto
+                {
+                    ProjectTitle = "Test Project",
+                    Description = "Test Description",
+                    StartDate = DateTime.UtcNow
+                }
             };
-
-            var command = new Create.Command { Project = project };
 
             var result = await _handler.Handle(command, CancellationToken.None);
 
-            // Assert
             result.Should().NotBeNull();
             result.IsSuccess.Should().BeTrue();
-            
-            var createdProject = await _context.Projects.FindAsync(project.Id);
+
+            var createdProject = await _context.Projects.FindAsync(result.Value);
             createdProject.Should().NotBeNull();
             createdProject.ProjectTitle.Should().Be("Test Project");
             createdProject.ProjectOwner.Should().Be("Test User");
-            
+
             var participant = await _context.ProjectParticipants
-                .FirstOrDefaultAsync(pp => pp.ProjectId == project.Id && pp.AppUserId == user.Id);
+                .FirstOrDefaultAsync(pp => pp.ProjectId == result.Value && pp.AppUserId == user.Id);
             participant.Should().NotBeNull();
             participant.IsOwner.Should().BeTrue();
             participant.Role.Should().Be("Owner");
@@ -80,23 +80,22 @@ namespace Application.UnitTests.Projects
 
             _mockUserAccessor.Setup(x => x.GetUsername()).Returns(user.UserName);
 
-            var project = new Project
+            var command = new Create.Command
             {
-                Id = Guid.NewGuid(),
-                ProjectTitle = "Test Project",
-                Description = "Test Description",
-                StartDate = DateTime.UtcNow
+                ProjectDto = new CreateProjectDto
+                {
+                    ProjectTitle = "Test Project",
+                    Description = "Test Description",
+                    StartDate = DateTime.UtcNow
+                }
             };
-
-            var command = new Create.Command { Project = project };
 
             var result = await _handler.Handle(command, CancellationToken.None);
 
-            // Assert
             result.Should().NotBeNull();
             result.IsSuccess.Should().BeTrue();
-            
-            var createdProject = await _context.Projects.FindAsync(project.Id);
+
+            var createdProject = await _context.Projects.FindAsync(result.Value);
             createdProject.Should().NotBeNull();
             createdProject.ProjectOwner.Should().Be("testuser");
         }
@@ -115,43 +114,42 @@ namespace Application.UnitTests.Projects
 
             _mockUserAccessor.Setup(x => x.GetUsername()).Returns(user.UserName);
 
-            var project = new Project
+            var command = new Create.Command
             {
-                Id = Guid.NewGuid(),
-                ProjectTitle = "Test Project",
-                Description = "Test Description",
-                StartDate = DateTime.UtcNow
+                ProjectDto = new CreateProjectDto
+                {
+                    ProjectTitle = "Test Project",
+                    Description = "Test Description",
+                    StartDate = DateTime.UtcNow
+                }
             };
-
-            var command = new Create.Command { Project = project };
 
             var result = await _handler.Handle(command, CancellationToken.None);
 
-            // Assert
             result.Should().NotBeNull();
             result.IsSuccess.Should().BeTrue();
-            
-            var createdProject = await _context.Projects.FindAsync(project.Id);
+
+            var createdProject = await _context.Projects.FindAsync(result.Value);
             createdProject.Should().NotBeNull();
             createdProject.ProjectOwner.Should().Be("testuser");
         }
 
         [Fact]
-        public async Task Handle_ValidProjectWithNonExistentUser_ShouldCreateProjectWithoutOwner()
+        public async Task Handle_ValidProjectWithNonExistentUser_ThrowsBecauseParticipantRequiresUserId()
         {
+            // AppUserId is the composite PK on ProjectParticipant — null user means null PK, which EF Core rejects.
             _mockUserAccessor.Setup(x => x.GetUsername()).Returns("nonexistentuser");
 
-            var project = new Project
+            var command = new Create.Command
             {
-                Id = Guid.NewGuid(),
-                ProjectTitle = "Test Project",
-                Description = "Test Description",
-                StartDate = DateTime.UtcNow
+                ProjectDto = new CreateProjectDto
+                {
+                    ProjectTitle = "Test Project",
+                    Description = "Test Description",
+                    StartDate = DateTime.UtcNow
+                }
             };
 
-            var command = new Create.Command { Project = project };
-
-            // Act & Assert
             await Assert.ThrowsAsync<InvalidOperationException>(() => _handler.Handle(command, CancellationToken.None));
         }
 
@@ -177,20 +175,20 @@ namespace Application.UnitTests.Projects
             badContext.Users.Add(user);
             await badContext.SaveChangesAsync();
 
-            var project = new Project
+            var command = new Create.Command
             {
-                Id = Guid.NewGuid(),
-                ProjectTitle = "",
-                Description = "",
-                StartDate = DateTime.UtcNow
+                ProjectDto = new CreateProjectDto
+                {
+                    ProjectTitle = "",
+                    Description = "",
+                    StartDate = DateTime.UtcNow
+                }
             };
-
-            var command = new Create.Command { Project = project };
 
             var result = await badHandler.Handle(command, CancellationToken.None);
 
             result.IsSuccess.Should().BeTrue();
-            var createdProject = await badContext.Projects.FindAsync(project.Id);
+            var createdProject = await badContext.Projects.FindAsync(result.Value);
             createdProject.Should().NotBeNull();
         }
 
@@ -208,26 +206,25 @@ namespace Application.UnitTests.Projects
 
             _mockUserAccessor.Setup(x => x.GetUsername()).Returns(user.UserName);
 
-            var project = new Project
+            var command = new Create.Command
             {
-                Id = Guid.NewGuid(),
-                ProjectTitle = "Test Project",
-                Description = "Test Description",
-                StartDate = DateTime.UtcNow
+                ProjectDto = new CreateProjectDto
+                {
+                    ProjectTitle = "Test Project",
+                    Description = "Test Description",
+                    StartDate = DateTime.UtcNow
+                }
             };
-
-            var command = new Create.Command { Project = project };
 
             var result = await _handler.Handle(command, CancellationToken.None);
 
-            // Assert
             result.Should().NotBeNull();
             result.IsSuccess.Should().BeTrue();
-            
+
             var createdProject = await _context.Projects
                 .Include(p => p.Participants)
-                .FirstOrDefaultAsync(p => p.Id == project.Id);
-            
+                .FirstOrDefaultAsync(p => p.Id == result.Value);
+
             createdProject.Should().NotBeNull();
             createdProject.Participants.Should().HaveCount(1);
             createdProject.Participants.First().IsOwner.Should().BeTrue();

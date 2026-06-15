@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using Application.Tickets;
 using Application.Interfaces;
+using Application.DTOs;
 using Domain;
 using Persistence;
 
@@ -21,13 +22,12 @@ namespace Application.UnitTests.Tickets
 
             _context = new DataContext(options);
             _mockUserAccessor = new Mock<IUserAccessor>();
-            _handler = new Create.Handler(_context);
+            _handler = new Create.Handler(_context, _mockUserAccessor.Object);
         }
 
         [Fact]
         public async Task Handle_ValidTicket_ShouldCreateTicketSuccessfully()
         {
-            // Arrange
             var user = new AppUser
             {
                 Id = "user123",
@@ -48,30 +48,28 @@ namespace Application.UnitTests.Tickets
             _context.Projects.Add(project);
             await _context.SaveChangesAsync();
 
-            var ticket = new Ticket
+            _mockUserAccessor.Setup(x => x.GetUsername()).Returns(user.UserName);
+
+            var command = new Create.Command
             {
-                Id = Guid.NewGuid(),
-                Title = "Test Ticket",
-                Description = "Test Description",
-                Submitter = user.UserName,
-                Assigned = user.UserName,
-                Priority = "High",
-                Severity = "Critical",
-                Status = "Open",
-                StartDate = DateTime.UtcNow,
-                ProjectId = project.Id
+                TicketDto = new CreateTicketDto
+                {
+                    Title = "Test Ticket",
+                    Description = "Test Description",
+                    Assigned = user.UserName,
+                    Priority = "High",
+                    Severity = "Critical",
+                    StartDate = DateTime.UtcNow,
+                    ProjectId = project.Id
+                }
             };
 
-            var command = new Create.Command { Ticket = ticket };
-
-            // Act
             var result = await _handler.Handle(command, CancellationToken.None);
 
-            // Assert
             result.Should().NotBeNull();
             result.IsSuccess.Should().BeTrue();
-            
-            var createdTicket = await _context.Tickets.FindAsync(ticket.Id);
+
+            var createdTicket = await _context.Tickets.FindAsync(result.Value);
             createdTicket.Should().NotBeNull();
             createdTicket.Title.Should().Be("Test Ticket");
             createdTicket.CreatedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(1));
@@ -81,7 +79,6 @@ namespace Application.UnitTests.Tickets
         [Fact]
         public async Task Handle_TicketWithAssignedUserNotInProject_ShouldAddUserAsProjectParticipant()
         {
-            // Arrange
             var user = new AppUser
             {
                 Id = "user123",
@@ -108,32 +105,30 @@ namespace Application.UnitTests.Tickets
             _context.Projects.Add(project);
             await _context.SaveChangesAsync();
 
-            var ticket = new Ticket
+            _mockUserAccessor.Setup(x => x.GetUsername()).Returns(user.UserName);
+
+            var command = new Create.Command
             {
-                Id = Guid.NewGuid(),
-                Title = "Test Ticket",
-                Description = "Test Description",
-                Submitter = user.UserName,
-                Assigned = assignedUser.UserName,
-                Priority = "High",
-                Severity = "Critical",
-                Status = "Open",
-                StartDate = DateTime.UtcNow,
-                ProjectId = project.Id
+                TicketDto = new CreateTicketDto
+                {
+                    Title = "Test Ticket",
+                    Description = "Test Description",
+                    Assigned = assignedUser.UserName,
+                    Priority = "High",
+                    Severity = "Critical",
+                    StartDate = DateTime.UtcNow,
+                    ProjectId = project.Id
+                }
             };
 
-            var command = new Create.Command { Ticket = ticket };
-
-            // Act
             var result = await _handler.Handle(command, CancellationToken.None);
 
-            // Assert
             result.Should().NotBeNull();
             result.IsSuccess.Should().BeTrue();
-            
+
             var participant = await _context.ProjectParticipants
                 .FirstOrDefaultAsync(pp => pp.ProjectId == project.Id && pp.AppUserId == assignedUser.Id);
-            
+
             participant.Should().NotBeNull();
             participant.IsOwner.Should().BeFalse();
             participant.Role.Should().Be("User");
@@ -142,7 +137,6 @@ namespace Application.UnitTests.Tickets
         [Fact]
         public async Task Handle_TicketWithAssignedUserAlreadyInProject_ShouldNotCreateDuplicateParticipant()
         {
-            // Arrange
             var user = new AppUser
             {
                 Id = "user123",
@@ -169,7 +163,6 @@ namespace Application.UnitTests.Tickets
             _context.Projects.Add(project);
             await _context.SaveChangesAsync();
 
-            // Add existing participant
             var existingParticipant = new ProjectParticipant
             {
                 ProjectId = project.Id,
@@ -180,33 +173,31 @@ namespace Application.UnitTests.Tickets
             _context.ProjectParticipants.Add(existingParticipant);
             await _context.SaveChangesAsync();
 
-            var ticket = new Ticket
+            _mockUserAccessor.Setup(x => x.GetUsername()).Returns(user.UserName);
+
+            var command = new Create.Command
             {
-                Id = Guid.NewGuid(),
-                Title = "Test Ticket",
-                Description = "Test Description",
-                Submitter = user.UserName,
-                Assigned = assignedUser.UserName,
-                Priority = "High",
-                Severity = "Critical",
-                Status = "Open",
-                StartDate = DateTime.UtcNow,
-                ProjectId = project.Id
+                TicketDto = new CreateTicketDto
+                {
+                    Title = "Test Ticket",
+                    Description = "Test Description",
+                    Assigned = assignedUser.UserName,
+                    Priority = "High",
+                    Severity = "Critical",
+                    StartDate = DateTime.UtcNow,
+                    ProjectId = project.Id
+                }
             };
 
-            var command = new Create.Command { Ticket = ticket };
-
-            // Act
             var result = await _handler.Handle(command, CancellationToken.None);
 
-            // Assert
             result.Should().NotBeNull();
             result.IsSuccess.Should().BeTrue();
-            
+
             var participants = await _context.ProjectParticipants
                 .Where(pp => pp.ProjectId == project.Id && pp.AppUserId == assignedUser.Id)
                 .ToListAsync();
-            
+
             participants.Should().HaveCount(1);
             participants.First().Role.Should().Be("Admin"); // Original role preserved
         }
@@ -214,7 +205,6 @@ namespace Application.UnitTests.Tickets
         [Fact]
         public async Task Handle_TicketWithNonExistentAssignedUser_ShouldCreateTicketSuccessfully()
         {
-            // Arrange
             var user = new AppUser
             {
                 Id = "user123",
@@ -235,34 +225,31 @@ namespace Application.UnitTests.Tickets
             _context.Projects.Add(project);
             await _context.SaveChangesAsync();
 
-            var ticket = new Ticket
+            _mockUserAccessor.Setup(x => x.GetUsername()).Returns(user.UserName);
+
+            var command = new Create.Command
             {
-                Id = Guid.NewGuid(),
-                Title = "Test Ticket",
-                Description = "Test Description",
-                Submitter = user.UserName,
-                Assigned = "nonexistentuser",
-                Priority = "High",
-                Severity = "Critical",
-                Status = "Open",
-                StartDate = DateTime.UtcNow,
-                ProjectId = project.Id
+                TicketDto = new CreateTicketDto
+                {
+                    Title = "Test Ticket",
+                    Description = "Test Description",
+                    Assigned = "nonexistentuser",
+                    Priority = "High",
+                    Severity = "Critical",
+                    StartDate = DateTime.UtcNow,
+                    ProjectId = project.Id
+                }
             };
 
-            var command = new Create.Command { Ticket = ticket };
-
-            // Act
             var result = await _handler.Handle(command, CancellationToken.None);
 
-            // Assert
             result.Should().NotBeNull();
             result.IsSuccess.Should().BeTrue();
-            
-            var createdTicket = await _context.Tickets.FindAsync(ticket.Id);
+
+            var createdTicket = await _context.Tickets.FindAsync(result.Value);
             createdTicket.Should().NotBeNull();
             createdTicket.Assigned.Should().Be("nonexistentuser");
-            
-            // No participant should be created for non-existent user
+
             var participants = await _context.ProjectParticipants
                 .Where(pp => pp.ProjectId == project.Id)
                 .ToListAsync();
@@ -279,7 +266,7 @@ namespace Application.UnitTests.Tickets
                 .Options;
 
             using var badContext = new DataContext(options);
-            var badHandler = new Create.Handler(badContext);
+            var badHandler = new Create.Handler(badContext, _mockUserAccessor.Object);
 
             var user = new AppUser
             {
@@ -290,28 +277,30 @@ namespace Application.UnitTests.Tickets
             badContext.Users.Add(user);
             await badContext.SaveChangesAsync();
 
-            var ticket = new Ticket
-            {
-                Id = Guid.NewGuid(),
-                Title = "Test Ticket",
-                Description = "Test Description",
-                Submitter = "testuser",
-                Assigned = "assigneduser",
-                Priority = "High",
-                Severity = "Critical",
-                Status = "Open",
-                StartDate = DateTime.UtcNow,
-                ProjectId = Guid.NewGuid() // Non-existent project — FK not enforced in-memory
-            };
+            _mockUserAccessor.Setup(x => x.GetUsername()).Returns(user.UserName);
 
-            var command = new Create.Command { Ticket = ticket };
+            var nonExistentProjectId = Guid.NewGuid();
+
+            var command = new Create.Command
+            {
+                TicketDto = new CreateTicketDto
+                {
+                    Title = "Test Ticket",
+                    Description = "Test Description",
+                    Assigned = "assigneduser",
+                    Priority = "High",
+                    Severity = "Critical",
+                    StartDate = DateTime.UtcNow,
+                    ProjectId = nonExistentProjectId
+                }
+            };
 
             var result = await badHandler.Handle(command, CancellationToken.None);
 
             result.IsSuccess.Should().BeTrue();
-            var createdTicket = await badContext.Tickets.FindAsync(ticket.Id);
+            var createdTicket = await badContext.Tickets.FindAsync(result.Value);
             createdTicket.Should().NotBeNull();
-            createdTicket.ProjectId.Should().Be(command.Ticket.ProjectId);
+            createdTicket.ProjectId.Should().Be(nonExistentProjectId);
         }
 
         public void Dispose()
