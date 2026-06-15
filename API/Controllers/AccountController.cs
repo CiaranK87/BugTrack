@@ -142,19 +142,6 @@ namespace API.Controllers
         }
 
         [Authorize]
-        [HttpPost("refreshToken")]
-        public async Task<ActionResult<UserDto>> RefreshToken()
-        {
-            var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
-            
-            user = await _context.Users
-                .AsNoTracking()
-                .FirstOrDefaultAsync(u => u.Id == user.Id);
-
-            return CreateUserObject(user);
-        }
-
-        [Authorize]
         [HttpPost("changePassword")]
         public async Task<ActionResult> ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
         {
