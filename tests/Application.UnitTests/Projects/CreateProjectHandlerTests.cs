@@ -156,7 +156,7 @@ namespace Application.UnitTests.Projects
         }
 
         [Fact]
-        public async Task Handle_ProjectWithEmptyTitle_HandlerSucceedsWithoutValidation()
+        public async Task Handle_ProjectWithEmptyTitle_Succeeds_ValidationIsPipelineResponsibility()
         {
             // Validation is the pipeline's responsibility; the handler itself imposes no constraints.
             var options = new DbContextOptionsBuilder<DataContext>()
