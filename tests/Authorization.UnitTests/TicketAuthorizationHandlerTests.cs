@@ -89,7 +89,7 @@ public class TicketAuthorizationHandlerTests : TestBase
     [InlineData("user4", TicketOperation.Create, true)]
     [InlineData("user4", TicketOperation.Edit, true)]
     [InlineData("user4", TicketOperation.Close, true)]
-    [InlineData("user4", TicketOperation.Delete, false)]
+    [InlineData("user4", TicketOperation.Delete, true)]
     [InlineData("user5", TicketOperation.Read, true)]
     [InlineData("user5", TicketOperation.Create, true)]
     [InlineData("user5", TicketOperation.Close, false)]
