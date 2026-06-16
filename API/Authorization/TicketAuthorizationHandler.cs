@@ -1,3 +1,4 @@
+using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Persistence;
@@ -22,7 +23,7 @@ namespace API.Authorization
         TicketOperationRequirement requirement)
         {
             var globalRoleClaim = context.User.FindFirst("globalrole")?.Value;
-            if (globalRoleClaim == "Admin")
+            if (globalRoleClaim == Roles.Global.Admin)
             {
                 context.Succeed(requirement);
                 return;
@@ -113,18 +114,16 @@ namespace API.Authorization
                 return;
 
             var role = participant.Role;
-            if (role == "Contributor")
-                role = "User";
 
             switch (requirement.Operation)
             {
                 case TicketOperation.Read:
                     if (participant.IsOwner ||
-                        role == "Owner" ||
-                        role == "ProjectManager" ||
-                        role == "Developer" ||
-                        role == "User" ||
-                        role == "Guest")
+                        role == Roles.Project.Owner ||
+                        role == Roles.Project.ProjectManager ||
+                        role == Roles.Project.Developer ||
+                        role == Roles.Project.User ||
+                        role == Roles.Project.Guest)
                     {
                         context.Succeed(requirement);
                     }
@@ -132,11 +131,11 @@ namespace API.Authorization
 
                 case TicketOperation.Create:
                     if (participant.IsOwner ||
-                        role == "Owner" ||
-                        role == "ProjectManager" ||
-                        role == "Developer" ||
-                        role == "User" ||
-                        role == "Guest")
+                        role == Roles.Project.Owner ||
+                        role == Roles.Project.ProjectManager ||
+                        role == Roles.Project.Developer ||
+                        role == Roles.Project.User ||
+                        role == Roles.Project.Guest)
                     {
                         context.Succeed(requirement);
                     }
@@ -144,9 +143,9 @@ namespace API.Authorization
 
                 case TicketOperation.Edit:
                     if (participant.IsOwner ||
-                        role == "Owner" ||
-                        role == "ProjectManager" ||
-                        role == "Developer" ||
+                        role == Roles.Project.Owner ||
+                        role == Roles.Project.ProjectManager ||
+                        role == Roles.Project.Developer ||
                         (!string.IsNullOrEmpty(ticketSubmitter) && ticketSubmitter == currentUsername) ||
                         (!string.IsNullOrEmpty(ticketAssigned) && ticketAssigned == currentUsername))
                     {
@@ -156,9 +155,9 @@ namespace API.Authorization
 
                 case TicketOperation.Close:
                     if (participant.IsOwner ||
-                        role == "Owner" ||
-                        role == "ProjectManager" ||
-                        role == "Developer")
+                        role == Roles.Project.Owner ||
+                        role == Roles.Project.ProjectManager ||
+                        role == Roles.Project.Developer)
                     {
                         context.Succeed(requirement);
                     }

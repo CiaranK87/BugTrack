@@ -30,7 +30,7 @@ namespace API.Services
                 new(ClaimTypes.Name, user.UserName),
                 new(ClaimTypes.NameIdentifier, user.Id),
                 new(ClaimTypes.Email, user.Email),
-                new("globalrole", user.GlobalRole ?? "User"),
+                new("globalrole", user.GlobalRole ?? Roles.Global.User),
             };
 
             var tokenKey = _config.GetEnvironmentVariable("TOKEN_KEY") ??

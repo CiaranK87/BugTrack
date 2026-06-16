@@ -1,3 +1,4 @@
+using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Persistence;
@@ -24,7 +25,7 @@ namespace API.Authorization
         ProjectRoleRequirement requirement)
         {
             var globalRoleClaim = context.User.FindFirst("globalrole")?.Value;
-            if (globalRoleClaim == "Admin")
+            if (globalRoleClaim == Roles.Global.Admin)
             {
                 context.Succeed(requirement);
                 return;
@@ -59,7 +60,7 @@ namespace API.Authorization
 
             if (participant == null) return;
 
-            if (participant.IsOwner && requirement.AllowedRoles.Contains("Owner"))
+            if (participant.IsOwner && requirement.AllowedRoles.Contains(Roles.Project.Owner))
             {
                 context.Succeed(requirement);
                 return;
@@ -67,8 +68,7 @@ namespace API.Authorization
             
             if (!string.IsNullOrWhiteSpace(participant.Role))
             {
-                var role = participant.Role == "Contributor" ? "User" : participant.Role;
-                if (requirement.AllowedRoles.Contains(role))
+                if (requirement.AllowedRoles.Contains(participant.Role))
                     context.Succeed(requirement);
             }
         }

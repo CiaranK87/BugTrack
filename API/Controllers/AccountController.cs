@@ -114,7 +114,7 @@ namespace API.Controllers
 
             if (result.Succeeded)
             {
-                var roleToSet = registerDto.Role ?? "User";
+                var roleToSet = registerDto.Role ?? Roles.Global.User;
                 user.GlobalRole = roleToSet;
                 await _context.SaveChangesAsync();
                 
@@ -170,7 +170,7 @@ namespace API.Controllers
                 DisplayName = user.DisplayName,
                 Token = _tokenService.CreateToken(user),
                 Username = user.UserName,
-                GlobalRole = user.GlobalRole ?? "User"
+                GlobalRole = user.GlobalRole ?? Roles.Global.User
             };
         }
     }

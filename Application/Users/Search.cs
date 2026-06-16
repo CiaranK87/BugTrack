@@ -1,4 +1,5 @@
 using Application.Core;
+using Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -52,7 +53,7 @@ namespace Application.Users
                     Name = u.DisplayName ?? u.UserName,
                     Username = u.UserName,
                     IsParticipant = !request.ProjectId.HasValue ||
-                                    u.GlobalRole == "Admin" ||
+                                    u.GlobalRole == Roles.Global.Admin ||
                                     participantUserIds.Contains(u.Id) ||
                                     _context.Projects.Any(p => p.Id == request.ProjectId.Value && p.ProjectOwner == u.UserName) ||
                                     _context.Tickets.Any(t => t.ProjectId == request.ProjectId.Value && (t.Assigned == u.UserName || t.Submitter == u.UserName))

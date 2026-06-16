@@ -1,5 +1,6 @@
 using Application.Core;
 using Application.DTOs;
+using Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -29,7 +30,7 @@ namespace Application.Users
                         Username = u.UserName,
                         DisplayName = u.DisplayName,
                         Email = u.Email,
-                        GlobalRole = u.GlobalRole ?? "User",
+                        GlobalRole = u.GlobalRole ?? Roles.Global.User,
                         JobTitle = u.JobTitle,
                         Bio = u.Bio
                     })

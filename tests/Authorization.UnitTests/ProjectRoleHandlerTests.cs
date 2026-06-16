@@ -183,30 +183,4 @@ public class ProjectRoleHandlerTests : TestBase
         result.Succeeded.Should().BeFalse();
     }
 
-    [Fact]
-    public async Task ContributorRole_ShouldBeTreatedAsUser()
-    {
-        // Arrange
-        var project = _context.Projects.First();
-        var contributorParticipant = new ProjectParticipant
-        {
-            AppUserId = "user9",
-            ProjectId = project.Id,
-            Role = "Contributor",
-            IsOwner = false
-        };
-        _context.ProjectParticipants.Add(contributorParticipant);
-        await _context.SaveChangesAsync();
-
-        var requirement = new ProjectRoleRequirement("User");
-        var authService = _serviceProvider.GetRequiredService<IAuthorizationService>();
-        var user = CreateUserPrincipal("user9");
-
-        // Act
-        var result = await authService.AuthorizeAsync(user, project.Id, requirement);
-
-        // Assert
-        result.Succeeded.Should().BeTrue();
-    }
-
 }

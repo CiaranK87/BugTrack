@@ -86,7 +86,7 @@ namespace API.Services
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
 
             var demoUser = await context.Users.FirstOrDefaultAsync(
-                u => u.UserName == "Demo User" && u.GlobalRole == "Guest", stoppingToken);
+                u => u.UserName == "Demo User" && u.GlobalRole == Roles.Global.Guest, stoppingToken);
             if (demoUser == null)
             {
                 _logger.LogWarning("DemoReseedService: no demo user found, skipping reseed");
