@@ -133,10 +133,6 @@ namespace API.Controllers
         public async Task<ActionResult<UserDto>> GetCurrentUser()
         {
             var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
-            
-            user = await _context.Users
-                .AsNoTracking()
-                .FirstOrDefaultAsync(u => u.Id == user.Id);
 
             return CreateUserObject(user);
         }
