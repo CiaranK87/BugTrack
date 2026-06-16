@@ -26,6 +26,15 @@ namespace API.IntegrationTests
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
+            builder.ConfigureAppConfiguration(config =>
+            {
+                config.AddInMemoryCollection(new Dictionary<string, string>
+                {
+                    ["TokenKey"] = "test-only-key-not-used-for-real-auth-minimum-length-32",
+                    ["ALLOWED_ORIGINS"] = "http://localhost:3000"
+                });
+            });
+
             builder.ConfigureServices(services =>
             {
                 // Remove all existing DbContext registrations

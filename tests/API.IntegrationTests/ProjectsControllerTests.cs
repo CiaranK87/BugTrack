@@ -7,6 +7,7 @@ using Xunit;
 
 namespace API.IntegrationTests
 {
+    [Collection("IntegrationTests")]
     public class ProjectsControllerTests
     {
         private (HttpClient client, DataContext context) CreateClient(Action<HttpClient> authenticate)

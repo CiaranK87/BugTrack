@@ -8,6 +8,7 @@ using Xunit;
 
 namespace API.IntegrationTests
 {
+    [Collection("IntegrationTests")]
     /// <summary>
     /// Integration tests for full-stack ticket management workflows
     /// </summary>

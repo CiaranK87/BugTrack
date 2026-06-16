@@ -20,10 +20,10 @@ namespace Infrastructure.Security
             _dbContext = dbContext;
         }
 
-        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, IsOwnerRequirement requirement)
+        protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, IsOwnerRequirement requirement)
         {
             var userId = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null) return Task.CompletedTask;
+            if (userId == null) return;
 
             Guid projectId;
             if (context.Resource is Guid guidResource)
@@ -36,18 +36,15 @@ namespace Infrastructure.Security
                 var idString = routeValues?.GetValueOrDefault("projectId")?.ToString()
                             ?? routeValues?.GetValueOrDefault("id")?.ToString();
                 if (!Guid.TryParse(idString, out projectId))
-                    return Task.CompletedTask;
+                    return;
             }
 
-            var participant = _dbContext.ProjectParticipants
+            var participant = await _dbContext.ProjectParticipants
                 .AsNoTracking()
-                .SingleOrDefaultAsync(x => x.AppUserId == userId && x.ProjectId == projectId)
-                .Result;
+                .SingleOrDefaultAsync(x => x.AppUserId == userId && x.ProjectId == projectId);
 
-            if (participant == null) return Task.CompletedTask;
-            if (participant.IsOwner) context.Succeed(requirement);
-
-            return Task.CompletedTask;
+            if (participant != null && participant.IsOwner)
+                context.Succeed(requirement);
         }
     }
 }
