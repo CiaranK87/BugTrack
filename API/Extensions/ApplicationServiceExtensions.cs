@@ -6,6 +6,7 @@ using API.Services;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Infrastructure.Security;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 using Npgsql;
@@ -83,6 +84,7 @@ namespace API.Extensions
             services.AddFluentValidationAutoValidation();
             services.AddValidatorsFromAssemblyContaining<Create>();
             services.AddHttpContextAccessor();
+            services.AddScoped<IAuthorizationHandler, IsOwnerRequirementHandler>();
             services.AddScoped<IUserAccessor, UserAccessor>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<INotificationPushService, NotificationPushService>();

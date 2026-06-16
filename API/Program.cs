@@ -1,6 +1,7 @@
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
 using API.Authorization;
+using Infrastructure.Security;
 using API.Extensions;
 using API.Middleware;
 using API.Hubs;
@@ -91,6 +92,9 @@ builder.Services.AddAuthorization(options =>
 
     options.AddPolicy("CanUploadAttachments", policy =>
         policy.RequireClaim("globalrole", Roles.Global.User, Roles.Global.Developer, Roles.Global.ProjectManager, Roles.Global.Admin));
+
+    options.AddPolicy("ProjectOwnerOnly", policy =>
+        policy.Requirements.Add(new IsOwnerRequirement()));
 
     // Ticket operation policies
     options.AddPolicy("CanReadTicket", policy =>

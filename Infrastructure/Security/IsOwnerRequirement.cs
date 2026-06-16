@@ -23,21 +23,31 @@ namespace Infrastructure.Security
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, IsOwnerRequirement requirement)
         {
             var userId = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null) return Task.CompletedTask;
 
-            if(userId == null) return Task.CompletedTask;
-
-            var projectId = Guid.Parse(_httpContextAccessor.HttpContext?.Request.RouteValues.SingleOrDefault(x => x.Key == "id").Value?.ToString());
+            Guid projectId;
+            if (context.Resource is Guid guidResource)
+            {
+                projectId = guidResource;
+            }
+            else
+            {
+                var routeValues = _httpContextAccessor.HttpContext?.Request.RouteValues;
+                var idString = routeValues?.GetValueOrDefault("projectId")?.ToString()
+                            ?? routeValues?.GetValueOrDefault("id")?.ToString();
+                if (!Guid.TryParse(idString, out projectId))
+                    return Task.CompletedTask;
+            }
 
             var participant = _dbContext.ProjectParticipants
                 .AsNoTracking()
-                .SingleOrDefaultAsync(x => x.AppUserId ==  userId && x.ProjectId == projectId )
+                .SingleOrDefaultAsync(x => x.AppUserId == userId && x.ProjectId == projectId)
                 .Result;
 
-            if(participant == null) return Task.CompletedTask;
+            if (participant == null) return Task.CompletedTask;
+            if (participant.IsOwner) context.Succeed(requirement);
 
-            if(participant.IsOwner) context.Succeed(requirement);
-
-            return Task.CompletedTask; 
+            return Task.CompletedTask;
         }
     }
 }
