@@ -1,6 +1,7 @@
 using Application.Core;
 using Application.DTOs;
 using Application.Interfaces;
+using Domain;
 using MediatR;
 using Persistence;
 
@@ -33,14 +34,14 @@ namespace Application.Users
                 if (user == null)
                     return null;
 
-                if (user.GlobalRole == "Admin" && user.Id != currentUserId)
+                if (user.GlobalRole == Roles.Global.Admin && user.Id != currentUserId)
                     return Result<UserDto>.Failure("Admins cannot modify other admins");
 
-                var validRoles = new[] { "Admin", "ProjectManager", "Developer", "User" };
+                var validRoles = new[] { Roles.Global.Admin, Roles.Global.ProjectManager, Roles.Global.Developer, Roles.Global.User };
                 if (!validRoles.Contains(request.Role))
                     return Result<UserDto>.Failure("Invalid role");
 
-                if (user.Id == currentUserId && request.Role != "Admin")
+                if (user.Id == currentUserId && request.Role != Roles.Global.Admin)
                     return Result<UserDto>.Failure("Admins cannot demote themselves");
 
                 user.GlobalRole = request.Role;

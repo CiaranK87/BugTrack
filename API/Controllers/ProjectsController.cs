@@ -97,8 +97,12 @@ namespace API.Controllers
 
         [Authorize]
         [HttpPost("{projectId}/cancel")]
-        public async Task<IActionResult> ToggleCancel(Guid projectId) =>
-            HandleResult(await Mediator.Send(new ToggleCancel.Command { Id = projectId }));
+        public async Task<IActionResult> ToggleCancel(Guid projectId)
+        {
+            var authorized = await _authorizationService.AuthorizeAsync(User, projectId, "ProjectOwnerOnly");
+            if (!authorized.Succeeded) return Forbid();
+            return HandleResult(await Mediator.Send(new ToggleCancel.Command { Id = projectId }));
+        }
 
 
         [Authorize]

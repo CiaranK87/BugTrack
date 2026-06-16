@@ -71,7 +71,7 @@ namespace Application.Comments
                 
                 if (request.Attachments != null && request.Attachments.Count > 0)
                 {
-                    if (_userAccessor.GetGlobalRole() == "Guest")
+                    if (_userAccessor.GetGlobalRole() == Roles.Global.Guest)
                         return Result<CommentDto>.Failure("File uploads are not available for Guest users.");
 
                     foreach (var file in request.Attachments)
@@ -133,7 +133,7 @@ namespace Application.Comments
                 var mentionedUsers = await _context.Users
                     .Where(u => u.Id != authorId && !u.IsDeleted)
                     .Where(u => lowerMentions.Contains(u.UserName.Replace(" ", "").ToLower()))
-                    .Where(u => u.GlobalRole == "Admin" || 
+                    .Where(u => u.GlobalRole == Roles.Global.Admin ||
                                _context.ProjectParticipants.Any(pp => pp.AppUserId == u.Id && pp.ProjectId == ticket.ProjectId) ||
                                _context.Projects.Any(p => p.Id == ticket.ProjectId && p.ProjectOwner == u.UserName) ||
                                _context.Tickets.Any(t => t.ProjectId == ticket.ProjectId && (t.Assigned == u.UserName || t.Submitter == u.UserName)))

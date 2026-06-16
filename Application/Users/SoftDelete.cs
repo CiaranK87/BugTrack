@@ -1,5 +1,6 @@
 using Application.Core;
 using Application.Interfaces;
+using Domain;
 using MediatR;
 using Persistence;
 
@@ -31,7 +32,7 @@ namespace Application.Users
                 if (user == null)
                     return null;
 
-                if (user.GlobalRole == "Admin" && user.Id != currentUserId)
+                if (user.GlobalRole == Roles.Global.Admin && user.Id != currentUserId)
                     return Result<Unit>.Failure("Admins cannot delete other admins");
 
                 if (user.Id == currentUserId)

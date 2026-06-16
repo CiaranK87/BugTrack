@@ -196,6 +196,11 @@ const Notifications = {
   clearAll: () => requests.del<{ deletedCount: number }>("/notifications/clear-all"),
 };
 
+const Contact = {
+  requestAccess: (name: string, email: string, message: string) =>
+    requests.post<void>("/contact/request-access", { name, email, message }),
+};
+
 const agent = {
   Projects,
   Account,
@@ -204,6 +209,7 @@ const agent = {
   Profiles,
   Users,
   Notifications,
+  Contact,
 };
 
 export default agent;

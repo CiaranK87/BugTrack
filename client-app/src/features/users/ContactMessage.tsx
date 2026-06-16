@@ -2,7 +2,7 @@ import { Header, Message, Button, Icon, Form } from "semantic-ui-react";
 import { useTheme } from "../../app/context/ThemeContext";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import axios from "axios";
+import agent from "../../app/api/agent";
 
 export default function ContactMessage() {
   const { darkMode } = useTheme();
@@ -33,22 +33,11 @@ export default function ContactMessage() {
     setIsSubmitting(true);
     
     try {
-      // This will send the request to your backend API using the configured axios instance
-      const response = await axios.post('/contact/request-access', {
-        name: formData.name,
-        email: formData.email,
-        message: formData.message
-      });
-
-      if (response.status === 200) {
-        setShowSuccess(true);
-        setFormData({ name: "", email: "", message: "" });
-        // Hide success message after 5 seconds
-        setTimeout(() => setShowSuccess(false), 5000);
-      } else {
-        toast.error("Failed to send request. Please try again later.");
-      }
-    } catch (error) {
+      await agent.Contact.requestAccess(formData.name, formData.email, formData.message);
+      setShowSuccess(true);
+      setFormData({ name: "", email: "", message: "" });
+      setTimeout(() => setShowSuccess(false), 5000);
+    } catch {
       toast.error("Failed to send request. Please try again later.");
     } finally {
       setIsSubmitting(false);

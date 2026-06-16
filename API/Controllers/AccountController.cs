@@ -114,7 +114,7 @@ namespace API.Controllers
 
             if (result.Succeeded)
             {
-                var roleToSet = registerDto.Role ?? "User";
+                var roleToSet = registerDto.Role ?? Roles.Global.User;
                 user.GlobalRole = roleToSet;
                 await _context.SaveChangesAsync();
                 
@@ -133,23 +133,6 @@ namespace API.Controllers
         public async Task<ActionResult<UserDto>> GetCurrentUser()
         {
             var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
-            
-            user = await _context.Users
-                .AsNoTracking()
-                .FirstOrDefaultAsync(u => u.Id == user.Id);
-
-            return CreateUserObject(user);
-        }
-
-        [Authorize]
-        [HttpPost("refreshToken")]
-        public async Task<ActionResult<UserDto>> RefreshToken()
-        {
-            var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
-            
-            user = await _context.Users
-                .AsNoTracking()
-                .FirstOrDefaultAsync(u => u.Id == user.Id);
 
             return CreateUserObject(user);
         }
@@ -183,7 +166,7 @@ namespace API.Controllers
                 DisplayName = user.DisplayName,
                 Token = _tokenService.CreateToken(user),
                 Username = user.UserName,
-                GlobalRole = user.GlobalRole ?? "User"
+                GlobalRole = user.GlobalRole ?? Roles.Global.User
             };
         }
     }

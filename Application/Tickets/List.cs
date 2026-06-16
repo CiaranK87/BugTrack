@@ -2,6 +2,7 @@ using Application.Core;
 using Application.DTOs;
 using Application.Interfaces;
 using AutoMapper;
+using Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -32,7 +33,7 @@ namespace Application.Tickets
 
                 List<Domain.Ticket> tickets;
 
-                if (globalRole == "Admin")
+                if (globalRole == Roles.Global.Admin)
                 {
                     tickets = await _context.Tickets
                         .Include(x => x.Project)

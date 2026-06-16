@@ -1,5 +1,6 @@
 using Application.Core;
 using Application.Interfaces;
+using Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -27,7 +28,7 @@ namespace Application.Projects
             public async Task<Result<string>> Handle(Query request, CancellationToken cancellationToken)
             {
                 var globalRole = _userAccessor.GetGlobalRole();
-                if (globalRole == "Admin") return Result<string>.Success("Admin");
+                if (globalRole == Roles.Global.Admin) return Result<string>.Success(Roles.Global.Admin);
 
                 var userId = _userAccessor.GetUserId();
 
@@ -35,11 +36,11 @@ namespace Application.Projects
                     .AsNoTracking()
                     .FirstOrDefaultAsync(pp => pp.ProjectId == request.ProjectId && pp.AppUserId == userId, cancellationToken);
 
-                if (participant == null) return Result<string>.Success("User");
+                if (participant == null) return Result<string>.Success(Roles.Project.User);
 
-                if (participant.IsOwner) return Result<string>.Success("Owner");
+                if (participant.IsOwner) return Result<string>.Success(Roles.Project.Owner);
 
-                return Result<string>.Success(participant.Role ?? "User");
+                return Result<string>.Success(participant.Role ?? Roles.Project.User);
             }
         }
     }

@@ -1,6 +1,7 @@
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
 using API.Authorization;
+using Infrastructure.Security;
 using API.Extensions;
 using API.Middleware;
 using API.Hubs;
@@ -62,35 +63,38 @@ builder.Services.AddAuthorization(options =>
 {
     // Global role policies
     options.AddPolicy("RequireAdminRole", policy =>
-        policy.RequireClaim("globalrole", "Admin"));
+        policy.RequireClaim("globalrole", Roles.Global.Admin));
 
     options.AddPolicy("RequireProjectManagerRole", policy =>
-        policy.RequireClaim("globalrole", "Admin", "ProjectManager"));
+        policy.RequireClaim("globalrole", Roles.Global.Admin, Roles.Global.ProjectManager));
 
     options.AddPolicy("CanCreateProjects", policy =>
-        policy.RequireClaim("globalrole", "Admin", "ProjectManager"));
+        policy.RequireClaim("globalrole", Roles.Global.Admin, Roles.Global.ProjectManager));
 
     options.AddPolicy("CanManageGlobalRoles", policy =>
-        policy.RequireClaim("globalrole", "Admin"));
+        policy.RequireClaim("globalrole", Roles.Global.Admin));
 
     // Project role policies
     options.AddPolicy("ProjectOwnerOrManager", policy =>
-        policy.Requirements.Add(new ProjectRoleRequirement("Owner", "ProjectManager")));
+        policy.Requirements.Add(new ProjectRoleRequirement(Roles.Project.Owner, Roles.Project.ProjectManager)));
 
     options.AddPolicy("ProjectDeveloper", policy =>
-        policy.Requirements.Add(new ProjectRoleRequirement("Developer")));
+        policy.Requirements.Add(new ProjectRoleRequirement(Roles.Project.Developer)));
 
     options.AddPolicy("ProjectUser", policy =>
-        policy.Requirements.Add(new ProjectRoleRequirement("User")));
+        policy.Requirements.Add(new ProjectRoleRequirement(Roles.Project.User)));
 
     options.AddPolicy("ProjectContributor", policy =>
-        policy.Requirements.Add(new ProjectRoleRequirement("Owner", "ProjectManager", "Developer", "User", "Guest")));
+        policy.Requirements.Add(new ProjectRoleRequirement(Roles.Project.Owner, Roles.Project.ProjectManager, Roles.Project.Developer, Roles.Project.User, Roles.Project.Guest)));
 
     options.AddPolicy("ProjectAnyRole", policy =>
-        policy.Requirements.Add(new ProjectRoleRequirement("Owner", "ProjectManager", "Developer", "User", "Guest")));
+        policy.Requirements.Add(new ProjectRoleRequirement(Roles.Project.Owner, Roles.Project.ProjectManager, Roles.Project.Developer, Roles.Project.User, Roles.Project.Guest)));
 
     options.AddPolicy("CanUploadAttachments", policy =>
-        policy.RequireClaim("globalrole", "User", "Developer", "ProjectManager", "Admin"));
+        policy.RequireClaim("globalrole", Roles.Global.User, Roles.Global.Developer, Roles.Global.ProjectManager, Roles.Global.Admin));
+
+    options.AddPolicy("ProjectOwnerOnly", policy =>
+        policy.Requirements.Add(new IsOwnerRequirement()));
 
     // Ticket operation policies
     options.AddPolicy("CanReadTicket", policy =>
@@ -159,16 +163,16 @@ try
     }
     
     // Create roles if they don't exist (needed for both dev and production)
-    if (!await roleManager.RoleExistsAsync("Admin"))
-        await roleManager.CreateAsync(new IdentityRole("Admin"));
-    if (!await roleManager.RoleExistsAsync("ProjectManager"))
-        await roleManager.CreateAsync(new IdentityRole("ProjectManager"));
-    if (!await roleManager.RoleExistsAsync("Developer"))
-        await roleManager.CreateAsync(new IdentityRole("Developer"));
-    if (!await roleManager.RoleExistsAsync("User"))
-        await roleManager.CreateAsync(new IdentityRole("User"));
-    if (!await roleManager.RoleExistsAsync("Guest"))
-        await roleManager.CreateAsync(new IdentityRole("Guest"));
+    if (!await roleManager.RoleExistsAsync(Roles.Global.Admin))
+        await roleManager.CreateAsync(new IdentityRole(Roles.Global.Admin));
+    if (!await roleManager.RoleExistsAsync(Roles.Global.ProjectManager))
+        await roleManager.CreateAsync(new IdentityRole(Roles.Global.ProjectManager));
+    if (!await roleManager.RoleExistsAsync(Roles.Global.Developer))
+        await roleManager.CreateAsync(new IdentityRole(Roles.Global.Developer));
+    if (!await roleManager.RoleExistsAsync(Roles.Global.User))
+        await roleManager.CreateAsync(new IdentityRole(Roles.Global.User));
+    if (!await roleManager.RoleExistsAsync(Roles.Global.Guest))
+        await roleManager.CreateAsync(new IdentityRole(Roles.Global.Guest));
 
     Log.Information("Application roles created/verified successfully");
 

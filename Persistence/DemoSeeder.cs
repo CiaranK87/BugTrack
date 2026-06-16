@@ -19,7 +19,7 @@ namespace Persistence
                     DisplayName = "Demo User",
                     Email = demoEmail,
                     UserName = "Demo User",
-                    GlobalRole = "Guest"
+                    GlobalRole = Roles.Global.Guest
                 };
 
                 var result = await userManager.CreateAsync(demoUser, "Dem0Pa$$");
@@ -32,9 +32,9 @@ namespace Persistence
                 return;
             }
 
-            if (demoUser.GlobalRole != "Guest")
+            if (demoUser.GlobalRole != Roles.Global.Guest)
             {
-                demoUser.GlobalRole = "Guest";
+                demoUser.GlobalRole = Roles.Global.Guest;
                 await userManager.UpdateAsync(demoUser);
             }
         }

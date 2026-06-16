@@ -38,7 +38,7 @@ namespace Application.Users
                 if (user == null)
                     return null;
 
-                if (user.GlobalRole == "Admin" && user.Id != currentUserId)
+                if (user.GlobalRole == Roles.Global.Admin && user.Id != currentUserId)
                     return Result<UserDto>.Failure("Admins cannot modify other admins");
 
                 var oldUsername = user.UserName;

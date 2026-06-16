@@ -1,5 +1,6 @@
 using Application.Core;
 using AutoMapper;
+using Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -25,7 +26,7 @@ namespace Application.Projects
             }
             public async Task<Result<List<ProjectDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                if (request.GlobalRole == "Admin")
+                if (request.GlobalRole == Roles.Global.Admin)
                 {
                     var projects = await _context.Projects
                         .Include(p => p.Tickets)

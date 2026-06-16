@@ -86,7 +86,7 @@ namespace Application.Tickets
                                 ProjectId = ticket.ProjectId,
                                 AppUserId = assignedUser.Id,
                                 IsOwner = false,
-                                Role = "User"
+                                Role = Roles.Project.User
                             };
                             _context.ProjectParticipants.Add(participant);
                         }
