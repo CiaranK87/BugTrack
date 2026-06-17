@@ -1,14 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Application.Comments;
 using Application.Core;
 using Application.DTOs;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using API.Authorization;
@@ -111,21 +105,17 @@ namespace API.Controllers
             return BadRequest(result.Error);
         }
 
-[HttpGet("{commentId}/attachments/{attachmentId}/download")]
+        [HttpGet("{commentId}/attachments/{attachmentId}/download")]
         public async Task<IActionResult> GetAttachment(Guid ticketId, Guid commentId, Guid attachmentId)
         {
             var authResult = await _authorizationService.AuthorizeAsync(User, ticketId, new TicketOperationRequirement(TicketOperation.Read));
             if (!authResult.Succeeded) return Forbid();
 
-            var attachmentResult = await _mediator.Send(new Application.Comments.Query { TicketId = ticketId, CommentId = commentId, AttachmentId = attachmentId });
-            
-            if (attachmentResult.Attachment != null && System.IO.File.Exists(attachmentResult.FilePath))
-            {
-                var fileBytes = await System.IO.File.ReadAllBytesAsync(attachmentResult.FilePath);
-                return File(fileBytes, "application/octet-stream", attachmentResult.Attachment.OriginalFileName);
-            }
-            
-            return NotFound();
+            var (stream, contentType, originalFileName) = await _mediator.Send(new GetAttachmentQuery { TicketId = ticketId, CommentId = commentId, AttachmentId = attachmentId });
+
+            if (stream == null) return NotFound();
+
+            return File(stream, contentType, originalFileName);
         }
 
         [HttpDelete("{commentId}/attachments/{attachmentId}")]

@@ -39,18 +39,20 @@ namespace Application.Comments
             private readonly INotificationService _notificationService;
             private readonly INotificationPushService _notificationPushService;
             private readonly ILogger<Handler> _logger;
+            private readonly IFileService _fileService;
 
             private static readonly HashSet<string> AllowedExtensions = new(StringComparer.OrdinalIgnoreCase)
                 { ".jpg", ".jpeg", ".png", ".gif", ".webp", ".pdf", ".txt", ".doc", ".docx", ".xls", ".xlsx", ".zip" };
             private const long MaxFileSizeBytes = 10 * 1024 * 1024;
 
-            public Handler(DataContext context, IUserAccessor userAccessor, INotificationService notificationService, INotificationPushService notificationPushService, ILogger<Handler> logger)
+            public Handler(DataContext context, IUserAccessor userAccessor, INotificationService notificationService, INotificationPushService notificationPushService, ILogger<Handler> logger, IFileService fileService)
             {
                 _context = context;
                 _userAccessor = userAccessor;
                 _notificationService = notificationService;
                 _notificationPushService = notificationPushService;
                 _logger = logger;
+                _fileService = fileService;
             }
 
             public async Task<Result<CommentDto>> Handle(Command request, CancellationToken cancellationToken)
@@ -85,7 +87,7 @@ namespace Application.Comments
 
                     foreach (var file in request.Attachments)
                     {
-                        var attachment = await CreateAttachmentFromFile(file, comment.Id, userId);
+                        var attachment = await CreateAttachmentFromFile(file, comment.Id, userId, cancellationToken);
                         if (attachment != null)
                         {
                             _context.CommentAttachments.Add(attachment);
@@ -178,33 +180,21 @@ namespace Application.Comments
                 }
             }
 
-            private async Task<CommentAttachment> CreateAttachmentFromFile(IFormFile file, Guid commentId, string userId)
+            private async Task<CommentAttachment> CreateAttachmentFromFile(IFormFile file, Guid commentId, string userId, CancellationToken cancellationToken)
             {
                 if (file == null || file.Length == 0)
                     return null;
 
-                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
-                if (!Directory.Exists(uploadsFolder))
-                {
-                    Directory.CreateDirectory(uploadsFolder);
-                }
-
-                var uniqueFileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
-                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await file.CopyToAsync(stream);
-                }
+                var blobName = await _fileService.UploadAsync(file, cancellationToken);
 
                 return new CommentAttachment
                 {
                     Id = Guid.NewGuid(),
-                    FileName = uniqueFileName,
+                    FileName = blobName,
                     OriginalFileName = file.FileName,
                     ContentType = file.ContentType,
                     FileSize = file.Length,
-                    FilePath = uniqueFileName,
+                    FilePath = blobName,
                     UploadedAt = DateTime.UtcNow,
                     CommentId = commentId,
                     UploadedById = userId

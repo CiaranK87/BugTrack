@@ -6,6 +6,7 @@ using API.Services;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Infrastructure.Security;
+using Infrastructure.Storage;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -88,6 +89,7 @@ namespace API.Extensions
             services.AddScoped<IUserAccessor, UserAccessor>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<INotificationPushService, NotificationPushService>();
+            services.AddScoped<IFileService, AzureBlobFileService>();
 
             return services;
         }

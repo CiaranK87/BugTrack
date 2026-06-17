@@ -1,7 +1,3 @@
-using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 using Application.Core;
 using Application.Interfaces;
 using Domain;
@@ -24,17 +20,19 @@ namespace Application.Comments
         {
             private readonly DataContext _context;
             private readonly IUserAccessor _userAccessor;
+            private readonly IFileService _fileService;
 
-            public Handler(DataContext context, IUserAccessor userAccessor)
+            public Handler(DataContext context, IUserAccessor userAccessor, IFileService fileService)
             {
                 _context = context;
                 _userAccessor = userAccessor;
+                _fileService = fileService;
             }
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
                 var userId = _userAccessor.GetUserId();
-                
+
                 var attachment = await _context.CommentAttachments
                     .Where(ca => ca.CommentId == request.CommentId && ca.Id == request.AttachmentId)
                     .FirstOrDefaultAsync(cancellationToken);
@@ -42,11 +40,7 @@ namespace Application.Comments
                 if (attachment == null || attachment.UploadedById != userId)
                     return Result<Unit>.Failure("Attachment not found or access denied");
 
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "uploads", attachment.FilePath);
-                if (File.Exists(filePath))
-                {
-                    File.Delete(filePath);
-                }
+                await _fileService.DeleteAsync(attachment.FilePath, cancellationToken);
 
                 _context.CommentAttachments.Remove(attachment);
                 await _context.SaveChangesAsync(cancellationToken);

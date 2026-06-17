@@ -1,35 +1,29 @@
-using System;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Application.Core;
-using Application.DTOs;
 using Application.Interfaces;
-using Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace Application.Comments
 {
-    public class Query : IRequest<(CommentAttachmentDto Attachment, string FilePath)>
+    public class GetAttachmentQuery : IRequest<(Stream FileStream, string ContentType, string OriginalFileName)>
     {
         public Guid TicketId { get; set; }
         public Guid CommentId { get; set; }
         public Guid AttachmentId { get; set; }
     }
 
-    public class GetAttachmentHandler : IRequestHandler<Query, (CommentAttachmentDto Attachment, string FilePath)>
+    public class GetAttachmentHandler : IRequestHandler<GetAttachmentQuery, (Stream FileStream, string ContentType, string OriginalFileName)>
     {
         private readonly DataContext _context;
+        private readonly IFileService _fileService;
 
-        public GetAttachmentHandler(DataContext context)
+        public GetAttachmentHandler(DataContext context, IFileService fileService)
         {
             _context = context;
+            _fileService = fileService;
         }
 
-        public async Task<(CommentAttachmentDto Attachment, string FilePath)> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<(Stream FileStream, string ContentType, string OriginalFileName)> Handle(GetAttachmentQuery request, CancellationToken cancellationToken)
         {
             var attachment = await _context.CommentAttachments
                 .Include(ca => ca.Comment)
@@ -39,25 +33,10 @@ namespace Application.Comments
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (attachment == null)
-            {
-                return (null, null);
-            }
+                return (null, null, null);
 
-            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
-            var filePath = Path.Combine(uploadsFolder, attachment.FilePath);
-
-            var attachmentDto = new CommentAttachmentDto
-            {
-                Id = attachment.Id,
-                FileName = attachment.FileName,
-                OriginalFileName = attachment.OriginalFileName,
-                ContentType = attachment.ContentType,
-                FileSize = attachment.FileSize,
-                UploadedAt = attachment.UploadedAt,
-                DownloadUrl = $"/api/tickets/{request.TicketId}/comments/{request.CommentId}/attachments/{attachment.Id}/download"
-            };
-
-            return (attachmentDto, filePath);
+            var stream = await _fileService.DownloadAsync(attachment.FilePath, cancellationToken);
+            return (stream, attachment.ContentType, attachment.OriginalFileName);
         }
     }
 }
