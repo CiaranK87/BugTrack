@@ -1,6 +1,3 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Application.Core;
 using Application.Interfaces;
 using Domain;
@@ -22,11 +19,13 @@ namespace Application.Comments
         {
             private readonly DataContext _context;
             private readonly IUserAccessor _userAccessor;
+            private readonly IFileService _fileService;
 
-            public Handler(DataContext context, IUserAccessor userAccessor)
+            public Handler(DataContext context, IUserAccessor userAccessor, IFileService fileService)
             {
                 _context = context;
                 _userAccessor = userAccessor;
+                _fileService = fileService;
             }
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
@@ -45,26 +44,22 @@ namespace Application.Comments
                 // Check if comment has replies
                 var hasReplies = comment.Replies != null && comment.Replies.Any();
 
+                if (comment.Attachments.Any())
+                {
+                    foreach (var attachment in comment.Attachments)
+                        await _fileService.DeleteAsync(attachment.FilePath, cancellationToken);
+
+                    _context.CommentAttachments.RemoveRange(comment.Attachments);
+                }
+
                 if (hasReplies)
                 {
-                    // Soft delete: mark as deleted but keep in database for context
                     comment.IsDeleted = true;
                     comment.DeletedAt = DateTime.UtcNow;
                     comment.Content = "[Deleted]";
-                    
-                    // Remove attachments when soft deleting
-                    if (comment.Attachments.Any())
-                    {
-                        _context.CommentAttachments.RemoveRange(comment.Attachments);
-                    }
                 }
                 else
                 {
-                    // Hard delete: remove completely if no replies
-                    if (comment.Attachments.Any())
-                    {
-                        _context.CommentAttachments.RemoveRange(comment.Attachments);
-                    }
                     _context.Comments.Remove(comment);
                 }
 
