@@ -11,10 +11,12 @@ interface Props {
 export default observer(function ProfileCard({ profile }: Props) {
   return (
     <Card as={Link} to={`/profile/${profile.username}`}>
-      <UserAvatar image={profile.image} displayName={profile.displayName} size="small" circular={false} style={{ borderRadius: '4px 4px 0 0', width: '100%', height: '80px' }} />
-      <Card.Content>
-        <Card.Header>{profile.displayName}</Card.Header>
-        <Card.Description>Bio goes here</Card.Description>
+      <Card.Content style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <UserAvatar image={profile.image} displayName={profile.displayName} size="small" />
+        <div>
+          <Card.Header>{profile.displayName}</Card.Header>
+          <Card.Description>Bio goes here</Card.Description>
+        </div>
       </Card.Content>
       <Card.Content extra>
         <Icon name="user" />
