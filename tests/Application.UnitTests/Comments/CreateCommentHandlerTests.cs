@@ -19,6 +19,7 @@ namespace Application.UnitTests.Comments
         private readonly Mock<INotificationService> _mockNotificationService;
         private readonly Mock<INotificationPushService> _mockNotificationPushService;
         private readonly Mock<ILogger<Create.Handler>> _mockLogger;
+        private readonly Mock<IFileService> _mockFileService;
         private readonly Create.Handler _handler;
 
         public CreateCommentHandlerTests()
@@ -32,13 +33,15 @@ namespace Application.UnitTests.Comments
             _mockNotificationService = new Mock<INotificationService>();
             _mockNotificationPushService = new Mock<INotificationPushService>();
             _mockLogger = new Mock<ILogger<Create.Handler>>();
-            
+            _mockFileService = new Mock<IFileService>();
+
             _handler = new Create.Handler(
-                _context, 
-                _mockUserAccessor.Object, 
+                _context,
+                _mockUserAccessor.Object,
                 _mockNotificationService.Object,
                 _mockNotificationPushService.Object,
-                _mockLogger.Object
+                _mockLogger.Object,
+                _mockFileService.Object
             );
         }
 
@@ -397,11 +400,12 @@ namespace Application.UnitTests.Comments
 
             using var badContext = new DataContext(options);
             var badHandler = new Create.Handler(
-                badContext, 
-                _mockUserAccessor.Object, 
+                badContext,
+                _mockUserAccessor.Object,
                 _mockNotificationService.Object,
                 _mockNotificationPushService.Object,
-                _mockLogger.Object
+                _mockLogger.Object,
+                _mockFileService.Object
             );
 
             _mockUserAccessor.Setup(x => x.GetUserId()).Returns("user123");
