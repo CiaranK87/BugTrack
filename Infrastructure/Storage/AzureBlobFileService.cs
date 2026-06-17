@@ -12,8 +12,8 @@ namespace Infrastructure.Storage
 
         public AzureBlobFileService(IConfiguration config)
         {
-            var connectionString = config["AzureBlobStorage:ConnectionString"];
-            var containerName = config["AzureBlobStorage:ContainerName"] ?? "attachments";
+            var connectionString = config["AzureStorageConnectionString"];
+            var containerName = config["AzureStorageContainerName"] ?? "attachments";
             _containerClient = new BlobContainerClient(connectionString, containerName);
         }
 
