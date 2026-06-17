@@ -1,7 +1,8 @@
-import { Segment, List, Label, Item, Image, Header, Icon } from "semantic-ui-react";
+import { Segment, List, Label, Item, Header, Icon } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../../app/stores/store";
+import UserAvatar from "../../../app/common/UserAvatar";
 
 export default observer(function TicketDetailedSidebar() {
   const { ticketStore, projectStore, userStore } = useStore();
@@ -25,10 +26,10 @@ export default observer(function TicketDetailedSidebar() {
             <Label style={{ position: "absolute" }} color="orange" ribbon="right">
               Submitter
             </Label>
-            <Image
+            <UserAvatar
+              image={submitterUser?.image}
+              displayName={submitterUser?.displayName || ticket?.submitter || ''}
               size="tiny"
-              src="/assets/user.png"
-              avatar
             />
             <Item.Content verticalAlign="middle">
               <Item.Header as="h4">
@@ -49,10 +50,10 @@ export default observer(function TicketDetailedSidebar() {
               <Label style={{ position: "absolute" }} color="blue" ribbon="right">
                 Assigned
               </Label>
-              <Image
+              <UserAvatar
+                image={assignedUser?.image}
+                displayName={assignedUser?.displayName || ticket?.assigned || ''}
                 size="tiny"
-                src="/assets/user.png"
-                avatar
               />
               <Item.Content verticalAlign="middle">
                 <Item.Header as="h4">

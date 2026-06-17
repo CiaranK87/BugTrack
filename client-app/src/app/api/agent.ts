@@ -168,6 +168,8 @@ const Account = {
 const Profiles = {
   get: (username: string) => requests.get<Profile>(`/profiles/${username}`),
   updateProfile: (profile: Partial<Profile>) => requests.put<void>(`/profiles`, profile),
+  uploadAvatar: (file: FormData) => requests.postForm<void>(`/profiles/avatar`, file),
+  deleteAvatar: () => requests.del<void>(`/profiles/avatar`),
 };
 
 const Users = {

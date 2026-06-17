@@ -166,7 +166,8 @@ namespace API.Controllers
                 DisplayName = user.DisplayName,
                 Token = _tokenService.CreateToken(user),
                 Username = user.UserName,
-                GlobalRole = user.GlobalRole ?? Roles.Global.User
+                GlobalRole = user.GlobalRole ?? Roles.Global.User,
+                Image = user.AvatarBlobName != null ? $"/api/profiles/{user.UserName}/avatar" : null
             };
         }
     }

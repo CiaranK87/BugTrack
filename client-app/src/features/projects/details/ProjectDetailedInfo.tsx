@@ -1,7 +1,8 @@
-import { Segment, List, Label, Item, Image } from "semantic-ui-react";
+import { Segment, List, Label, Item } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import { Project } from "../../../app/models/project";
+import UserAvatar from "../../../app/common/UserAvatar";
 
 interface Props {
   project: Project;
@@ -26,7 +27,7 @@ export default observer(function ProjectDetailedInfo({ project: { participants, 
                   Owner
                 </Label>
               )}
-              <Image size="tiny" src="/assets/user.png" />
+              <UserAvatar image={participant.image} displayName={participant.displayName} size="tiny" />
               <Item.Content verticalAlign="middle">
                 <Item.Header as="h3">
                   <Link to={`/profiles/${participant.username}`}>{participant.displayName}</Link>

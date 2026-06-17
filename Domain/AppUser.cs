@@ -11,6 +11,7 @@ namespace Domain
         public bool IsDeleted { get; set; } = false;
         public DateTime? DeletedAt { get; set; }
         public DateTime JoinDate { get; set; } = DateTime.UtcNow;
+        public string AvatarBlobName { get; set; }
         public ICollection<ProjectParticipant> ProjectParticipants { get; set; }
         public ICollection<Notification> Notifications { get; set; }
     }

@@ -41,7 +41,8 @@ namespace Application.Core
                 .ForMember(dest => dest.DisplayName, opt => opt.MapFrom(src => src.DisplayName))
                 .ForMember(dest => dest.Bio, opt => opt.MapFrom(src => src.Bio))
                 .ForMember(dest => dest.JoinDate, opt => opt.MapFrom(src => src.JoinDate))
-                .ForMember(dest => dest.Image, opt => opt.Ignore());
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src =>
+                    src.AvatarBlobName != null ? $"/api/profiles/{src.UserName}/avatar" : null));
 
             CreateMap<Ticket, Ticket>()
                 .ForMember(dest => dest.CreatedAt, opt => opt.Ignore());
@@ -57,6 +58,8 @@ namespace Application.Core
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.ToString()))
                 .ForMember(dest => dest.AuthorUsername, opt => opt.MapFrom(src => src.Author.UserName))
                 .ForMember(dest => dest.AuthorDisplayName, opt => opt.MapFrom(src => src.Author.DisplayName))
+                .ForMember(dest => dest.AuthorImage, opt => opt.MapFrom(src =>
+                    src.Author.AvatarBlobName != null ? $"/api/profiles/{src.Author.UserName}/avatar" : null))
                 .ForMember(dest => dest.AuthorId, opt => opt.MapFrom(src => src.AuthorId))
                 .ForMember(dest => dest.ParentCommentId, opt => opt.MapFrom(src => src.ParentCommentId))
                 .ForMember(dest => dest.Replies, opt => opt.Ignore());

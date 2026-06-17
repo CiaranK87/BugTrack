@@ -10,5 +10,6 @@ namespace Application.DTOs
         public string JobTitle { get; set; }
         public string Bio { get; set; }
         public string Token { get; set; }
+        public string Image { get; set; }
     }
 }

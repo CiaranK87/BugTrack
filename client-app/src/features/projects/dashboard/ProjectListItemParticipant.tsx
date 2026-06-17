@@ -1,8 +1,9 @@
 import { observer } from "mobx-react-lite";
-import { Image, List, Popup } from "semantic-ui-react";
+import { List, Popup } from "semantic-ui-react";
 import { Profile } from "../../../app/models/profile";
 import { Link } from "react-router-dom";
 import ProfileCard from "../../profiles/ProfileCard";
+import UserAvatar from "../../../app/common/UserAvatar";
 
 interface Props {
   participants: Profile[];
@@ -17,7 +18,7 @@ export default observer(function ProjectListItemParticipant({ participants }: Pr
           key={participant.username}
           trigger={
             <List.Item key={participant.username} as={Link} to={`/profiles/${participant.username}`}>
-              <Image size="mini" circular src="assets/user.png" />
+              <UserAvatar image={participant.image} displayName={participant.displayName} size="mini" />
             </List.Item>
           }
         >

@@ -1,10 +1,11 @@
 import { observer } from "mobx-react-lite";
-import { Button, Header, Item, Segment, Image, Confirm, Dropdown } from "semantic-ui-react";
+import { Button, Header, Item, Segment, Confirm, Dropdown } from "semantic-ui-react";
 import { Ticket } from "../../../app/models/ticket";
 import { Link, useNavigate } from "react-router-dom";
 import { useStore } from "../../../app/stores/store";
 import { useState } from "react";
 import { logger } from "../../../app/utils/logger";
+import UserAvatar from "../../../app/common/UserAvatar";
 
 interface Props {
   ticket: Ticket;
@@ -114,14 +115,14 @@ export default observer(function TicketDetailedHeader({ ticket }: Props) {
                   <p>Created: {ticket.createdAt ? new Date(ticket.createdAt + 'Z').toUTCString().replace('GMT', '').trim().slice(0, -3) : 'Never'}</p>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginTop: '10px' }}>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                      <Image avatar size="mini" src="/assets/user.png" style={{ marginRight: '8px' }} />
+                      <UserAvatar image={undefined} displayName={ticket.submitter || ''} size="mini" style={{ marginRight: '8px' }} />
                       <span style={{ fontSize: '0.9em', color: '#666' }}>
                         Submitted by <strong>{ticket.submitter}</strong>
                       </span>
                     </div>
                     {ticket.assigned && (
                       <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <Image avatar size="mini" src="/assets/user.png" style={{ marginRight: '8px' }} />
+                        <UserAvatar image={undefined} displayName={ticket.assigned || ''} size="mini" style={{ marginRight: '8px' }} />
                         <span style={{ fontSize: '0.9em', color: '#666' }}>
                           Assigned to <strong>{ticket.assigned}</strong>
                         </span>
