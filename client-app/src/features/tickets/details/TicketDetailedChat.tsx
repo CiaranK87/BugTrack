@@ -1,5 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { Segment, Header, Comment, Form, Button } from "semantic-ui-react";
+import UserAvatar from "../../../app/common/UserAvatar";
 
 export default observer(function TicketDetailedChat() {
   return (
@@ -10,7 +11,7 @@ export default observer(function TicketDetailedChat() {
       <Segment attached>
         <Comment.Group>
           <Comment>
-            <Comment.Avatar src="/assets/user.png" />
+            <Comment.Avatar as="div"><UserAvatar image={undefined} displayName="Matt" size="mini" /></Comment.Avatar>
             <Comment.Content>
               <Comment.Author as="a">Matt</Comment.Author>
               <Comment.Metadata>
@@ -24,7 +25,7 @@ export default observer(function TicketDetailedChat() {
           </Comment>
 
           <Comment>
-            <Comment.Avatar src="/assets/user.png" />
+            <Comment.Avatar as="div"><UserAvatar image={undefined} displayName="Joe Henderson" size="mini" /></Comment.Avatar>
             <Comment.Content>
               <Comment.Author as="a">Joe Henderson</Comment.Author>
               <Comment.Metadata>

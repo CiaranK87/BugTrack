@@ -1,15 +1,18 @@
 import { observer } from "mobx-react-lite";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Container, Grid, Header, Segment, Button, Icon, Card, Label, Menu } from "semantic-ui-react";
 import { useStore } from "../../app/stores/store";
 import ProfileEditForm from "./ProfileEditForm";
 import ChangePasswordForm from "../users/ChangePasswordForm";
 import { format } from "date-fns";
+import UserAvatar from "../../app/common/UserAvatar";
 
 export default observer(function ProfilePage() {
   const { userStore, projectStore, modalStore } = useStore();
   const { username } = useParams<{ username: string }>();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [avatarLoading, setAvatarLoading] = useState(false);
 
   useEffect(() => {
     if (username) {
@@ -17,6 +20,27 @@ export default observer(function ProfilePage() {
       projectStore.loadUserProjects(username);
     }
   }, [userStore, projectStore, username]);
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setAvatarLoading(true);
+    try {
+      await userStore.uploadAvatar(file);
+    } finally {
+      setAvatarLoading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  const handleAvatarDelete = async () => {
+    setAvatarLoading(true);
+    try {
+      await userStore.deleteAvatar();
+    } finally {
+      setAvatarLoading(false);
+    }
+  };
 
 
 
@@ -48,12 +72,49 @@ export default observer(function ProfilePage() {
       {/* Header */}
       <Segment className="profile-header-segment">
         <Grid stackable>
-          <Grid.Row>
+          <Grid.Row verticalAlign="middle">
             <Grid.Column width={10}>
-              <Header as="h2" style={{ margin: 0, paddingTop: '10px' }}>
-                <Icon name="user" style={{ marginRight: '10px' }} />
-                {profile.displayName}'s Profile
-              </Header>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <div style={{ position: 'relative', display: 'inline-block' }}>
+                  <UserAvatar image={profile.image} displayName={profile.displayName} size="small" />
+                  {userStore.isCurrentUser(profile.username) && (
+                    <Button
+                      icon="camera"
+                      circular
+                      size="mini"
+                      loading={avatarLoading}
+                      disabled={avatarLoading}
+                      onClick={() => fileInputRef.current?.click()}
+                      style={{ position: 'absolute', bottom: -4, right: -4, padding: '4px' }}
+                    />
+                  )}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/gif,image/webp"
+                    style={{ display: 'none' }}
+                    onChange={handleAvatarUpload}
+                  />
+                </div>
+                <div>
+                  <Header as="h2" style={{ margin: 0 }}>
+                    {profile.displayName}'s Profile
+                  </Header>
+                  {userStore.isCurrentUser(profile.username) && profile.image && (
+                    <Button
+                      content="Remove photo"
+                      icon="trash"
+                      size="mini"
+                      basic
+                      color="red"
+                      loading={avatarLoading}
+                      disabled={avatarLoading}
+                      onClick={handleAvatarDelete}
+                      style={{ marginTop: '6px' }}
+                    />
+                  )}
+                </div>
+              </div>
             </Grid.Column>
             <Grid.Column width={6} textAlign="right">
               {userStore.isCurrentUser(profile.username) && (

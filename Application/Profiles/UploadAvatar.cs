@@ -1,16 +1,16 @@
 using Application.Core;
 using Application.Interfaces;
-using Domain;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Persistence;
 
-namespace Application.Users
+namespace Application.Profiles
 {
-    public class SoftDelete
+    public class UploadAvatar
     {
         public class Command : IRequest<Result<Unit>>
         {
-            public string UserId { get; set; }
+            public IFormFile File { get; set; }
         }
 
         public class Handler : IRequestHandler<Command, Result<Unit>>
@@ -28,26 +28,25 @@ namespace Application.Users
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
-                var currentUserId = _userAccessor.GetUserId();
-                var user = await _context.Users.FindAsync(request.UserId);
+                var userId = _userAccessor.GetUserId();
+                var user = await _context.Users.FindAsync(userId);
 
-                if (user == null)
-                    return null;
+                if (user == null) return null;
 
-                if (user.GlobalRole == Roles.Global.Admin && user.Id != currentUserId)
-                    return Result<Unit>.Failure("Admins cannot delete other admins");
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+                var ext = Path.GetExtension(request.File.FileName).ToLower();
+                if (!allowedExtensions.Contains(ext))
+                    return Result<Unit>.Failure("Only image files are allowed (jpg, jpeg, png, gif, webp)");
 
-                if (user.Id == currentUserId)
-                    return Result<Unit>.Failure("Admins cannot delete themselves");
+                if (request.File.Length > 5 * 1024 * 1024)
+                    return Result<Unit>.Failure("Avatar must be 5 MB or smaller");
 
                 if (!string.IsNullOrEmpty(user.AvatarBlobName))
                     await _fileService.DeleteAsync(user.AvatarBlobName, cancellationToken);
 
-                user.IsDeleted = true;
-                user.DeletedAt = DateTime.UtcNow;
+                user.AvatarBlobName = await _fileService.UploadAsync(request.File, cancellationToken);
 
                 await _context.SaveChangesAsync(cancellationToken);
-
                 return Result<Unit>.Success(Unit.Value);
             }
         }

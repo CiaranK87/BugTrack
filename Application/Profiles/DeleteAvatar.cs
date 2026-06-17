@@ -1,16 +1,14 @@
 using Application.Core;
 using Application.Interfaces;
-using Domain;
 using MediatR;
 using Persistence;
 
-namespace Application.Users
+namespace Application.Profiles
 {
-    public class SoftDelete
+    public class DeleteAvatar
     {
         public class Command : IRequest<Result<Unit>>
         {
-            public string UserId { get; set; }
         }
 
         public class Handler : IRequestHandler<Command, Result<Unit>>
@@ -28,26 +26,17 @@ namespace Application.Users
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
-                var currentUserId = _userAccessor.GetUserId();
-                var user = await _context.Users.FindAsync(request.UserId);
+                var userId = _userAccessor.GetUserId();
+                var user = await _context.Users.FindAsync(userId);
 
-                if (user == null)
-                    return null;
+                if (user == null) return null;
+                if (string.IsNullOrEmpty(user.AvatarBlobName))
+                    return Result<Unit>.Failure("No avatar to delete");
 
-                if (user.GlobalRole == Roles.Global.Admin && user.Id != currentUserId)
-                    return Result<Unit>.Failure("Admins cannot delete other admins");
-
-                if (user.Id == currentUserId)
-                    return Result<Unit>.Failure("Admins cannot delete themselves");
-
-                if (!string.IsNullOrEmpty(user.AvatarBlobName))
-                    await _fileService.DeleteAsync(user.AvatarBlobName, cancellationToken);
-
-                user.IsDeleted = true;
-                user.DeletedAt = DateTime.UtcNow;
+                await _fileService.DeleteAsync(user.AvatarBlobName, cancellationToken);
+                user.AvatarBlobName = null;
 
                 await _context.SaveChangesAsync(cancellationToken);
-
                 return Result<Unit>.Success(Unit.Value);
             }
         }

@@ -4,6 +4,7 @@ export interface User {
   token: string;
   globalRole: string;
   projectRoles?: string[];
+  image?: string;
 }
 
 export interface UserFormValues {

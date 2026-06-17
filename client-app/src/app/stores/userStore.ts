@@ -162,7 +162,7 @@ export default class UserStore {
           this.profile.displayName = profile.displayName || this.profile.displayName;
           this.profile.bio = profile.bio || this.profile.bio;
         }
-        
+
         if (profile.displayName && this.user) {
           this.user.displayName = profile.displayName;
           this.userRegistry.set(this.user.username, this.user);
@@ -171,6 +171,25 @@ export default class UserStore {
     } catch (error: any) {
       logger.error("Profile update error", error.response?.data || error.message);
     }
+  };
+
+  uploadAvatar = async (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    await agent.Profiles.uploadAvatar(formData);
+    const imagePath = `/api/profiles/${this.user?.username}/avatar`;
+    runInAction(() => {
+      if (this.user) this.user.image = imagePath;
+      if (this.profile) this.profile.image = imagePath;
+    });
+  };
+
+  deleteAvatar = async () => {
+    await agent.Profiles.deleteAvatar();
+    runInAction(() => {
+      if (this.user) this.user.image = undefined;
+      if (this.profile) this.profile.image = undefined;
+    });
   };
 
   get projectRoles() {

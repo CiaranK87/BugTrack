@@ -30,5 +30,28 @@ namespace API.Controllers
         {
             return HandleResult(await Mediator.Send(new UpdateProfile.Command { ProfileDto = profileDto }));
         }
+
+        [AllowAnonymous]
+        [HttpGet("{username}/avatar")]
+        public async Task<IActionResult> GetAvatar(string username)
+        {
+            var (stream, contentType) = await Mediator.Send(new GetAvatar.Query { Username = username });
+            if (stream == null) return NotFound();
+            return File(stream, contentType);
+        }
+
+        [Authorize]
+        [HttpPost("avatar")]
+        public async Task<IActionResult> UploadAvatar([FromForm] IFormFile file)
+        {
+            return HandleResult(await Mediator.Send(new UploadAvatar.Command { File = file }));
+        }
+
+        [Authorize]
+        [HttpDelete("avatar")]
+        public async Task<IActionResult> DeleteAvatar()
+        {
+            return HandleResult(await Mediator.Send(new DeleteAvatar.Command()));
+        }
     }
 }

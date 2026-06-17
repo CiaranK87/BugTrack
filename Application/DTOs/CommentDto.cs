@@ -14,6 +14,7 @@ namespace Application.DTOs
         public string AuthorId { get; set; }
         public string AuthorUsername { get; set; }
         public string AuthorDisplayName { get; set; }
+        public string AuthorImage { get; set; }
         public Guid? ParentCommentId { get; set; }
         public List<CommentDto> Replies { get; set; } = new List<CommentDto>();
         public List<CommentAttachmentDto> Attachments { get; set; } = new List<CommentAttachmentDto>();

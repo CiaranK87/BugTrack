@@ -1,9 +1,10 @@
-import { Container, Dropdown, Image, Menu, Button, Icon } from "semantic-ui-react";
+import { Container, Dropdown, Menu, Button, Icon } from "semantic-ui-react";
 import { Link, NavLink } from "react-router-dom";
 import { useState } from "react";
 import { useStore } from "../stores/store";
 import { observer } from "mobx-react-lite";
 import NotificationsDropdown from "../common/notifications/NotificationsDropdown";
+import UserAvatar from "../common/UserAvatar";
 
 export default observer(function Navbar() {
   const {
@@ -48,7 +49,7 @@ export default observer(function Navbar() {
         </div>
         
         <Menu.Item position="right" className="user-menu-item">
-          <Image avatar spaced="right" src={"/assets/user.png"} />
+          <UserAvatar image={user?.image} displayName={user?.displayName || ''} size="mini" style={{ marginRight: '0.5em' }} />
           <Dropdown pointing="top right" text={`${user?.displayName} (${user?.globalRole})`}>
             <Dropdown.Menu>
               <Dropdown.Item as={Link} to={`/profile/${user?.username}`} text="My Profile" icon="user" />

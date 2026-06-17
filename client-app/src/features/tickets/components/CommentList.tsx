@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useStore } from '../../../app/stores/store';
-import { Icon, Button, Image, Confirm } from 'semantic-ui-react';
+import { Icon, Button, Confirm } from 'semantic-ui-react';
 import { format } from 'date-fns';
 import FileAttachment from './FileAttachment';
 import CommentForm from './CommentForm';
+import UserAvatar from '../../../app/common/UserAvatar';
 
 interface Props {
   ticketId: string;
@@ -73,10 +74,10 @@ const CommentList: React.FC<Props> = observer(({ ticketId }) => {
           {sortedComments.filter(comment => !comment.parentCommentId).map((comment) => (
             <div key={comment.id} id={`comment-${comment.id}`} className={`comment-item ${comment.isDeleted ? 'deleted-comment' : ''}`}>
               <div className="comment-main-wrapper">
-                <Image
-                  src='/assets/user.png'
-                  avatar
-                  size='mini'
+                <UserAvatar
+                  image={comment.authorImage}
+                  displayName={comment.authorDisplayName}
+                  size="mini"
                   className="comment-avatar-img"
                 />
                 <div className="comment-body">
@@ -164,10 +165,10 @@ const CommentList: React.FC<Props> = observer(({ ticketId }) => {
                   ).map((reply) => (
                     <div key={reply.id} id={`comment-${reply.id}`} className={`reply-item ${reply.isDeleted ? 'deleted-comment' : ''}`}>
                       <div className="reply-main-wrapper">
-                        <Image
-                          src='/assets/user.png'
-                          avatar
-                          size='mini'
+                        <UserAvatar
+                          image={reply.authorImage}
+                          displayName={reply.authorDisplayName}
+                          size="mini"
                           className="reply-avatar-img"
                         />
                         <div className="reply-body">
