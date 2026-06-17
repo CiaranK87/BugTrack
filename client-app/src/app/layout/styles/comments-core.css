@@ -201,6 +201,13 @@ body.dark-mode .ui.comment {
   gap: 10px;
 }
 
+.comment-form-footer .ui.basic.button:active,
+.comment-form-footer .ui.basic.button:focus {
+  background: transparent !important;
+  color: rgba(0, 0, 0, 0.6) !important;
+  box-shadow: 0 0 0 1px rgba(34, 36, 38, 0.35) inset !important;
+}
+
 body.dark-mode .ui.comments .comment .text,
 body.dark-mode .ui.comments .comment .author,
 body.dark-mode .ui.comments .comment .metadata,
