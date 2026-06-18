@@ -33,6 +33,9 @@ namespace Application.Profiles
 
                 if (user == null) return null;
 
+                if (request.File == null)
+                    return Result<Unit>.Failure("No file provided");
+
                 var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
                 var ext = Path.GetExtension(request.File.FileName).ToLower();
                 if (!allowedExtensions.Contains(ext))
@@ -41,12 +44,16 @@ namespace Application.Profiles
                 if (request.File.Length > 5 * 1024 * 1024)
                     return Result<Unit>.Failure("Avatar must be 5 MB or smaller");
 
-                if (!string.IsNullOrEmpty(user.AvatarBlobName))
-                    await _fileService.DeleteAsync(user.AvatarBlobName, cancellationToken);
-
+                var oldBlobName = user.AvatarBlobName;
                 user.AvatarBlobName = await _fileService.UploadAsync(request.File, cancellationToken);
-
                 await _context.SaveChangesAsync(cancellationToken);
+
+                if (!string.IsNullOrEmpty(oldBlobName))
+                {
+                    try { await _fileService.DeleteAsync(oldBlobName, cancellationToken); }
+                    catch { /* orphaned blob is acceptable; do not block the upload */ }
+                }
+
                 return Result<Unit>.Success(Unit.Value);
             }
         }

@@ -35,7 +35,8 @@ namespace Application.Comments
             if (attachment == null)
                 return (null, null, null);
 
-            var stream = await _fileService.DownloadAsync(attachment.FilePath, cancellationToken);
+            var (stream, _) = await _fileService.DownloadAsync(attachment.FilePath, cancellationToken);
+            if (stream == null) return (null, null, null);
             return (stream, attachment.ContentType, attachment.OriginalFileName);
         }
     }

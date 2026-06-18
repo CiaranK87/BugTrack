@@ -45,7 +45,10 @@ namespace Application.Projects
                         DisplayName = p.AppUser.DisplayName,
                         Email = p.AppUser.Email,
                         Role = p.Role,
-                        IsOwner = p.IsOwner
+                        IsOwner = p.IsOwner,
+                        Image = p.AppUser.AvatarBlobName != null
+                            ? AvatarUrl.For(p.AppUser.UserName)
+                            : null
                     })
                     .ToList();
 

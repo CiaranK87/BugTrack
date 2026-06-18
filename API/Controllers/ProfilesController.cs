@@ -37,6 +37,7 @@ namespace API.Controllers
         {
             var (stream, contentType) = await Mediator.Send(new GetAvatar.Query { Username = username });
             if (stream == null) return NotFound();
+            Response.Headers["Cache-Control"] = "no-cache, no-store";
             return File(stream, contentType);
         }
 

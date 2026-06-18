@@ -177,11 +177,12 @@ export default class UserStore {
     const formData = new FormData();
     formData.append('file', file);
     await agent.Profiles.uploadAvatar(formData);
-    const imagePath = `/api/profiles/${this.user?.username}/avatar`;
+    const imagePath = `/api/profiles/${this.user?.username}/avatar?t=${Date.now()}`;
     runInAction(() => {
       if (this.user) this.user.image = imagePath;
       if (this.profile) this.profile.image = imagePath;
     });
+    store.projectStore.clearParticipantCache();
   };
 
   deleteAvatar = async () => {
@@ -190,6 +191,7 @@ export default class UserStore {
       if (this.user) this.user.image = undefined;
       if (this.profile) this.profile.image = undefined;
     });
+    store.projectStore.clearParticipantCache();
   };
 
   get projectRoles() {
