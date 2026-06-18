@@ -1,4 +1,5 @@
 using Application.Interfaces;
+using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Http;
@@ -27,12 +28,32 @@ namespace Infrastructure.Storage
             return blobName;
         }
 
-        public async Task<Stream> DownloadAsync(string blobName, CancellationToken cancellationToken = default)
+        public async Task<(Stream Content, string ContentType)> DownloadAsync(string blobName, CancellationToken cancellationToken = default)
         {
             var blobClient = _containerClient.GetBlobClient(blobName);
-            var response = await blobClient.DownloadStreamingAsync(cancellationToken: cancellationToken);
-            return response.Value.Content;
+            try
+            {
+                var response = await blobClient.DownloadStreamingAsync(cancellationToken: cancellationToken);
+                var contentType = response.Value.Details?.ContentType;
+                if (string.IsNullOrWhiteSpace(contentType))
+                    contentType = FallbackContentType(blobName);
+                return (response.Value.Content, contentType);
+            }
+            catch (RequestFailedException ex) when (ex.Status == 404)
+            {
+                return (null, null);
+            }
         }
+
+        private static string FallbackContentType(string blobName) =>
+            Path.GetExtension(blobName)?.ToLowerInvariant() switch
+            {
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".png"            => "image/png",
+                ".gif"            => "image/gif",
+                ".webp"           => "image/webp",
+                _                 => "application/octet-stream"
+            };
 
         public async Task DeleteAsync(string blobName, CancellationToken cancellationToken = default)
         {

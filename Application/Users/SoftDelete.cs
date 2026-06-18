@@ -41,7 +41,10 @@ namespace Application.Users
                     return Result<Unit>.Failure("Admins cannot delete themselves");
 
                 if (!string.IsNullOrEmpty(user.AvatarBlobName))
-                    await _fileService.DeleteAsync(user.AvatarBlobName, cancellationToken);
+                {
+                    try { await _fileService.DeleteAsync(user.AvatarBlobName, cancellationToken); }
+                    catch { /* blob cleanup is best-effort; do not block account deletion */ }
+                }
 
                 user.IsDeleted = true;
                 user.DeletedAt = DateTime.UtcNow;

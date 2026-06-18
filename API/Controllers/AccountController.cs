@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Application.Core;
 using Application.DTOs;
 using API.Services;
 using Domain;
@@ -167,7 +168,7 @@ namespace API.Controllers
                 Token = _tokenService.CreateToken(user),
                 Username = user.UserName,
                 GlobalRole = user.GlobalRole ?? Roles.Global.User,
-                Image = user.AvatarBlobName != null ? $"/api/profiles/{user.UserName}/avatar" : null
+                Image = user.AvatarBlobName != null ? AvatarUrl.For(user.UserName) : null
             };
         }
     }

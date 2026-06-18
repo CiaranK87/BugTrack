@@ -33,10 +33,13 @@ namespace Application.Profiles
                 if (string.IsNullOrEmpty(user.AvatarBlobName))
                     return Result<Unit>.Failure("No avatar to delete");
 
-                await _fileService.DeleteAsync(user.AvatarBlobName, cancellationToken);
+                var blobName = user.AvatarBlobName;
                 user.AvatarBlobName = null;
-
                 await _context.SaveChangesAsync(cancellationToken);
+
+                try { await _fileService.DeleteAsync(blobName, cancellationToken); }
+                catch { /* orphaned blob is acceptable; do not block the delete */ }
+
                 return Result<Unit>.Success(Unit.Value);
             }
         }

@@ -68,6 +68,7 @@ export interface ProjectParticipantDto {
   email: string;
   role: string;
   isOwner: boolean;
+  image?: string | null;
 }
 
 export interface AddParticipantDto {

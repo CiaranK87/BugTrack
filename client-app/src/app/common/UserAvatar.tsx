@@ -24,7 +24,7 @@ export default function UserAvatar({ image, displayName, size = 'mini', classNam
   };
 
   if (image) {
-    const baseUrl = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace(/\/api$/, '');
+    const baseUrl = new URL(import.meta.env.VITE_API_URL || 'http://localhost:5000/api').origin;
     return (
       <div className={className} style={containerStyle}>
         <img

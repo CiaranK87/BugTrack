@@ -278,6 +278,10 @@ export default class ProjectStore {
 
   //*************************************************PARTICIPANTS************************************************************** */
 
+  clearParticipantCache = () => {
+    this.projectParticipants.clear();
+  };
+
   loadProjectParticipants = async (projectId: string) => {
     this.loadingParticipants = true;
     try {

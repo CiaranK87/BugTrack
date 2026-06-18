@@ -27,6 +27,10 @@ export default observer(function TicketDetailedHeader({ ticket }: Props) {
 
   const projectParticipants = projectStore.projectParticipants.get(ticket.projectId) || [];
   const participant = projectParticipants.find(p => p.username === currentUser?.username);
+  const submitterParticipant = projectParticipants.find(p => p.username === ticket.submitter);
+  const assignedParticipant = ticket.assigned
+    ? projectParticipants.find(p => p.username === ticket.assigned)
+    : null;
   const isProjectManager = participant?.role === "ProjectManager";
   const isDeveloper = participant?.role === "Developer";
 
@@ -115,14 +119,14 @@ export default observer(function TicketDetailedHeader({ ticket }: Props) {
                   <p>Created: {ticket.createdAt ? new Date(ticket.createdAt + 'Z').toUTCString().replace('GMT', '').trim().slice(0, -3) : 'Never'}</p>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginTop: '10px' }}>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                      <UserAvatar image={undefined} displayName={ticket.submitter || ''} size="mini" style={{ marginRight: '8px' }} />
+                      <UserAvatar image={submitterParticipant?.image} displayName={ticket.submitter || ''} size="mini" style={{ marginRight: '8px' }} />
                       <span style={{ fontSize: '0.9em', color: '#666' }}>
                         Submitted by <strong>{ticket.submitter}</strong>
                       </span>
                     </div>
                     {ticket.assigned && (
                       <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <UserAvatar image={undefined} displayName={ticket.assigned || ''} size="mini" style={{ marginRight: '8px' }} />
+                        <UserAvatar image={assignedParticipant?.image} displayName={ticket.assigned || ''} size="mini" style={{ marginRight: '8px' }} />
                         <span style={{ fontSize: '0.9em', color: '#666' }}>
                           Assigned to <strong>{ticket.assigned}</strong>
                         </span>

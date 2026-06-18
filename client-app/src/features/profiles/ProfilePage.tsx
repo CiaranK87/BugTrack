@@ -12,6 +12,7 @@ export default observer(function ProfilePage() {
   const { userStore, projectStore, modalStore } = useStore();
   const { username } = useParams<{ username: string }>();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const uploadInFlight = useRef(false);
   const [avatarLoading, setAvatarLoading] = useState(false);
 
   useEffect(() => {
@@ -23,11 +24,13 @@ export default observer(function ProfilePage() {
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file || uploadInFlight.current) return;
+    uploadInFlight.current = true;
     setAvatarLoading(true);
     try {
       await userStore.uploadAvatar(file);
     } finally {
+      uploadInFlight.current = false;
       setAvatarLoading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
     }

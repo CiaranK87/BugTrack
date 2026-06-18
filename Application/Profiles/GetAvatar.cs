@@ -31,19 +31,9 @@ namespace Application.Profiles
                 if (user == null || string.IsNullOrEmpty(user.AvatarBlobName))
                     return (null, null);
 
-                var stream = await _fileService.DownloadAsync(user.AvatarBlobName, cancellationToken);
-                return (stream, GetContentType(user.AvatarBlobName));
+                var (stream, contentType) = await _fileService.DownloadAsync(user.AvatarBlobName, cancellationToken);
+                return (stream, contentType);
             }
-
-            private static string GetContentType(string blobName) =>
-                Path.GetExtension(blobName)?.ToLower() switch
-                {
-                    ".jpg" or ".jpeg" => "image/jpeg",
-                    ".png" => "image/png",
-                    ".gif" => "image/gif",
-                    ".webp" => "image/webp",
-                    _ => "image/octet-stream"
-                };
         }
     }
 }
