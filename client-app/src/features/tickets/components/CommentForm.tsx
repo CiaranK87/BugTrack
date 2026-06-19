@@ -29,6 +29,7 @@ export default observer(function CommentForm({ ticketId, parentCommentId, isRepl
   const [atSymbolPosition, setAtSymbolPosition] = useState(0);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const setFieldValueRef = useRef<((field: string, value: any) => void) | null>(null);
+  const setTouchedRef = useRef<((fields: Record<string, boolean>) => void) | null>(null);
   const isMentioningRef = useRef(false);
 
   const validationSchema = Yup.object({
@@ -130,6 +131,16 @@ export default observer(function CommentForm({ ticketId, parentCommentId, isRepl
     }
   };
 
+  useEffect(() => {
+    const handleOpenReply = () => {
+      if (!isReply) {
+        setTouchedRef.current?.({ content: false });
+      }
+    };
+    window.addEventListener('openReplyForm', handleOpenReply);
+    return () => window.removeEventListener('openReplyForm', handleOpenReply);
+  }, [isReply]);
+
   return (
     <Segment clearing style={{ position: 'relative' }}>
       <Header content={isReply ? 'Add Reply' : 'Add Comment'} sub color='teal' />
@@ -143,15 +154,9 @@ export default observer(function CommentForm({ ticketId, parentCommentId, isRepl
             setFieldValueRef.current = setFieldValue;
           }
 
-          useEffect(() => {
-            const handleOpenReply = () => {
-              if (!isReply) {
-                setTouched({ content: false });
-              }
-            };
-            window.addEventListener('openReplyForm', handleOpenReply);
-            return () => window.removeEventListener('openReplyForm', handleOpenReply);
-          }, [setTouched]);
+          if (setTouched && setTouchedRef.current !== setTouched) {
+            setTouchedRef.current = setTouched;
+          }
 
           return (
             <Form className='ui form'>

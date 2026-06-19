@@ -39,6 +39,7 @@ builder.Services.AddIdentityServices(builder.Configuration);
 builder.Services.AddScoped<IAuthorizationHandler, ProjectRoleHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, TicketAuthorizationHandler>();
 builder.Services.AddLogging();
+builder.Services.AddHttpClient();
 
 builder.Services.Configure<API.Services.DemoSettings>(builder.Configuration.GetSection("DemoSettings"));
 builder.Services.AddHostedService<API.Services.DemoReseedService>();

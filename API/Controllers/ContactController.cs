@@ -15,11 +15,13 @@ namespace API.Controllers
     {
         private readonly IConfiguration _config;
         private readonly ILogger<ContactController> _logger;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public ContactController(IConfiguration config, ILogger<ContactController> logger)
+        public ContactController(IConfiguration config, ILogger<ContactController> logger, IHttpClientFactory httpClientFactory)
         {
             _config = config;
             _logger = logger;
+            _httpClientFactory = httpClientFactory;
         }
 
         [HttpPost("request-access")]
@@ -88,11 +90,15 @@ namespace API.Controllers
 
             try
             {
+                var safeName = WebUtility.HtmlEncode(request.Name);
+                var safeEmail = WebUtility.HtmlEncode(request.Email);
+                var safeMessage = WebUtility.HtmlEncode(request.Message);
+
                 var htmlContent = $@"
                 <h3>New access request for BugTrack</h3>
-                <p><strong>Name:</strong> {request.Name}</p>
-                <p><strong>Email:</strong> {request.Email}</p>
-                <p><strong>Message:</strong> {request.Message}</p>
+                <p><strong>Name:</strong> {safeName}</p>
+                <p><strong>Email:</strong> {safeEmail}</p>
+                <p><strong>Message:</strong> {safeMessage}</p>
                 <p><strong>Requested at:</strong> {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC</p>
                 <p>Please review this request and respond accordingly.</p>";
 
@@ -118,7 +124,7 @@ namespace API.Controllers
                 var json = JsonSerializer.Serialize(emailData);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                using var httpClient = new HttpClient();
+                using var httpClient = _httpClientFactory.CreateClient();
                 httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {resendApiKey}");
 
                 var response = await httpClient.PostAsync("https://api.resend.com/emails", content);

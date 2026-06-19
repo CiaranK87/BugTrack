@@ -34,7 +34,7 @@ axios.interceptors.request.use((config) => {
 
 axios.interceptors.response.use(
   async (response) => {
-    await sleep(500);
+    if (import.meta.env.DEV) await sleep(500);
     return response;
   },
   (error: AxiosError) => {
@@ -173,7 +173,7 @@ const Profiles = {
 };
 
 const Users = {
-  search: (query: string, projectId?: string) => requests.get<UserSearchDto[]>(`/users/search?query=${query}${projectId ? `&projectId=${projectId}` : ''}`),
+  search: (query: string, projectId?: string) => requests.get<UserSearchDto[]>(`/users/search?query=${encodeURIComponent(query)}${projectId ? `&projectId=${projectId}` : ''}`),
   list: () => requests.get<UserDto[]>("/users/list"),
   updateRole: (userId: string, role: string) => requests.put<UserDto>(`/users/${userId}/role`, { role }),
   update: (userId: string, user: Partial<UserDto>) => requests.put<UserDto>(`/users/${userId}`, user),
