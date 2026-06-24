@@ -49,7 +49,7 @@ builder.Services.AddRateLimiter(options =>
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
     options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
         RateLimitPartition.GetFixedWindowLimiter(
-            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? httpContext.Request.Headers.Host.ToString(),
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
             factory: partition => new FixedWindowRateLimiterOptions
             {
                 AutoReplenishment = true,
@@ -57,6 +57,14 @@ builder.Services.AddRateLimiter(options =>
                 QueueLimit = 0,
                 Window = TimeSpan.FromMinutes(1)
             }));
+
+    options.AddFixedWindowLimiter("contact", limiterOptions =>
+    {
+        limiterOptions.AutoReplenishment = true;
+        limiterOptions.PermitLimit = 5;
+        limiterOptions.QueueLimit = 0;
+        limiterOptions.Window = TimeSpan.FromHours(1);
+    });
 });
 
 

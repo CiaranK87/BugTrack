@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
 using System.Net;
 using System.Net.Mail;
@@ -24,6 +25,7 @@ namespace API.Controllers
             _httpClientFactory = httpClientFactory;
         }
 
+        [EnableRateLimiting("contact")]
         [HttpPost("request-access")]
         public async Task<IActionResult> RequestAccess([FromBody] AccessRequestDto request)
         {
@@ -158,7 +160,10 @@ namespace API.Controllers
                 }
 
                 var logFile = Path.Combine(logDirectory, "access-requests.log");
-                var logEntry = $"[{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC] Name: {request.Name}, Email: {request.Email}, Message: {request.Message}{Environment.NewLine}";
+                var safeName = request.Name.Replace("\r", "").Replace("\n", "")[..Math.Min(request.Name.Length, 100)];
+                var safeEmail = request.Email.Replace("\r", "").Replace("\n", "")[..Math.Min(request.Email.Length, 254)];
+                var safeMessage = request.Message.Replace("\r", "").Replace("\n", " ")[..Math.Min(request.Message.Length, 500)];
+                var logEntry = $"[{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC] Name: {safeName}, Email: {safeEmail}, Message: {safeMessage}{Environment.NewLine}";
                 
                 await System.IO.File.AppendAllTextAsync(logFile, logEntry);
                 _logger.LogInformation("Access request logged to file: {LogFile}", logFile);
