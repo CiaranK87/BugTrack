@@ -41,6 +41,14 @@ namespace Application.Projects
                 if (participant.IsOwner)
                     return Result<Unit>.Failure("Cannot change the role of the project owner");
 
+                var validRoles = new HashSet<string>
+                {
+                    Domain.Roles.Project.Owner, Domain.Roles.Project.ProjectManager,
+                    Domain.Roles.Project.Developer, Domain.Roles.Project.User, Domain.Roles.Project.Guest
+                };
+                if (!validRoles.Contains(request.Role))
+                    return Result<Unit>.Failure("Invalid role specified");
+
                 participant.Role = request.Role;
 
                 var result = await _context.SaveChangesAsync(cancellationToken) > 0;

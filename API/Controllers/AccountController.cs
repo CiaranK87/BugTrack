@@ -103,6 +103,15 @@ namespace API.Controllers
                 return ValidationProblem();
             }
 
+            var validRoles = new HashSet<string>
+            {
+                Roles.Global.Admin, Roles.Global.ProjectManager,
+                Roles.Global.Developer, Roles.Global.User, Roles.Global.Guest
+            };
+            var roleToSet = registerDto.Role ?? Roles.Global.User;
+            if (!validRoles.Contains(roleToSet))
+                return BadRequest(new { message = "Invalid role specified" });
+
             var user = new AppUser
             {
                 DisplayName = registerDto.DisplayName,
@@ -115,7 +124,6 @@ namespace API.Controllers
 
             if (result.Succeeded)
             {
-                var roleToSet = registerDto.Role ?? Roles.Global.User;
                 user.GlobalRole = roleToSet;
                 await _context.SaveChangesAsync();
                 
@@ -134,6 +142,8 @@ namespace API.Controllers
         public async Task<ActionResult<UserDto>> GetCurrentUser()
         {
             var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
+
+            if (user == null || user.IsDeleted) return Unauthorized();
 
             return CreateUserObject(user);
         }
