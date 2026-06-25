@@ -103,6 +103,15 @@ namespace API.Controllers
                 return ValidationProblem();
             }
 
+            var validRoles = new HashSet<string>
+            {
+                Roles.Global.Admin, Roles.Global.ProjectManager,
+                Roles.Global.Developer, Roles.Global.User, Roles.Global.Guest
+            };
+            var roleToSet = registerDto.Role ?? Roles.Global.User;
+            if (!validRoles.Contains(roleToSet))
+                return BadRequest(new { message = "Invalid role specified" });
+
             var user = new AppUser
             {
                 DisplayName = registerDto.DisplayName,
@@ -115,14 +124,6 @@ namespace API.Controllers
 
             if (result.Succeeded)
             {
-                var validRoles = new HashSet<string>
-                {
-                    Roles.Global.Admin, Roles.Global.ProjectManager,
-                    Roles.Global.Developer, Roles.Global.User, Roles.Global.Guest
-                };
-                var roleToSet = registerDto.Role ?? Roles.Global.User;
-                if (!validRoles.Contains(roleToSet))
-                    return BadRequest(new { message = "Invalid role specified" });
                 user.GlobalRole = roleToSet;
                 await _context.SaveChangesAsync();
                 
