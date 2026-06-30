@@ -30,7 +30,7 @@ export default observer(function ProjectDetailedInfo({ project: { participants, 
               <UserAvatar image={participant.image} displayName={participant.displayName} size="tiny" />
               <Item.Content verticalAlign="middle">
                 <Item.Header as="h3">
-                  <Link to={`/profiles/${participant.username}`}>{participant.displayName}</Link>
+                  <Link to={`/profile/${participant.username}`}>{participant.displayName}</Link>
                 </Item.Header>
                 <Item.Extra style={{ color: "orange" }}>project participant</Item.Extra>
               </Item.Content>

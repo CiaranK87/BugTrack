@@ -36,7 +36,7 @@ namespace Application.Projects
                     .AsNoTracking()
                     .FirstOrDefaultAsync(pp => pp.ProjectId == request.ProjectId && pp.AppUserId == userId, cancellationToken);
 
-                if (participant == null) return Result<string>.Success(Roles.Project.User);
+                if (participant == null) return Result<string>.Failure("Not a member of this project");
 
                 if (participant.IsOwner) return Result<string>.Success(Roles.Project.Owner);
 

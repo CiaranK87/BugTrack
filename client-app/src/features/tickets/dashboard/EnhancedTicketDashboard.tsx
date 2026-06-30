@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Grid, Header, Segment, Button, Input, Dropdown, Card, Label, Icon, ButtonGroup, Confirm } from 'semantic-ui-react';
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
@@ -21,6 +22,7 @@ const sortOptions = [
 ];
 
 export default observer(function EnhancedTicketDashboard() {
+  const navigate = useNavigate();
   const { ticketStore } = useStore();
   const { loadTickets, ticketsByStartDate, updateTicket, deleteTicket, loading } = ticketStore;
 
@@ -101,7 +103,7 @@ export default observer(function EnhancedTicketDashboard() {
       key={ticket.id}
       style={{ cursor: 'pointer', height: '100%' }}
       onClick={() => {
-        window.location.href = `/tickets/${ticket.id}`;
+        navigate(`/tickets/${ticket.id}`);
       }}
     >
       <Card.Content>
@@ -161,7 +163,7 @@ export default observer(function EnhancedTicketDashboard() {
       key={ticket.id}
       style={{ cursor: 'pointer' }}
       onClick={() => {
-        window.location.href = `/tickets/${ticket.id}`;
+        navigate(`/tickets/${ticket.id}`);
       }}
     >
       <Grid>

@@ -53,7 +53,7 @@ namespace Application.Comments
                     .Include(c => c.Attachments)
                     .FirstOrDefaultAsync(cancellationToken);
 
-                if (comment == null || comment.AuthorId != userId)
+                if (comment == null || comment.IsDeleted || comment.AuthorId != userId)
                     return Result<CommentDto>.Failure("Comment not found or access denied");
 
                 comment.Content = request.Content;
@@ -79,7 +79,7 @@ namespace Application.Comments
                         ContentType = a.ContentType,
                         FileSize = a.FileSize,
                         UploadedAt = a.UploadedAt,
-                        DownloadUrl = $"/api/comments/attachments/{a.Id}/download"
+                        DownloadUrl = $"/api/tickets/{request.TicketId}/comments/{comment.Id}/attachments/{a.Id}/download"
                     }).ToList() ?? new List<CommentAttachmentDto>()
                 });
             }

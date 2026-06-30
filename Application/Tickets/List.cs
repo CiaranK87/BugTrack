@@ -37,13 +37,14 @@ namespace Application.Tickets
                 {
                     tickets = await _context.Tickets
                         .Include(x => x.Project)
+                        .Where(t => !t.IsDeleted)
                         .ToListAsync(cancellationToken);
                 }
                 else
                 {
                     tickets = await _context.Tickets
                         .Include(x => x.Project)
-                        .Where(t => t.Project.Participants.Any(p => p.AppUserId == userId))
+                        .Where(t => !t.IsDeleted && t.Project.Participants.Any(p => p.AppUserId == userId))
                         .ToListAsync(cancellationToken);
                 }
 

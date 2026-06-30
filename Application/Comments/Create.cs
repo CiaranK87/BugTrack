@@ -213,6 +213,7 @@ namespace Application.Comments
                     AuthorId = comment.AuthorId,
                     AuthorUsername = comment.Author?.UserName,
                     AuthorDisplayName = comment.Author?.DisplayName,
+                    AuthorImage = comment.Author?.AvatarBlobName != null ? AvatarUrl.For(comment.Author.UserName) : null,
                     ParentCommentId = comment.ParentCommentId,
                     Attachments = comment.Attachments?.Select(a => MapToCommentAttachmentDto(a, comment.TicketId, comment.Id)).ToList() ?? new List<CommentAttachmentDto>()
                 };

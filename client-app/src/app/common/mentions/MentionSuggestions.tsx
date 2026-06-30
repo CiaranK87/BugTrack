@@ -39,7 +39,7 @@ export default function MentionSuggestions({ query, onSelect, onClose, position,
 
     const timeoutId = setTimeout(searchUsers, 300);
     return () => clearTimeout(timeoutId);
-  }, [query]);
+  }, [query, projectId]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

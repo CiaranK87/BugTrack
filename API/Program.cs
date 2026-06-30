@@ -192,9 +192,6 @@ catch (Exception ex)
 {
     Log.Fatal(ex, "An error occurred during startup");
 }
-finally
-{
-    Log.CloseAndFlush();
-}
 
 app.Run();
+Log.CloseAndFlush();

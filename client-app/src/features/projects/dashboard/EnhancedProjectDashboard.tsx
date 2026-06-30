@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { Grid, Header, Segment, Button, Input, Dropdown, Card, Label, Icon, ButtonGroup } from 'semantic-ui-react';
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
@@ -17,6 +18,7 @@ const sortOptions = [
 ];
 
 export default observer(function EnhancedProjectDashboard() {
+  const navigate = useNavigate();
   const { projectStore, userStore } = useStore();
   const { loadProjects, projectsByStartDate } = projectStore;
   const { canCreateProjects } = userStore;
@@ -80,7 +82,7 @@ export default observer(function EnhancedProjectDashboard() {
       fluid
       key={project.id}
       style={{ cursor: 'pointer', height: '100%' }}
-      onClick={() => window.location.href = `/projects/${project.id}`}
+      onClick={() => navigate(`/projects/${project.id}`)}
     >
       <Card.Content>
         <Card.Header>
@@ -140,7 +142,7 @@ export default observer(function EnhancedProjectDashboard() {
     <Segment
       key={project.id}
       style={{ cursor: 'pointer' }}
-      onClick={() => window.location.href = `/projects/${project.id}`}
+      onClick={() => navigate(`/projects/${project.id}`)}
     >
       <Grid>
         <Grid.Column width={10}>
@@ -193,7 +195,7 @@ export default observer(function EnhancedProjectDashboard() {
   );
 
   const renderProjectTableRow = (project: Project) => (
-    <tr key={project.id} style={{ cursor: 'pointer' }} onClick={() => window.location.href = `/projects/${project.id}`}>
+    <tr key={project.id} style={{ cursor: 'pointer' }} onClick={() => navigate(`/projects/${project.id}`)}>
       <td>
         <Header as="h4" style={{ margin: 0 }}>
           {project.projectTitle}
@@ -292,7 +294,7 @@ export default observer(function EnhancedProjectDashboard() {
             </div>
           </div>
           {canCreateProjects && (
-            <Button as="a" href="/createProject" color="teal" content="Create Project" icon="plus" />
+            <Button as={Link} to="/createProject" color="teal" content="Create Project" icon="plus" />
           )}
         </div>
       </div>

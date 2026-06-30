@@ -41,7 +41,7 @@ export default function TicketListItem({ ticket }: Props) {
       </Segment>
       <Segment>
       <Card.Meta>
-  <span>Updated: {ticket.updated ? new Date(ticket.updated + 'Z').toUTCString().replace('GMT', '').trim().slice(0, -3) : 'Never'}</span>
+  <span>Updated: {ticket.updated ? new Date(ticket.updated).toUTCString().replace('GMT', '').trim().slice(0, -3) : 'Never'}</span>
 </Card.Meta>
       </Segment>
       <Segment secondary>Assigned/collaborators go here</Segment>
