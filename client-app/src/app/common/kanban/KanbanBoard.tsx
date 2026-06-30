@@ -123,6 +123,8 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
   viewOptions = []
 }) => {
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [activeColumns, setActiveColumns] = useState<KanbanColumn[] | null>(null);
+  const displayColumns = activeColumns ?? columns;
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -137,14 +139,39 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string);
+    setActiveColumns(null);
   };
 
   const handleDragOver = (event: DragOverEvent) => {
-    const { over } = event;
-    if (!over) return;
+    const { active, over } = event;
+    if (!over || !active) return;
+
+    const activeItemId = active.id as string;
+    const overId = over.id as string;
+    const current = activeColumns ?? columns;
+
+    let sourceColIdx = -1;
+    let draggedItem: any = null;
+    for (let i = 0; i < current.length; i++) {
+      const item = current[i].items.find(it => it.id === activeItemId);
+      if (item) { sourceColIdx = i; draggedItem = item; break; }
+    }
+    if (!draggedItem) return;
+
+    const targetColIdx = current.findIndex(col =>
+      col.id === overId || col.items.some(it => it.id === overId)
+    );
+    if (targetColIdx === -1 || sourceColIdx === targetColIdx) return;
+
+    setActiveColumns(current.map((col, idx) => {
+      if (idx === sourceColIdx) return { ...col, items: col.items.filter(it => it.id !== activeItemId) };
+      if (idx === targetColIdx) return { ...col, items: [...col.items, draggedItem] };
+      return col;
+    }));
   };
 
   const handleDragEnd = async (event: DragEndEvent) => {
+    setActiveColumns(null);
     const { active, over } = event;
 
     if (!over) {
@@ -271,8 +298,8 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({
           onDragOver={handleDragOver}
           onDragEnd={handleDragEnd}
         >
-          <Grid columns={Math.min(columns.length, 4) as any} stackable>
-            {columns.map((column) => (
+          <Grid columns={Math.min(displayColumns.length, 4) as any} stackable>
+            {displayColumns.map((column) => (
               <DroppableColumn
                 key={column.id}
                 id={column.id}

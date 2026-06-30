@@ -117,7 +117,7 @@ export default class TicketStore {
       this.projectTickets.set(projectId, processedTickets);
     });
   } catch (error) {
-    logger.error("Failed to create ticket", error);
+    logger.error("Failed to load tickets for project", error);
     runInAction(() => {
       this.projectTickets.set(projectId, []);
     });
@@ -190,7 +190,7 @@ private setTicket = (ticket: Ticket) => {
         this.loading = false;
       });
     } catch (error) {
-      logger.error("Failed to delete ticket", error);
+      logger.error("Failed to update ticket", error);
       runInAction(() => {
         this.loading = false;
       });
@@ -206,7 +206,7 @@ private setTicket = (ticket: Ticket) => {
         this.loading = false;
       });
     } catch (error) {
-      logger.error("Failed to restore ticket", error);
+      logger.error("Failed to delete ticket", error);
       runInAction(() => {
         this.loading = false;
       });
@@ -225,7 +225,7 @@ private setTicket = (ticket: Ticket) => {
         this.setLoadingInitial(false);
       });
     } catch (error) {
-      logger.error("Failed to permanently delete ticket", error);
+      logger.error("Failed to load deleted tickets", error);
       runInAction(() => {
         this.setLoadingInitial(false);
       });
@@ -242,7 +242,7 @@ private setTicket = (ticket: Ticket) => {
         this.loading = false;
       });
     } catch (error) {
-      logger.error("Failed to update ticket status", error);
+      logger.error("Failed to permanently delete ticket", error);
       runInAction(() => {
         this.loading = false;
       });
@@ -259,7 +259,7 @@ private setTicket = (ticket: Ticket) => {
       });
       this.loadDeletedTickets();
     } catch (error) {
-      logger.error("Failed to update ticket priority", error);
+      logger.error("Failed to restore ticket", error);
       runInAction(() => {
         this.loading = false;
       });

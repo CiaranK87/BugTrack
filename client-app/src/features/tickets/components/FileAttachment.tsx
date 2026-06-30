@@ -219,16 +219,16 @@ function AuthenticatedImage({ attachment, ticketId, commentId }: AuthenticatedIm
   const [error, setError] = useState<string>('');
 
   useEffect(() => {
+    let objectUrl: string | null = null;
+
     const fetchImage = async () => {
       try {
         setLoading(true);
         setError('');
-        
+
         const blob = await agent.Comments.downloadBlob(ticketId, commentId, attachment.id);
-        const url = URL.createObjectURL(blob);
-        setImageUrl(url);
-        
-        return () => URL.revokeObjectURL(url);
+        objectUrl = URL.createObjectURL(blob);
+        setImageUrl(objectUrl);
       } catch (err) {
         logger.error('Failed to fetch image', err);
         setError('Failed to load image');
@@ -238,6 +238,10 @@ function AuthenticatedImage({ attachment, ticketId, commentId }: AuthenticatedIm
     };
 
     fetchImage();
+
+    return () => {
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
   }, [attachment, ticketId, commentId]);
 
   if (loading) {

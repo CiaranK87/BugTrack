@@ -160,7 +160,7 @@ export default class UserStore {
       runInAction(() => {
         if (this.profile) {
           this.profile.displayName = profile.displayName || this.profile.displayName;
-          this.profile.bio = profile.bio || this.profile.bio;
+          this.profile.bio = profile.bio !== undefined ? profile.bio : this.profile.bio;
         }
 
         if (profile.displayName && this.user) {

@@ -52,6 +52,7 @@ namespace Application.Comments
                 AuthorId = rootComment.AuthorId,
                 AuthorUsername = rootComment.Author?.UserName,
                 AuthorDisplayName = rootComment.Author?.DisplayName,
+                AuthorImage = rootComment.Author?.AvatarBlobName != null ? AvatarUrl.For(rootComment.Author.UserName) : null,
                 ParentCommentId = rootComment.ParentCommentId,
                 Replies = allReplies.Where(r => r.ParentCommentId == rootComment.Id)
                     .Select(reply => new CommentDto
@@ -66,6 +67,7 @@ namespace Application.Comments
                         AuthorId = reply.AuthorId,
                         AuthorUsername = reply.Author?.UserName,
                         AuthorDisplayName = reply.Author?.DisplayName,
+                        AuthorImage = reply.Author?.AvatarBlobName != null ? AvatarUrl.For(reply.Author.UserName) : null,
                         ParentCommentId = reply.ParentCommentId,
                         Attachments = reply.Attachments?.Select(a => new CommentAttachmentDto
                         {

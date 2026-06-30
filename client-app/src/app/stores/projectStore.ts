@@ -25,7 +25,7 @@ export default class ProjectStore {
   }
 
   get projectsByStartDate() {
-    return Array.from(this.projectRegistry.values()).sort((a, b) => a.startDate!.getDate() - b.startDate!.getDate());
+    return Array.from(this.projectRegistry.values()).sort((a, b) => a.startDate!.getTime() - b.startDate!.getTime());
   }
 
   get deletedProjects() {

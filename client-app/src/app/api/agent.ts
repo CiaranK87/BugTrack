@@ -52,7 +52,7 @@ axios.interceptors.response.use(
     const { data, status, config } = error.response as AxiosResponse;
     switch (status) {
       case 400:
-        if (config.method === "get" && Object.prototype.hasOwnProperty.call(data.errors, "id")) {
+        if (config.method === "get" && data.errors && Object.prototype.hasOwnProperty.call(data.errors, "id")) {
           let fromPath = window.location.pathname;
           
           if (config.url && config.url.includes('/tickets/')) {

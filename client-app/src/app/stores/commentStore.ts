@@ -4,6 +4,7 @@ import * as signalR from '@microsoft/signalr';
 import { Comment, CommentAttachment } from '../models/comment';
 import { logger } from '../utils/logger';
 import agent from '../api/agent';
+import { store } from './store';
 
 export default class CommentStore {
   comments: Comment[] = [];
@@ -25,10 +26,7 @@ export default class CommentStore {
 
     const connection = new HubConnectionBuilder()
       .withUrl(`${import.meta.env.VITE_API_URL?.replace('/api', '')}/hubs/comments`, {
-        accessTokenFactory: () => {
-          const token = localStorage.getItem('jwt');
-          return token || '';
-        },
+        accessTokenFactory: () => store.commonStore.token || '',
         skipNegotiation: false,
         transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.LongPolling
       })

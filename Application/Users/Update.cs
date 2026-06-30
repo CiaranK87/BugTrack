@@ -46,7 +46,6 @@ namespace Application.Users
                 user.DisplayName = request.Dto.DisplayName ?? user.DisplayName;
                 user.JobTitle = request.Dto.JobTitle;
                 user.Bio = request.Dto.Bio;
-                user.UserName = request.Dto.Username ?? user.UserName;
 
                 if (request.Dto.Email != null && request.Dto.Email != user.Email)
                 {
@@ -55,8 +54,12 @@ namespace Application.Users
                         return Result<UserDto>.Failure(string.Join(", ", setEmailResult.Errors.Select(e => e.Description)));
                 }
 
-                if (oldUsername != user.UserName)
+                if (request.Dto.Username != null && request.Dto.Username != oldUsername)
                 {
+                    var setUsernameResult = await _userManager.SetUserNameAsync(user, request.Dto.Username);
+                    if (!setUsernameResult.Succeeded)
+                        return Result<UserDto>.Failure(string.Join(", ", setUsernameResult.Errors.Select(e => e.Description)));
+
                     var ticketsToUpdate = await _context.Tickets
                         .Where(t => t.Submitter == oldUsername || t.Assigned == oldUsername)
                         .ToListAsync(cancellationToken);

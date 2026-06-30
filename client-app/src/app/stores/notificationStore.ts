@@ -104,8 +104,10 @@ export default class NotificationStore {
   loadNotifications = async () => {
     this.loading = true;
     try {
-      const notifications = await agent.Notifications.list();
-      const count = await agent.Notifications.getUnreadCount();
+      const [notifications, count] = await Promise.all([
+        agent.Notifications.list(),
+        agent.Notifications.getUnreadCount()
+      ]);
       runInAction(() => {
         this.notifications = notifications;
         this.unreadCount = count;
