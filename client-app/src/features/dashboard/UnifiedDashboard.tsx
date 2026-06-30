@@ -187,7 +187,7 @@ export default observer(function UnifiedDashboard() {
           <Segment>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
               <Header as="h3">Recent Projects</Header>
-              <Button as="a" href="/projects" basic size="small">View All</Button>
+              <Button as={Link} to="/projects" basic size="small">View All</Button>
             </div>
             {displayedProjects.length > 0 ? (
               displayedProjects.map(project => (
@@ -270,7 +270,7 @@ export default observer(function UnifiedDashboard() {
           <Segment>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
               <Header as="h3">Recent Tickets</Header>
-              <Button as="a" href="/tickets" basic size="small">View All</Button>
+              <Button as={Link} to="/tickets" basic size="small">View All</Button>
             </div>
             {displayedTickets.length > 0 ? (
               displayedTickets.map(ticket => (

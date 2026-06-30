@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { Container, Grid, Header, Segment, Button, Icon, Card, Label, Menu } from "semantic-ui-react";
 import { useStore } from "../../app/stores/store";
 import ProfileEditForm from "./ProfileEditForm";
@@ -255,7 +255,7 @@ export default observer(function ProfilePage() {
             <Header icon>
               <Icon name="folder open outline" />
             </Header>
-            <p>No projects yet. <a href="/createProject">Create your first project</a> to get started!</p>
+            <p>No projects yet. <Link to="/createProject">Create your first project</Link> to get started!</p>
           </Segment>
         )}
       </Segment>
