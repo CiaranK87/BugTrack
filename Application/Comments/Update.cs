@@ -79,7 +79,7 @@ namespace Application.Comments
                         ContentType = a.ContentType,
                         FileSize = a.FileSize,
                         UploadedAt = a.UploadedAt,
-                        DownloadUrl = $"/api/comments/attachments/{a.Id}/download"
+                        DownloadUrl = $"/api/tickets/{request.TicketId}/comments/{comment.Id}/attachments/{a.Id}/download"
                     }).ToList() ?? new List<CommentAttachmentDto>()
                 });
             }

@@ -17,14 +17,11 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<TicketDto>> GetTicket(Guid id)
         {
-            var result = await Mediator.Send(new Details.Query { Id = id });
-            if (result.Value == null) return NotFound();
-
             var authResult = await _authorizationService.AuthorizeAsync(
                 User, id, new TicketOperationRequirement(TicketOperation.Read));
             if (!authResult.Succeeded) return Forbid();
 
-            return HandleResult(result);
+            return HandleResult(await Mediator.Send(new Details.Query { Id = id }));
         }
 
         [HttpGet]

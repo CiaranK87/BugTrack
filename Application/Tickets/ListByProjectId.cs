@@ -29,7 +29,7 @@ namespace Application.Tickets
             {
                 var tickets = await _context.Tickets
                     .Include(t => t.Project)
-                    .Where(t => t.ProjectId == request.ProjectId)
+                    .Where(t => t.ProjectId == request.ProjectId && !t.IsDeleted)
                     .ToListAsync(cancellationToken);
 
                 return Result<List<TicketDto>>.Success(_mapper.Map<List<TicketDto>>(tickets));
