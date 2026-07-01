@@ -11,7 +11,7 @@ namespace API.Controllers
     {
         private IMediator _mediator;
         
-        protected IAuthorizationService _authorizationService;
+        protected readonly IAuthorizationService _authorizationService;
 
         public BaseApiController(IAuthorizationService authorizationService)
         {

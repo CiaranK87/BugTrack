@@ -37,6 +37,9 @@ namespace Application.Projects
                 if (user == null) 
                     return Result<Unit>.Failure("User not found");
 
+                if (request.Role == Roles.Project.Owner)
+                    return Result<Unit>.Failure("Cannot assign Owner role via this endpoint");
+
                 if (project.Participants.Any(p => p.AppUserId == request.UserId))
                     return Result<Unit>.Failure("User is already a participant of this project");
 

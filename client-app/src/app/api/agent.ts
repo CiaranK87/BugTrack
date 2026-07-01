@@ -1,4 +1,5 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
+import { runInAction } from "mobx";
 import { AddParticipantDto, Project, ProjectFormValues, ProjectParticipantDto, UpdateRoleDto } from "../models/project";
 import { toast } from "react-toastify";
 import { router } from "../router/Routes";
@@ -82,8 +83,10 @@ axios.interceptors.response.use(
       case 401:
         const wasLoggedIn = store.userStore.user !== null;
         store.commonStore.setToken(null);
-        store.userStore.user = null;
-        store.userStore.userRegistry.clear();
+        runInAction(() => {
+          store.userStore.user = null;
+          store.userStore.userRegistry.clear();
+        });
         store.projectStore.clear();
         store.ticketStore.clear();
         router.navigate("/");

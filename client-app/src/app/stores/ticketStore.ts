@@ -91,7 +91,7 @@ export default class TicketStore {
   
   loadTicketsByProject = async (projectId: string) => {
   
-  if (this.loadingProjectIds.has(projectId) || this.loadingInitial) return;
+  if (this.loadingProjectIds.has(projectId)) return;
   
   this.loadingProjectIds.add(projectId);
   this.setLoadingInitial(true);

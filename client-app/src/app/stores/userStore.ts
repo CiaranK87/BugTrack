@@ -289,7 +289,7 @@ export default class UserStore {
     }
   };
   
-  getUserById(username: string): User | undefined {
+  getUserByUsername(username: string): User | undefined {
     return this.userRegistry.get(username);
   }
 
