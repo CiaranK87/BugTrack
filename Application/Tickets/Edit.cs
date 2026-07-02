@@ -29,7 +29,7 @@ namespace Application.Tickets
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
                 var ticket = await _context.Tickets.FindAsync(request.Id);
-                if (ticket == null) return null;
+                if (ticket == null) return Result<Unit>.NotFound();
 
                 var existingSubmitter = ticket.Submitter;
 

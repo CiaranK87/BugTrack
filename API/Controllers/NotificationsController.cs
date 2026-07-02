@@ -1,6 +1,7 @@
 using Application.Core;
 using Application.DTOs;
 using Application.Interfaces;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,7 +15,8 @@ namespace API.Controllers
         public NotificationsController(
             INotificationService notificationService,
             IUserAccessor userAccessor,
-            IAuthorizationService authorizationService) : base(authorizationService)
+            IMediator mediator,
+            IAuthorizationService authorizationService) : base(mediator, authorizationService)
         {
             _notificationService = notificationService;
             _userAccessor = userAccessor;

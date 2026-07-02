@@ -33,7 +33,7 @@ namespace Application.Projects
                         .Where(x => !x.IsDeleted)
                         .FirstOrDefaultAsync(x => x.Id == request.Id);
 
-                    if (project == null) return null;
+                    if (project == null) return Result<ProjectDto>.Success(null);
 
                     return Result<ProjectDto>.Success(_mapper.Map<ProjectDto>(project));
                 }

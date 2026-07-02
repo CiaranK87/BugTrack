@@ -1,6 +1,7 @@
 using API.Authorization;
 using Application.DTOs;
 using Application.Tickets;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
@@ -11,8 +12,8 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class TicketsController : BaseApiController
     {
-        public TicketsController(IAuthorizationService authorizationService)
-            : base(authorizationService) {}
+        public TicketsController(IMediator mediator, IAuthorizationService authorizationService)
+            : base(mediator, authorizationService) {}
 
         [HttpGet("{id}")]
         public async Task<ActionResult<TicketDto>> GetTicket(Guid id)
@@ -43,7 +44,9 @@ namespace API.Controllers
             var authResult = await _authorizationService.AuthorizeAsync(User, ticketDto.ProjectId, "ProjectContributor");
             if (!authResult.Succeeded) return Forbid();
 
-            return HandleResult(await Mediator.Send(new Create.Command { TicketDto = ticketDto }));
+            var result = await Mediator.Send(new Create.Command { TicketDto = ticketDto });
+            if (!result.IsSuccess) return BadRequest(result.Error);
+            return CreatedAtAction(nameof(GetTicket), new { id = result.Value }, result.Value);
         }
 
         [HttpPut("{id}")]

@@ -38,8 +38,10 @@ namespace Application.Comments
                     .Where(c => c.TicketId == request.TicketId && c.Id == request.Id)
                     .FirstOrDefaultAsync(cancellationToken);
 
-                if (comment == null || comment.AuthorId != userId)
-                    return Result<Unit>.Failure("Comment not found or access denied");
+                if (comment == null)
+                    return Result<Unit>.NotFound();
+                if (comment.AuthorId != userId)
+                    return Result<Unit>.Failure("Access denied");
 
                 // Check if comment has replies
                 var hasReplies = comment.Replies != null && comment.Replies.Any();

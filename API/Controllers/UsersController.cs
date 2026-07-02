@@ -1,5 +1,6 @@
 using Application.DTOs;
 using Application.Users;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,9 +10,9 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class UsersController : BaseApiController
     {
-        public UsersController(IAuthorizationService authorizationService) : base(authorizationService)
-        {
-        }
+        public UsersController(IMediator mediator, IAuthorizationService authorizationService)
+            : base(mediator, authorizationService) {}
+
 
         [Authorize(Policy = "CanManageGlobalRoles")]
         [HttpGet("list")]

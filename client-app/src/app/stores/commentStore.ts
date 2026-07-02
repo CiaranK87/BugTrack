@@ -11,6 +11,8 @@ export default class CommentStore {
   connection: HubConnection | null = null;
   currentTicketId: string | null = null;
   loading: boolean = false;
+  loadingComments: boolean = false;
+  groupJoined: boolean = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -34,14 +36,24 @@ export default class CommentStore {
       .configureLogging(import.meta.env.DEV ? signalR.LogLevel.Warning : signalR.LogLevel.None)
       .build();
 
-    connection.onreconnected(() => {
+    connection.onreconnected(async () => {
       logger.info('SignalR reconnected');
+      runInAction(() => { this.groupJoined = false; });
+      if (this.currentTicketId) {
+        try {
+          await this.connection?.invoke('JoinTicketGroup', this.currentTicketId);
+          runInAction(() => { this.groupJoined = true; });
+        } catch (err) {
+          logger.error('Error re-joining ticket group after reconnect', err);
+        }
+      }
     });
 
     connection.onclose(() => {
       logger.info('SignalR connection closed');
       runInAction(() => {
         this.connection = null;
+        this.groupJoined = false;
       });
     });
 
@@ -56,16 +68,36 @@ export default class CommentStore {
         this.currentTicketId = ticketId;
       });
       
-      await newConnection.start()
-        .catch((err: any) => logger.error('Error starting SignalR connection', err));
+      let lastErr: unknown;
+      for (let attempt = 0; attempt < 3; attempt++) {
+        if (this.connection !== newConnection) return;
+        if (attempt > 0) await new Promise(r => setTimeout(r, 1000));
+        try {
+          await newConnection.start();
+          lastErr = undefined;
+          break;
+        } catch (err) {
+          logger.error(`SignalR start failed (attempt ${attempt + 1}/3)`, err);
+          lastErr = err;
+        }
+      }
+      if (lastErr !== undefined) {
+        runInAction(() => { this.connection = null; });
+        throw lastErr;
+      }
     }
 
     if (this.connection) {
-      await this.connection.invoke('JoinTicketGroup', ticketId)
-        .catch((err: any) => logger.error('Error joining ticket group', err));
+      try {
+        await this.connection.invoke('JoinTicketGroup', ticketId);
+      } catch (err) {
+        logger.error('Error joining ticket group', err);
+        throw err;
+      }
     }
-      
+
     this.setupEventHandlers();
+    runInAction(() => { this.groupJoined = true; });
   };
   
   setupEventHandlers = () => {
@@ -159,16 +191,25 @@ export default class CommentStore {
   disconnect = () => {
     if (this.connection) {
       this.connection.stop();
-      runInAction(() => {
-        this.connection = null;
-      });
     }
+    runInAction(() => {
+      this.connection = null;
+      this.groupJoined = false;
+      this.comments = [];
+      this.currentTicketId = null;
+      this.loadingComments = false;
+    });
   };
 
   loadComments = async (ticketId: string) => {
+    runInAction(() => {
+      this.currentTicketId = ticketId;
+      this.loadingComments = true;
+    });
     try {
       const comments = await agent.Comments.list(ticketId);
       runInAction(() => {
+        if (this.currentTicketId !== ticketId) return;
         const commentsWithDownloadUrls = comments.map(comment => ({
           ...comment,
           attachments: comment.attachments.map(attachment => ({
@@ -183,8 +224,10 @@ export default class CommentStore {
         this.comments = commentsWithDownloadUrls.sort((a, b) =>
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
+        this.loadingComments = false;
       });
     } catch (error) {
+      runInAction(() => { this.loadingComments = false; });
       logger.error('Error loading comments', error);
       throw error;
     }

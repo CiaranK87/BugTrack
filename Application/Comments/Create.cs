@@ -6,7 +6,6 @@ using Application.Services;
 using Domain;
 using FluentValidation;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Persistence;
@@ -20,7 +19,7 @@ namespace Application.Comments
             public string Content { get; set; }
             public Guid TicketId { get; set; }
             public Guid? ParentCommentId { get; set; }
-            public List<IFormFile> Attachments { get; set; } = new List<IFormFile>();
+            public List<FileUploadDto> Attachments { get; set; } = new List<FileUploadDto>();
         }
 
         public class CommandValidator : AbstractValidator<Command>
@@ -41,8 +40,6 @@ namespace Application.Comments
             private readonly ILogger<Handler> _logger;
             private readonly IFileService _fileService;
 
-            private static readonly HashSet<string> AllowedExtensions = new(StringComparer.OrdinalIgnoreCase)
-                { ".jpg", ".jpeg", ".png", ".gif", ".webp", ".pdf", ".txt", ".doc", ".docx", ".xls", ".xlsx", ".zip" };
             private const long MaxFileSizeBytes = 10 * 1024 * 1024;
 
             public Handler(DataContext context, IUserAccessor userAccessor, INotificationService notificationService, INotificationPushService notificationPushService, ILogger<Handler> logger, IFileService fileService)
@@ -58,7 +55,7 @@ namespace Application.Comments
             public async Task<Result<CommentDto>> Handle(Command request, CancellationToken cancellationToken)
             {
                 var userId = _userAccessor.GetUserId();
-                
+
                 var comment = new Comment
                 {
                     Id = Guid.NewGuid(),
@@ -70,7 +67,7 @@ namespace Application.Comments
                 };
 
                 _context.Comments.Add(comment);
-                
+
                 if (request.Attachments != null && request.Attachments.Count > 0)
                 {
                     if (_userAccessor.GetGlobalRole() == Roles.Global.Guest)
@@ -80,49 +77,42 @@ namespace Application.Comments
                     {
                         if (file.Length > MaxFileSizeBytes)
                             return Result<CommentDto>.Failure($"'{file.FileName}' exceeds the 10 MB size limit.");
-                        var ext = Path.GetExtension(file.FileName);
-                        if (string.IsNullOrEmpty(ext) || !AllowedExtensions.Contains(ext))
-                            return Result<CommentDto>.Failure($"File type '{ext}' is not permitted.");
                     }
 
                     foreach (var file in request.Attachments)
                     {
                         var attachment = await CreateAttachmentFromFile(file, comment.Id, userId, cancellationToken);
                         if (attachment != null)
-                        {
                             _context.CommentAttachments.Add(attachment);
-                        }
                     }
                 }
 
                 var success = await _context.SaveChangesAsync() > 0;
-                  
+
                 if (!success)
                     return Result<CommentDto>.Failure("Failed to create comment");
 
                 await ProcessMentionsAsync(comment, userId);
-                
+
                 await _context.Entry(comment)
                     .Collection(c => c.Attachments)
                     .Query()
                     .Include(a => a.UploadedBy)
                     .LoadAsync();
-                
+
                 await _context.Entry(comment)
                     .Reference(c => c.Author)
                     .LoadAsync();
-                
+
                 return Result<CommentDto>.Success(MapToCommentDto(comment));
             }
 
             private async Task ProcessMentionsAsync(Comment comment, string authorId)
             {
                 var mentions = MentionHelper.ExtractMentions(comment.Content);
-                
+
                 if (mentions.Count == 0)
-                {
                     return;
-                }
 
                 var author = await _context.Users.FindAsync(authorId);
                 var authorDisplayName = author?.DisplayName ?? author?.UserName ?? "Someone";
@@ -131,7 +121,6 @@ namespace Application.Comments
 
                 var lowerMentions = mentions.Select(m => m.ToLower()).ToList();
 
-                // Broaden check to include project owners, ticket-linked users, and explicit participants
                 var mentionedUsers = await _context.Users
                     .Where(u => u.Id != authorId && !u.IsDeleted)
                     .Where(u => lowerMentions.Contains(u.UserName.Replace(" ", "").ToLower()))
@@ -169,7 +158,7 @@ namespace Application.Comments
                         };
 
                         await _notificationPushService.PushNotificationAsync(user.Id, notificationDto);
-                        
+
                         var unreadCount = await _notificationService.GetUnreadCountAsync(user.Id);
                         await _notificationPushService.PushUnreadCountUpdateAsync(user.Id, unreadCount);
                     }
@@ -180,7 +169,7 @@ namespace Application.Comments
                 }
             }
 
-            private async Task<CommentAttachment> CreateAttachmentFromFile(IFormFile file, Guid commentId, string userId, CancellationToken cancellationToken)
+            private async Task<CommentAttachment> CreateAttachmentFromFile(FileUploadDto file, Guid commentId, string userId, CancellationToken cancellationToken)
             {
                 if (file == null || file.Length == 0)
                     return null;

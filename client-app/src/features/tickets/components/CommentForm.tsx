@@ -16,7 +16,7 @@ interface Props {
 
 export default observer(function CommentForm({ ticketId, parentCommentId, isReply = false }: Props) {
   const { commentStore, ticketStore, userStore } = useStore();
-  const { createComment, loading } = commentStore;
+  const { createComment, loading, groupJoined } = commentStore;
   const { isGuest } = userStore;
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -214,10 +214,10 @@ export default observer(function CommentForm({ ticketId, parentCommentId, isRepl
 
                 <Button
                   loading={loading || isSubmitting}
-                  disabled={!isValid || isSubmitting}
+                  disabled={!isValid || isSubmitting || !groupJoined}
                   positive
                   type='submit'
-                  content='Submit'
+                  content={groupJoined ? 'Submit' : 'Connecting...'}
                 />
               </div>
 

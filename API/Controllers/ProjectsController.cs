@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Application.DTOs;
 using Application.Projects;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,8 +9,8 @@ namespace API.Controllers
 {
     public class ProjectsController : BaseApiController
     {
-        public ProjectsController(IAuthorizationService authorizationService)
-            : base(authorizationService) {}
+        public ProjectsController(IMediator mediator, IAuthorizationService authorizationService)
+            : base(mediator, authorizationService) {}
 
 
 
@@ -42,8 +43,12 @@ namespace API.Controllers
 
         [Authorize(Policy = "CanCreateProjects")]
         [HttpPost]
-        public async Task<IActionResult> CreateProject([FromBody] CreateProjectDto projectDto) =>
-            HandleResult(await Mediator.Send(new Create.Command { ProjectDto = projectDto }));
+        public async Task<IActionResult> CreateProject([FromBody] CreateProjectDto projectDto)
+        {
+            var result = await Mediator.Send(new Create.Command { ProjectDto = projectDto });
+            if (!result.IsSuccess) return BadRequest(result.Error);
+            return CreatedAtAction(nameof(GetProject), new { projectId = result.Value }, result.Value);
+        }
 
 
         [Authorize]
@@ -70,7 +75,7 @@ namespace API.Controllers
         public async Task<IActionResult> DeleteProject(Guid projectId)
         {
             var projectResult = await Mediator.Send(new Details.Query { Id = projectId });
-            if (!projectResult.IsSuccess) return HandleResult(projectResult);
+            if (!projectResult.IsSuccess || projectResult.Value == null) return HandleResult(projectResult);
 
             var authorized = await _authorizationService.AuthorizeAsync(User, projectId.ToString(), "ProjectOwnerOrManager");
             if (!authorized.Succeeded) return Forbid();

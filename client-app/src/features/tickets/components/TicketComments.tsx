@@ -12,11 +12,11 @@ interface Props {
 
 export default observer(function TicketComments({ ticketId }: Props) {
   const { commentStore } = useStore();
-  const { connect, disconnect, connection } = commentStore;
+  const { connect } = commentStore;
   const isConnecting = useRef(false);
 
   useEffect(() => {
-    if (!connection && !isConnecting.current) {
+    if (!commentStore.connection && !isConnecting.current) {
       isConnecting.current = true;
       connect(ticketId)
         .catch((error: any) => {
@@ -30,11 +30,10 @@ export default observer(function TicketComments({ ticketId }: Props) {
     commentStore.loadComments(ticketId);
 
     return () => {
-      if (connection) {
-        disconnect();
-      }
+      isConnecting.current = false;
+      commentStore.disconnect();
     };
-  }, [ticketId, connect, disconnect, connection, commentStore]);
+  }, [ticketId, connect, commentStore]);
 
   return (
     <Segment>

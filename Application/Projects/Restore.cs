@@ -24,7 +24,7 @@ namespace Application.Projects
             {
                 var project = await _context.Projects.FindAsync(request.Id);
 
-                if (project == null) return null;
+                if (project == null) return Result<Unit>.NotFound();
 
                 if (!project.IsDeleted)
                     return Result<Unit>.Failure("Project is not deleted");

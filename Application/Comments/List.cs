@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Application.Core;
 using Application.DTOs;
 using Application.Interfaces;
@@ -13,86 +8,88 @@ using Persistence;
 
 namespace Application.Comments
 {
-    public class List : IRequest<Result<List<CommentDto>>>
+    public class CommentList
     {
-        public Guid TicketId { get; set; }
-    }
-
-    public class Handler : IRequestHandler<List, Result<List<CommentDto>>>
-    {
-        private readonly DataContext _context;
-
-        public Handler(DataContext context)
+        public class Query : IRequest<Result<List<CommentDto>>>
         {
-            _context = context;
+            public Guid TicketId { get; set; }
         }
 
-        public async Task<Result<List<CommentDto>>> Handle(List request, CancellationToken cancellationToken)
+        public class Handler : IRequestHandler<Query, Result<List<CommentDto>>>
         {
-            var comments = await _context.Comments
-                .Where(c => c.TicketId == request.TicketId)
-                .Include(c => c.Author)
-                .Include(c => c.Attachments)
-                .OrderByDescending(c => c.CreatedAt)
-                .ToListAsync(cancellationToken);
+            private readonly DataContext _context;
 
-            // Build parent-child relationships
-            var rootComments = comments.Where(c => c.ParentCommentId == null).ToList();
-            var allReplies = comments.Where(c => c.ParentCommentId != null).ToList();
-
-            var commentDtos = rootComments.Select(rootComment => new CommentDto
+            public Handler(DataContext context)
             {
-                Id = rootComment.Id,
-                Content = rootComment.Content,
-                CreatedAt = rootComment.CreatedAt,
-                UpdatedAt = rootComment.UpdatedAt,
-                DeletedAt = rootComment.DeletedAt,
-                IsDeleted = rootComment.IsDeleted,
-                TicketId = rootComment.TicketId,
-                AuthorId = rootComment.AuthorId,
-                AuthorUsername = rootComment.Author?.UserName,
-                AuthorDisplayName = rootComment.Author?.DisplayName,
-                AuthorImage = rootComment.Author?.AvatarBlobName != null ? AvatarUrl.For(rootComment.Author.UserName) : null,
-                ParentCommentId = rootComment.ParentCommentId,
-                Replies = allReplies.Where(r => r.ParentCommentId == rootComment.Id)
-                    .Select(reply => new CommentDto
-                    {
-                        Id = reply.Id,
-                        Content = reply.Content,
-                        CreatedAt = reply.CreatedAt,
-                        UpdatedAt = reply.UpdatedAt,
-                        DeletedAt = reply.DeletedAt,
-                        IsDeleted = reply.IsDeleted,
-                        TicketId = reply.TicketId,
-                        AuthorId = reply.AuthorId,
-                        AuthorUsername = reply.Author?.UserName,
-                        AuthorDisplayName = reply.Author?.DisplayName,
-                        AuthorImage = reply.Author?.AvatarBlobName != null ? AvatarUrl.For(reply.Author.UserName) : null,
-                        ParentCommentId = reply.ParentCommentId,
-                        Attachments = reply.Attachments?.Select(a => new CommentAttachmentDto
-                        {
-                            Id = a.Id,
-                            FileName = a.FileName,
-                            OriginalFileName = a.OriginalFileName,
-                            ContentType = a.ContentType,
-                            FileSize = a.FileSize,
-                            UploadedAt = a.UploadedAt,
-                            DownloadUrl = $"/api/tickets/{reply.TicketId}/comments/{reply.Id}/attachments/{a.Id}/download"
-                        }).ToList() ?? new List<CommentAttachmentDto>()
-                    }).ToList(),
-                Attachments = rootComment.Attachments?.Select(a => new CommentAttachmentDto
-                {
-                    Id = a.Id,
-                    FileName = a.FileName,
-                    OriginalFileName = a.OriginalFileName,
-                    ContentType = a.ContentType,
-                    FileSize = a.FileSize,
-                    UploadedAt = a.UploadedAt,
-                    DownloadUrl = $"/api/tickets/{rootComment.TicketId}/comments/{rootComment.Id}/attachments/{a.Id}/download"
-                }).ToList() ?? new List<CommentAttachmentDto>()
-            }).ToList();
+                _context = context;
+            }
 
-            return Result<List<CommentDto>>.Success(commentDtos);
+            public async Task<Result<List<CommentDto>>> Handle(Query request, CancellationToken cancellationToken)
+            {
+                var comments = await _context.Comments
+                    .Where(c => c.TicketId == request.TicketId)
+                    .Include(c => c.Author)
+                    .Include(c => c.Attachments)
+                    .OrderByDescending(c => c.CreatedAt)
+                    .ToListAsync(cancellationToken);
+
+                var rootComments = comments.Where(c => c.ParentCommentId == null).ToList();
+                var allReplies = comments.Where(c => c.ParentCommentId != null).ToList();
+
+                var commentDtos = rootComments.Select(rootComment => new CommentDto
+                {
+                    Id = rootComment.Id,
+                    Content = rootComment.Content,
+                    CreatedAt = rootComment.CreatedAt,
+                    UpdatedAt = rootComment.UpdatedAt,
+                    DeletedAt = rootComment.DeletedAt,
+                    IsDeleted = rootComment.IsDeleted,
+                    TicketId = rootComment.TicketId,
+                    AuthorId = rootComment.AuthorId,
+                    AuthorUsername = rootComment.Author?.UserName,
+                    AuthorDisplayName = rootComment.Author?.DisplayName,
+                    AuthorImage = rootComment.Author?.AvatarBlobName != null ? AvatarUrl.For(rootComment.Author.UserName) : null,
+                    ParentCommentId = rootComment.ParentCommentId,
+                    Replies = allReplies.Where(r => r.ParentCommentId == rootComment.Id)
+                        .Select(reply => new CommentDto
+                        {
+                            Id = reply.Id,
+                            Content = reply.Content,
+                            CreatedAt = reply.CreatedAt,
+                            UpdatedAt = reply.UpdatedAt,
+                            DeletedAt = reply.DeletedAt,
+                            IsDeleted = reply.IsDeleted,
+                            TicketId = reply.TicketId,
+                            AuthorId = reply.AuthorId,
+                            AuthorUsername = reply.Author?.UserName,
+                            AuthorDisplayName = reply.Author?.DisplayName,
+                            AuthorImage = reply.Author?.AvatarBlobName != null ? AvatarUrl.For(reply.Author.UserName) : null,
+                            ParentCommentId = reply.ParentCommentId,
+                            Attachments = reply.Attachments?.Select(a => new CommentAttachmentDto
+                            {
+                                Id = a.Id,
+                                FileName = a.FileName,
+                                OriginalFileName = a.OriginalFileName,
+                                ContentType = a.ContentType,
+                                FileSize = a.FileSize,
+                                UploadedAt = a.UploadedAt,
+                                DownloadUrl = $"/api/tickets/{reply.TicketId}/comments/{reply.Id}/attachments/{a.Id}/download"
+                            }).ToList() ?? new List<CommentAttachmentDto>()
+                        }).ToList(),
+                    Attachments = rootComment.Attachments?.Select(a => new CommentAttachmentDto
+                    {
+                        Id = a.Id,
+                        FileName = a.FileName,
+                        OriginalFileName = a.OriginalFileName,
+                        ContentType = a.ContentType,
+                        FileSize = a.FileSize,
+                        UploadedAt = a.UploadedAt,
+                        DownloadUrl = $"/api/tickets/{rootComment.TicketId}/comments/{rootComment.Id}/attachments/{a.Id}/download"
+                    }).ToList() ?? new List<CommentAttachmentDto>()
+                }).ToList();
+
+                return Result<List<CommentDto>>.Success(commentDtos);
+            }
         }
     }
 }

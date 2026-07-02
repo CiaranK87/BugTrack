@@ -1,6 +1,9 @@
+using API.Helpers;
 using Application.DTOs;
 using Application.Profiles;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -8,7 +11,7 @@ namespace API.Controllers
 {
 
     [ApiController]
-    public class ProfilesController(IAuthorizationService authorizationService) : BaseApiController(authorizationService)
+    public class ProfilesController(IMediator mediator, IAuthorizationService authorizationService) : BaseApiController(mediator, authorizationService)
     {
         [Authorize]
         [HttpGet("{username}")]
@@ -45,7 +48,19 @@ namespace API.Controllers
         [HttpPost("avatar")]
         public async Task<IActionResult> UploadAvatar([FromForm] IFormFile file)
         {
-            return HandleResult(await Mediator.Send(new UploadAvatar.Command { File = file }));
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+            var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+            if (!allowedExtensions.Contains(ext))
+                return BadRequest("Only image files are allowed (jpg, jpeg, png, gif, webp)");
+
+            var upload = new FileUploadDto
+            {
+                Content = file.OpenReadStream(),
+                FileName = file.FileName,
+                ContentType = ContentTypeHelper.FromExtension(ext),
+                Length = file.Length
+            };
+            return HandleResult(await Mediator.Send(new UploadAvatar.Command { File = upload }));
         }
 
         [Authorize]

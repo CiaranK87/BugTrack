@@ -30,7 +30,7 @@ namespace Application.Profiles
                 var user = await _context.Users
                     .FirstOrDefaultAsync(x => x.UserName == request.Username, cancellationToken);
 
-                if (user == null) return null;
+                if (user == null) return Result<ProfileDto>.Failure("User not found");
 
                 var profile = _mapper.Map<ProfileDto>(user);
                 return Result<ProfileDto>.Success(profile);

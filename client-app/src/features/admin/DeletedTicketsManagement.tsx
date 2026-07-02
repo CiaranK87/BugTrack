@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import LoadingComponent from "../../app/layout/LoadingComponent";
 import { formatDate } from "../../app/services/dateService";
+import { Ticket } from "../../app/models/ticket";
 
 export default observer(function DeletedTicketsManagement() {
   const { ticketStore } = useStore();
@@ -13,7 +14,7 @@ export default observer(function DeletedTicketsManagement() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleteTicketId, setDeleteTicketId] = useState("");
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
-  const [selectedTicket, setSelectedTicket] = useState<any>(null);
+  const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {

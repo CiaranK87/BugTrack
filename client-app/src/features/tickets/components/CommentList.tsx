@@ -13,6 +13,7 @@ interface Props {
 
 const CommentList: React.FC<Props> = observer(({ ticketId }) => {
   const { commentStore, userStore } = useStore();
+  const { loadingComments } = commentStore;
 
   useEffect(() => {
     const handleCloseReplyForm = (event: CustomEvent) => {
@@ -64,7 +65,12 @@ const CommentList: React.FC<Props> = observer(({ ticketId }) => {
 
   return (
     <div className="comment-list-container">
-      {commentStore.comments.length === 0 ? (
+      {loadingComments ? (
+        <div className="no-comments-placeholder">
+          <Icon name='spinner' size='large' loading style={{ marginBottom: '10px', display: 'block' }} />
+          Loading comments...
+        </div>
+      ) : commentStore.comments.length === 0 ? (
         <div className="no-comments-placeholder">
           <Icon name='comment outline' size='large' style={{ marginBottom: '10px', display: 'block' }} />
           No comments yet. Be the first to share your thoughts.

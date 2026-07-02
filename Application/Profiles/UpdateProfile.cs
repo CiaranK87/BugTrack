@@ -30,7 +30,7 @@ namespace Application.Profiles
                 var user = await _context.Users
                     .FirstOrDefaultAsync(x => x.UserName == _userAccessor.GetUsername(), cancellationToken);
 
-                if (user == null) return null;
+                if (user == null) return Result<Unit>.Failure("User not found");
 
                 user.DisplayName = request.ProfileDto.DisplayName ?? user.DisplayName;
                 user.Bio = request.ProfileDto.Bio ?? user.Bio;

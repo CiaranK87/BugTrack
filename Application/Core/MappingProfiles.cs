@@ -21,7 +21,7 @@ namespace Application.Core
                 )
                 .ForMember(
                     dest => dest.TicketCount,
-                    opt => opt.MapFrom(src => src.Tickets.Count())
+                    opt => opt.MapFrom(src => src.Tickets.Count(t => !t.IsDeleted))
                 )
                 .ForMember(
                     dest => dest.Participants,
