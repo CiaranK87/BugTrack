@@ -32,7 +32,7 @@ namespace API.Controllers
         public async Task<IActionResult> GetProject(Guid projectId)
         {
             var authorized = await _authorizationService.AuthorizeAsync(
-                User, projectId, "ProjectAnyRole");
+                User, projectId, "ProjectContributor");
 
             if (!authorized.Succeeded)
                 return Forbid();

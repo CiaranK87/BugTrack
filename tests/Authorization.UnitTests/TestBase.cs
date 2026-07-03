@@ -45,8 +45,6 @@ public class TestBase : IDisposable
                 policy.Requirements.Add(new ProjectRoleRequirement("User")));
             options.AddPolicy("ProjectContributor", policy =>
                 policy.Requirements.Add(new ProjectRoleRequirement("Owner", "ProjectManager", "Developer", "User", "Guest")));
-            options.AddPolicy("ProjectAnyRole", policy =>
-                policy.Requirements.Add(new ProjectRoleRequirement("Owner", "ProjectManager", "Developer", "User", "Guest")));
         });
         
         services.AddSingleton<IAuthorizationHandler, ProjectRoleHandler>();

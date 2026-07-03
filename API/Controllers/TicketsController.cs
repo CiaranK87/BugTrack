@@ -32,7 +32,7 @@ namespace API.Controllers
         [HttpGet("project/{projectId}")]
         public async Task<ActionResult<List<TicketDto>>> GetTicketsByProject(Guid projectId)
         {
-            var authResult = await _authorizationService.AuthorizeAsync(User, projectId, "ProjectAnyRole");
+            var authResult = await _authorizationService.AuthorizeAsync(User, projectId, "ProjectContributor");
             if (!authResult.Succeeded) return Forbid();
 
             return HandleResult(await Mediator.Send(new ListByProjectId.Query { ProjectId = projectId }));
