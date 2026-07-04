@@ -52,8 +52,10 @@ export default class CommentStore {
     connection.onclose(() => {
       logger.info('SignalR connection closed');
       runInAction(() => {
-        this.connection = null;
-        this.groupJoined = false;
+        if (this.connection === connection) {
+          this.connection = null;
+          this.groupJoined = false;
+        }
       });
     });
 

@@ -31,8 +31,9 @@ namespace Application.Profiles
                     .Include(p => p.Tickets)
                     .Include(p => p.Participants)
                     .ThenInclude(pa => pa.AppUser)
-                    .Where(p => p.ProjectOwner == request.Username ||
-                            p.Participants.Any(pa => pa.AppUser.UserName == request.Username))
+                    .Where(p => !p.IsDeleted &&
+                            (p.ProjectOwner == request.Username ||
+                            p.Participants.Any(pa => pa.AppUser.UserName == request.Username)))
                     .ToListAsync(cancellationToken);
 
                 var projectDtos = _mapper.Map<List<ProjectDto>>(projects);
