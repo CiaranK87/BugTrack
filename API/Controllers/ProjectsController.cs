@@ -80,13 +80,19 @@ namespace API.Controllers
             var authorized = await _authorizationService.AuthorizeAsync(User, projectId.ToString(), "ProjectOwnerOrManager");
             if (!authorized.Succeeded) return Forbid();
 
-            return HandleResult(await Mediator.Send(new Delete.Command { Id = projectId }));
+            var deleteResult = await Mediator.Send(new Delete.Command { Id = projectId });
+            if (!deleteResult.IsSuccess) return HandleResult(deleteResult);
+            return NoContent();
         }
 
         [Authorize(Policy = "RequireAdminRole")]
         [HttpDelete("{projectId}/admin-delete")]
-        public async Task<IActionResult> AdminDeleteProject(Guid projectId) =>
-            HandleResult(await Mediator.Send(new AdminDelete.Command { Id = projectId }));
+        public async Task<IActionResult> AdminDeleteProject(Guid projectId)
+        {
+            var result = await Mediator.Send(new AdminDelete.Command { Id = projectId });
+            if (!result.IsSuccess) return HandleResult(result);
+            return NoContent();
+        }
 
         [Authorize(Policy = "RequireAdminRole")]
         [HttpGet("admin/deleted")]
@@ -170,7 +176,9 @@ namespace API.Controllers
                 return Forbid("Only project owners can remove participants");
 
             var command = new RemoveParticipant.Command { ProjectId = projectId, UserId = userId };
-            return HandleResult(await Mediator.Send(command));
+            var result = await Mediator.Send(command);
+            if (!result.IsSuccess) return HandleResult(result);
+            return NoContent();
         }
 
         [Authorize]

@@ -72,7 +72,9 @@ namespace API.Controllers
                 User, id, new TicketOperationRequirement(TicketOperation.Delete));
             if (!authResult.Succeeded) return Forbid();
 
-            return HandleResult(await Mediator.Send(new Delete.Command { Id = id }));
+            var deleteResult = await Mediator.Send(new Delete.Command { Id = id });
+            if (!deleteResult.IsSuccess) return HandleResult(deleteResult);
+            return NoContent();
         }
 
         [HttpGet("admin/deleted")]
@@ -82,8 +84,12 @@ namespace API.Controllers
 
         [HttpDelete("{id}/admin-delete")]
         [Authorize(Policy = "RequireAdminRole")]
-        public async Task<IActionResult> AdminDeleteTicket(Guid id) =>
-            HandleResult(await Mediator.Send(new AdminDelete.Command { Id = id }));
+        public async Task<IActionResult> AdminDeleteTicket(Guid id)
+        {
+            var result = await Mediator.Send(new AdminDelete.Command { Id = id });
+            if (!result.IsSuccess) return HandleResult(result);
+            return NoContent();
+        }
 
         [HttpPut("{id}/restore")]
         [Authorize(Policy = "RequireAdminRole")]

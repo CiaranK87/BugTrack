@@ -67,7 +67,9 @@ namespace API.Controllers
         [HttpDelete("avatar")]
         public async Task<IActionResult> DeleteAvatar()
         {
-            return HandleResult(await Mediator.Send(new DeleteAvatar.Command()));
+            var result = await Mediator.Send(new DeleteAvatar.Command());
+            if (!result.IsSuccess) return HandleResult(result);
+            return NoContent();
         }
     }
 }

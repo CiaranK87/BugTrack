@@ -68,11 +68,11 @@ namespace API.Controllers
         {
             var userId = _userAccessor.GetUserId();
             var success = await _notificationService.DeleteAsync(id, userId);
-            
+
             if (!success)
                 return NotFound();
-            
-            return Ok();
+
+            return NoContent();
         }
 
         [HttpDelete("clear-all")]

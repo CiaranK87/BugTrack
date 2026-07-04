@@ -54,7 +54,7 @@ export default observer(function DeletedProjectsManagement() {
       });
   };
 
-  const handleViewDetails = (project: any) => {
+  const handleViewDetails = (project: Project) => {
     setSelectedProject(project);
     setDetailsModalOpen(true);
   };
