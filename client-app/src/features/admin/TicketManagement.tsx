@@ -290,8 +290,8 @@ export default observer(function TicketManagement() {
                     </Label>
                   </p>
                   <p><strong>Created:</strong> {selectedTicket.createdAt ? formatDate(selectedTicket.createdAt, 'MMM dd, yyyy') : "N/A"}</p>
-                  {selectedTicket.updated && (
-                    <p><strong>Updated:</strong> {formatDate(selectedTicket.updated, 'MMM dd, yyyy')}</p>
+                  {selectedTicket.updatedAt && (
+                    <p><strong>Updated:</strong> {formatDate(selectedTicket.updatedAt, 'MMM dd, yyyy')}</p>
                   )}
                   {selectedTicket.projectTitle && (
                     <p><strong>Project:</strong>

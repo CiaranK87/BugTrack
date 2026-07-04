@@ -24,8 +24,8 @@ const MyTasks = ({ style }: Props) => {
         )
         .sort(
           (a, b) =>
-            new Date(a.endDate || '').getTime() -
-            new Date(b.endDate || '').getTime()
+            (a.endDate ? new Date(a.endDate).getTime() : Infinity) -
+            (b.endDate ? new Date(b.endDate).getTime() : Infinity)
         )
     : [];
   

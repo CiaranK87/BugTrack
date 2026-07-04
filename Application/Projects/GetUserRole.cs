@@ -38,8 +38,6 @@ namespace Application.Projects
 
                 if (participant == null) return Result<string>.Failure("Not a member of this project");
 
-                if (participant.IsOwner) return Result<string>.Success(Roles.Project.Owner);
-
                 return Result<string>.Success(participant.Role ?? Roles.Project.User);
             }
         }

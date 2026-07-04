@@ -64,7 +64,7 @@ export default observer(function DeletedProjectsManagement() {
     project.projectTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (project.projectOwner && project.projectOwner.toLowerCase().includes(searchTerm.toLowerCase())) ||
     (project.description && project.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    (project.deletedDate && format(new Date(project.deletedDate), 'MMM dd, yyyy').toLowerCase().includes(searchTerm.toLowerCase()))
+    (project.deletedAt && format(new Date(project.deletedAt), 'MMM dd, yyyy').toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   return (
@@ -116,7 +116,7 @@ export default observer(function DeletedProjectsManagement() {
                       <Table.Cell>{project.projectOwner || "Unknown"}</Table.Cell>
                       <Table.Cell>{project.startDate ? new Date(project.startDate).toLocaleDateString() : "N/A"}</Table.Cell>
                       <Table.Cell>{project.ticketCount || 0}</Table.Cell>
-                      <Table.Cell>{(project as any).deletedDate ? format(new Date((project as any).deletedDate), 'MMM dd, yyyy') : "N/A"}</Table.Cell>
+                      <Table.Cell>{project.deletedAt ? format(new Date(project.deletedAt), 'MMM dd, yyyy') : "N/A"}</Table.Cell>
                       <Table.Cell>
                         <Button.Group>
                           <Button
@@ -162,7 +162,7 @@ export default observer(function DeletedProjectsManagement() {
                     <div className="project-card-content">
                       <div className="project-detail-item">
                         <span className="detail-label">Deleted On:</span>
-                        <span className="detail-value">{(project as any).deletedDate ? format(new Date((project as any).deletedDate), 'MMM dd, yyyy') : "N/A"}</span>
+                        <span className="detail-value">{project.deletedAt ? format(new Date(project.deletedAt), 'MMM dd, yyyy') : "N/A"}</span>
                       </div>
                       <div className="project-detail-item">
                         <span className="detail-label">Tickets:</span>
@@ -222,7 +222,7 @@ export default observer(function DeletedProjectsManagement() {
                   <p><strong>Description:</strong> {selectedProject.description}</p>
                   <p><strong>Owner:</strong> {selectedProject.projectOwner}</p>
                   <p><strong>Start Date:</strong> {selectedProject.startDate ? new Date(selectedProject.startDate).toLocaleDateString() : "N/A"}</p>
-                  <p><strong>Deleted Date:</strong> {selectedProject.deletedDate ? format(new Date(selectedProject.deletedDate), 'MMM dd, yyyy') : "N/A"}</p>
+                  <p><strong>Deleted Date:</strong> {selectedProject.deletedAt ? format(new Date(selectedProject.deletedAt), 'MMM dd, yyyy') : "N/A"}</p>
                   <p><strong>Tickets:</strong> {selectedProject.ticketCount || 0}</p>
                 </div>
               )}

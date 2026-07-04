@@ -48,8 +48,7 @@ namespace Authorization.UnitTests
             { 
                 AppUserId = userId, 
                 ProjectId = projectId, 
-                Role = "Owner",
-                IsOwner = true
+                Role = "Owner"
             };
 
             _context.Users.Add(user);
@@ -94,8 +93,7 @@ namespace Authorization.UnitTests
             { 
                 AppUserId = userId, 
                 ProjectId = projectId, 
-                Role = "Developer",
-                IsOwner = false
+                Role = "Developer"
             };
 
             _context.Users.Add(user);

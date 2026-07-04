@@ -282,8 +282,8 @@ private setTicket = (ticket: Ticket) => {
   get deletedTickets() {
     return Array.from(this.deletedTicketRegistry.values())
       .sort((a, b) => {
-        const aTime = a.deletedDate ? new Date(a.deletedDate).getTime() : 0;
-        const bTime = b.deletedDate ? new Date(b.deletedDate).getTime() : 0;
+        const aTime = a.deletedAt ? new Date(a.deletedAt).getTime() : 0;
+        const bTime = b.deletedAt ? new Date(b.deletedAt).getTime() : 0;
         return bTime - aTime;
       });
   }

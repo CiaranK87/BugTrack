@@ -12,7 +12,7 @@ namespace Domain.UnitTests.Models
             
             project.IsCancelled.Should().BeFalse();
             project.IsDeleted.Should().BeFalse();
-            project.DeletedDate.Should().BeNull();
+            project.DeletedAt.Should().BeNull();
             project.Participants.Should().NotBeNull();
             project.Participants.Should().BeEmpty();
         }
@@ -74,31 +74,27 @@ namespace Domain.UnitTests.Models
             {
                 AppUserId = "project-manager-001",
                 ProjectId = project.Id,
-                IsOwner = true,
                 Role = "Owner"
             };
-            
+
             var developer1 = new ProjectParticipant
             {
                 AppUserId = "developer-002",
                 ProjectId = project.Id,
-                IsOwner = false,
                 Role = "Developer"
             };
-            
+
             var developer2 = new ProjectParticipant
             {
                 AppUserId = "developer-003",
                 ProjectId = project.Id,
-                IsOwner = false,
                 Role = "Developer"
             };
-            
+
             var developer3 = new ProjectParticipant
             {
                 AppUserId = "developer-004",
                 ProjectId = project.Id,
-                IsOwner = false,
                 Role = "Developer"
             };
             
@@ -109,7 +105,7 @@ namespace Domain.UnitTests.Models
             project.Participants.Add(developer3);
             
             project.Participants.Should().HaveCount(4);
-            project.Participants.Count(p => p.IsOwner).Should().Be(1);
+            project.Participants.Count(p => p.Role == "Owner").Should().Be(1);
             project.Participants.Count(p => p.Role == "Developer").Should().Be(3);
             project.Participants.All(p => p.ProjectId == project.Id).Should().BeTrue();
         }
@@ -153,7 +149,7 @@ namespace Domain.UnitTests.Models
             
             project.IsCancelled.Should().BeTrue();
             project.IsDeleted.Should().BeFalse();
-            project.DeletedDate.Should().BeNull();
+            project.DeletedAt.Should().BeNull();
             project.StartDate.Should().BeBefore(beforeCancellation);
         }
 
@@ -172,13 +168,13 @@ namespace Domain.UnitTests.Models
             
             // Act
             project.IsDeleted = true;
-            project.DeletedDate = DateTime.UtcNow;
+            project.DeletedAt = DateTime.UtcNow;
             var afterDeletion = DateTime.UtcNow;
             
             project.IsDeleted.Should().BeTrue();
-            project.DeletedDate.Should().NotBeNull();
-            project.DeletedDate.Value.Should().BeOnOrAfter(beforeDeletion);
-            project.DeletedDate.Value.Should().BeOnOrBefore(afterDeletion);
+            project.DeletedAt.Should().NotBeNull();
+            project.DeletedAt.Value.Should().BeOnOrAfter(beforeDeletion);
+            project.DeletedAt.Value.Should().BeOnOrBefore(afterDeletion);
             project.IsCancelled.Should().BeFalse();
         }
 
@@ -249,15 +245,13 @@ namespace Domain.UnitTests.Models
             {
                 AppUserId = "project-manager-001",
                 ProjectId = project.Id,
-                IsOwner = true,
                 Role = "Owner"
             };
-            
+
             project.Participants.Add(ownerParticipant);
-            
+
             project.ProjectOwner.Should().Be("project-manager@company.com");
             project.Participants.Should().HaveCount(1);
-            project.Participants.First().IsOwner.Should().BeTrue();
             project.Participants.First().Role.Should().Be("Owner");
             project.Participants.First().AppUserId.Should().Be("project-manager-001");
         }

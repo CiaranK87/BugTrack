@@ -94,7 +94,7 @@ export default observer(function TicketDetailedInfo({ ticket }: Props) {
               Dates
             </Header>
             <p><strong>Created:</strong> {ticket.createdAt ? formatDateTime(ticket.createdAt, 'MMM dd, yyyy HH:mm') : 'Never'}</p>
-            <p><strong>Updated:</strong> {ticket.updated ? formatDateTime(ticket.updated, 'MMM dd, yyyy HH:mm') : 'Never'}</p>
+            <p><strong>Updated:</strong> {ticket.updatedAt ? formatDateTime(ticket.updatedAt, 'MMM dd, yyyy HH:mm') : 'Never'}</p>
             {ticket.closedDate && (
               <p><strong>Closed:</strong> {formatDateTime(ticket.closedDate, 'MMM dd, yyyy HH:mm')}</p>
             )}

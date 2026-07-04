@@ -26,7 +26,7 @@ namespace Application.Projects
                 if (project == null) return Result<Unit>.NotFound();
 
                 project.IsDeleted = true;
-                project.DeletedDate = DateTime.UtcNow;
+                project.DeletedAt = DateTime.UtcNow;
 
                 var result = await _context.SaveChangesAsync() > 0;
 

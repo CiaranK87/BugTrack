@@ -62,7 +62,6 @@ namespace Application.UnitTests.Projects
             var participant = await _context.ProjectParticipants
                 .FirstOrDefaultAsync(pp => pp.ProjectId == result.Value && pp.AppUserId == user.Id);
             participant.Should().NotBeNull();
-            participant.IsOwner.Should().BeTrue();
             participant.Role.Should().Be("Owner");
         }
 
@@ -227,7 +226,6 @@ namespace Application.UnitTests.Projects
 
             createdProject.Should().NotBeNull();
             createdProject.Participants.Should().HaveCount(1);
-            createdProject.Participants.First().IsOwner.Should().BeTrue();
             createdProject.Participants.First().Role.Should().Be("Owner");
         }
 

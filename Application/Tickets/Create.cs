@@ -56,15 +56,15 @@ namespace Application.Tickets
                     Priority = request.TicketDto.Priority,
                     Severity = request.TicketDto.Severity,
                     StartDate = request.TicketDto.StartDate ?? DateTime.UtcNow,
-                    EndDate = request.TicketDto.EndDate ?? DateTime.UtcNow,
+                    EndDate = request.TicketDto.EndDate,
                     ProjectId = request.TicketDto.ProjectId,
                     Submitter = user.UserName,
                     Status = "Open",
                     IsDeleted = false,
-                    DeletedDate = null,
+                    DeletedAt = null,
                     ClosedDate = null,
                     CreatedAt = DateTime.UtcNow,
-                    Updated = DateTime.UtcNow
+                    UpdatedAt = DateTime.UtcNow
                 };
 
                 _context.Tickets.Add(ticket);
@@ -85,8 +85,7 @@ namespace Application.Tickets
                             {
                                 ProjectId = ticket.ProjectId,
                                 AppUserId = assignedUser.Id,
-                                IsOwner = false,
-                                Role = Roles.Project.User
+                                    Role = Roles.Project.User
                             };
                             _context.ProjectParticipants.Add(participant);
                         }

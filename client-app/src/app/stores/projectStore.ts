@@ -30,8 +30,8 @@ export default class ProjectStore {
 
   get deletedProjects() {
     return Array.from(this.deletedProjectRegistry.values()).sort((a, b) => {
-      const dateA = new Date(a.deletedDate || 0);
-      const dateB = new Date(b.deletedDate || 0);
+      const dateA = new Date(a.deletedAt || 0);
+      const dateB = new Date(b.deletedAt || 0);
       return dateB.getTime() - dateA.getTime();
     });
   }
@@ -190,7 +190,7 @@ export default class ProjectStore {
         const project = this.projectRegistry.get(id);
         if (project) {
           (project as any).isDeleted = true;
-          (project as any).deletedDate = new Date();
+          (project as any).deletedAt = new Date();
           this.projectRegistry.delete(id);
           this.deletedProjectRegistry.set(id, project);
         }
@@ -229,7 +229,7 @@ export default class ProjectStore {
         const project = this.deletedProjectRegistry.get(id);
         if (project) {
           project.isDeleted = false;
-          (project as any).deletedDate = undefined;
+          (project as any).deletedAt = undefined;
           this.deletedProjectRegistry.delete(id);
           this.projectRegistry.set(id, project);
         }

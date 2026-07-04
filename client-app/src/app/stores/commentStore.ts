@@ -72,7 +72,7 @@ export default class CommentStore {
       
       let lastErr: unknown;
       for (let attempt = 0; attempt < 3; attempt++) {
-        if (this.connection !== newConnection) return;
+        if (!Object.is(this.connection, newConnection)) return; // !== would narrow newConnection to never inside if(!this.connection)
         if (attempt > 0) await new Promise(r => setTimeout(r, 1000));
         try {
           await newConnection.start();

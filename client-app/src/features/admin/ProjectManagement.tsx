@@ -263,7 +263,7 @@ export default observer(function ProjectManagement() {
                   </p>
                   <p><strong>Tickets:</strong> {selectedProject.ticketCount || 0}</p>
                   {selectedProject.isDeleted && (
-                    <p><strong>Deleted Date:</strong> {selectedProject.deletedDate ? format(new Date(selectedProject.deletedDate), 'MMM dd, yyyy') : "N/A"}</p>
+                    <p><strong>Deleted Date:</strong> {selectedProject.deletedAt ? format(new Date(selectedProject.deletedAt), 'MMM dd, yyyy') : "N/A"}</p>
                   )}
                 </div>
               )}

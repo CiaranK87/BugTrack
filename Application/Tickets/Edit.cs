@@ -52,10 +52,10 @@ namespace Application.Tickets
                 }
                 
                 ticket.StartDate = request.EditDto.StartDate ?? DateTime.UtcNow;
-                ticket.EndDate = request.EditDto.EndDate ?? DateTime.UtcNow;
-                
+                ticket.EndDate = request.EditDto.EndDate;
+
                 ticket.Submitter = existingSubmitter;
-                ticket.Updated = DateTime.UtcNow;
+                ticket.UpdatedAt = DateTime.UtcNow;
 
                 _context.Entry(ticket).State = EntityState.Modified;
 

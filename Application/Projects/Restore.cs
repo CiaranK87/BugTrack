@@ -30,7 +30,7 @@ namespace Application.Projects
                     return Result<Unit>.Failure("Project is not deleted");
 
                 project.IsDeleted = false;
-                project.DeletedDate = null;
+                project.DeletedAt = null;
 
                 var result = await _context.SaveChangesAsync() > 0;
 

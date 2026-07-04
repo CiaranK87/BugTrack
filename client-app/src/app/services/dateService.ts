@@ -58,10 +58,10 @@ export const normalizeTicketDates = (ticket: any) => {
 
   ticket.startDate = normalizeDate(ticket.startDate);
   ticket.endDate = normalizeDate(ticket.endDate);
-  ticket.updated = normalizeDate(ticket.updated);
+  ticket.updatedAt = normalizeDate(ticket.updatedAt);
   ticket.createdAt = normalizeDate(ticket.createdAt);
   ticket.closedDate = normalizeDate(ticket.closedDate);
-  ticket.deletedDate = normalizeDate(ticket.deletedDate);
+  ticket.deletedAt = normalizeDate(ticket.deletedAt);
 
   return ticket;
 };

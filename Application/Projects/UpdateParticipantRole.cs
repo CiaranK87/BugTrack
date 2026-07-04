@@ -1,4 +1,5 @@
 using Application.Core;
+using Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -38,7 +39,7 @@ namespace Application.Projects
                 if (participant == null)
                     return Result<Unit>.Failure("User is not a participant of this project");
 
-                if (participant.IsOwner)
+                if (participant.Role == Roles.Project.Owner)
                     return Result<Unit>.Failure("Cannot change the role of the project owner");
 
                 var validRoles = new HashSet<string>

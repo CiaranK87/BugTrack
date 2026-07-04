@@ -107,7 +107,7 @@ namespace API.Authorization
             var participant = await _context.ProjectParticipants
                 .AsNoTracking()
                 .Where(pp => pp.AppUserId == currentUserId && pp.ProjectId == projectId)
-                .Select(pp => new { pp.Role, pp.IsOwner })
+                .Select(pp => new { pp.Role })
                 .FirstOrDefaultAsync();
 
             if (participant == null)
@@ -118,8 +118,7 @@ namespace API.Authorization
             switch (requirement.Operation)
             {
                 case TicketOperation.Read:
-                    if (participant.IsOwner ||
-                        role == Roles.Project.Owner ||
+                    if (role == Roles.Project.Owner ||
                         role == Roles.Project.ProjectManager ||
                         role == Roles.Project.Developer ||
                         role == Roles.Project.User ||
@@ -130,8 +129,7 @@ namespace API.Authorization
                     break;
 
                 case TicketOperation.Create:
-                    if (participant.IsOwner ||
-                        role == Roles.Project.Owner ||
+                    if (role == Roles.Project.Owner ||
                         role == Roles.Project.ProjectManager ||
                         role == Roles.Project.Developer ||
                         role == Roles.Project.User ||
@@ -142,8 +140,7 @@ namespace API.Authorization
                     break;
 
                 case TicketOperation.Edit:
-                    if (participant.IsOwner ||
-                        role == Roles.Project.Owner ||
+                    if (role == Roles.Project.Owner ||
                         role == Roles.Project.ProjectManager ||
                         role == Roles.Project.Developer ||
                         (!string.IsNullOrEmpty(ticketSubmitter) && ticketSubmitter == currentUsername) ||
@@ -154,8 +151,7 @@ namespace API.Authorization
                     break;
 
                 case TicketOperation.Close:
-                    if (participant.IsOwner ||
-                        role == Roles.Project.Owner ||
+                    if (role == Roles.Project.Owner ||
                         role == Roles.Project.ProjectManager ||
                         role == Roles.Project.Developer)
                     {

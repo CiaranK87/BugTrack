@@ -87,7 +87,7 @@ export default observer(function DeletedTicketsManagement() {
     (ticket.project && ticket.project.projectTitle.toLowerCase().includes(searchTerm.toLowerCase())) ||
     ticket.priority.toLowerCase().includes(searchTerm.toLowerCase()) ||
     ticket.severity.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (ticket.deletedDate && formatDate(ticket.deletedDate, 'MMM dd, yyyy').toLowerCase().includes(searchTerm.toLowerCase()))
+    (ticket.deletedAt && formatDate(ticket.deletedAt, 'MMM dd, yyyy').toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   return (
@@ -158,7 +158,7 @@ export default observer(function DeletedTicketsManagement() {
                         </Label>
                       </Table.Cell>
                       <Table.Cell>
-                        {ticket.deletedDate ? formatDate(ticket.deletedDate, 'MMM dd, yyyy') : "N/A"}
+                        {ticket.deletedAt ? formatDate(ticket.deletedAt, 'MMM dd, yyyy') : "N/A"}
                       </Table.Cell>
                       <Table.Cell>
                         <Button.Group>
@@ -205,7 +205,7 @@ export default observer(function DeletedTicketsManagement() {
                     <div className="ticket-card-content">
                       <div className="ticket-detail-item">
                         <span className="detail-label">Deleted On:</span>
-                        <span className="detail-value">{ticket.deletedDate ? formatDate(ticket.deletedDate, 'MMM dd, yyyy') : "N/A"}</span>
+                        <span className="detail-value">{ticket.deletedAt ? formatDate(ticket.deletedAt, 'MMM dd, yyyy') : "N/A"}</span>
                       </div>
                       <div className="ticket-detail-item">
                         <span className="detail-label">Priority / Severity:</span>
@@ -280,7 +280,7 @@ export default observer(function DeletedTicketsManagement() {
                   </p>
                   <p><strong>Status:</strong> {selectedTicket.status}</p>
                   <p><strong>Created:</strong> {selectedTicket.createdAt ? formatDate(selectedTicket.createdAt, 'MMM dd, yyyy') : "N/A"}</p>
-                  <p><strong>Deleted:</strong> {selectedTicket.deletedDate ? formatDate(selectedTicket.deletedDate, 'MMM dd, yyyy') : "N/A"}</p>
+                  <p><strong>Deleted:</strong> {selectedTicket.deletedAt ? formatDate(selectedTicket.deletedAt, 'MMM dd, yyyy') : "N/A"}</p>
                   {selectedTicket.projectTitle && (
                     <p><strong>Project:</strong>
                       <Link to={`/projects/${selectedTicket.projectId}`} style={{ marginLeft: '5px' }}>

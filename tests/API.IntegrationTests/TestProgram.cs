@@ -205,8 +205,7 @@ namespace API.IntegrationTests
             {
                 AppUserId = adminUser.Id,
                 ProjectId = project1.Id,
-                Role = "Owner",
-                IsOwner = true
+                Role = "Owner"
             };
             db.ProjectParticipants.Add(participant1);
 
@@ -214,8 +213,7 @@ namespace API.IntegrationTests
             {
                 AppUserId = testUser.Id,
                 ProjectId = project1.Id,
-                Role = "Developer",
-                IsOwner = false
+                Role = "Developer"
             };
             db.ProjectParticipants.Add(participant2);
 
@@ -223,8 +221,7 @@ namespace API.IntegrationTests
             {
                 AppUserId = testUser.Id,
                 ProjectId = project2.Id,
-                Role = "Owner",
-                IsOwner = true
+                Role = "Owner"
             };
             db.ProjectParticipants.Add(participant3);
 

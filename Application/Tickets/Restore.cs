@@ -33,7 +33,7 @@ namespace Application.Tickets
                     return Result<Unit>.Failure("Ticket is not deleted");
 
                 ticket.IsDeleted = false;
-                ticket.DeletedDate = null;
+                ticket.DeletedAt = null;
 
                 var result = await _context.SaveChangesAsync() > 0;
 

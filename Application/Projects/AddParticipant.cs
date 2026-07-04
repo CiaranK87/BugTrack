@@ -47,8 +47,7 @@ namespace Application.Projects
                 {
                     AppUserId = request.UserId,
                     ProjectId = request.ProjectId,
-                    Role = request.Role,
-                    IsOwner = request.Role == Roles.Project.Owner
+                    Role = request.Role
                 });
 
                 var result = await _context.SaveChangesAsync(cancellationToken) > 0;

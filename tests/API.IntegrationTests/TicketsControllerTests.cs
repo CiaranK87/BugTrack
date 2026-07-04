@@ -176,7 +176,7 @@ namespace API.IntegrationTests
             updatedTicket.Description.Should().Be(editDto.Description);
             updatedTicket.Priority.Should().Be(editDto.Priority);
             updatedTicket.Status.Should().Be(editDto.Status);
-            updatedTicket.Updated.Should().BeOnOrAfter(beforeUpdate);
+            updatedTicket.UpdatedAt.Should().BeOnOrAfter(beforeUpdate);
         }
 
         [Fact]
@@ -195,9 +195,9 @@ namespace API.IntegrationTests
             var deletedTicket = await context.Tickets.FindAsync(TestProgram.Ticket1Id);
             deletedTicket.Should().NotBeNull(); // Still exists (soft delete)
             deletedTicket.IsDeleted.Should().BeTrue();
-            deletedTicket.DeletedDate.Should().NotBeNull();
-            deletedTicket.DeletedDate.Value.Should().BeOnOrAfter(beforeDeletion);
-            deletedTicket.DeletedDate.Value.Should().BeOnOrBefore(DateTime.UtcNow);
+            deletedTicket.DeletedAt.Should().NotBeNull();
+            deletedTicket.DeletedAt.Value.Should().BeOnOrAfter(beforeDeletion);
+            deletedTicket.DeletedAt.Value.Should().BeOnOrBefore(DateTime.UtcNow);
         }
 
         [Fact]
