@@ -80,7 +80,7 @@ export default observer(function TicketForm() {
     priority: Yup.string().required("Priority is required"),
     severity: Yup.string().required("Severity is required"),
     startDate: Yup.string().required("Start date is required"),
-    endDate: Yup.string().required("End date is required"),
+    endDate: Yup.string().optional(),
   });
 
   function handleFormSubmit(ticket: Ticket) {

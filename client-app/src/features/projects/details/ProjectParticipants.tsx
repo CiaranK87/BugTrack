@@ -67,7 +67,8 @@ export default observer(function ProjectParticipants({ projectId }: Props) {
     if (!removeUserId || !projectId) return;
 
     try {
-      await removeParticipant(projectId, removeUserId);
+      const ok = await removeParticipant(projectId, removeUserId);
+      if (!ok) return;
       await loadProjectParticipants(projectId);
       toast.success('Participant removed');
     } catch (error) {
