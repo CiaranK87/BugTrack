@@ -29,7 +29,7 @@ namespace Application.Tickets
             {
                 var ticket = await _context.Tickets
                     .Include(t => t.Project)
-                    .FirstOrDefaultAsync(t => t.Id == request.Id);
+                    .FirstOrDefaultAsync(t => t.Id == request.Id && !t.IsDeleted);
 
                 return Result<TicketDto>.Success(_mapper.Map<TicketDto>(ticket));
             }

@@ -30,6 +30,7 @@ namespace Application.Tickets
             {
                 var ticket = await _context.Tickets.FindAsync(request.Id);
                 if (ticket == null) return Result<Unit>.NotFound();
+                if (ticket.IsDeleted) return Result<Unit>.NotFound();
 
                 var existingSubmitter = ticket.Submitter;
 
