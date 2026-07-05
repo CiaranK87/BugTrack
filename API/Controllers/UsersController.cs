@@ -1,5 +1,6 @@
 using Application.DTOs;
 using Application.Users;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,9 +10,9 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class UsersController : BaseApiController
     {
-        public UsersController(IAuthorizationService authorizationService) : base(authorizationService)
-        {
-        }
+        public UsersController(IMediator mediator, IAuthorizationService authorizationService)
+            : base(mediator, authorizationService) {}
+
 
         [Authorize(Policy = "CanManageGlobalRoles")]
         [HttpGet("list")]
@@ -35,7 +36,11 @@ namespace API.Controllers
 
         [Authorize(Policy = "CanManageGlobalRoles")]
         [HttpDelete("{userId}")]
-        public async Task<IActionResult> SoftDeleteUser(string userId) =>
-            HandleResult(await Mediator.Send(new SoftDelete.Command { UserId = userId }));
+        public async Task<IActionResult> SoftDeleteUser(string userId)
+        {
+            var result = await Mediator.Send(new SoftDelete.Command { UserId = userId });
+            if (!result.IsSuccess) return HandleResult(result);
+            return NoContent();
+        }
     }
 }

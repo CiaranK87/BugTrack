@@ -1,7 +1,7 @@
 using Application.Core;
+using Application.DTOs;
 using Application.Interfaces;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Persistence;
 
 namespace Application.Profiles
@@ -10,7 +10,7 @@ namespace Application.Profiles
     {
         public class Command : IRequest<Result<Unit>>
         {
-            public IFormFile File { get; set; }
+            public FileUploadDto File { get; set; }
         }
 
         public class Handler : IRequestHandler<Command, Result<Unit>>
@@ -31,15 +31,10 @@ namespace Application.Profiles
                 var userId = _userAccessor.GetUserId();
                 var user = await _context.Users.FindAsync(userId);
 
-                if (user == null) return null;
+                if (user == null) return Result<Unit>.Failure("User not found");
 
                 if (request.File == null)
                     return Result<Unit>.Failure("No file provided");
-
-                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
-                var ext = Path.GetExtension(request.File.FileName).ToLower();
-                if (!allowedExtensions.Contains(ext))
-                    return Result<Unit>.Failure("Only image files are allowed (jpg, jpeg, png, gif, webp)");
 
                 if (request.File.Length > 5 * 1024 * 1024)
                     return Result<Unit>.Failure("Avatar must be 5 MB or smaller");

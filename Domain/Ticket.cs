@@ -13,11 +13,11 @@ namespace Domain
         public string Status { get; set; }
         public DateTime? ClosedDate { get; set; }
         public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
-        public DateTime Updated { get; set; }
+        public DateTime? EndDate { get; set; }
+        public DateTime UpdatedAt { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public bool IsDeleted { get; set; }
-        public DateTime? DeletedDate { get; set; }
+        public DateTime? DeletedAt { get; set; }
         public Guid ProjectId { get; set; }
         public Project Project { get; set; }
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();

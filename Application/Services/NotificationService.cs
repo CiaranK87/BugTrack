@@ -43,7 +43,6 @@ namespace Application.Services
                     .ThenInclude(c => c.Author)
                 .Include(n => n.Ticket)
                 .OrderByDescending(n => n.CreatedAt)
-                .Take(5)
                 .Select(n => new NotificationDto
                 {
                     Id = n.Id,

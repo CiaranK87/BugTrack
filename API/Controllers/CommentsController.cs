@@ -1,13 +1,14 @@
+using API.Authorization;
+using API.Helpers;
+using API.Hubs;
 using Application.Comments;
 using Application.Core;
 using Application.DTOs;
 using Application.Interfaces;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using API.Authorization;
-using API.Hubs;
-using MediatR;
 
 namespace API.Controllers
 {
@@ -16,13 +17,11 @@ namespace API.Controllers
     [Authorize]
     public class CommentsController : BaseApiController
     {
-        private readonly IMediator _mediator;
         private readonly IHubContext<TicketCommentHub> _hubContext;
 
         public CommentsController(IMediator mediator, IHubContext<TicketCommentHub> hubContext, IAuthorizationService authorizationService)
-            : base(authorizationService)
+            : base(mediator, authorizationService)
         {
-            _mediator = mediator;
             _hubContext = hubContext;
         }
 
@@ -32,7 +31,7 @@ namespace API.Controllers
             var authResult = await _authorizationService.AuthorizeAsync(User, ticketId, new TicketOperationRequirement(TicketOperation.Read));
             if (!authResult.Succeeded) return Forbid();
 
-            var result = await _mediator.Send(new List { TicketId = ticketId });
+            var result = await Mediator.Send(new CommentList.Query { TicketId = ticketId });
             return HandleResult(result);
         }
 
@@ -42,7 +41,7 @@ namespace API.Controllers
             var authResult = await _authorizationService.AuthorizeAsync(User, ticketId, new TicketOperationRequirement(TicketOperation.Read));
             if (!authResult.Succeeded) return Forbid();
 
-            var comment = await _mediator.Send(new Application.Comments.CommentDetailsQuery { TicketId = ticketId, Id = id });
+            var comment = await Mediator.Send(new CommentDetails.Query { TicketId = ticketId, Id = id });
             return HandleResult(comment);
         }
 
@@ -53,19 +52,35 @@ namespace API.Controllers
                 User, ticketId, new TicketOperationRequirement(TicketOperation.Read));
             if (!authResult.Succeeded) return Forbid();
 
-            var result = await _mediator.Send(new Create.Command {
+            if (commentDto.Attachments != null)
+            {
+                var invalid = commentDto.Attachments
+                    .FirstOrDefault(f => !ContentTypeHelper.IsAllowed(Path.GetExtension(f.FileName)));
+                if (invalid != null)
+                    return BadRequest($"File type '{Path.GetExtension(invalid.FileName)}' is not allowed.");
+            }
+
+            var attachments = commentDto.Attachments?.Select(f => new FileUploadDto
+            {
+                Content = f.OpenReadStream(),
+                FileName = f.FileName,
+                ContentType = ContentTypeHelper.FromExtension(Path.GetExtension(f.FileName)),
+                Length = f.Length
+            }).ToList() ?? new();
+
+            var result = await Mediator.Send(new Create.Command {
                 TicketId = ticketId,
                 Content = commentDto.Content,
-                Attachments = commentDto.Attachments,
+                Attachments = attachments,
                 ParentCommentId = commentDto.ParentCommentId
             });
-            
+
             if (result.IsSuccess)
             {
                 await _hubContext.Clients.Group($"Ticket_{ticketId}").SendAsync("ReceiveComment", result.Value);
                 return CreatedAtAction(nameof(GetComment), new { ticketId, id = result.Value.Id }, result.Value);
             }
-            
+
             return BadRequest(result.Error);
         }
 
@@ -76,14 +91,17 @@ namespace API.Controllers
                 User, ticketId, new TicketOperationRequirement(TicketOperation.Read));
             if (!authResult.Succeeded) return Forbid();
 
-            var result = await _mediator.Send(new Update.Command { TicketId = ticketId, Id = id, Content = commentDto.Content });
-            
+            var result = await Mediator.Send(new Update.Command { TicketId = ticketId, Id = id, Content = commentDto.Content });
+
+            if (result.IsNotFound || (result.IsSuccess && result.Value == null))
+                return NotFound();
+
             if (result.IsSuccess)
             {
                 await _hubContext.Clients.Group($"Ticket_{ticketId}").SendAsync("CommentUpdated", result.Value);
                 return Ok(result.Value);
             }
-            
+
             return BadRequest(result.Error);
         }
 
@@ -94,14 +112,17 @@ namespace API.Controllers
                 User, ticketId, new TicketOperationRequirement(TicketOperation.Read));
             if (!authResult.Succeeded) return Forbid();
 
-            var result = await _mediator.Send(new Delete.Command { TicketId = ticketId, Id = id });
-            
+            var result = await Mediator.Send(new Delete.Command { TicketId = ticketId, Id = id });
+
+            if (result.IsNotFound)
+                return NotFound();
+
             if (result.IsSuccess)
             {
                 await _hubContext.Clients.Group($"Ticket_{ticketId}").SendAsync("CommentDeleted", id);
                 return NoContent();
             }
-            
+
             return BadRequest(result.Error);
         }
 
@@ -111,7 +132,7 @@ namespace API.Controllers
             var authResult = await _authorizationService.AuthorizeAsync(User, ticketId, new TicketOperationRequirement(TicketOperation.Read));
             if (!authResult.Succeeded) return Forbid();
 
-            var (stream, contentType, originalFileName) = await _mediator.Send(new GetAttachmentQuery { TicketId = ticketId, CommentId = commentId, AttachmentId = attachmentId });
+            var (stream, contentType, originalFileName) = await Mediator.Send(new GetAttachment.Query { TicketId = ticketId, CommentId = commentId, AttachmentId = attachmentId });
 
             if (stream == null) return NotFound();
 
@@ -124,14 +145,14 @@ namespace API.Controllers
             var authResult = await _authorizationService.AuthorizeAsync(User, ticketId, new TicketOperationRequirement(TicketOperation.Read));
             if (!authResult.Succeeded) return Forbid();
 
-            var result = await _mediator.Send(new DeleteAttachment.Command { TicketId = ticketId, CommentId = commentId, AttachmentId = attachmentId });
-            
+            var result = await Mediator.Send(new DeleteAttachment.Command { TicketId = ticketId, CommentId = commentId, AttachmentId = attachmentId });
+
             if (result.IsSuccess)
             {
                 await _hubContext.Clients.Group($"Ticket_{ticketId}").SendAsync("AttachmentDeleted", commentId, attachmentId);
                 return NoContent();
             }
-            
+
             return BadRequest(result.Error);
         }
     }

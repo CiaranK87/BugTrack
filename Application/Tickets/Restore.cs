@@ -27,13 +27,13 @@ namespace Application.Tickets
                     .Include(t => t.Project)
                     .FirstOrDefaultAsync(t => t.Id == request.Id, cancellationToken);
 
-                if (ticket == null) return null;
+                if (ticket == null) return Result<Unit>.NotFound();
 
                 if (!ticket.IsDeleted)
                     return Result<Unit>.Failure("Ticket is not deleted");
 
                 ticket.IsDeleted = false;
-                ticket.DeletedDate = null;
+                ticket.DeletedAt = null;
 
                 var result = await _context.SaveChangesAsync() > 0;
 

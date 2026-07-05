@@ -23,10 +23,10 @@ namespace Application.Tickets
             {
                 var ticket = await _context.Tickets.FindAsync(request.Id);
 
-                if(ticket == null) return null;
+                if (ticket == null) return Result<Unit>.NotFound();
 
                 ticket.IsDeleted = true;
-                ticket.DeletedDate = DateTime.UtcNow;
+                ticket.DeletedAt = DateTime.UtcNow;
 
                 var result = await _context.SaveChangesAsync() > 0;
 

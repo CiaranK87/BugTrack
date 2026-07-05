@@ -9,7 +9,8 @@ export interface IProject {
   ownerUsername: string;
   isCancelled: boolean;
   isDeleted: boolean;
-  deletedDate?: Date;
+  createdAt?: Date;
+  deletedAt?: Date;
   isParticipant: boolean;
   isOwner: boolean;
   owner?: Profile;
@@ -33,7 +34,8 @@ export class Project implements IProject {
   ownerUsername: string;
   isCancelled: boolean = false;
   isDeleted: boolean = false;
-  deletedDate?: Date;
+  createdAt?: Date;
+  deletedAt?: Date;
   isParticipant: boolean = false;
   isOwner: boolean = false;
   owner?: Profile;

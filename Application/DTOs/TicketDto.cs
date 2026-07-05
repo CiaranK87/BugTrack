@@ -12,9 +12,9 @@ public class TicketDto
     public DateTime CreatedAt { get; set; }
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
-    public DateTime Updated { get; set; }
+    public DateTime UpdatedAt { get; set; }
     public bool IsDeleted { get; set; }
-    public DateTime? DeletedDate { get; set; }
+    public DateTime? DeletedAt { get; set; }
     public Guid ProjectId { get; set; }
     public string ProjectTitle { get; set; }
 }

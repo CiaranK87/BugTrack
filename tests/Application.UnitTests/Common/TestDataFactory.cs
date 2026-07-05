@@ -20,7 +20,7 @@ namespace Application.UnitTests.Common
             .RuleFor(t => t.StartDate, f => f.Date.Recent())
             .RuleFor(t => t.EndDate, f => f.Date.Future())
             .RuleFor(t => t.CreatedAt, f => f.Date.Recent())
-            .RuleFor(t => t.Updated, f => f.Date.Recent())
+            .RuleFor(t => t.UpdatedAt, f => f.Date.Recent())
             .RuleFor(t => t.ProjectId, f => f.Random.Guid())
             .RuleFor(t => t.IsDeleted, false);
 
@@ -99,7 +99,7 @@ namespace Application.UnitTests.Common
                 EndDate = ticket.EndDate,
                 ProjectId = ticket.ProjectId,
                 CreatedAt = ticket.CreatedAt,
-                Updated = ticket.Updated
+                UpdatedAt = ticket.UpdatedAt
             };
         }
 

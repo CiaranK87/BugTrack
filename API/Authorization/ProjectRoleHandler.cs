@@ -55,17 +55,11 @@ namespace API.Authorization
             var participant = await _context.ProjectParticipants
                 .AsNoTracking()
                 .Where(pp => pp.AppUserId == currentUserId && pp.ProjectId == projectGuid)
-                .Select(pp => new { pp.Role, pp.IsOwner })
+                .Select(pp => new { pp.Role })
                 .FirstOrDefaultAsync();
 
             if (participant == null) return;
 
-            if (participant.IsOwner && requirement.AllowedRoles.Contains(Roles.Project.Owner))
-            {
-                context.Succeed(requirement);
-                return;
-            }
-            
             if (!string.IsNullOrWhiteSpace(participant.Role))
             {
                 if (requirement.AllowedRoles.Contains(participant.Role))

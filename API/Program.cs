@@ -96,9 +96,6 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("ProjectContributor", policy =>
         policy.Requirements.Add(new ProjectRoleRequirement(Roles.Project.Owner, Roles.Project.ProjectManager, Roles.Project.Developer, Roles.Project.User, Roles.Project.Guest)));
 
-    options.AddPolicy("ProjectAnyRole", policy =>
-        policy.Requirements.Add(new ProjectRoleRequirement(Roles.Project.Owner, Roles.Project.ProjectManager, Roles.Project.Developer, Roles.Project.User, Roles.Project.Guest)));
-
     options.AddPolicy("CanUploadAttachments", policy =>
         policy.RequireClaim("globalrole", Roles.Global.User, Roles.Global.Developer, Roles.Global.ProjectManager, Roles.Global.Admin));
 

@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import LoadingComponent from "../../app/layout/LoadingComponent";
 import { formatDate } from "../../app/services/dateService";
+import { Ticket } from "../../app/models/ticket";
 
 export default observer(function TicketManagement() {
   const { ticketStore } = useStore();
@@ -13,7 +14,7 @@ export default observer(function TicketManagement() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleteTicketId, setDeleteTicketId] = useState("");
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
-  const [selectedTicket, setSelectedTicket] = useState<any>(null);
+  const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
@@ -289,8 +290,8 @@ export default observer(function TicketManagement() {
                     </Label>
                   </p>
                   <p><strong>Created:</strong> {selectedTicket.createdAt ? formatDate(selectedTicket.createdAt, 'MMM dd, yyyy') : "N/A"}</p>
-                  {selectedTicket.updated && (
-                    <p><strong>Updated:</strong> {formatDate(selectedTicket.updated, 'MMM dd, yyyy')}</p>
+                  {selectedTicket.updatedAt && (
+                    <p><strong>Updated:</strong> {formatDate(selectedTicket.updatedAt, 'MMM dd, yyyy')}</p>
                   )}
                   {selectedTicket.projectTitle && (
                     <p><strong>Project:</strong>

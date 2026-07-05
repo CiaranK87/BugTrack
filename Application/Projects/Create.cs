@@ -51,14 +51,14 @@ namespace Application.Projects
                         : user?.UserName ?? string.Empty,
                     IsDeleted = false,
                     IsCancelled = false,
-                    DeletedDate = null
+                    CreatedAt = DateTime.UtcNow,
+                    DeletedAt = null
                 };
 
                 var participant = new ProjectParticipant
                 {
                     AppUser = user,
                     Project = project,
-                    IsOwner = true,
                     Role = Roles.Project.Owner
                 };
 

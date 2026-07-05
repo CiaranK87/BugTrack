@@ -32,7 +32,7 @@ namespace Application.Users
                 var user = await _context.Users.FindAsync(request.UserId);
 
                 if (user == null)
-                    return null;
+                    return Result<Unit>.NotFound();
 
                 if (user.GlobalRole == Roles.Global.Admin && user.Id != currentUserId)
                     return Result<Unit>.Failure("Admins cannot delete other admins");

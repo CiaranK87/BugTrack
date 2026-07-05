@@ -15,13 +15,13 @@ namespace Application.Core
                 .ForMember(
                     dest => dest.OwnerUsername,
                     opt => opt.MapFrom(src => src.Participants
-                        .Where(x => x.IsOwner)
+                        .Where(x => x.Role == Roles.Project.Owner)
                         .Select(x => x.AppUser.UserName)
                         .FirstOrDefault())
                 )
                 .ForMember(
                     dest => dest.TicketCount,
-                    opt => opt.MapFrom(src => src.Tickets.Count())
+                    opt => opt.MapFrom(src => src.Tickets.Count(t => !t.IsDeleted))
                 )
                 .ForMember(
                     dest => dest.Participants,

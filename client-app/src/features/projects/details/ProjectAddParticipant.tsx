@@ -3,6 +3,7 @@ import { Form, Dropdown, Button, Segment, Header } from 'semantic-ui-react';
 import { useState, useEffect } from 'react';
 import { useStore } from '../../../app/stores/store';
 import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 export default observer(function ProjectAddParticipant() {
   const { projectStore, userStore } = useStore();
@@ -30,13 +31,14 @@ export default observer(function ProjectAddParticipant() {
     if (!selectedUser || !projectId) return;
     setLoading(true);
     try {
-      await addProjectParticipant(projectId, {
+      const success = await addProjectParticipant(projectId, {
         userId: selectedUser,
         role: selectedRole
       });
-      navigate(`/projects/${projectId}`, { state: { message: 'Participant added successfully!' } });
-    } catch (error) {
-      alert('Failed to add participant');
+      if (success) {
+        toast.success('Participant added successfully!');
+        navigate(`/projects/${projectId}`);
+      }
     } finally {
       setLoading(false);
     }

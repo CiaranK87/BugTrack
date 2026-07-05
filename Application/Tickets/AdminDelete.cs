@@ -24,7 +24,7 @@ namespace Application.Tickets
             {
                 var ticket = await _context.Tickets.FindAsync(request.Id);
 
-                if (ticket == null) return null;
+                if (ticket == null) return Result<Unit>.Failure("Ticket not found");
 
                 if (!ticket.IsDeleted)
                     return Result<Unit>.Failure("Ticket must be soft deleted first");

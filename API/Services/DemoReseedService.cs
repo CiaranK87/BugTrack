@@ -1,3 +1,4 @@
+using Application.Interfaces;
 using Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -84,6 +85,7 @@ namespace API.Services
             using var scope = _scopeFactory.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<DataContext>();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+            var fileService = scope.ServiceProvider.GetRequiredService<IFileService>();
 
             var demoUser = await context.Users.FirstOrDefaultAsync(
                 u => u.UserName == "Demo User" && u.GlobalRole == Roles.Global.Guest, stoppingToken);
@@ -103,6 +105,13 @@ namespace API.Services
             var demoUserAttachments = await context.CommentAttachments
                 .Where(a => a.UploadedById == demoUser.Id)
                 .ToListAsync(stoppingToken);
+
+            foreach (var attachment in demoUserAttachments)
+            {
+                try { await fileService.DeleteAsync(attachment.FilePath, stoppingToken); }
+                catch (Exception ex) { _logger.LogWarning(ex, "DemoReseedService: failed to delete blob {FilePath}", attachment.FilePath); }
+            }
+
             context.CommentAttachments.RemoveRange(demoUserAttachments);
 
             var notifications = await context.Notifications

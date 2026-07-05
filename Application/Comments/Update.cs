@@ -53,7 +53,9 @@ namespace Application.Comments
                     .Include(c => c.Attachments)
                     .FirstOrDefaultAsync(cancellationToken);
 
-                if (comment == null || comment.IsDeleted || comment.AuthorId != userId)
+                if (comment == null)
+                    return Result<CommentDto>.Success(null);
+                if (comment.IsDeleted || comment.AuthorId != userId)
                     return Result<CommentDto>.Failure("Comment not found or access denied");
 
                 comment.Content = request.Content;

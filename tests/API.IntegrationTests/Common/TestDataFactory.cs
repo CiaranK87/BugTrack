@@ -12,7 +12,7 @@ namespace API.IntegrationTests.Common
             .RuleFor(t => t.Submitter, f => f.Internet.UserName())
             .RuleFor(t => t.Assigned, f => f.Internet.UserName())
             .RuleFor(t => t.CreatedAt, f => f.Date.Recent())
-            .RuleFor(t => t.Updated, f => f.Date.Recent())
+            .RuleFor(t => t.UpdatedAt, f => f.Date.Recent())
             .RuleFor(t => t.StartDate, f => f.Date.Recent())
             .RuleFor(t => t.EndDate, f => f.Date.Future());
 
@@ -69,7 +69,7 @@ namespace API.IntegrationTests.Common
                 Severity = ticket.Severity,
                 Status = ticket.Status,
                 CreatedAt = ticket.CreatedAt,
-                Updated = ticket.Updated,
+                UpdatedAt = ticket.UpdatedAt,
                 ProjectId = ticket.ProjectId,
                 Submitter = ticket.Submitter,
                 Assigned = ticket.Assigned,
@@ -77,7 +77,7 @@ namespace API.IntegrationTests.Common
                 EndDate = ticket.EndDate,
                 ClosedDate = ticket.ClosedDate,
                 IsDeleted = ticket.IsDeleted,
-                DeletedDate = ticket.DeletedDate
+                DeletedAt = ticket.DeletedAt
             };
         }
     }

@@ -29,7 +29,7 @@ namespace Application.Profiles
                 var userId = _userAccessor.GetUserId();
                 var user = await _context.Users.FindAsync(userId);
 
-                if (user == null) return null;
+                if (user == null) return Result<Unit>.Failure("User not found");
                 if (string.IsNullOrEmpty(user.AvatarBlobName))
                     return Result<Unit>.Failure("No avatar to delete");
 

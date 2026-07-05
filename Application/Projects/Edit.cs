@@ -45,7 +45,7 @@ namespace Application.Projects
                     .FirstOrDefaultAsync(p => p.Id == request.Id, cancellationToken);
 
                 if (project == null)
-                    return Result<Unit>.Failure("Project not found");
+                    return Result<Unit>.NotFound();
 
                 _mapper.Map(request.ProjectDto, project);
 

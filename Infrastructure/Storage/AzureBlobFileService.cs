@@ -1,8 +1,8 @@
+using Application.DTOs;
 using Application.Interfaces;
 using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 
 namespace Infrastructure.Storage
@@ -18,13 +18,12 @@ namespace Infrastructure.Storage
             _containerClient = new BlobContainerClient(connectionString, containerName);
         }
 
-        public async Task<string> UploadAsync(IFormFile file, CancellationToken cancellationToken = default)
+        public async Task<string> UploadAsync(FileUploadDto file, CancellationToken cancellationToken = default)
         {
             await _containerClient.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
             var blobName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
             var blobClient = _containerClient.GetBlobClient(blobName);
-            using var stream = file.OpenReadStream();
-            await blobClient.UploadAsync(stream, new BlobHttpHeaders { ContentType = file.ContentType }, cancellationToken: cancellationToken);
+            await blobClient.UploadAsync(file.Content, new BlobHttpHeaders { ContentType = file.ContentType }, cancellationToken: cancellationToken);
             return blobName;
         }
 

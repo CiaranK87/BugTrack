@@ -43,7 +43,7 @@ namespace Infrastructure.Security
                 .AsNoTracking()
                 .SingleOrDefaultAsync(x => x.AppUserId == userId && x.ProjectId == projectId);
 
-            if (participant != null && participant.IsOwner)
+            if (participant != null && participant.Role == Domain.Roles.Project.Owner)
                 context.Succeed(requirement);
         }
     }

@@ -20,7 +20,9 @@ namespace Application.Projects
 
         public bool IsDeleted { get; set; }
 
-        public DateTime? DeletedDate { get; set; }
+        public DateTime CreatedAt { get; set; }
+
+        public DateTime? DeletedAt { get; set; }
 
         public int TicketCount { get; set; }
 

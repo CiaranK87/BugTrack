@@ -12,10 +12,10 @@ export interface Ticket {
   closedDate: Date | null;
   startDate: Date | null;
   endDate: Date | null;
-  updated?: Date | null;
+  updatedAt?: Date | null;
   createdAt?: Date | null;
   isDeleted?: boolean;
-  deletedDate?: Date | null;
+  deletedAt?: Date | null;
   projectId: string;
   projectTitle?: string;
   project?: Project;

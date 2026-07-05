@@ -149,9 +149,9 @@ export default observer(function EnhancedTicketDashboard() {
             </Label>
           )}
         </div>
-        {ticket.updated && (
+        {ticket.updatedAt && (
           <div style={{ marginTop: '8px', fontSize: '0.75em', color: '#999' }}>
-            Updated: {formatDate(ticket.updated, 'MMM dd, yyyy')}
+            Updated: {formatDate(ticket.updatedAt, 'MMM dd, yyyy')}
           </div>
         )}
       </Card.Content>
@@ -199,9 +199,9 @@ export default observer(function EnhancedTicketDashboard() {
               </Label>
             </div>
           )}
-          {ticket.updated && (
+          {ticket.updatedAt && (
             <div style={{ fontSize: '0.8em', color: '#999' }}>
-              Updated: {formatDate(ticket.updated, 'MMM dd, yyyy')}
+              Updated: {formatDate(ticket.updatedAt, 'MMM dd, yyyy')}
             </div>
           )}
         </Grid.Column>

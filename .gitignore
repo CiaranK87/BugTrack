@@ -12,6 +12,16 @@ appsettings.*.json
 # User uploads
 API/uploads/
 
+# Azurite local storage
+azurite/
+AzuriteConfig
+__azurite_db_blob*.json
+__azurite_db_queue*.json
+__azurite_db_table*.json
+
+# IDE caches
+*.lscache
+
 # Development documentation
 *.md
 !README.md

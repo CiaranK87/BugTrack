@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import LoadingComponent from "../../app/layout/LoadingComponent";
 import { format } from "date-fns";
+import { Project } from "../../app/models/project";
 
 export default observer(function ProjectManagement() {
   const { projectStore } = useStore();
@@ -13,7 +14,7 @@ export default observer(function ProjectManagement() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleteProjectId, setDeleteProjectId] = useState("");
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
-  const [selectedProject, setSelectedProject] = useState<any>(null);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
@@ -262,7 +263,7 @@ export default observer(function ProjectManagement() {
                   </p>
                   <p><strong>Tickets:</strong> {selectedProject.ticketCount || 0}</p>
                   {selectedProject.isDeleted && (
-                    <p><strong>Deleted Date:</strong> {selectedProject.deletedDate ? format(new Date(selectedProject.deletedDate), 'MMM dd, yyyy') : "N/A"}</p>
+                    <p><strong>Deleted Date:</strong> {selectedProject.deletedAt ? format(new Date(selectedProject.deletedAt), 'MMM dd, yyyy') : "N/A"}</p>
                   )}
                 </div>
               )}

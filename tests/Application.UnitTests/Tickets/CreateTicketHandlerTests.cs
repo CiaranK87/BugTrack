@@ -73,7 +73,7 @@ namespace Application.UnitTests.Tickets
             createdTicket.Should().NotBeNull();
             createdTicket.Title.Should().Be("Test Ticket");
             createdTicket.CreatedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(1));
-            createdTicket.Updated.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(1));
+            createdTicket.UpdatedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(1));
         }
 
         [Fact]
@@ -130,7 +130,6 @@ namespace Application.UnitTests.Tickets
                 .FirstOrDefaultAsync(pp => pp.ProjectId == project.Id && pp.AppUserId == assignedUser.Id);
 
             participant.Should().NotBeNull();
-            participant.IsOwner.Should().BeFalse();
             participant.Role.Should().Be("User");
         }
 
@@ -167,7 +166,6 @@ namespace Application.UnitTests.Tickets
             {
                 ProjectId = project.Id,
                 AppUserId = assignedUser.Id,
-                IsOwner = false,
                 Role = "Admin"
             };
             _context.ProjectParticipants.Add(existingParticipant);

@@ -9,23 +9,25 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class BaseApiController : ControllerBase
     {
-        private IMediator _mediator;
-        
-        protected IAuthorizationService _authorizationService;
+        private readonly IMediator _mediator;
+        protected readonly IAuthorizationService _authorizationService;
 
-        public BaseApiController(IAuthorizationService authorizationService)
+        public BaseApiController(IMediator mediator, IAuthorizationService authorizationService)
         {
+            _mediator = mediator;
             _authorizationService = authorizationService;
         }
 
-        protected IMediator Mediator => _mediator ??= HttpContext.RequestServices.GetService<IMediator>();
+        protected IMediator Mediator => _mediator;
 
         protected ActionResult HandleResult<T>(Result<T> result)
         {
-            if (result == null) return NotFound();
+            if (result == null) return StatusCode(500, "Handler returned a null result");
             if (result.IsSuccess && result.Value != null)
                 return Ok(result.Value);
             if (result.IsSuccess && result.Value == null)
+                return NotFound();
+            if (result.IsNotFound)
                 return NotFound();
             return BadRequest(result.Error);
         }

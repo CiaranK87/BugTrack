@@ -13,7 +13,7 @@ namespace Application.DTOs
         public string Password { get; set; }
 
         [Required]
-        public string Displayname { get; set; }
+        public string DisplayName { get; set; }
 
         [Required]
         public string Username { get; set; }

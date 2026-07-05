@@ -13,7 +13,6 @@ import MySelectInput from "../../../app/common/form/MySelectInput";
 import { priorityOptions } from "../../../app/common/options/priorityOptions";
 import MyDateInput from "../../../app/common/form/MyDateInput";
 import { severityOptions } from "../../../app/common/options/severityOptions";
-import { logger } from "../../../app/utils/logger";
 
 export default observer(function TicketForm() {
   const navigate = useNavigate();
@@ -81,7 +80,7 @@ export default observer(function TicketForm() {
     priority: Yup.string().required("Priority is required"),
     severity: Yup.string().required("Severity is required"),
     startDate: Yup.string().required("Start date is required"),
-    endDate: Yup.string().required("End date is required"),
+    endDate: Yup.string().optional(),
   });
 
   function handleFormSubmit(ticket: Ticket) {
@@ -100,11 +99,6 @@ export default observer(function TicketForm() {
       });
 
     } else {
-      if (!ticket.id || typeof ticket.id !== 'string') {
-        logger.error('Invalid ticket id', ticket.id);
-        return;
-      }
-
       updateTicket(ticket).then(() => {
         ticketStore.loadTicketsByProject(projectId!);
         projectStore.loadProjects();

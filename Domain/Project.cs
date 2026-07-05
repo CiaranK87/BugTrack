@@ -16,7 +16,9 @@ namespace Domain
 
         public bool IsDeleted { get; set; }
 
-        public DateTime? DeletedDate { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public DateTime? DeletedAt { get; set; }
 
         public ICollection<ProjectParticipant> Participants { get; set; } = new List<ProjectParticipant>();
         public ICollection<Ticket> Tickets { get; set; }

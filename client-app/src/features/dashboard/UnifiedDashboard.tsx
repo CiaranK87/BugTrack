@@ -47,8 +47,8 @@ export default observer(function UnifiedDashboard() {
 
   const recentTickets = allTickets
     .sort((a, b) => {
-      const dateA = a.updated ? safeGetDate(a.updated) : (a.startDate ? safeGetDate(a.startDate) : new Date(0));
-      const dateB = b.updated ? safeGetDate(b.updated) : (b.startDate ? safeGetDate(b.startDate) : new Date(0));
+      const dateA = a.updatedAt ? safeGetDate(a.updatedAt) : (a.startDate ? safeGetDate(a.startDate) : new Date(0));
+      const dateB = b.updatedAt ? safeGetDate(b.updatedAt) : (b.startDate ? safeGetDate(b.startDate) : new Date(0));
       return dateB.getTime() - dateA.getTime();
     });
 
@@ -327,9 +327,9 @@ export default observer(function UnifiedDashboard() {
                         </Label>
                       )}
                     </div>
-                    {ticket.updated && (
+                    {ticket.updatedAt && (
                       <div style={{ marginTop: '5px', fontSize: '0.75em', color: '#999' }}>
-                        Updated: {formatDate(ticket.updated, 'MMM dd, yyyy')}
+                        Updated: {formatDate(ticket.updatedAt, 'MMM dd, yyyy')}
                       </div>
                     )}
                   </Card.Content>

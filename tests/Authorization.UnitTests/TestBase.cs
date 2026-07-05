@@ -45,8 +45,6 @@ public class TestBase : IDisposable
                 policy.Requirements.Add(new ProjectRoleRequirement("User")));
             options.AddPolicy("ProjectContributor", policy =>
                 policy.Requirements.Add(new ProjectRoleRequirement("Owner", "ProjectManager", "Developer", "User", "Guest")));
-            options.AddPolicy("ProjectAnyRole", policy =>
-                policy.Requirements.Add(new ProjectRoleRequirement("Owner", "ProjectManager", "Developer", "User", "Guest")));
         });
         
         services.AddSingleton<IAuthorizationHandler, ProjectRoleHandler>();
@@ -150,43 +148,37 @@ public class TestBase : IDisposable
             {
                 AppUserId = "user1",
                 ProjectId = projects[0].Id,
-                Role = "Owner",
-                IsOwner = true
+                Role = "Owner"
             },
             new ProjectParticipant
             {
                 AppUserId = "user3", 
                 ProjectId = projects[0].Id,
                 Role = "ProjectManager",
-                IsOwner = false
             },
             new ProjectParticipant
             {
                 AppUserId = "user4",
                 ProjectId = projects[0].Id,
                 Role = "Developer",
-                IsOwner = false
             },
             new ProjectParticipant
             {
                 AppUserId = "user5",
                 ProjectId = projects[0].Id,
                 Role = "User",
-                IsOwner = false
             },
             new ProjectParticipant
             {
                 AppUserId = "user6",
                 ProjectId = projects[0].Id,
                 Role = "Guest",
-                IsOwner = false
             },
             new ProjectParticipant
             {
                 AppUserId = "user2",
                 ProjectId = projects[1].Id,
-                Role = "Owner",
-                IsOwner = true
+                Role = "Owner"
             }
         };
 

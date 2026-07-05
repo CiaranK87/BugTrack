@@ -35,7 +35,7 @@ namespace Domain.UnitTests.Models
             ticket.StartDate = DateTime.UtcNow;
             
             ticket.Status = "In Progress";
-            ticket.Updated = DateTime.UtcNow;
+            ticket.UpdatedAt = DateTime.UtcNow;
             ticket.Status = "Closed";
             ticket.ClosedDate = DateTime.UtcNow;
             
@@ -70,13 +70,13 @@ namespace Domain.UnitTests.Models
             
             // Act
             ticket.IsDeleted = true;
-            ticket.DeletedDate = DateTime.UtcNow;
+            ticket.DeletedAt = DateTime.UtcNow;
             var afterDeletion = DateTime.UtcNow;
-            
+
             ticket.IsDeleted.Should().BeTrue();
-            ticket.DeletedDate.Should().NotBeNull();
-            ticket.DeletedDate.Value.Should().BeOnOrAfter(beforeDeletion);
-            ticket.DeletedDate.Value.Should().BeOnOrBefore(afterDeletion);
+            ticket.DeletedAt.Should().NotBeNull();
+            ticket.DeletedAt.Value.Should().BeOnOrAfter(beforeDeletion);
+            ticket.DeletedAt.Value.Should().BeOnOrBefore(afterDeletion);
         }
 
         [Fact]

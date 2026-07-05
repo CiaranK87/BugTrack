@@ -15,8 +15,8 @@ export default observer(function RecentTickets() {
   const recentTickets = tickets
     .filter(t => t.assigned === user?.username || t.submitter === user?.username)
     .sort((a, b) => {
-      const dateA = a.updated ? new Date(a.updated).getTime() : 0;
-      const dateB = b.updated ? new Date(b.updated).getTime() : 0;
+      const dateA = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
+      const dateB = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
       return dateB - dateA;
     });
   
@@ -51,7 +51,7 @@ export default observer(function RecentTickets() {
                     </List.Header>
                     <List.Description style={{ color: 'rgba(0,0,0,0.6)' }}>
                       {project?.projectTitle} • {t.status}
-                      {t.updated && ` • Updated: ${new Date(t.updated).toLocaleDateString()}`}
+                      {t.updatedAt && ` • Updated: ${new Date(t.updatedAt).toLocaleDateString()}`}
                     </List.Description>
                   </List.Content>
                 </List.Item>

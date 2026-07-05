@@ -5,39 +5,42 @@ using Persistence;
 
 namespace Application.Comments
 {
-    public class GetAttachmentQuery : IRequest<(Stream FileStream, string ContentType, string OriginalFileName)>
+    public class GetAttachment
     {
-        public Guid TicketId { get; set; }
-        public Guid CommentId { get; set; }
-        public Guid AttachmentId { get; set; }
-    }
-
-    public class GetAttachmentHandler : IRequestHandler<GetAttachmentQuery, (Stream FileStream, string ContentType, string OriginalFileName)>
-    {
-        private readonly DataContext _context;
-        private readonly IFileService _fileService;
-
-        public GetAttachmentHandler(DataContext context, IFileService fileService)
+        public class Query : IRequest<(Stream FileStream, string ContentType, string OriginalFileName)>
         {
-            _context = context;
-            _fileService = fileService;
+            public Guid TicketId { get; set; }
+            public Guid CommentId { get; set; }
+            public Guid AttachmentId { get; set; }
         }
 
-        public async Task<(Stream FileStream, string ContentType, string OriginalFileName)> Handle(GetAttachmentQuery request, CancellationToken cancellationToken)
+        public class Handler : IRequestHandler<Query, (Stream FileStream, string ContentType, string OriginalFileName)>
         {
-            var attachment = await _context.CommentAttachments
-                .Include(ca => ca.Comment)
-                .Where(ca => ca.Comment.TicketId == request.TicketId
-                          && ca.CommentId == request.CommentId
-                          && ca.Id == request.AttachmentId)
-                .FirstOrDefaultAsync(cancellationToken);
+            private readonly DataContext _context;
+            private readonly IFileService _fileService;
 
-            if (attachment == null)
-                return (null, null, null);
+            public Handler(DataContext context, IFileService fileService)
+            {
+                _context = context;
+                _fileService = fileService;
+            }
 
-            var (stream, _) = await _fileService.DownloadAsync(attachment.FilePath, cancellationToken);
-            if (stream == null) return (null, null, null);
-            return (stream, attachment.ContentType, attachment.OriginalFileName);
+            public async Task<(Stream FileStream, string ContentType, string OriginalFileName)> Handle(Query request, CancellationToken cancellationToken)
+            {
+                var attachment = await _context.CommentAttachments
+                    .Include(ca => ca.Comment)
+                    .Where(ca => ca.Comment.TicketId == request.TicketId
+                              && ca.CommentId == request.CommentId
+                              && ca.Id == request.AttachmentId)
+                    .FirstOrDefaultAsync(cancellationToken);
+
+                if (attachment == null)
+                    return (null, null, null);
+
+                var (stream, _) = await _fileService.DownloadAsync(attachment.FilePath, cancellationToken);
+                if (stream == null) return (null, null, null);
+                return (stream, attachment.ContentType, attachment.OriginalFileName);
+            }
         }
     }
 }

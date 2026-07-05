@@ -1,4 +1,5 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
+import { runInAction } from "mobx";
 import { AddParticipantDto, Project, ProjectFormValues, ProjectParticipantDto, UpdateRoleDto } from "../models/project";
 import { toast } from "react-toastify";
 import { router } from "../router/Routes";
@@ -52,19 +53,20 @@ axios.interceptors.response.use(
     const { data, status, config } = error.response as AxiosResponse;
     switch (status) {
       case 400:
-        if (config.method === "get" && data.errors && Object.prototype.hasOwnProperty.call(data.errors, "id")) {
+        if (config.method === "get" && data.errors) {
           let fromPath = window.location.pathname;
-          
+
           if (config.url && config.url.includes('/tickets/')) {
             fromPath = '/tickets';
           }
           else if (config.url && config.url.includes('/projects/')) {
             fromPath = '/projects';
           }
-          
+
           router.navigate("/not-found", {
             state: { from: fromPath }
           });
+          return Promise.reject(error);
         }
 
         if (data.errors) {
@@ -82,8 +84,10 @@ axios.interceptors.response.use(
       case 401:
         const wasLoggedIn = store.userStore.user !== null;
         store.commonStore.setToken(null);
-        store.userStore.user = null;
-        store.userStore.userRegistry.clear();
+        runInAction(() => {
+          store.userStore.user = null;
+          store.userStore.userRegistry.clear();
+        });
         store.projectStore.clear();
         store.ticketStore.clear();
         router.navigate("/");
