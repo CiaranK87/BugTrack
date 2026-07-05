@@ -175,7 +175,7 @@ namespace API.IntegrationTests
                 Status = "Open",
                 StartDate = DateTime.UtcNow,
                 EndDate = DateTime.UtcNow.AddDays(7),
-                Updated = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow
             };
             Ticket1Id = testTicket1.Id;
@@ -194,7 +194,7 @@ namespace API.IntegrationTests
                 Status = "In Progress",
                 StartDate = DateTime.UtcNow,
                 EndDate = DateTime.UtcNow.AddDays(7),
-                Updated = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow
             };
             Ticket2Id = testTicket2.Id;

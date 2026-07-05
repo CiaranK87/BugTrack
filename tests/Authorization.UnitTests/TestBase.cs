@@ -197,7 +197,7 @@ public class TestBase : IDisposable
                 Severity = "Low",
                 StartDate = DateTime.UtcNow,
                 EndDate = DateTime.UtcNow.AddDays(1),
-                Updated = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,
                 IsDeleted = false
             },
@@ -214,7 +214,7 @@ public class TestBase : IDisposable
                 Severity = "Medium",
                 StartDate = DateTime.UtcNow,
                 EndDate = DateTime.UtcNow.AddDays(1),
-                Updated = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,
                 IsDeleted = false
             }

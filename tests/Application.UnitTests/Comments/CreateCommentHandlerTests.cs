@@ -6,7 +6,6 @@ using Application.Interfaces;
 using Domain;
 using Persistence;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using FluentAssertions;
 
@@ -162,16 +161,19 @@ namespace Application.UnitTests.Comments
 
             _mockUserAccessor.Setup(x => x.GetUserId()).Returns(user.Id);
 
-            var mockFile = new Mock<IFormFile>();
-            mockFile.Setup(f => f.FileName).Returns("test.txt");
-            mockFile.Setup(f => f.Length).Returns(1024);
-            mockFile.Setup(f => f.ContentType).Returns("text/plain");
+            var file = new FileUploadDto
+            {
+                FileName = "test.txt",
+                Length = 1024,
+                ContentType = "text/plain",
+                Content = Stream.Null
+            };
 
             var command = new Create.Command
             {
                 Content = "This is a comment with attachment",
                 TicketId = ticket.Id,
-                Attachments = new List<IFormFile> { mockFile.Object }
+                Attachments = new List<FileUploadDto> { file }
             };
 
             // Act
@@ -461,21 +463,27 @@ namespace Application.UnitTests.Comments
 
             _mockUserAccessor.Setup(x => x.GetUserId()).Returns(user.Id);
 
-            var mockFile1 = new Mock<IFormFile>();
-            mockFile1.Setup(f => f.FileName).Returns("test1.txt");
-            mockFile1.Setup(f => f.Length).Returns(1024);
-            mockFile1.Setup(f => f.ContentType).Returns("text/plain");
+            var file1 = new FileUploadDto
+            {
+                FileName = "test1.txt",
+                Length = 1024,
+                ContentType = "text/plain",
+                Content = Stream.Null
+            };
 
-            var mockFile2 = new Mock<IFormFile>();
-            mockFile2.Setup(f => f.FileName).Returns("test2.txt");
-            mockFile2.Setup(f => f.Length).Returns(2048);
-            mockFile2.Setup(f => f.ContentType).Returns("text/plain");
+            var file2 = new FileUploadDto
+            {
+                FileName = "test2.txt",
+                Length = 2048,
+                ContentType = "text/plain",
+                Content = Stream.Null
+            };
 
             var command = new Create.Command
             {
                 Content = "This is a comment with multiple attachments",
                 TicketId = ticket.Id,
-                Attachments = new List<IFormFile> { mockFile1.Object, mockFile2.Object }
+                Attachments = new List<FileUploadDto> { file1, file2 }
             };
 
             // Act
@@ -515,16 +523,19 @@ namespace Application.UnitTests.Comments
             _mockUserAccessor.Setup(x => x.GetUserId()).Returns(user.Id);
             _mockUserAccessor.Setup(x => x.GetGlobalRole()).Returns("Guest");
 
-            var mockFile = new Mock<IFormFile>();
-            mockFile.Setup(f => f.FileName).Returns("test.txt");
-            mockFile.Setup(f => f.Length).Returns(1024);
-            mockFile.Setup(f => f.ContentType).Returns("text/plain");
+            var mockFile = new FileUploadDto
+            {
+                FileName = "test.txt",
+                Length = 1024,
+                ContentType = "text/plain",
+                Content = Stream.Null
+            };
 
             var command = new Create.Command
             {
                 Content = "This is a comment with attachment",
                 TicketId = ticket.Id,
-                Attachments = new List<IFormFile> { mockFile.Object }
+                Attachments = new List<FileUploadDto> { mockFile }
             };
 
             // Act

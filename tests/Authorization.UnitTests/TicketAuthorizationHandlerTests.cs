@@ -66,7 +66,7 @@ public class TicketAuthorizationHandlerTests : TestBase
             Priority = "Medium",
             Severity = "Low",
             CreatedAt = DateTime.UtcNow,
-            Updated = DateTime.UtcNow
+            UpdatedAt = DateTime.UtcNow
         };
         
         _context.Tickets.Add(ticket);
