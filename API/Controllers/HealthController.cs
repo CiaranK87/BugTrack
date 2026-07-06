@@ -18,7 +18,7 @@ namespace API.Controllers
             _logger = logger;
         }
 
-        [HttpGet("health")]
+        [HttpGet]
         public IActionResult GetHealth()
         {
             try
@@ -47,7 +47,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("health/ready")]
+        [HttpGet("ready")]
         public IActionResult GetReadiness()
         {
             try

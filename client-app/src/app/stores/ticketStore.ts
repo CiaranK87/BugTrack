@@ -64,7 +64,7 @@ export default class TicketStore {
 
     this.loadingTicketIds.add(id);
     this.ticketError = null;
-    this.setLoadingInitial(true);
+    this.setLoadingInitial(true); // must stay before first await — masks stale selectedTicket in components
 
     try {
       ticket = await agent.Tickets.details(id);

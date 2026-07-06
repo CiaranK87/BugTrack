@@ -22,7 +22,10 @@ export const safeGetDate = (dateValue: string | Date | null | undefined): Date =
       return dateValue;
     }
 
-    const date = new Date(dateValue);
+    // Bare ISO strings (no Z or ±offset) come from the API as DateTimeKind.Unspecified;
+    // treat them as UTC to match how they were stored.
+    const normalized = /^\d{4}-\d{2}-\d{2}T[\d:.]+$/.test(dateValue) ? dateValue + 'Z' : dateValue;
+    const date = new Date(normalized);
     if (isNaN(date.getTime())) {
       logger.warn('Invalid date string', dateValue);
       return new Date(0);
