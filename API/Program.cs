@@ -156,17 +156,20 @@ try
 
     Log.Information("Attempting to connect to BugTrack database...");
 
-    // Apply migrations to the database
-    try
+    // Apply migrations to the database (skipped for non-relational providers, e.g. in-memory test DBs)
+    if (context.Database.IsRelational())
     {
-        await context.Database.MigrateAsync();
-        Log.Information("Database migration completed successfully");
-    }
-    catch (Exception migrateEx)
-    {
-        Log.Error(migrateEx, "Migration failed: {ErrorMessage}", migrateEx.Message);
-        Log.Information("Please ensure the 'BugTrack' database exists in your Neon console.");
-        throw;
+        try
+        {
+            await context.Database.MigrateAsync();
+            Log.Information("Database migration completed successfully");
+        }
+        catch (Exception migrateEx)
+        {
+            Log.Error(migrateEx, "Migration failed: {ErrorMessage}", migrateEx.Message);
+            Log.Information("Please ensure the 'BugTrack' database exists in your Neon console.");
+            throw;
+        }
     }
     
     // Create roles if they don't exist (needed for both dev and production)
