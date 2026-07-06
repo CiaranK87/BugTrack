@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using Application.Comments;
+using Application.DTOs;
 using Application.Interfaces;
 using Domain;
 using Persistence;
