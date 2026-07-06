@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useStore } from "../../../app/stores/store";
 import { useState } from "react";
 import { logger } from "../../../app/utils/logger";
+import { formatDateTime } from "../../../app/services/dateService";
 import UserAvatar from "../../../app/common/UserAvatar";
 
 interface Props {
@@ -116,7 +117,7 @@ export default observer(function TicketDetailedHeader({ ticket }: Props) {
                       Project - <strong>{project?.projectTitle || ticket.projectTitle}</strong>
                     </span>
                   )}
-                  <p>Created: {ticket.createdAt ? new Date(ticket.createdAt).toUTCString().replace('GMT', '').trim().slice(0, -3) : 'Never'}</p>
+                  <p>Created: {ticket.createdAt ? formatDateTime(ticket.createdAt, 'MMM dd, yyyy HH:mm') : 'Never'}</p>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginTop: '10px' }}>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                       <UserAvatar image={submitterParticipant?.image} displayName={ticket.submitter || ''} size="mini" style={{ marginRight: '8px' }} />

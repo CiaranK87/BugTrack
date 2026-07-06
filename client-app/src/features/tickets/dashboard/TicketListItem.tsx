@@ -4,6 +4,7 @@ import { useStore } from "../../../app/stores/store";
 import { useState } from "react";
 import { Ticket } from "../../../app/models/ticket";
 import React from "react";
+import { formatDateTime } from "../../../app/services/dateService";
 
 interface Props {
   ticket: Ticket;
@@ -41,7 +42,7 @@ export default function TicketListItem({ ticket }: Props) {
       </Segment>
       <Segment>
       <Card.Meta>
-  <span>Updated: {ticket.updatedAt ? new Date(ticket.updatedAt).toUTCString().replace('GMT', '').trim().slice(0, -3) : 'Never'}</span>
+  <span>Updated: {ticket.updatedAt ? formatDateTime(ticket.updatedAt, 'MMM dd, yyyy HH:mm') : 'Never'}</span>
 </Card.Meta>
       </Segment>
       <Segment secondary>Assigned/collaborators go here</Segment>

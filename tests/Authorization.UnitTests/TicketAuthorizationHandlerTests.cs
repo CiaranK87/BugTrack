@@ -78,26 +78,21 @@ public class TicketAuthorizationHandlerTests : TestBase
     [InlineData("user1", TicketOperation.Read, true)]
     [InlineData("user1", TicketOperation.Create, true)]
     [InlineData("user1", TicketOperation.Edit, true)]
-    [InlineData("user1", TicketOperation.Close, true)]
     [InlineData("user1", TicketOperation.Delete, false)]
     [InlineData("user3", TicketOperation.Read, true)]
     [InlineData("user3", TicketOperation.Create, true)]
     [InlineData("user3", TicketOperation.Edit, true)]
-    [InlineData("user3", TicketOperation.Close, true)]
     [InlineData("user3", TicketOperation.Delete, false)]
     [InlineData("user4", TicketOperation.Read, true)]
     [InlineData("user4", TicketOperation.Create, true)]
     [InlineData("user4", TicketOperation.Edit, true)]
-    [InlineData("user4", TicketOperation.Close, true)]
     [InlineData("user4", TicketOperation.Delete, true)]
     [InlineData("user5", TicketOperation.Read, true)]
     [InlineData("user5", TicketOperation.Create, true)]
-    [InlineData("user5", TicketOperation.Close, false)]
     [InlineData("user5", TicketOperation.Delete, false)]
     [InlineData("user6", TicketOperation.Read, true)]
     [InlineData("user6", TicketOperation.Create, true)]
     [InlineData("user6", TicketOperation.Edit, false)]
-    [InlineData("user6", TicketOperation.Close, false)]
     [InlineData("user6", TicketOperation.Delete, false)]
     public async Task TicketOperationAuthorizationTests(string userId, TicketOperation operation, bool shouldSucceed)
     {
@@ -125,7 +120,6 @@ public class TicketAuthorizationHandlerTests : TestBase
     [InlineData("user4", TicketOperation.Read, true)]
     [InlineData("user4", TicketOperation.Create, true)]
     [InlineData("user4", TicketOperation.Edit, true)]
-    [InlineData("user4", TicketOperation.Close, true)]
     public async Task TicketSubmitter_ShouldHaveAppropriateAccess(string userId, TicketOperation operation, bool shouldSucceed)
     {
         // Arrange
@@ -151,7 +145,6 @@ public class TicketAuthorizationHandlerTests : TestBase
     [Theory]
     [InlineData("user5", TicketOperation.Read, true)]
     [InlineData("user5", TicketOperation.Create, true)]
-    [InlineData("user5", TicketOperation.Close, false)]
     [InlineData("user5", TicketOperation.Delete, false)]
     public async Task TicketAssignedUser_ShouldHaveAppropriateAccess(string userId, TicketOperation operation, bool shouldSucceed)
     {
@@ -179,7 +172,6 @@ public class TicketAuthorizationHandlerTests : TestBase
     [InlineData("user4", TicketOperation.Read, true)]
     [InlineData("user4", TicketOperation.Create, true)]
     [InlineData("user4", TicketOperation.Edit, true)]
-    [InlineData("user4", TicketOperation.Close, true)]
     public async Task UserIsBothSubmitterAndAssigned_ShouldHaveFullAccess(string userId, TicketOperation operation, bool shouldSucceed)
     {
         // Arrange

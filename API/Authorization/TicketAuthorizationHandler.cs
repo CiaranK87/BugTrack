@@ -150,15 +150,6 @@ namespace API.Authorization
                     }
                     break;
 
-                case TicketOperation.Close:
-                    if (role == Roles.Project.Owner ||
-                        role == Roles.Project.ProjectManager ||
-                        role == Roles.Project.Developer)
-                    {
-                        context.Succeed(requirement);
-                    }
-                    break;
-
                 case TicketOperation.Delete:
                     if (!string.IsNullOrEmpty(ticketSubmitter) && ticketSubmitter == currentUsername)
                         context.Succeed(requirement);
@@ -182,7 +173,6 @@ namespace API.Authorization
         Read,
         Create,
         Edit,
-        Close,
         Delete
     }
 }

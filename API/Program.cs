@@ -166,6 +166,7 @@ try
     {
         Log.Error(migrateEx, "Migration failed: {ErrorMessage}", migrateEx.Message);
         Log.Information("Please ensure the 'BugTrack' database exists in your Neon console.");
+        throw;
     }
     
     // Create roles if they don't exist (needed for both dev and production)
@@ -188,6 +189,7 @@ try
 catch (Exception ex)
 {
     Log.Fatal(ex, "An error occurred during startup");
+    throw;
 }
 
 app.Run();
