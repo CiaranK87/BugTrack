@@ -128,7 +128,7 @@ namespace API.IntegrationTests
             var response = await client.PostAsJsonAsync("/api/tickets", ticketDto);
 
             // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            response.StatusCode.Should().Be(HttpStatusCode.Created);
             
             var createdTickets = await context.Tickets
                 .Where(t => t.Title == ticketDto.Title && t.Description == ticketDto.Description)
@@ -190,7 +190,7 @@ namespace API.IntegrationTests
             var response = await client.DeleteAsync($"/api/tickets/{TestProgram.Ticket1Id}");
 
             // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            response.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
             var deletedTicket = await context.Tickets.FindAsync(TestProgram.Ticket1Id);
             deletedTicket.Should().NotBeNull(); // Still exists (soft delete)
@@ -263,7 +263,7 @@ namespace API.IntegrationTests
             };
 
             var createResponse = await client.PostAsJsonAsync("/api/tickets", newTicketDto);
-            createResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+            createResponse.StatusCode.Should().Be(HttpStatusCode.Created);
 
             var createdTicket = await context.Tickets
                 .AsNoTracking()
