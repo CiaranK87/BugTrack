@@ -1,5 +1,5 @@
+import React, { useState, useEffect, useCallback } from "react";
 import { observer } from "mobx-react-lite";
-import { useState, useEffect, useCallback } from "react";
 import { useStore } from "../../stores/store";
 import { Notification, NotificationType } from "../../models/notification";
 import { formatDistanceToNow, isValid } from "date-fns";
@@ -122,8 +122,8 @@ export default observer(function NotificationsDropdown({ isInProfileDropdown = f
           <Icon name={iconInfo.name} color={iconInfo.color} size="large" />
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ 
-            fontSize: isMobileView ? '14px' : '13px', 
+          <div style={{
+            fontSize: isMobileView ? '14px' : '13px',
             fontWeight: !notification.isRead ? 'bold' : 'normal',
             color: darkMode ? '#fff' : '#333',
             marginBottom: '4px',
@@ -140,9 +140,19 @@ export default observer(function NotificationsDropdown({ isInProfileDropdown = f
             {safeFormatDistance(notification.createdAt)}
           </div>
         </div>
-        {!notification.isRead && (
-          <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#2185d0', marginTop: '6px' }} />
-        )}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+          {!notification.isRead && (
+            <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#2185d0' }} />
+          )}
+          <Icon
+            name="times"
+            link
+            size="small"
+            color="grey"
+            style={{ margin: 0 }}
+            onClick={(e: React.MouseEvent) => { e.stopPropagation(); notificationStore.deleteNotification(notification.id); }}
+          />
+        </div>
       </div>
     );
   };
