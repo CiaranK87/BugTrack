@@ -119,7 +119,6 @@ namespace API.Services
                 .ToListAsync(stoppingToken);
             context.Notifications.RemoveRange(notifications);
 
-            // ProjectOwner is a denormalized username string, not a FK — sensitive to renames.
             var projects = await context.Projects
                 .Where(p => p.ProjectOwner == demoUser.UserName)
                 .ToListAsync(stoppingToken);
