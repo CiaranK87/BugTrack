@@ -87,6 +87,7 @@ namespace API.Extensions
             services.AddHttpContextAccessor();
             services.AddScoped<IAuthorizationHandler, IsOwnerRequirementHandler>();
             services.AddScoped<IUserAccessor, UserAccessor>();
+            services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<INotificationPushService, NotificationPushService>();
             services.AddScoped<IFileService, AzureBlobFileService>();

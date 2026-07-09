@@ -9,7 +9,7 @@ import ValidationError from "../errors/ValidationError";
 import { toast } from "react-toastify";
 
 export default observer(function ChangePasswordForm() {
-  const { userStore } = useStore();
+  const { userStore, modalStore } = useStore();
   const [submitError, setSubmitError] = useState<string[] | null>(null);
 
   const validationSchema = Yup.object({
@@ -30,6 +30,7 @@ export default observer(function ChangePasswordForm() {
         setSubmitError(null);
         try {
           await userStore.changePassword(values);
+          modalStore.closeModal();
           toast.success("Password changed successfully");
           setSubmitting(false);
         } catch (error: any) {
