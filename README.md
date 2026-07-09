@@ -190,7 +190,7 @@ graph TD
 - **Admin Panel** — Centralised user and global role management for system administrators.
 - **Contact / Access Request** — Public access request form with email notifications (Resend API) and file-based fallback logging.
 - **File Attachments** — Upload and manage media files directly within bug reports.
-- **Secure Auth** — JWT-based authentication with refresh token support.
+- **Secure Auth** — JWT-based authentication with role-based access control.
 - **Dark Mode** — Persistent dark theme across the entire UI.
 
 ---
