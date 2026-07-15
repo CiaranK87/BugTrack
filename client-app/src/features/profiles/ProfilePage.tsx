@@ -170,14 +170,14 @@ export default observer(function ProfilePage() {
               Quick Actions
             </Header>
             <Menu vertical fluid style={{ width: '100%' }}>
-              <Menu.Item as="a" href="/projects">
+              <Menu.Item as={Link} to="/projects">
                 <Icon name="folder open" />
                 View All Projects
                 <Menu.Menu>
                   <Menu.Item>Browse and manage all your projects</Menu.Item>
                 </Menu.Menu>
               </Menu.Item>
-              <Menu.Item as="a" href="/tickets">
+              <Menu.Item as={Link} to="/tickets">
                 <Icon name="ticket" />
                 View All Tickets
                 <Menu.Menu>
@@ -216,7 +216,7 @@ export default observer(function ProfilePage() {
         <Card.Group itemsPerRow={3} stackable>
           {projectStore.userProjects.map(project => {
             return (
-              <Card key={project.id} as="a" href={`/projects/${project.id}`} style={{ height: '200px' }}>
+              <Card key={project.id} as={Link} to={`/projects/${project.id}`} style={{ height: '200px' }}>
                 <Card.Content>
                   <Card.Header>
                     {project.projectTitle}

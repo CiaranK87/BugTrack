@@ -4,6 +4,7 @@ import * as signalR from "@microsoft/signalr";
 import { Notification } from "../models/notification";
 import agent from "../api/agent";
 import { logger } from "../utils/logger";
+import { store } from "./store";
 
 export default class NotificationStore {
   notifications: Notification[] = [];
@@ -29,10 +30,7 @@ export default class NotificationStore {
 
     const connection = new HubConnectionBuilder()
       .withUrl(hubUrl, {
-        accessTokenFactory: () => {
-          const token = localStorage.getItem('jwt');
-          return token || '';
-        },
+        accessTokenFactory: () => store.commonStore.token || '',
         skipNegotiation: false,
         transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.LongPolling
       })
