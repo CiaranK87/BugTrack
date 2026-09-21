@@ -1,6 +1,4 @@
-using Application.Core;
-using Application.DTOs;
-using Application.Interfaces;
+using Application.Notifications;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,79 +7,45 @@ namespace API.Controllers
 {
     public class NotificationsController : BaseApiController
     {
-        private readonly INotificationService _notificationService;
-        private readonly IUserAccessor _userAccessor;
-
-        public NotificationsController(
-            INotificationService notificationService,
-            IUserAccessor userAccessor,
-            IMediator mediator,
-            IAuthorizationService authorizationService) : base(mediator, authorizationService)
-        {
-            _notificationService = notificationService;
-            _userAccessor = userAccessor;
-        }
+        public NotificationsController(IMediator mediator, IAuthorizationService authorizationService)
+            : base(mediator, authorizationService) { }
 
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<List<NotificationDto>>> GetNotifications()
-        {
-            var userId = _userAccessor.GetUserId();
-            var notifications = await _notificationService.GetUserNotificationsAsync(userId);
-            return Ok(notifications);
-        }
+        public async Task<IActionResult> GetNotifications() =>
+            HandleResult(await Mediator.Send(new List.Query()));
 
         [HttpGet("unread-count")]
         [Authorize]
-        public async Task<ActionResult<int>> GetUnreadCount()
-        {
-            var userId = _userAccessor.GetUserId();
-            var count = await _notificationService.GetUnreadCountAsync(userId);
-            return Ok(count);
-        }
+        public async Task<IActionResult> GetUnreadCount() =>
+            HandleResult(await Mediator.Send(new GetUnreadCount.Query()));
 
         [HttpPut("{id}/read")]
         [Authorize]
-        public async Task<ActionResult> MarkAsRead(Guid id)
-        {
-            var userId = _userAccessor.GetUserId();
-            var success = await _notificationService.MarkAsReadAsync(id, userId);
-            
-            if (!success)
-                return NotFound();
-            
-            return Ok();
-        }
+        public async Task<IActionResult> MarkAsRead(Guid id) =>
+            HandleResult(await Mediator.Send(new MarkAsRead.Command { Id = id }));
 
         [HttpPut("read-all")]
         [Authorize]
-        public async Task<ActionResult> MarkAllAsRead()
-        {
-            var userId = _userAccessor.GetUserId();
-            await _notificationService.MarkAllAsReadAsync(userId);
-            return Ok();
-        }
+        public async Task<IActionResult> MarkAllAsRead() =>
+            HandleResult(await Mediator.Send(new MarkAllAsRead.Command()));
 
         [HttpDelete("{id}")]
         [Authorize]
-        public async Task<ActionResult> DeleteNotification(Guid id)
+        public async Task<IActionResult> DeleteNotification(Guid id)
         {
-            var userId = _userAccessor.GetUserId();
-            var success = await _notificationService.DeleteAsync(id, userId);
-
-            if (!success)
-                return NotFound();
-
+            var result = await Mediator.Send(new Delete.Command { Id = id });
+            if (!result.IsSuccess) return HandleResult(result);
             return NoContent();
         }
 
         [HttpDelete("clear-all")]
         [Authorize]
-        public async Task<ActionResult> ClearAllNotifications()
+        public async Task<IActionResult> ClearAllNotifications()
         {
-            var userId = _userAccessor.GetUserId();
-            var count = await _notificationService.DeleteAllAsync(userId);
-            return Ok(new { deletedCount = count });
+            var result = await Mediator.Send(new ClearAll.Command());
+            if (!result.IsSuccess) return HandleResult(result);
+            return Ok(new { deletedCount = result.Value });
         }
     }
 }
