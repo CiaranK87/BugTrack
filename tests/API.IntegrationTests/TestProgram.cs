@@ -34,6 +34,7 @@ namespace API.IntegrationTests
                 // Remove all existing DbContext registrations
                 var dbContextDescriptors = services.Where(
                     d => d.ServiceType == typeof(DbContextOptions<DataContext>) ||
+                           d.ServiceType == typeof(Microsoft.EntityFrameworkCore.Infrastructure.IDbContextOptionsConfiguration<DataContext>) ||
                            d.ServiceType == typeof(DataContext)).ToList();
                 foreach (var descriptor in dbContextDescriptors)
                 {

@@ -1,6 +1,6 @@
 # <img src="docs/bug-logo.png" width="40" alt="BugTrack Logo" valign="middle"> BugTrack — Full-Stack Issue Tracking System
 
-[![.NET 8](https://img.shields.io/badge/.NET-8.0-512bd4?logo=dotnet)](https://dotnet.microsoft.com/download)
+[![.NET 10](https://img.shields.io/badge/.NET-10.0-512bd4?logo=dotnet)](https://dotnet.microsoft.com/download)
 [![React](https://img.shields.io/badge/React-18-61dafb?logo=react)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.2-3178c6?logo=typescript)](https://www.typescriptlang.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169e1?logo=postgresql)](https://www.postgresql.org/)
@@ -134,7 +134,7 @@ graph TD
     end
 
     subgraph API_Layer [API]
-        API[".NET 8 Web API\nJWT Auth · SignalR Hubs\nSecurity Headers · Rate Limiting"]
+        API[".NET 10 Web API\nJWT Auth · SignalR Hubs\nSecurity Headers · Rate Limiting"]
     end
 
     subgraph Core_Layer [Core]
@@ -197,8 +197,8 @@ graph TD
 
 ## 🛠️ Tech Stack
 
-### Backend (.NET 8)
-- **Framework**: ASP.NET Core 8 (LTS)
+### Backend (.NET 10)
+- **Framework**: ASP.NET Core 10 (LTS)
 - **Mediator**: MediatR
 - **Mapping**: AutoMapper
 - **Validation**: FluentValidation
@@ -234,7 +234,7 @@ graph TD
 ## ⚡ Getting Started
 
 ### Prerequisites
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
 - [Node.js v18+](https://nodejs.org/)
 - [PostgreSQL 16](https://www.postgresql.org/download/) (or use the included Docker Compose)
 - [Docker](https://www.docker.com/) *(optional, for local PostgreSQL)*
