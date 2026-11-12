@@ -2,13 +2,13 @@
 
 [![.NET 10](https://img.shields.io/badge/.NET-10.0-512bd4?logo=dotnet)](https://dotnet.microsoft.com/download)
 [![React](https://img.shields.io/badge/React-18-61dafb?logo=react)](https://reactjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.2-3178c6?logo=typescript)](https://www.typescriptlang.org/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169e1?logo=postgresql)](https://www.postgresql.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178c6?logo=typescript)](https://www.typescriptlang.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-4169e1?logo=postgresql)](https://www.postgresql.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://github.com/CiaranK87/BugTrack/actions/workflows/main_bugtrack-api.yml/badge.svg)](https://github.com/CiaranK87/BugTrack/actions)
 [![CodeQL](https://github.com/CiaranK87/BugTrack/actions/workflows/codeql.yml/badge.svg)](https://github.com/CiaranK87/BugTrack/actions/workflows/codeql.yml)
 
-> A full-stack issue tracker I use as a living codebase — somewhere to implement patterns I pick up at work and see how they hold up in a real, running application. Always in a working state; never a finished product.
+> BugTrack is a full-stack issue tracker built with .NET 10 and React. I use it as a living codebase: somewhere to implement patterns and practices and see how they hold up in a real, running application. It is deployed, always in a working state, and actively maintained.
 
 
 ## 🚀 Quick Demo
@@ -117,9 +117,9 @@ To explore the app without registering, use the following **Guest** credentials:
 
 ## 🎯 About This Project
 
-This codebase has grown organically: Clean Architecture and CQRS went in when I wanted to understand how they hold up across a full codebase, not just in isolated examples. The custom RBAC came from thinking through how project-level permissions actually differ from global ones. The test suite is there because I wanted to get comfortable with all four layers — unit, component, integration, and E2E — in a single project.
+BugTrack lets a team organise work into projects, track tickets through a status workflow with priority and severity, manage them on a Kanban board, and discuss them in comment threads that update in real time.
 
-It's not a finished product, but it's always in a working state and I treat it with the same care I would professional code.
+Clean Architecture and CQRS went in so I could see how they hold up across a full codebase, not just in isolated examples. The custom RBAC came from thinking through how project-level permissions actually differ from global ones. The test suite covers all four layers (unit, component, integration and E2E) in a single project. I treat it with the same care I would professional code.
 
 ---
 
@@ -158,7 +158,7 @@ graph TD
 
 - **CQRS with MediatR**: Commands and queries are fully separated, keeping controllers thin and business logic independently testable. Adding a new feature means adding a handler, not modifying existing ones.
 - **Result Pattern**: Service responses use a typed `Result<T>` instead of exceptions for flow control. This makes error paths explicit, improves performance, and keeps the controller logic predictable.
-- **Custom Authorization Handlers**: Project-level roles (Owner, PM, Developer) extend beyond global permissions. A user can be a Developer on one project and a PM on another — handled via custom `IAuthorizationHandler` implementations.
+- **Custom Authorization Handlers**: Project-level roles (Owner, PM, Developer, User, Guest) extend beyond global permissions. A user can be a Developer on one project and a PM on another — handled via custom `IAuthorizationHandler` implementations.
 - **Exception Middleware**: A single `ExceptionMiddleware` catches unhandled errors and returns consistent `AppException` responses across the API, rather than letting error formats vary by controller.
 - **Security & Rate Limiting**: OWASP-recommended headers applied globally via middleware, alongside a `FixedWindowLimiter` (500 requests/min) at the API level — both small additions that meaningfully harden the surface area without requiring per-endpoint configuration. A passive OWASP ZAP baseline scan against the deployed frontend and API confirmed the API headers are solid; the main gap was the Vercel frontend, which now carries `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, and a `Content-Security-Policy` tuned to the Vite/React bundle. Scan reports and triage notes are in `docs/security/`.
 - **SignalR for Real-time**: Live comment threads and notifications give the app a responsive, collaborative feel without the overhead of polling.
@@ -173,7 +173,6 @@ graph TD
 
 - **Dependency Updates**: Dependabot configured for NuGet, npm, and GitHub Actions — weekly PRs for outdated packages.
 - **Static Analysis**: CodeQL runs on every push and pull request, scanning C# and TypeScript for known vulnerability patterns.
-- **Branch Protection**: `main` requires pull requests and passing status checks before merge.
 - **Secret Scanning**: GitHub push protection enabled; no secrets reach the repo.
 - **Runtime Headers**: OWASP-recommended headers applied globally via middleware (see Key Design Decisions for the ZAP scan findings).
 
@@ -181,7 +180,7 @@ graph TD
 
 ## 🚀 Features
 
-- **Project Management** — Multi-tier projects with role-based access (Owner, Project Manager, Developer).
+- **Project Management** — Multi-tier projects with role-based access (Owner, Project Manager, Developer, User, Guest).
 - **Advanced Ticketing** — Full lifecycle management with priority levels, severity tracking, and status workflows.
 - **Interactive Dashboard** — Data visualisation with charts showing ticket distribution and project health metrics.
 - **Real-time Collaboration** — Live comment threads and instant notifications via SignalR.
@@ -235,8 +234,8 @@ graph TD
 
 ### Prerequisites
 - [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
-- [Node.js v18+](https://nodejs.org/)
-- [PostgreSQL 16](https://www.postgresql.org/download/) (or use the included Docker Compose)
+- [Node.js v20+](https://nodejs.org/)
+- [PostgreSQL 15 or later](https://www.postgresql.org/download/) (or use the included Docker Compose)
 - [Docker](https://www.docker.com/) *(optional, for local PostgreSQL)*
 
 ### Installation
@@ -267,12 +266,16 @@ npm run dev
 
 ### Configuration
 
-Create a `.env` file in the `API/` directory (see `appsettings.example.json` for the full configuration reference):
+Create a `.env` file in the `API/` directory:
 
 ```env
-# Required
-DB_CONNECTION_STRING=Host=localhost;Database=BugTrack;Username=postgres;Password=your_password
+# Required (these values match the included Docker Compose database)
+DB_CONNECTION_STRING=Host=localhost;Database=bugtrack_dev;Username=postgres;Password=postgres
 TOKEN_KEY=your_super_secret_jwt_key_min_64_characters
+
+# Optional — JWT issuer and audience (both default to http://localhost:5000)
+JWT_ISSUER=http://localhost:5000
+JWT_AUDIENCE=http://localhost:5000
 
 # Optional — Contact / Access Request feature
 CONTACT_ADMIN_EMAIL=your_admin_email@example.com
@@ -280,18 +283,22 @@ CONTACT_FROM_EMAIL=noreply@yourdomain.com
 RESEND_API_KEY=your_resend_api_key
 ```
 
+Then copy `API/appsettings.example.json` to `API/appsettings.json`. It holds the logging configuration and the file attachment storage settings: set `AzureStorageConnectionString` to an Azure Storage connection string, or to `UseDevelopmentStorage=true` to use the [Azurite](https://learn.microsoft.com/azure/storage/common/storage-use-azurite) emulator locally.
+
 ---
 
 ## 🧪 Testing
 
 ```bash
 # Run all backend tests from the root directory
-dotnet test
+dotnet test tests/BugTrack.Tests.sln
 
 # Run frontend tests
 cd client-app
 npm test
 ```
+
+The Playwright E2E tests need the API and frontend running, so they are skipped unless `RUN_E2E_TESTS=true` is set.
 
 The project maintains tests across four layers to ensure stability and correctness:
 
@@ -322,7 +329,6 @@ The project maintains tests across four layers to ensure stability and correctne
 
 ### Planned Improvements
 - [ ] **Multitenancy**: Implementing data isolation to support multi-client project hosting.
-- [ ] **Azure Blob Storage**: Replace local storage for production-grade scalability.
 - [ ] **Full Docker Compose**: Extend the existing database container setup to include the API and frontend for one-command local startup.
 
 ---
