@@ -195,7 +195,8 @@ describe('Authentication Flow', () => {
     const errorMessage = 'Invalid email or password';
     const mockStoreWithError = createMockStore({
       userStore: {
-        login: vi.fn().mockRejectedValue(new Error(errorMessage)),
+        // The form shows the message only when the server responded (e.g. a 401)
+        login: vi.fn().mockRejectedValue({ response: { status: 401 } }),
       }
     });
     
@@ -220,7 +221,7 @@ describe('Authentication Flow', () => {
     });
   });
 
-  test('should show login/register buttons when user is not logged in', () => {
+  test('should show login/request access buttons when user is not logged in', () => {
     render(
       <StoreContext.Provider value={mockStore as any}>
         <BrowserRouter>
@@ -228,10 +229,10 @@ describe('Authentication Flow', () => {
         </BrowserRouter>
       </StoreContext.Provider>
     );
-    
-    // Check if login and register buttons are shown
+
+    // Check if login and request access buttons are shown
     expect(screen.getByText('Login')).toBeInTheDocument();
-    expect(screen.getByText('Register')).toBeInTheDocument();
+    expect(screen.getByText('Request Access')).toBeInTheDocument();
     expect(screen.queryByText('Go to dashboard')).not.toBeInTheDocument();
   });
 
@@ -251,9 +252,9 @@ describe('Authentication Flow', () => {
       </StoreContext.Provider>
     );
     
-    // Check if dashboard button is shown and login/register are hidden
+    // Check if dashboard button is shown and login/request access are hidden
     expect(screen.getByText('Go to dashboard')).toBeInTheDocument();
     expect(screen.queryByText('Login')).not.toBeInTheDocument();
-    expect(screen.queryByText('Register')).not.toBeInTheDocument();
+    expect(screen.queryByText('Request Access')).not.toBeInTheDocument();
   });
 });
