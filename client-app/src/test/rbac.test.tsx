@@ -10,6 +10,18 @@ vi.mock('../app/stores/store', () => ({
 
 import { useStore } from '../app/stores/store';
 
+// The Navbar renders the notifications dropdown, which reads this store
+const mockNotificationStore = {
+  notifications: [],
+  unreadCount: 0,
+  loading: false,
+  loadNotifications: vi.fn(),
+  markAsRead: vi.fn(),
+  markAllAsRead: vi.fn(),
+  deleteNotification: vi.fn(),
+  clearAllNotifications: vi.fn(),
+};
+
 describe('Role-Based Access Control (RBAC)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -32,6 +44,7 @@ describe('Role-Based Access Control (RBAC)', () => {
         darkMode: false,
         toggleDarkMode: vi.fn(),
       },
+      notificationStore: mockNotificationStore,
     } as any);
 
     render(
@@ -40,9 +53,9 @@ describe('Role-Based Access Control (RBAC)', () => {
       </BrowserRouter>
     );
 
-    // Check if admin menu items are visible
-    expect(screen.getByText('Admin')).toBeInTheDocument();
-    expect(screen.getByText('Errors')).toBeInTheDocument();
+    // Check if admin menu items are visible (desktop menu and mobile drawer)
+    expect(screen.getAllByText('Admin').length).toBeGreaterThan(0);
+    expect(screen.getByText('User Management')).toBeInTheDocument();
   });
 
   test('should hide admin menu items for regular users', () => {
@@ -62,6 +75,7 @@ describe('Role-Based Access Control (RBAC)', () => {
         darkMode: false,
         toggleDarkMode: vi.fn(),
       },
+      notificationStore: mockNotificationStore,
     } as any);
 
     render(
@@ -72,7 +86,7 @@ describe('Role-Based Access Control (RBAC)', () => {
 
     // Check if admin menu items are not visible
     expect(screen.queryByText('Admin')).not.toBeInTheDocument();
-    expect(screen.queryByText('Errors')).not.toBeInTheDocument();
+    expect(screen.queryByText('User Management')).not.toBeInTheDocument();
   });
 
   test('should show project manager capabilities for project managers', () => {
@@ -93,6 +107,7 @@ describe('Role-Based Access Control (RBAC)', () => {
         darkMode: false,
         toggleDarkMode: vi.fn(),
       },
+      notificationStore: mockNotificationStore,
     } as any);
 
     render(
@@ -123,6 +138,7 @@ describe('Role-Based Access Control (RBAC)', () => {
         darkMode: false,
         toggleDarkMode: vi.fn(),
       },
+      notificationStore: mockNotificationStore,
     } as any);
 
     render(
@@ -132,7 +148,7 @@ describe('Role-Based Access Control (RBAC)', () => {
     );
 
     expect(screen.queryByText('Admin')).not.toBeInTheDocument();
-    expect(screen.queryByText('Errors')).not.toBeInTheDocument();
+    expect(screen.queryByText('User Management')).not.toBeInTheDocument();
   });
 
   test('should handle logout correctly', async () => {
@@ -154,6 +170,7 @@ describe('Role-Based Access Control (RBAC)', () => {
         darkMode: false,
         toggleDarkMode: vi.fn(),
       },
+      notificationStore: mockNotificationStore,
     } as any);
 
     render(

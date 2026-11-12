@@ -15,7 +15,7 @@ vi.mock('../../app/stores/store', () => ({
   }),
 }));
 
-test('renders HomePage with login and register buttons when not logged in', () => {
+test('renders HomePage with login and request access buttons when not logged in', () => {
   render(
     <BrowserRouter>
       <HomePage />
@@ -25,9 +25,9 @@ test('renders HomePage with login and register buttons when not logged in', () =
   // Check if the BugTrack title is rendered
   expect(screen.getByText('BugTrack')).toBeInTheDocument();
   
-  // Check if Login and Register buttons are rendered
+  // Check if Login and Request Access buttons are rendered
   expect(screen.getByText('Login')).toBeInTheDocument();
-  expect(screen.getByText('Register')).toBeInTheDocument();
+  expect(screen.getByText('Request Access')).toBeInTheDocument();
 });
 
 test('renders HomePage with dashboard button when logged in', () => {
