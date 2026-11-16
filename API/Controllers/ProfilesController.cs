@@ -27,7 +27,7 @@ namespace API.Controllers
             return HandleResult(await Mediator.Send(new GetUserProjects.Query { Username = username }));
         }
 
-        [Authorize]
+        [Authorize(Policy = "CanEditOwnProfile")]
         [HttpPut]
         public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto profileDto)
         {
@@ -44,7 +44,7 @@ namespace API.Controllers
             return File(stream, contentType);
         }
 
-        [Authorize]
+        [Authorize(Policy = "CanEditOwnProfile")]
         [HttpPost("avatar")]
         public async Task<IActionResult> UploadAvatar([FromForm] IFormFile file)
         {
@@ -63,7 +63,7 @@ namespace API.Controllers
             return HandleResult(await Mediator.Send(new UploadAvatar.Command { File = upload }));
         }
 
-        [Authorize]
+        [Authorize(Policy = "CanEditOwnProfile")]
         [HttpDelete("avatar")]
         public async Task<IActionResult> DeleteAvatar()
         {

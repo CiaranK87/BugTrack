@@ -281,6 +281,17 @@ namespace API.IntegrationTests
             );
         }
 
+        // Reuses the seeded test user's identity with the Guest global role
+        public static void AuthenticateAsGuest(this HttpClient client)
+        {
+            client.AuthenticateAs(
+                TestProgram.TestUserId,
+                "testuser",
+                "test@example.com",
+                "Guest"
+            );
+        }
+
         public static void AuthenticateAsDeveloperWithProjectRole(this HttpClient client, Guid projectId, string projectRole)
         {
             var authData = new Dictionary<string, string>
