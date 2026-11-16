@@ -99,6 +99,9 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("CanUploadAttachments", policy =>
         policy.RequireClaim("globalrole", Roles.Global.User, Roles.Global.Developer, Roles.Global.ProjectManager, Roles.Global.Admin));
 
+    options.AddPolicy("CanEditOwnProfile", policy =>
+        policy.RequireClaim("globalrole", Roles.Global.User, Roles.Global.Developer, Roles.Global.ProjectManager, Roles.Global.Admin));
+
     options.AddPolicy("ProjectOwnerOnly", policy =>
         policy.Requirements.Add(new IsOwnerRequirement()));
 

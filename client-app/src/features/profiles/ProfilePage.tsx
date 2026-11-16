@@ -69,6 +69,8 @@ export default observer(function ProfilePage() {
   }
 
   const { profile } = userStore;
+  // The guest demo account is shared, so its profile and password stay read-only
+  const canEditProfile = userStore.isCurrentUser(profile.username) && !userStore.isGuest;
 
   return (
     <Container className="profile-page" style={{ marginTop: '7em', maxWidth: '1200px' }}>
@@ -80,7 +82,7 @@ export default observer(function ProfilePage() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                 <div style={{ position: 'relative', display: 'inline-block' }}>
                   <UserAvatar image={profile.image} displayName={profile.displayName} size="small" />
-                  {userStore.isCurrentUser(profile.username) && (
+                  {canEditProfile && (
                     <Button
                       icon="camera"
                       circular
@@ -103,7 +105,7 @@ export default observer(function ProfilePage() {
                   <Header as="h2" style={{ margin: 0 }}>
                     {profile.displayName}'s Profile
                   </Header>
-                  {userStore.isCurrentUser(profile.username) && profile.image && (
+                  {canEditProfile && profile.image && (
                     <Button
                       content="Remove photo"
                       icon="trash"
@@ -120,7 +122,7 @@ export default observer(function ProfilePage() {
               </div>
             </Grid.Column>
             <Grid.Column width={6} textAlign="right">
-              {userStore.isCurrentUser(profile.username) && (
+              {canEditProfile && (
                 <Button
                   content="Edit Profile"
                   icon="edit"
@@ -184,7 +186,7 @@ export default observer(function ProfilePage() {
                   <Menu.Item>Check your assigned and created tickets</Menu.Item>
                 </Menu.Menu>
               </Menu.Item>
-              {userStore.isCurrentUser(profile.username) && (
+              {canEditProfile && (
                 <>
                   <Menu.Item onClick={() => modalStore.openModal(<ProfileEditForm profile={profile} />)}>
                     <Icon name="settings" />

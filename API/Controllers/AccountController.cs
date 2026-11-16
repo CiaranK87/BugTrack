@@ -67,7 +67,7 @@ namespace API.Controllers
             return CreateUserObject(result.Value);
         }
 
-        [Authorize]
+        [Authorize(Policy = "CanEditOwnProfile")]
         [HttpPost("changePassword")]
         public async Task<ActionResult> ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
         {
