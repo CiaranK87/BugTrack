@@ -18,6 +18,9 @@ updates:
     groups:
       nuget-minor-patch:
         update-types: ["minor", "patch"]
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "npm"
     directory: "/client-app"
@@ -26,6 +29,11 @@ updates:
     groups:
       npm-minor-patch:
         update-types: ["minor", "patch"]
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "eslint-plugin-react-refresh"
+        versions: [">=0.5.0"]
 
   - package-ecosystem: "github-actions"
     directory: "/"
