@@ -171,7 +171,7 @@ graph TD
 
 ### Security & Supply Chain
 
-- **Dependency Updates**: Dependabot configured for NuGet, npm, and GitHub Actions — weekly PRs for outdated packages.
+- **Dependency Updates**: Dependabot configured for NuGet, npm, and GitHub Actions — monthly grouped PRs for minor and patch updates.
 - **Static Analysis**: CodeQL runs on every push and pull request, scanning C# and TypeScript for known vulnerability patterns.
 - **Secret Scanning**: GitHub push protection enabled; no secrets reach the repo.
 - **Runtime Headers**: OWASP-recommended headers applied globally via middleware (see Key Design Decisions for the ZAP scan findings).
